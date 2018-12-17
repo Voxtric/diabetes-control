@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_edit_name"
+        android:title="@string/title_edit_name" />
+
+    <item
+        android:id="@+id/navigation_edit_time"
+        android:title="@string/title_edit_time" />
+
+    <item
+        android:id="@+id/navigation_delete"
+        android:title="@string/title_delete" />
+
+    <item
+        android:id="@+id/navigation_cancel"
+        android:title="@string/title_cancel" />
+</menu>

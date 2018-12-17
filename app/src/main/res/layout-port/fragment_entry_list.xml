@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:name="voxtric.com.diabetescontrol.EntryFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/text_box_padding"
+        android:paddingBottom="@dimen/text_box_padding"
+        android:background="@color/colorAccent">
+
+        <TextView
+            android:id="@+id/text_view_time_stamp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="@string/date_time_hint"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:id="@+id/text_view_blood_glucose_level"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/blood_glucose_level_hint"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:id="@+id/text_view_insulin_dose"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/insulin_dose_hint"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:id="@+id/text_view_event"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="@string/event_hint"
+            android:textColor="@android:color/white"/>
+
+        <LinearLayout
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            tools:ignore="UselessLeaf" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/text_view_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_data_notice"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/large_text_size"
+        android:visibility="gone"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_entry_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".EntryListFragment"
+        tools:listitem="@layout/fragment_entry" />
+</LinearLayout>

@@ -1,0 +1,154 @@
+<resources>
+    <string name="app_name">Diabetes Control</string>
+
+    <string name="title_delete">Delete</string>
+    <string name="title_cancel">Cancel</string>
+
+    <!-- First Time Setup -->
+    <string name="first_launch_setup_title">First Launch Setup</string>
+    <string name="first_launch_setup_message_1">
+"As this is the first time you have launched this app, would you like to configure your events?
+
+If not, you can do so later from the settings menu at the top right."
+    </string>
+    <string name="first_launch_setup_message_2">
+"To export your data later, your contact details and blood glucose level targets are requested. Would you like to input this now?
+
+If not, you can do so later from the settings menu at the top right."
+    </string>
+
+    <!-- Main Activity -->
+    <string name="title_edit_events">Edit Events</string>
+    <string name="title_edit_contact_details">Edit Contact Details</string>
+    <string name="title_edit_targets">Edit Targets</string>
+    <string name="title_export">Export PDF</string>
+    <string name="title_export_nhs">NHS Format</string>
+    <string name="title_export_ads">ADS Format</string>
+
+    <string name="title_add_new">Add New</string>
+    <string name="title_view_all">View All</string>
+    <string name="title_graph">Graph View</string>
+    <string name="title_view_full">View Full</string>
+    <string name="title_edit">Edit</string>
+
+    <string name="date_label">Date:</string>
+    <string name="time_label">Time:</string>
+    <string name="event_label">Event:</string>
+    <string name="insulin_name_label">Insulin Name:</string>
+    <string name="insulin_dose_label">Insulin Dose:</string>
+    <string name="blood_glucose_level_label">Blood Glucose\nLevel:</string>
+    <string name="food_eaten_label">Food Eaten:</string>
+    <string name="additional_notes_label">Additional Notes:</string>
+
+    <string name="date_time_hint">Date &amp; Time</string>
+    <string name="event_hint">Event</string>
+    <string name="insulin_name_hint">Insulin Name</string>
+    <string name="insulin_dose_hint">Insulin Dose</string>
+    <string name="blood_glucose_level_hint">BGL (mmol/l)</string>
+    <string name="blood_glucose_level_text">Blood Glucose Level</string>
+    <string name="food_eaten_hint">Food Eaten</string>
+    <string name="additional_notes_hint">Addition Notes</string>
+
+    <string name="see_previous_text">See Previous</string>
+    <string name="add_new_entry_text">Add New Entry</string>
+    <string name="save_changes_text">Save Changes</string>
+
+    <string name="no_data_notice">No data to display</string>
+
+    <string name="new_entry_insulin_name_empty_message">Insulin name missing.</string>
+    <string name="new_entry_insulin_dose_empty_message">Insulin dose missing.</string>
+    <string name="new_entry_bgl_empty_message">Blood glucose level missing.</string>
+    <string name="new_entry_added_message">New entry logged.</string>
+    <string name="new_entry_deleted_event_message">Entry contains a deleted event.</string>
+    <string name="not_implemented_message">Feature under construction.</string>
+
+    <!-- Edit Events Activity -->
+    <string name="event_name_title">Event Name</string>
+    <string name="event_time_title">Event Time</string>
+
+    <string name="title_edit_name">Edit Name</string>
+    <string name="title_edit_time">Edit Time</string>
+    <string name="title_edit_event_name">Edit event name</string>
+
+    <string name="event_name_label">Event Name:</string>
+
+    <string name="add_new_event_text">Add New Event</string>
+
+    <string name="new_event_added_message">New event added.</string>
+    <string name="new_event_cancelled_message">New event cancelled.</string>
+    <string name="event_name_changed_message">Event name changed.</string>
+    <string name="event_time_changed_message">Event time changed.</string>
+    <string name="event_deleted_message">Event deleted.</string>
+    <string name="event_delete_final_message">Cannot delete final event.</string>
+
+    <!-- Edit Entry Activity -->
+    <string name="title_cancel_entry_edit">Cancel entry edit?</string>
+    <string name="message_cancel_entry_edit">Any changes made to this entry will be lost. Are you sure you want to cancel the edit?</string>
+
+    <string name="changes_saved_message">Changes saved.</string>
+    <string name="changes_not_saved_message">No changes to save found.</string>
+
+    <!-- Settings -->
+    <string name="title_contact_details">Edit contact details</string>
+    <string name="title_targets">Edit targets</string>
+
+    <string name="contact_name_label">Contact Name:</string>
+    <string name="contact_number_label">Contact Number:</string>
+    <string name="target_pre_meal_label">Pre-meal blood glucose range:</string>
+    <string name="target_post_meal_label">Post-meal blood glucose range:</string>
+
+    <string name="contact_name_hint">Contact Name</string>
+    <string name="contact_number_hint">Contact No.</string>
+    <string name="target_lower_hint">Lower (mmol/l)</string>
+    <string name="target_upper_hint">Upper (mmol/l)</string>
+    <string name="target_range_indicator">-</string>
+
+    <!-- View Previous Dialog -->
+    <string name="title_missing_comparison_values">Missing comparison values</string>
+    <string name="title_see_previous_criteria">See previous with similar…</string>
+    <string name="title_no_results">No results found</string>
+
+    <string name="message_missing_comparison_values">No values have been filled in for a new entry that can be compared against existing entries.</string>
+    <string name="message_no_results">No previous entries could be found with any similarities.</string>
+
+    <!-- Event Collision -->
+    <string name="title_event_collision">Event collision</string>
+    <string name="message_event_collision">
+"This entry has the same event as the previous entry.
+
+Are you sure you wish to add it?"
+    </string>
+
+    <!-- Delete Entry -->
+    <string name="title_delete_entry">Delete entry?</string>
+    <string name="message_delete_entry">Are you sure that you want to delete this entry?</string>
+
+    <!-- Delete Event -->
+    <string name="title_delete_event">Delete event?</string>
+    <string name="message_delete_event">Are you sure you want to delete event: \"%1$s\"?</string>
+
+    <!-- Dialog Options -->
+    <string name="done">Done</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="add">Add</string>
+    <string name="delete">Delete</string>
+    <string name="save">Save</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="cancel_edit">Cancel Edit</string>
+    <string name="continue_edit">Continue Edit</string>
+
+    <string-array name="nhs_event_names">
+        <item>Before Breakfast</item>
+        <item>Two Hours after Breakfast</item>
+        <item>Before Midday Meal</item>
+        <item>Two Hours after Midday Meal</item>
+        <item>Before Evening Meal</item>
+        <item>Two Hours after Evening Meal</item>
+        <item>Before Bed</item>
+        <item>During Night</item>
+    </string-array>
+</resources>

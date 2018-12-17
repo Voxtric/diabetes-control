@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/group_edit">
+        <item
+            android:id="@+id/navigation_edit_events"
+            android:title="@string/title_edit_events" />
+
+        <item
+            android:id="@+id/navigation_edit_contact_details"
+            android:title="@string/title_edit_contact_details"/>
+
+        <item
+            android:id="@+id/navigation_edit_targets"
+            android:title="@string/title_edit_targets"/>
+    </group>
+
+    <group android:id="@+id/group_export">
+        <item
+            android:id="@+id/navigation_export"
+            android:title="@string/title_export" >
+
+            <menu>
+                <item
+                    android:id="@+id/navigation_export_nhs"
+                    android:title="@string/title_export_nhs"/>
+
+                <item
+                    android:id="@+id/navigation_export_ads"
+                    android:title="@string/title_export_ads"/>
+            </menu>
+        </item>
+    </group>
+</menu>

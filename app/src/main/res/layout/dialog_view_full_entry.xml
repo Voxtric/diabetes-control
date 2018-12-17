@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NewEntryFragment">
+
+    <LinearLayout
+        android:id="@+id/grid_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:focusableInTouchMode="true"
+        android:padding="@dimen/activity_horizontal_margin">
+
+        <!-- Date -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_label_weight"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:text="@string/date_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"/>
+
+            <TextView
+                android:id="@+id/text_view_date"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/view_new_entry_input_weight"
+                android:background="@drawable/no_edit_back"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"
+                android:textAlignment="center"/>
+        </LinearLayout>
+
+        <!-- Time -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_label_weight"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:text="@string/time_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"/>
+
+            <TextView
+                android:id="@+id/text_view_time"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/view_new_entry_input_weight"
+                android:background="@drawable/no_edit_back"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"
+                android:textAlignment="center"/>
+        </LinearLayout>
+
+        <!-- Event -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_label_weight"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:gravity="center_vertical"
+                android:text="@string/event_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"/>
+
+            <TextView
+                android:id="@+id/text_view_event"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/view_new_entry_input_weight"
+                android:paddingLeft="@dimen/text_box_padding"
+                android:paddingStart="@dimen/text_box_padding"
+                android:paddingRight="@dimen/text_box_padding"
+                android:paddingEnd="@dimen/text_box_padding"
+                android:background="@drawable/no_edit_back"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"
+                android:textAlignment="center"/>
+        </LinearLayout>
+
+        <!-- Insulin Name -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_label_weight"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:text="@string/insulin_name_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"/>
+
+            <TextView
+                android:id="@+id/text_view_insulin_name"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/view_new_entry_input_weight"
+                android:background="@drawable/no_edit_back"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"
+                android:textAlignment="center"/>
+        </LinearLayout>
+
+        <!-- Insulin Dose -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_label_weight"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:text="@string/insulin_dose_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"/>
+
+            <TextView
+                android:id="@+id/text_view_insulin_dose"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/view_new_entry_input_weight"
+                android:background="@drawable/no_edit_back"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"
+                android:textAlignment="center"/>
+        </LinearLayout>
+
+        <!-- Blood Glucose Level -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_label_weight"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:text="@string/blood_glucose_level_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"/>
+
+            <TextView
+                android:id="@+id/text_view_blood_glucose_level"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/view_new_entry_input_weight"
+                android:background="@drawable/no_edit_back"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"
+                android:textAlignment="center"/>
+        </LinearLayout>
+
+        <!-- Food Eaten -->
+        <TextView
+            android:id="@+id/text_view_food_eaten_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:text="@string/food_eaten_label"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size"/>
+
+        <TextView
+            android:id="@+id/text_view_food_eaten"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/text_box_padding"
+            android:paddingStart="@dimen/text_box_padding"
+            android:paddingRight="@dimen/text_box_padding"
+            android:paddingEnd="@dimen/text_box_padding"
+            android:background="@drawable/no_edit_back"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size"
+            android:nextFocusForward="@id/auto_complete_additional_notes"
+            android:gravity="center"
+            android:minLines="3"/>
+
+        <!-- Additional Notes -->
+        <TextView
+            android:id="@+id/text_view_additional_notes_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:text="@string/additional_notes_label"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size"/>
+
+        <TextView
+            android:id="@+id/text_view_additional_notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/text_box_padding"
+            android:paddingStart="@dimen/text_box_padding"
+            android:paddingRight="@dimen/text_box_padding"
+            android:paddingEnd="@dimen/text_box_padding"
+            android:background="@drawable/no_edit_back"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size"
+            android:nextFocusForward="@id/auto_complete_additional_notes"
+            android:gravity="center"
+            android:minLines="3"/>
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

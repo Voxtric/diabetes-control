@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NewEntryFragment">
+
+    <LinearLayout
+        android:id="@+id/grid_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:focusableInTouchMode="true"
+        android:padding="@dimen/activity_horizontal_margin">
+
+        <!-- Date -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_label_weight"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:text="@string/date_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"
+                android:focusable="true"/>
+
+            <Button
+                android:id="@+id/button_date"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_input_weight"
+                android:background="@drawable/back"
+                android:minHeight="0dp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"
+                android:textAlignment="center"
+                style="?android:attr/borderlessButtonStyle"/>
+        </LinearLayout>
+
+        <!-- Time -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_label_weight"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:text="@string/time_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"/>
+
+            <Button
+                android:id="@+id/button_time"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_input_weight"
+                android:background="@drawable/back"
+                android:minHeight="0dp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"
+                android:textAlignment="center"
+                style="?android:attr/borderlessButtonStyle"/>
+        </LinearLayout>
+
+        <!-- Event -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_label_weight"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:gravity="center_vertical"
+                android:text="@string/event_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"/>
+
+            <Spinner
+                android:id="@+id/spinner_event"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_input_weight"
+                android:background="@drawable/back"/>
+        </LinearLayout>
+
+        <!-- Insulin Name -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:orientation="horizontal"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:descendantFocusability="beforeDescendants">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_label_weight"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:text="@string/insulin_name_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"/>
+
+            <AutoCompleteTextView
+                android:id="@+id/auto_complete_insulin_name"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_input_weight"
+                android:background="@drawable/back"
+                android:hint="@string/insulin_name_hint"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"
+                android:imeOptions="actionNext"
+                android:nextFocusForward="@id/auto_complete_insulin_dose"
+                android:inputType="textCapWords"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <!-- Insulin Dose -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_label_weight"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:text="@string/insulin_dose_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"/>
+
+            <AutoCompleteTextView
+                android:id="@+id/auto_complete_insulin_dose"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_input_weight"
+                android:background="@drawable/back"
+                android:hint="@string/insulin_dose_hint"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"
+                android:imeOptions="actionNext"
+                android:nextFocusForward="@id/edit_text_blood_glucose_level"
+                android:inputType="textCapCharacters"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <!-- Blood Glucose Level -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_label_weight"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:text="@string/blood_glucose_level_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"/>
+
+            <EditText
+                android:id="@+id/edit_text_blood_glucose_level"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_input_weight"
+                android:background="@drawable/back"
+                android:hint="@string/blood_glucose_level_hint"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"
+                android:imeOptions="actionNext"
+                android:nextFocusForward="@id/auto_complete_food_eaten"
+                android:inputType="numberDecimal"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <!-- Food Eaten -->
+        <TextView
+            android:id="@+id/text_view_food_eaten"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/food_eaten_label"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size"/>
+
+        <AutoCompleteTextView
+            android:id="@+id/auto_complete_food_eaten"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:paddingLeft="@dimen/text_box_padding"
+            android:paddingStart="@dimen/text_box_padding"
+            android:paddingRight="@dimen/text_box_padding"
+            android:paddingEnd="@dimen/text_box_padding"
+            android:background="@drawable/back"
+            android:hint="@string/food_eaten_hint"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size"
+            android:inputType="textCapWords|textMultiLine"
+            android:imeOptions="actionNext"
+            android:nextFocusForward="@id/auto_complete_additional_notes"
+            android:gravity="center"
+            android:minLines="3"/>
+
+        <!-- Additional Notes -->
+        <TextView
+            android:id="@+id/text_view_additional_notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/additional_notes_label"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size"/>
+
+        <AutoCompleteTextView
+            android:id="@+id/auto_complete_additional_notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:paddingLeft="@dimen/text_box_padding"
+            android:paddingStart="@dimen/text_box_padding"
+            android:paddingRight="@dimen/text_box_padding"
+            android:paddingEnd="@dimen/text_box_padding"
+            android:background="@drawable/back"
+            android:hint="@string/additional_notes_hint"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size"
+            android:inputType="textCapSentences|textMultiLine"
+            android:imeOptions="actionDone"
+            android:gravity="center"
+            android:minLines="3"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_see_previous"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/see_previous_text"/>
+
+            <Button
+                android:id="@+id/button_add_new_entry"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/add_new_entry_text"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>
