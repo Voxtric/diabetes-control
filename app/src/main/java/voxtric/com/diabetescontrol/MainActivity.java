@@ -344,7 +344,7 @@ public class MainActivity extends DatabaseActivity
             {
                 if (m_database.eventsDao().getEvents().isEmpty())
                 {
-                    EditEventsActivity.addNHSEvents(m_database);
+                    EditEventsActivity.addNHSEvents(m_database, MainActivity.this);
                 }
             }
         });
