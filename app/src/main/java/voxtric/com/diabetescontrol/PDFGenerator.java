@@ -1,6 +1,7 @@
 package voxtric.com.diabetescontrol;
 
 import android.app.Activity;
+import android.support.v4.app.FragmentManager;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -44,7 +45,7 @@ public abstract class PDFGenerator
     static final PDFont FONT_BOLD = PDType1Font.HELVETICA_BOLD;
     static final PDFColor BLACK = new PDFColor(0, 0, 0);
 
-    private PDDocument m_document;
+    private final PDDocument m_document;
     private PDPageContentStream m_content = null;
     float m_pageWidth = 0.0f;
 

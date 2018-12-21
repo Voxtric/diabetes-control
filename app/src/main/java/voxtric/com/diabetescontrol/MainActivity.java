@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -22,7 +21,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,14 +35,8 @@ import android.widget.Toast;
 
 import org.apache.pdfbox.util.PDFBoxResourceLoader;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
@@ -65,7 +57,8 @@ public class MainActivity extends DatabaseActivity
     private ViewPager m_viewPager = null;
 
     private String m_exportTitle = null;
-    private String m_exportMessage = null;
+    private String m_exportStartMessage = null;
+    private String m_exportEndMessage = null;
 
     private BottomNavigationView.OnNavigationItemSelectedListener m_onNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener()
@@ -144,7 +137,7 @@ public class MainActivity extends DatabaseActivity
             return true;
 
         case R.id.navigation_export_ads:
-            export("ADS Export", "Generating PDF...");
+            export("ADS Export", "Generating PDF...", "PDF generation complete!");
             return true;
         case R.id.navigation_export_nhs:
             Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
@@ -181,7 +174,7 @@ public class MainActivity extends DatabaseActivity
         case REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE:
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
             {
-                export(m_exportTitle, m_exportMessage);
+                export(m_exportTitle, m_exportStartMessage, m_exportEndMessage);
             }
             else
             {
@@ -194,10 +187,11 @@ public class MainActivity extends DatabaseActivity
         }
     }
 
-    private void export(final String title, String message)
+    private void export(final String title, String startMessage, String endMessage)
     {
         m_exportTitle = title;
-        m_exportMessage = message;
+        m_exportStartMessage = startMessage;
+        m_exportEndMessage = endMessage;
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
         {
@@ -237,9 +231,9 @@ public class MainActivity extends DatabaseActivity
             }
         }
 
-        final ExportDialogFragment dialog = new ExportDialogFragment();
-        dialog.setText(title, message);
-        dialog.show(getSupportFragmentManager(), ExportDialogFragment.TAG);
+        ExportDurationDialogFragment dialog = new ExportDurationDialogFragment();
+        dialog.setText(title, startMessage, endMessage);
+        dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
     }
 
     public static void addHintHide(final EditText viewWithHint, final int targetGravity, final Activity activity)

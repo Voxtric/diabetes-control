@@ -3,7 +3,10 @@ package voxtric.com.diabetescontrol;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Pair;
+import android.widget.ProgressBar;
 
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
@@ -38,7 +41,6 @@ public class ADSExporter extends PDFGenerator
     {
         m_database = database;
         m_weeks = Week.splitEntries(entries);
-
         Date startDate = new Date(entries.get(entries.size() - 1).timeStamp);
         Date endDate = new Date(entries.get(0).timeStamp);
         String startDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(startDate);
@@ -60,13 +62,29 @@ public class ADSExporter extends PDFGenerator
     }
 
     @Override
-    public ByteArrayOutputStream createPDF(Activity activity)
+    public ByteArrayOutputStream createPDF(final Activity activity)
     {
         try
         {
-            for (Week week : m_weeks)
+            for (final Week week : m_weeks)
             {
                 addPage(week, activity);
+                if (activity instanceof FragmentActivity)
+                {
+                    activity.runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            FragmentManager fragmentManager = ((FragmentActivity)activity).getSupportFragmentManager();
+                            ExportDialogFragment exportDialogFragment = (ExportDialogFragment)fragmentManager.findFragmentByTag(ExportDialogFragment.TAG);
+                            if (exportDialogFragment != null)
+                            {
+                                ((ProgressBar)exportDialogFragment.getAlertDialog().findViewById(R.id.progress_bar_export)).incrementProgressBy(week.entries.size());
+                            }
+                        }
+                    });
+                }
             }
             return getOutputStream();
         }

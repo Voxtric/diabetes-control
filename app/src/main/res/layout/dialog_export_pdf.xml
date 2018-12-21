@@ -15,6 +15,7 @@
         android:layout_height="wrap_content">
 
         <ProgressBar
+            android:id="@+id/progress_bar_export_indefinite"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginRight="@dimen/text_box_padding"
@@ -31,7 +32,7 @@
     </LinearLayout>
 
     <ProgressBar
-        android:id="@+id/progress_bar"
+        android:id="@+id/progress_bar_export"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="?android:attr/progressBarStyleHorizontal"/>
