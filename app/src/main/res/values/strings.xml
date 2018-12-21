@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Diabetes Control</string>
+    <string name="edit_events_name">Edit Events (%1$d/%2$d)</string>
+    <string name="edit_entry_name">Edit Entry</string>
 
     <string name="title_delete">Delete</string>
     <string name="title_cancel">Cancel</string>

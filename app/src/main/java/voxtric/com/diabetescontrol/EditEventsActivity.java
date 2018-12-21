@@ -66,6 +66,7 @@ public class EditEventsActivity extends DatabaseActivity
                         m_adapter = new EditEventsRecyclerViewAdapter(events);
                         recyclerView.setAdapter(m_adapter);
                         findViewById(R.id.button_add_new_event).setEnabled(events.size() < MAX_EVENT_COUNT);
+                        getSupportActionBar().setTitle(getString(R.string.edit_events_name, events.size(), MAX_EVENT_COUNT));
                     }
                 });
             }
@@ -223,7 +224,12 @@ public class EditEventsActivity extends DatabaseActivity
                         public void onClick(DialogInterface dialog, int which)
                         {
                             m_adapter.deleteEvent(dataView);
-                            findViewById(R.id.button_add_new_event).setEnabled(true);
+                            findViewById(R.id.button_add_new_event).setEnabled(m_adapter.getItemCount() < MAX_EVENT_COUNT);
+                            ActionBar actionBar = getSupportActionBar();
+                            if (actionBar != null)
+                            {
+                                actionBar.setTitle(getString(R.string.edit_events_name, m_adapter.getItemCount(), MAX_EVENT_COUNT));
+                            }
                             setResult(MainActivity.RESULT_EVENTS_CHANGED);
                             AsyncTask.execute(new Runnable()
                             {
@@ -323,6 +329,11 @@ public class EditEventsActivity extends DatabaseActivity
                         RecyclerView recyclerView = findViewById(R.id.recycler_view_entry_list);
                         recyclerView.setAdapter(m_adapter);
                         findViewById(R.id.button_add_new_event).setEnabled(events.size() < MAX_EVENT_COUNT);
+                        ActionBar actionBar = getSupportActionBar();
+                        if (actionBar != null)
+                        {
+                            actionBar.setTitle(getString(R.string.edit_events_name, events.size(), MAX_EVENT_COUNT));
+                        }
                         setResult(MainActivity.RESULT_EVENTS_CHANGED);
                     }
                 });

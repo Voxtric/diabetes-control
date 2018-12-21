@@ -25,11 +25,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".EditEventsActivity" />
+        <activity
+            android:name=".EditEventsActivity"
+            android:label="@string/edit_events_name"/>
 
         <activity
             android:name=".EditEntryActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:label="@string/edit_entry_name"/>
     </application>
 
 </manifest>
