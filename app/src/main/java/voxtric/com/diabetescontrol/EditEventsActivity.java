@@ -32,6 +32,8 @@ import voxtric.com.diabetescontrol.database.Event;
 
 public class EditEventsActivity extends DatabaseActivity
 {
+    private static final int MAX_EVENT_COUNT = 8;
+
     private EditEventsRecyclerViewAdapter m_adapter = null;
 
     @Override
@@ -63,6 +65,7 @@ public class EditEventsActivity extends DatabaseActivity
                     {
                         m_adapter = new EditEventsRecyclerViewAdapter(events);
                         recyclerView.setAdapter(m_adapter);
+                        findViewById(R.id.button_add_new_event).setEnabled(events.size() < MAX_EVENT_COUNT);
                     }
                 });
             }
@@ -220,6 +223,7 @@ public class EditEventsActivity extends DatabaseActivity
                         public void onClick(DialogInterface dialog, int which)
                         {
                             m_adapter.deleteEvent(dataView);
+                            findViewById(R.id.button_add_new_event).setEnabled(true);
                             setResult(MainActivity.RESULT_EVENTS_CHANGED);
                             AsyncTask.execute(new Runnable()
                             {
@@ -318,6 +322,7 @@ public class EditEventsActivity extends DatabaseActivity
                         m_adapter = new EditEventsRecyclerViewAdapter(events);
                         RecyclerView recyclerView = findViewById(R.id.recycler_view_entry_list);
                         recyclerView.setAdapter(m_adapter);
+                        findViewById(R.id.button_add_new_event).setEnabled(events.size() < MAX_EVENT_COUNT);
                         setResult(MainActivity.RESULT_EVENTS_CHANGED);
                     }
                 });

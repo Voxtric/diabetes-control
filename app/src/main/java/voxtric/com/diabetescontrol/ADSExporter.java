@@ -30,11 +30,6 @@ public class ADSExporter extends PDFGenerator
     private static final float EXTRAS_MIN_WIDTH = 140.0f;
     private static final float DATA_GAP = FONT_SIZE_MEDIUM * 1.6f;
 
-    private static final String[] DAYS =
-    {
-        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
-    };
-
     private final AppDatabase m_database;
     private final List<Week> m_weeks;
     private final String m_fileName;
@@ -96,7 +91,7 @@ public class ADSExporter extends PDFGenerator
     private void addPage(Week week, Activity activity) throws IOException
     {
         super.addPage();
-
+        final String[] DAYS = activity.getResources().getStringArray(R.array.days);
         float height = PDRectangle.A4.getHeight() - BORDER;
 
         // Week Commencing.

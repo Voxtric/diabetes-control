@@ -79,7 +79,7 @@ If not, you can do so later from the settings menu at the top right."
     <string name="event_name_changed_message">Event name changed.</string>
     <string name="event_time_changed_message">Event time changed.</string>
     <string name="event_deleted_message">Event deleted.</string>
-    <string name="event_delete_final_message">Cannot delete final event.</string>
+    <string name="event_delete_final_message">Final event can not be deleted.</string>
 
     <!-- Edit Entry Activity -->
     <string name="title_cancel_entry_edit">Cancel entry edit?</string>
