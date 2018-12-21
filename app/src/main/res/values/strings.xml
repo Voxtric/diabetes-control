@@ -3,6 +3,8 @@
     <string name="edit_events_name">Edit Events (%1$d/%2$d)</string>
     <string name="edit_entry_name">Edit Entry</string>
 
+    <string name="not_implemented_message">Feature under construction.</string>
+
     <string name="title_delete">Delete</string>
     <string name="title_cancel">Cancel</string>
 
@@ -62,8 +64,8 @@ If not, you can do so later from the settings menu at the top right."
     <string name="new_entry_insulin_dose_empty_message">Insulin dose missing.</string>
     <string name="new_entry_bgl_empty_message">Blood glucose level missing.</string>
     <string name="new_entry_added_message">New entry logged.</string>
+    <string name="new_entry_cancelled_message">New entry cancelled.</string>
     <string name="new_entry_deleted_event_message">Entry contains a deleted event.</string>
-    <string name="not_implemented_message">Feature under construction.</string>
 
     <!-- Edit Events Activity -->
     <string name="event_name_title">Event Name</string>
@@ -117,9 +119,9 @@ If not, you can do so later from the settings menu at the top right."
     <!-- Event Collision -->
     <string name="title_event_collision">Event collision</string>
     <string name="message_event_collision">
-"This entry has the same event as the previous entry.
+"This entry has the same event on the same day as an existing entry.
 
-Are you sure you wish to add it?"
+Do you want to overwrite the existing entry?"
     </string>
 
     <!-- Delete Entry -->

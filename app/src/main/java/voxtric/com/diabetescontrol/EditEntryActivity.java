@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import voxtric.com.diabetescontrol.database.DataEntry;

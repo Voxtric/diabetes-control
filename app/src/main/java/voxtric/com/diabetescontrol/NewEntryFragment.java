@@ -171,7 +171,6 @@ public class NewEntryFragment extends Fragment
         Activity activity = getActivity();
         if (activity != null)
         {
-            //calender.set(m_year, m_month, m_day, m_hour, m_minute, 0);
             calender.set(Calendar.YEAR, m_year);
             calender.set(Calendar.MONTH, m_month);
             calender.set(Calendar.DAY_OF_MONTH, m_day);
@@ -799,8 +798,12 @@ public class NewEntryFragment extends Fragment
         return entry;
     }
 
-    private void addEntry(final DataEntry entry, final Activity activity)
+    private void addEntry(final DataEntry entry, final Activity activity, DataEntry entryToReplace)
     {
+        if (entryToReplace != null)
+        {
+            m_database.dataEntriesDao().delete(entryToReplace);
+        }
         m_database.dataEntriesDao().insert(entry);
         activity.runOnUiThread(new Runnable()
         {
@@ -836,21 +839,28 @@ public class NewEntryFragment extends Fragment
                 @Override
                 public void run()
                 {
-                    List<DataEntry> previousEntries = m_database.dataEntriesDao().findFirstBefore(entry.timeStamp);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(entry.timeStamp);
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.add(Calendar.DAY_OF_MONTH, 1);
+                    List<DataEntry> previousEntries = m_database.dataEntriesDao().findFirstBefore(calendar.getTimeInMillis() - 1, entry.event);
                     if (previousEntries.isEmpty())
                     {
-                        addEntry(entry, activity);
+                        addEntry(entry, activity, null);
                     }
                     else
                     {
-                        DataEntry previousEntry = previousEntries.get(0);
-                        Calendar calendar = Calendar.getInstance();
+                        final DataEntry previousEntry = previousEntries.get(0);
                         calendar.setTimeInMillis(entry.timeStamp);
                         Calendar previousCalendar = Calendar.getInstance();
                         previousCalendar.setTimeInMillis(previousEntry.timeStamp);
-                        if (!entry.event.equals(previousEntry.event) || calendar.get(Calendar.DAY_OF_MONTH) != previousCalendar.get(Calendar.DAY_OF_MONTH))
+                        if (calendar.get(Calendar.YEAR) != previousCalendar.get(Calendar.YEAR) ||
+                            calendar.get(Calendar.MONTH) != previousCalendar.get(Calendar.MONTH) ||
+                            calendar.get(Calendar.DAY_OF_MONTH) != previousCalendar.get(Calendar.DAY_OF_MONTH))
                         {
-                            addEntry(entry, activity);
+                            addEntry(entry, activity, null);
                         }
                         else
                         {
@@ -862,8 +872,15 @@ public class NewEntryFragment extends Fragment
                                     AlertDialog dialog = new AlertDialog.Builder(activity)
                                             .setTitle(R.string.title_event_collision)
                                             .setMessage(R.string.message_event_collision)
-                                            .setNegativeButton(R.string.cancel, null)
-                                            .setPositiveButton(R.string.add, new DialogInterface.OnClickListener()
+                                            .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
+                                            {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which)
+                                                {
+                                                    Toast.makeText(activity, R.string.new_entry_cancelled_message, Toast.LENGTH_LONG).show();
+                                                }
+                                            })
+                                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
                                             {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which)
@@ -873,7 +890,7 @@ public class NewEntryFragment extends Fragment
                                                         @Override
                                                         public void run()
                                                         {
-                                                            addEntry(entry, activity);
+                                                            addEntry(entry, activity, previousEntry);
                                                         }
                                                     });
                                                 }

@@ -53,6 +53,12 @@ public interface DataEntriesDao
 
 
 
+    @Query("SELECT * FROM data_entries WHERE time_stamp < :timeStamp AND event IS :event AND time_stamp IS NOT :notTimeStamp ORDER BY time_stamp DESC LIMIT 1")
+    List<DataEntry> findFirstBefore(long timeStamp, String event, long notTimeStamp);
+
+    @Query("SELECT * FROM data_entries WHERE time_stamp < :timeStamp AND event IS :event ORDER BY time_stamp DESC LIMIT 1")
+    List<DataEntry> findFirstBefore(long timeStamp, String event);
+
     @Query("SELECT * FROM data_entries WHERE time_stamp < :timeStamp ORDER BY time_stamp DESC LIMIT 1")
     List<DataEntry> findFirstBefore(long timeStamp);
 
