@@ -136,10 +136,13 @@ public class MainActivity extends DatabaseActivity
             editTargets();
             return true;
 
+        case R.id.navigation_export_nhs:
+            Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
+            return true;
         case R.id.navigation_export_ads:
             export("ADS Export", "Generating PDF...", "PDF generated!");
             return true;
-        case R.id.navigation_export_nhs:
+        case R.id.navigation_export_xlsx:
             Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
             return true;
 

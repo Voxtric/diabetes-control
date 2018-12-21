@@ -97,18 +97,19 @@ public class ADSExporter extends PDFGenerator
 
     private void showExtras(StringBuilder foodEatenStringBuilder, StringBuilder additionalNotesStringBuilder, float startX, float availableSpace, float height) throws IOException
     {
+        float minimumHeight = height - DAY_HEADER_HEIGHT;
         if (foodEatenStringBuilder.length() > 0)
         {
             height = drawText(FONT_BOLD, FONT_SIZE_SMALL, "Food Eaten:", startX + LINE_SPACING, height);
             String foodEatenString = foodEatenStringBuilder.substring(0, foodEatenStringBuilder.length() - 2);
-            height = drawTextParagraphed(FONT, FONT_SIZE_SMALL, foodEatenString, startX + LINE_SPACING, startX + availableSpace - LINE_SPACING, height);
+            height = drawTextParagraphed(FONT, FONT_SIZE_SMALL, foodEatenString, startX + LINE_SPACING, startX + availableSpace - LINE_SPACING, height, minimumHeight);
             foodEatenStringBuilder.setLength(0);
         }
         if (additionalNotesStringBuilder.length() > 0)
         {
             height = drawText(FONT_BOLD, FONT_SIZE_SMALL, "Additional Notes:", startX + LINE_SPACING, height);
             String additionalNotesString = additionalNotesStringBuilder.substring(0, additionalNotesStringBuilder.length() - 1);
-            drawTextParagraphed(FONT, FONT_SIZE_SMALL, additionalNotesString, startX + LINE_SPACING, startX + availableSpace - LINE_SPACING, height);
+            drawTextParagraphed(FONT, FONT_SIZE_SMALL, additionalNotesString, startX + LINE_SPACING, startX + availableSpace - LINE_SPACING, height, minimumHeight);
             additionalNotesStringBuilder.setLength(0);
         }
     }

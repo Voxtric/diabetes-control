@@ -52,7 +52,7 @@ public class ExportDurationDialogFragment extends DialogFragment
         }
 
         Activity activity = getActivity();
-        final View view = View.inflate(activity, R.layout.dialog_choose_export_duration, null);
+        final View view = View.inflate(activity, R.layout.dialog_export_duration, null);
         m_startDateButton = view.findViewById(R.id.button_start_date);
         m_endDateButton = view.findViewById(R.id.button_end_date);
         initialiseDateButton(m_startDateButton);

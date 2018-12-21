@@ -14,7 +14,7 @@
 If not, you can do so later from the settings menu at the top right."
     </string>
     <string name="first_launch_setup_message_2">
-"To export your data later, your contact details and blood glucose level targets are requested. Would you like to input this now?
+"For a complete export in the future, your contact details and blood glucose level targets are requested. Would you like to input this now?
 
 If not, you can do so later from the settings menu at the top right."
     </string>
@@ -26,6 +26,7 @@ If not, you can do so later from the settings menu at the top right."
     <string name="title_export">Export PDF</string>
     <string name="title_export_nhs">NHS Format</string>
     <string name="title_export_ads">ADS Format</string>
+    <string name="title_export_xlsx">XLSX Format</string>
 
     <string name="title_add_new">Add New</string>
     <string name="title_view_all">View All</string>

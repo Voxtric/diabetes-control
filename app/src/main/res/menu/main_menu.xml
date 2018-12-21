@@ -28,6 +28,10 @@
                 <item
                     android:id="@+id/navigation_export_ads"
                     android:title="@string/title_export_ads"/>
+
+                <item
+                    android:id="@+id/navigation_export_xlsx"
+                    android:title="@string/title_export_xlsx"/>
             </menu>
         </item>
     </group>

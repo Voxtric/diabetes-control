@@ -123,7 +123,7 @@ public abstract class PDFGenerator
         return height - (halfStringLength * 2.0f);
     }
 
-    float drawTextParagraphed(PDFont font, float fontSize, String text, float startAt, float endAt, float height) throws IOException
+    float drawTextParagraphed(PDFont font, float fontSize, String text, float startAt, float endAt, float height, float minHeight) throws IOException
     {
         StringBuilder token = new StringBuilder();
         StringBuilder string = new StringBuilder();
@@ -138,6 +138,11 @@ public abstract class PDFGenerator
                     height = drawText(font, fontSize, string.toString(), startAt, height);
                     string = new StringBuilder(token + " ");
                     token = new StringBuilder();
+                    if (height - fontSize <= minHeight + fontSize)
+                    {
+                        token.append("...");
+                        break;
+                    }
                 }
                 else
                 {
@@ -147,6 +152,11 @@ public abstract class PDFGenerator
                     {
                         height = drawText(font, fontSize, string.toString(), startAt, height);
                         string = new StringBuilder();
+                        if (height - fontSize <= minHeight + fontSize)
+                        {
+                            token = new StringBuilder("...");
+                            break;
+                        }
                     }
                 }
             }
