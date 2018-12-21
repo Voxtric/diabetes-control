@@ -10,6 +10,12 @@ android {
         versionName "0.0.1"
         //project.ext.set("archivesBaseName", "diabetes-control v" + defaultConfig.versionName)
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         release {
@@ -45,4 +51,5 @@ dependencies {
     annotationProcessor "android.arch.persistence.room:compiler:$room_version"
 
     implementation 'com.shuhart.bubblepagerindicator:bubblepagerindicator:1.1.2'
+    implementation 'org.apache:pdfbox-android:1.8.9.0'
 }

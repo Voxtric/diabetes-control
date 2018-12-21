@@ -1,0 +1,145 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "0c204c8b406706c8c9aa0423ee674ef0",
+    "entities": [
+      {
+        "tableName": "data_entries",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`time_stamp` INTEGER NOT NULL, `event` TEXT, `insulin_name` TEXT, `insulin_dose` TEXT, `blood_glucose_level` REAL NOT NULL, `food_eaten` TEXT, `additional_notes` TEXT, PRIMARY KEY(`time_stamp`))",
+        "fields": [
+          {
+            "fieldPath": "timeStamp",
+            "columnName": "time_stamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "event",
+            "columnName": "event",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "insulinName",
+            "columnName": "insulin_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "insulinDose",
+            "columnName": "insulin_dose",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "bloodGlucoseLevel",
+            "columnName": "blood_glucose_level",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "foodEaten",
+            "columnName": "food_eaten",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "additionalNotes",
+            "columnName": "additional_notes",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "time_stamp"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "events",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `time_in_day` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "timeInDay",
+            "columnName": "time_in_day",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "target_changes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`time_stamp` INTEGER NOT NULL, `pre_meal_lower` REAL NOT NULL, `pre_meal_upper` REAL NOT NULL, `post_meal_lower` REAL NOT NULL, `post_meal_upper` REAL NOT NULL, PRIMARY KEY(`time_stamp`))",
+        "fields": [
+          {
+            "fieldPath": "timeStamp",
+            "columnName": "time_stamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "preMealLower",
+            "columnName": "pre_meal_lower",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "preMealUpper",
+            "columnName": "pre_meal_upper",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "postMealLower",
+            "columnName": "post_meal_lower",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "postMealUpper",
+            "columnName": "post_meal_upper",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "time_stamp"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"0c204c8b406706c8c9aa0423ee674ef0\")"
+    ]
+  }
+}

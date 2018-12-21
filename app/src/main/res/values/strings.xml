@@ -151,4 +151,14 @@ Are you sure you wish to add it?"
         <item>Before Bed</item>
         <item>During Night</item>
     </string-array>
+
+    <string-array name="days">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
 </resources>

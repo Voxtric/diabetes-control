@@ -1,13 +1,17 @@
 package voxtric.com.diabetescontrol;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -18,6 +22,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,8 +35,16 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.pdfbox.util.PDFBoxResourceLoader;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
@@ -46,8 +59,13 @@ public class MainActivity extends DatabaseActivity
     private static final int REQUEST_EDIT_EVENTS = 110;
     public static final int RESULT_EVENTS_CHANGED = 111;
 
+    private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 112;
+
     private AppDatabase m_database = null;
     private ViewPager m_viewPager = null;
+
+    private String m_exportTitle = null;
+    private String m_exportMessage = null;
 
     private BottomNavigationView.OnNavigationItemSelectedListener m_onNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener()
@@ -76,6 +94,7 @@ public class MainActivity extends DatabaseActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        PDFBoxResourceLoader.init(this);
 
         m_database = Room.databaseBuilder(this, AppDatabase.class, "diabetes-control.db").build();
 
@@ -125,7 +144,7 @@ public class MainActivity extends DatabaseActivity
             return true;
 
         case R.id.navigation_export_ads:
-            Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
+            export("ADS Export", "Generating PDF...");
             return true;
         case R.id.navigation_export_nhs:
             Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
@@ -152,6 +171,153 @@ public class MainActivity extends DatabaseActivity
         {
             ((NewEntryFragment)getSupportFragmentManager().getFragments().get(0)).updateEventSpinner();
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        switch (requestCode)
+        {
+        case REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE:
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
+                export(m_exportTitle, m_exportMessage);
+            }
+            else
+            {
+                Toast.makeText(this, "Cannot export until write permissions are granted.", Toast.LENGTH_LONG).show();
+            }
+            break;
+        default:
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            break;
+        }
+    }
+
+    private void export(final String title, String message)
+    {
+        m_exportTitle = title;
+        m_exportMessage = message;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+        {
+            int hasWriteExternalStoragePermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if (hasWriteExternalStoragePermission != PackageManager.PERMISSION_GRANTED)
+            {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                {
+                    AlertDialog dialog = new AlertDialog.Builder(this)
+                            .setTitle("Permission request")
+                            .setMessage("In order to export your data, permission to write to the external storage of the device must be given.\n\nGive write external storage permission?")
+                            .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    Toast.makeText(MainActivity.this, "Cannot export until write permissions are granted.", Toast.LENGTH_LONG).show();
+                                }
+                            })
+                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+                            {
+                                @SuppressLint("NewApi")
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
+                                }
+                            })
+                            .create();
+                    dialog.show();
+                }
+                else
+                {
+                    requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
+                }
+                return;
+            }
+        }
+
+        final ExportDialogFragment dialog = new ExportDialogFragment();
+        dialog.setText(title, message);
+        dialog.show(getSupportFragmentManager(), "EXPORT");
+
+        AsyncTask.execute(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                List<DataEntry> entries = m_database.dataEntriesDao().findPreviousEntries(100);
+                try
+                {
+                    if (entries.isEmpty())
+                    {
+                        throw new Exception("No entries to be exported.");
+                    }
+
+                    String fileName;
+                    ByteArrayOutputStream byteArrayOutputStream;
+                    if (title.equals("ADS Export"))
+                    {
+                        ADSExporter exporter = new ADSExporter(entries, m_database);
+                        fileName = exporter.getFileName();
+                        byteArrayOutputStream = exporter.createPDF(MainActivity.this);
+                    }
+                    else
+                    {
+                        throw new Exception("Unrecognised export format.");
+                    }
+
+                    if (byteArrayOutputStream != null)
+                    {
+                        File directory;
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT)
+                        {
+                            directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+                        }
+                        else
+                        {
+                            directory = new File(Environment.getExternalStorageDirectory() + "/Documents");
+                        }
+
+                        if (!directory.exists() && !directory.mkdirs())
+                        {
+                            throw new IOException("Failed to find documents directory.");
+                        }
+
+                        File file = new File(directory, fileName);
+                        OutputStream outputStream = new FileOutputStream(file);
+                        byteArrayOutputStream.writeTo(outputStream);
+                        outputStream.close();
+                        runOnUiThread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Log.e("Export", "Export failed.", exception);
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            dialog.dismiss();
+                            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                                    .setTitle("Export Failed")
+                                    .setMessage("Exporting of your data failed.\n\nPlease ensure there is plenty of space on your device, and try again.")
+                                    .setPositiveButton(R.string.ok, null)
+                                    .create();
+                            alertDialog.show();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     public static void addHintHide(final EditText viewWithHint, final int targetGravity, final Activity activity)
