@@ -26,6 +26,10 @@ public class ExportDurationDialogFragment extends DialogFragment
 {
     public static final String TAG = "ExportDurationDialogFragment";
 
+    private AlertDialog m_alertDialog = null;
+    private Button m_startDateButton = null;
+    private Button m_endDateButton = null;
+
     private String m_title = null;
     private String m_startMessage = null;
     private String m_endMessage = null;
@@ -49,10 +53,10 @@ public class ExportDurationDialogFragment extends DialogFragment
 
         Activity activity = getActivity();
         final View view = View.inflate(activity, R.layout.dialog_choose_export_duration, null);
-        final Button startDateButton = view.findViewById(R.id.button_start_date);
-        final Button endDateButton = view.findViewById(R.id.button_end_date);
-        initialiseDateButton(startDateButton);
-        initialiseDateButton(endDateButton);
+        m_startDateButton = view.findViewById(R.id.button_start_date);
+        m_endDateButton = view.findViewById(R.id.button_end_date);
+        initialiseDateButton(m_startDateButton);
+        initialiseDateButton(m_endDateButton);
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
         final long lastExportTimeStamp = preferences.getLong("last_export_time_stamp", -1);
@@ -76,26 +80,14 @@ public class ExportDurationDialogFragment extends DialogFragment
         }
         boolean enableWithinTimePeriod = lastChosen == 2;
         view.findViewById(R.id.text_view_start_date).setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
-        view.findViewById(R.id.text_view_end_date).setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
-        view.findViewById(R.id.button_start_date).setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
-        view.findViewById(R.id.button_end_date).setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
-        startDateButton.setEnabled(enableWithinTimePeriod);
-        endDateButton.setEnabled(enableWithinTimePeriod);
-        ((RadioButton)view.findViewById(R.id.radio_button_within_time_period)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-            {
-                view.findViewById(R.id.text_view_start_date).setAlpha(isChecked ? 1.0f : 0.3f);
-                view.findViewById(R.id.text_view_end_date).setAlpha(isChecked ? 1.0f : 0.3f);
-                view.findViewById(R.id.button_start_date).setAlpha(isChecked ? 1.0f : 0.3f);
-                view.findViewById(R.id.button_end_date).setAlpha(isChecked ? 1.0f : 0.3f);
-                startDateButton.setEnabled(isChecked);
-                endDateButton.setEnabled(isChecked);
-            }
-        });
+        m_startDateButton.setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
+        m_startDateButton.setEnabled(enableWithinTimePeriod);
 
-        return new AlertDialog.Builder(activity)
+        view.findViewById(R.id.text_view_end_date).setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
+        m_endDateButton.setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
+        m_endDateButton.setEnabled(enableWithinTimePeriod);
+
+        m_alertDialog = new AlertDialog.Builder(activity)
                 .setTitle("Export data")
                 .setView(view)
                 .setNegativeButton(R.string.cancel, null)
@@ -132,6 +124,26 @@ public class ExportDurationDialogFragment extends DialogFragment
                     }
                 })
                 .create();
+
+        ((RadioButton)view.findViewById(R.id.radio_button_within_time_period)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                view.findViewById(R.id.text_view_start_date).setAlpha(isChecked ? 1.0f : 0.3f);
+                m_startDateButton.setAlpha(isChecked ? 1.0f : 0.3f);
+                m_startDateButton.setEnabled(isChecked);
+
+                view.findViewById(R.id.text_view_end_date).setAlpha(isChecked ? 1.0f : 0.3f);
+                m_endDateButton.setAlpha(isChecked ? 1.0f : 0.3f);
+                m_endDateButton.setEnabled(isChecked);
+
+                m_alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(
+                        !isChecked || (m_startDateButton.getText().length() > 0 && m_endDateButton.getText().length() > 0));
+            }
+        });
+
+        return m_alertDialog;
     }
 
     @Override
@@ -188,6 +200,9 @@ public class ExportDurationDialogFragment extends DialogFragment
                                     calendar.add(Calendar.DAY_OF_MONTH, 1);
                                     m_withinTimePeriodEndTimeStamp = calendar.getTimeInMillis() - 1;
                                 }
+
+                                m_alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(
+                                        m_startDateButton.getText().length() > 0 && m_endDateButton.getText().length() > 0);
                             }
                         })
                         .create();
