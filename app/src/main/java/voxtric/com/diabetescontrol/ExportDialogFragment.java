@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Locale;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
@@ -80,7 +81,7 @@ public class ExportDialogFragment extends DialogFragment
                         if(m_file.exists())
                         {
                             intentShareFile.setType("application/pdf");
-                            intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + m_file.getAbsolutePath()));
+                            intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(m_file));
                             intentShareFile.putExtra(Intent.EXTRA_SUBJECT, m_file.getName());
                             intentShareFile.putExtra(Intent.EXTRA_TEXT, "Shared from 'Diabetes Control' app.");
                             startActivity(Intent.createChooser(intentShareFile, "Share File"));
@@ -152,7 +153,7 @@ public class ExportDialogFragment extends DialogFragment
         return m_alertDialog;
     }
 
-    private void finishExport(Activity activity)
+    private void finishExport(Activity activity, final long exportTime)
     {
         activity.runOnUiThread(new Runnable()
         {
@@ -160,7 +161,16 @@ public class ExportDialogFragment extends DialogFragment
             public void run()
             {
                 m_alertDialog.findViewById(R.id.progress_bar_export_indefinite).setVisibility(View.GONE);
-                ((TextView)m_alertDialog.findViewById(R.id.text_view_message)).setText(m_endMessage);
+                String durationString;
+                if (exportTime > 1000)
+                {
+                    durationString = String.format(Locale.getDefault(), "%.2fs", exportTime / 1000.0);
+                }
+                else
+                {
+                    durationString = String.format(Locale.getDefault(), "%dms", exportTime);
+                }
+                ((TextView)m_alertDialog.findViewById(R.id.text_view_message)).setText(String.format("%s (%s)", m_endMessage, durationString));
                 m_progressBar.setProgress(m_progressBar.getMax());
 
                 m_exportFinished = true;
@@ -180,6 +190,7 @@ public class ExportDialogFragment extends DialogFragment
             @Override
             public void run()
             {
+                long exportStart = System.currentTimeMillis();
                 final List<DataEntry> entries = database.dataEntriesDao().findAllBetween(m_startTimeStamp, m_endTimeStamp);
                 activity.runOnUiThread(new Runnable()
                 {
@@ -230,7 +241,8 @@ public class ExportDialogFragment extends DialogFragment
                         OutputStream outputStream = new FileOutputStream(m_file);
                         byteArrayOutputStream.writeTo(outputStream);
                         outputStream.close();
-                        finishExport(activity);
+                        long exportTime = System.currentTimeMillis() - exportStart;
+                        finishExport(activity, exportTime);
                     }
                 }
                 catch (Exception exception)

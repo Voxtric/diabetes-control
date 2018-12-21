@@ -137,7 +137,7 @@ public class MainActivity extends DatabaseActivity
             return true;
 
         case R.id.navigation_export_ads:
-            export("ADS Export", "Generating PDF...", "PDF generation complete!");
+            export("ADS Export", "Generating PDF...", "PDF generated!");
             return true;
         case R.id.navigation_export_nhs:
             Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
