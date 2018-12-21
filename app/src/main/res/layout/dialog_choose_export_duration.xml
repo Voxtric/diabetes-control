@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/activity_vertical_margin"
+    android:paddingStart="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_vertical_margin"
+    android:paddingEnd="@dimen/activity_vertical_margin"
+    android:orientation="vertical">
+
+    <RadioGroup
+        android:id="@+id/radio_group_duration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/text_margin">
+
+        <RadioButton
+            android:id="@+id/radio_button_all_recorded"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="All recorded"
+            android:textColor="@android:color/black"/>
+
+        <RadioButton
+            android:id="@+id/radio_button_since_last_export"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Since last export"
+            android:textColor="@android:color/black"/>
+
+        <RadioButton
+            android:id="@+id/radio_button_within_time_period"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Within time period"
+            android:textColor="@android:color/black"/>
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/text_margin"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/text_view_start_date"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin"
+            android:text="Start Date:"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size"
+            android:focusable="true"/>
+
+        <Button
+            android:id="@+id/button_start_date"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@drawable/back"
+            android:minHeight="0dp"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size"
+            android:textAlignment="center"
+            style="?android:attr/borderlessButtonStyle"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/text_view_end_date"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin"
+            android:text="End Date:"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size"
+            android:focusable="true"/>
+
+        <Button
+            android:id="@+id/button_end_date"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@drawable/back"
+            android:minHeight="0dp"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size"
+            android:textAlignment="center"
+            style="?android:attr/borderlessButtonStyle"/>
+    </LinearLayout>
+</LinearLayout>

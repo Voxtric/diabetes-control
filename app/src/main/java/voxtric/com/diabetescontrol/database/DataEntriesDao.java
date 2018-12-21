@@ -10,8 +10,9 @@ import java.util.List;
 @Dao
 public interface DataEntriesDao
 {
+
     @Query("SELECT * FROM data_entries ORDER BY time_stamp DESC LIMIT :limit")
-    List<DataEntry> findPreviousEntries(int limit);
+    List<DataEntry> getPreviousEntries(int limit);
 
     @Query("SELECT * FROM data_entries WHERE time_stamp IS :timeStamp")
     List<DataEntry> getEntry(long timeStamp);
@@ -57,6 +58,9 @@ public interface DataEntriesDao
 
     @Query("SELECT * FROM data_entries WHERE time_stamp > :timeStamp ORDER BY time_stamp ASC LIMIT 1")
     List<DataEntry> findFirstAfter(long timeStamp);
+
+    @Query("SELECT * FROM data_entries WHERE time_stamp >= :startTimeStamp AND time_stamp <= :endTimeStamp ORDER BY time_stamp DESC")
+    List<DataEntry> findAllBetween(long startTimeStamp, long endTimeStamp);
 
 
 

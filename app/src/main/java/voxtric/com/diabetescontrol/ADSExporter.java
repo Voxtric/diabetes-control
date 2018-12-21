@@ -39,11 +39,18 @@ public class ADSExporter extends PDFGenerator
         m_database = database;
         m_weeks = Week.splitEntries(entries);
 
-        Date startDate = new Date(m_weeks.get(0).weekBeginning);
-        Date endDate = new Date(m_weeks.get(m_weeks.size() - 1).weekEnding);
+        Date startDate = new Date(entries.get(entries.size() - 1).timeStamp);
+        Date endDate = new Date(entries.get(0).timeStamp);
         String startDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(startDate);
         String endDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(endDate);
-        m_fileName = String.format("%s - %s (ADS).pdf", startDateString, endDateString);
+        if (startDateString.equals(endDateString))
+        {
+            m_fileName = String.format("%s (ADS).pdf", startDateString);
+        }
+        else
+        {
+            m_fileName = String.format("%s - %s (ADS).pdf", startDateString, endDateString);
+        }
     }
 
     @Override

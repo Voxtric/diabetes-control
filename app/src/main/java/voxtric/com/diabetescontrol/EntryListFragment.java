@@ -74,7 +74,7 @@ public class EntryListFragment extends Fragment
                 @Override
                 public void run()
                 {
-                    final List<DataEntry> entries = m_database.dataEntriesDao().findPreviousEntries(100);
+                    final List<DataEntry> entries = m_database.dataEntriesDao().getPreviousEntries(100);
                     activity.runOnUiThread(new Runnable()
                     {
                         @Override
