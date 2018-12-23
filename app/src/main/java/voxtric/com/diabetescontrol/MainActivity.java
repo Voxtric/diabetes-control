@@ -140,7 +140,7 @@ public class MainActivity extends DatabaseActivity
             Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
             return true;
         case R.id.navigation_export_ads:
-            export("ADS Export", "Generating PDF...", "PDF generated!");
+            export(getString(R.string.ads_export_title), getString(R.string.ads_export_start_message), getString(R.string.ads_export_end_message));
             return true;
         case R.id.navigation_export_xlsx:
             Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
@@ -181,7 +181,7 @@ public class MainActivity extends DatabaseActivity
             }
             else
             {
-                Toast.makeText(this, "Cannot export until write permissions are granted.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.write_external_storage_permission_needed_message, Toast.LENGTH_LONG).show();
             }
             break;
         default:
@@ -204,14 +204,14 @@ public class MainActivity extends DatabaseActivity
                 if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))
                 {
                     AlertDialog dialog = new AlertDialog.Builder(this)
-                            .setTitle("Permission request")
-                            .setMessage("In order to export your data, permission to write to the external storage of the device must be given.\n\nGive write external storage permission?")
+                            .setTitle(R.string.write_external_storage_permission_justification_title)
+                            .setMessage(R.string.write_external_storage_permission_justification_message)
                             .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
                             {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
-                                    Toast.makeText(MainActivity.this, "Cannot export until write permissions are granted.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this, R.string.write_external_storage_permission_needed_message, Toast.LENGTH_LONG).show();
                                 }
                             })
                             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()

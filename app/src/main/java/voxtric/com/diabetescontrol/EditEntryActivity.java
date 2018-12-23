@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -123,40 +124,81 @@ public class EditEntryActivity extends DatabaseActivity
                 if (fragment != null)
                 {
                     final DataEntry entry = fragment.createEntry(EditEntryActivity.this);
-                    AsyncTask.execute(new Runnable()
+                    if (Math.abs(entry.timeStamp - m_entry.timeStamp) > 30000L ||
+                            !entry.event.endsWith(m_entry.event) ||
+                            !entry.insulinName.equals(m_entry.insulinName) ||
+                            !entry.insulinDose.equals(m_entry.insulinDose) ||
+                            entry.bloodGlucoseLevel != m_entry.bloodGlucoseLevel ||
+                            !entry.foodEaten.equals(m_entry.foodEaten) ||
+                            !entry.additionalNotes.equals(m_entry.additionalNotes))
                     {
-                        @Override
-                        public void run()
+                        AsyncTask.execute(new Runnable()
                         {
-                            @StringRes final int messageID;
-                            if (Math.abs(entry.timeStamp - m_entry.timeStamp) > 30000L ||
-                                !entry.event.endsWith(m_entry.event) ||
-                                !entry.insulinName.equals(m_entry.insulinName) ||
-                                !entry.insulinDose.equals(m_entry.insulinDose) ||
-                                entry.bloodGlucoseLevel != m_entry.bloodGlucoseLevel ||
-                                !entry.foodEaten.equals(m_entry.foodEaten) ||
-                                !entry.additionalNotes.equals(m_entry.additionalNotes))
+                            @Override
+                            public void run()
                             {
-                                m_database.dataEntriesDao().delete(m_entry);
-                                m_database.dataEntriesDao().insert(entry);
-                                messageID = R.string.changes_saved_message;
-                                setResult(EntryListFragment.RESULT_LIST_UPDATE_NEEDED);
-                            }
-                            else
-                            {
-                                messageID = R.string.changes_not_saved_message;
-                            }
-                            runOnUiThread(new Runnable()
-                            {
-                                @Override
-                                public void run()
+                                boolean changesSaved = false;
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.setTimeInMillis(entry.timeStamp);
+                                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                                calendar.set(Calendar.MINUTE, 0);
+                                calendar.set(Calendar.SECOND, 0);
+                                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                                List<DataEntry> previousEntries = m_database.dataEntriesDao().findFirstBefore(calendar.getTimeInMillis() - 1, entry.event, m_entry.timeStamp);
+                                if (previousEntries.isEmpty())// || previousEntries.get(0).timeStamp == m_entry.timeStamp)
                                 {
-                                    Toast.makeText(EditEntryActivity.this, messageID, Toast.LENGTH_LONG).show();
-                                    finish();
+                                    m_database.dataEntriesDao().delete(m_entry);
+                                    m_database.dataEntriesDao().insert(entry);
+                                    changesSaved = true;
+                                    setResult(EntryListFragment.RESULT_LIST_UPDATE_NEEDED);
                                 }
-                            });
-                        }
-                    });
+                                else
+                                {
+                                    final DataEntry previousEntry = previousEntries.get(0);
+                                    calendar.setTimeInMillis(entry.timeStamp);
+                                    Calendar previousCalendar = Calendar.getInstance();
+                                    previousCalendar.setTimeInMillis(previousEntry.timeStamp);
+                                    if (calendar.get(Calendar.YEAR) != previousCalendar.get(Calendar.YEAR) ||
+                                            calendar.get(Calendar.MONTH) != previousCalendar.get(Calendar.MONTH) ||
+                                            calendar.get(Calendar.DAY_OF_MONTH) != previousCalendar.get(Calendar.DAY_OF_MONTH))
+                                    {
+                                        m_database.dataEntriesDao().delete(m_entry);
+                                        m_database.dataEntriesDao().insert(entry);
+                                        changesSaved = true;
+                                        setResult(EntryListFragment.RESULT_LIST_UPDATE_NEEDED);
+                                    }
+                                }
+
+                                final boolean finalChangesSaved = changesSaved;
+                                runOnUiThread(new Runnable()
+                                {
+                                    @Override
+                                    public void run()
+                                    {
+                                        if (finalChangesSaved)
+                                        {
+                                            Toast.makeText(EditEntryActivity.this, R.string.changes_saved_message, Toast.LENGTH_LONG).show();
+                                            finish();
+                                        }
+                                        else
+                                        {
+                                            AlertDialog dialog = new AlertDialog.Builder(EditEntryActivity.this)
+                                                    .setTitle(R.string.title_event_collision)
+                                                    .setMessage(R.string.message_event_collision)
+                                                    .setPositiveButton(R.string.ok, null)
+                                                    .create();
+                                            dialog.show();
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else
+                    {
+                        Toast.makeText(EditEntryActivity.this, R.string.changes_not_saved_message, Toast.LENGTH_LONG).show();
+                        finish();
+                    }
                 }
             }
         });

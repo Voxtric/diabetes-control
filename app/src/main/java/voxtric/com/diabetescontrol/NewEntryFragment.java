@@ -871,7 +871,7 @@ public class NewEntryFragment extends Fragment
                                 {
                                     AlertDialog dialog = new AlertDialog.Builder(activity)
                                             .setTitle(R.string.title_event_collision)
-                                            .setMessage(R.string.message_event_collision)
+                                            .setMessage(R.string.message_event_collision_replace)
                                             .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
                                             {
                                                 @Override

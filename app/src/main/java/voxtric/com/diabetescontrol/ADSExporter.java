@@ -17,7 +17,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
@@ -95,19 +94,19 @@ public class ADSExporter extends PDFGenerator
         }
     }
 
-    private void showExtras(StringBuilder foodEatenStringBuilder, StringBuilder additionalNotesStringBuilder, float startX, float availableSpace, float height) throws IOException
+    private void showExtras(Activity activity, StringBuilder foodEatenStringBuilder, StringBuilder additionalNotesStringBuilder, float startX, float availableSpace, float height) throws IOException
     {
         float minimumHeight = height - DAY_HEADER_HEIGHT;
         if (foodEatenStringBuilder.length() > 0)
         {
-            height = drawText(FONT_BOLD, FONT_SIZE_SMALL, "Food Eaten:", startX + LINE_SPACING, height);
+            height = drawText(FONT_BOLD, FONT_SIZE_SMALL, activity.getString(R.string.food_eaten_label), startX + LINE_SPACING, height);
             String foodEatenString = foodEatenStringBuilder.substring(0, foodEatenStringBuilder.length() - 2);
             height = drawTextParagraphed(FONT, FONT_SIZE_SMALL, foodEatenString, startX + LINE_SPACING, startX + availableSpace - LINE_SPACING, height, minimumHeight);
             foodEatenStringBuilder.setLength(0);
         }
         if (additionalNotesStringBuilder.length() > 0)
         {
-            height = drawText(FONT_BOLD, FONT_SIZE_SMALL, "Additional Notes:", startX + LINE_SPACING, height);
+            height = drawText(FONT_BOLD, FONT_SIZE_SMALL, activity.getString(R.string.additional_notes_label), startX + LINE_SPACING, height);
             String additionalNotesString = additionalNotesStringBuilder.substring(0, additionalNotesStringBuilder.length() - 1);
             drawTextParagraphed(FONT, FONT_SIZE_SMALL, additionalNotesString, startX + LINE_SPACING, startX + availableSpace - LINE_SPACING, height, minimumHeight);
             additionalNotesStringBuilder.setLength(0);
@@ -122,7 +121,7 @@ public class ADSExporter extends PDFGenerator
 
         // Week Commencing.
         Date date = new Date(week.weekBeginning);
-        String dateString = String.format("Week Commencing: %s", DateFormat.getDateInstance(DateFormat.SHORT).format(date));
+        String dateString = activity.getString(R.string.week_commencing, DateFormat.getDateInstance(DateFormat.SHORT).format(date));
         drawText(FONT, FONT_SIZE_MEDIUM, dateString, BORDER, height);
 
         // Pre-meal and post-meal targets.
@@ -133,13 +132,13 @@ public class ADSExporter extends PDFGenerator
             targetChange = m_database.targetChangesDao().findFirstBefore(week.weekBeginning);
             if (targetChange == null)
             {
-                targetString = "Blood Glucose Targets (mmol/l): Pre-meal ........., Post-meal .........";
+                targetString = activity.getString(R.string.blood_glucose_targets_empty);
             }
         }
         if (targetChange != null)
         {
-            targetString = String.format(Locale.getDefault(), "Blood Glucose Targets (mmol/l): Pre-meal %f - %f, Post-meal %f - %f",
-                                         targetChange.preMealLower, targetChange.preMealUpper, targetChange.postMealLower, targetChange.postMealUpper);
+            targetString = activity.getString(R.string.blood_glucose_targets, targetChange.preMealLower,
+                    targetChange.preMealUpper, targetChange.postMealLower, targetChange.postMealUpper);
         }
         height = drawText(FONT, FONT_SIZE_MEDIUM, targetString, BORDER + (m_pageWidth / 3.0f), height);
 
@@ -162,9 +161,9 @@ public class ADSExporter extends PDFGenerator
                 drawBox(startX, dayHeight, startX + eventWidth, dayHeight - DAY_HEADER_HEIGHT, BLACK, null);
 
                 dayHeight -= 1.0f;
-                dayHeight = drawTextCenterAligned(FONT, FONT_SIZE_SMALL, "Reading", startX + (eventWidth / 2.0f), dayHeight) - DATA_GAP;
-                dayHeight = drawTextCenterAligned(FONT, FONT_SIZE_SMALL, "Time", startX + (eventWidth / 2.0f), dayHeight) - DATA_GAP;
-                drawTextCenterAligned(FONT, FONT_SIZE_SMALL, "Dose", startX + (eventWidth / 2.0f), dayHeight);
+                dayHeight = drawTextCenterAligned(FONT, FONT_SIZE_SMALL, activity.getString(R.string.reading), startX + (eventWidth / 2.0f), dayHeight) - DATA_GAP;
+                dayHeight = drawTextCenterAligned(FONT, FONT_SIZE_SMALL, activity.getString(R.string.time), startX + (eventWidth / 2.0f), dayHeight) - DATA_GAP;
+                drawTextCenterAligned(FONT, FONT_SIZE_SMALL, activity.getString(R.string.dose), startX + (eventWidth / 2.0f), dayHeight);
             }
 
             startX += eventWidth;
@@ -175,8 +174,8 @@ public class ADSExporter extends PDFGenerator
         // Day headers and extras.
         float tempHeight = height + (FONT_SIZE_LARGE * 2.2f);
         drawBox(startX, tempHeight, startX + availableSpace, height, BLACK, null);
-        tempHeight = drawTextCenterAligned(FONT, FONT_SIZE_LARGE, "Food Eaten /", startX + (availableSpace / 2.0f), tempHeight);
-        drawTextCenterAligned(FONT, FONT_SIZE_LARGE, "Additional Notes", startX + (availableSpace / 2.0f), tempHeight);
+        tempHeight = drawTextCenterAligned(FONT, FONT_SIZE_LARGE, activity.getString(R.string.food_eaten_title), startX + (availableSpace / 2.0f), tempHeight);
+        drawTextCenterAligned(FONT, FONT_SIZE_LARGE, activity.getString(R.string.additional_notes_title), startX + (availableSpace / 2.0f), tempHeight);
         for (int i = 0; i < DAYS.length; i++)
         {
             float dayHeight = height - (DAY_HEADER_HEIGHT * i);
@@ -200,7 +199,7 @@ public class ADSExporter extends PDFGenerator
             calendar.clear(Calendar.SECOND);
             calendar.clear(Calendar.MILLISECOND);
 
-            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2; // Should be -1, but only works with -2 for some reason.
+            int dayOfWeek = (calendar.get(Calendar.DAY_OF_WEEK) + 5) % DAYS.length;
             dayStartHeight = height - (DAY_HEADER_HEIGHT * dayOfWeek);
             float dayHeight = dayStartHeight - FONT_SIZE_SMALL - (FONT_SIZE_MEDIUM * 0.2f);
             float eventStartX = eventStartXMap.get(entry.event);
@@ -217,7 +216,7 @@ public class ADSExporter extends PDFGenerator
             // Food eaten and additional notes.
             if (lastDayOfWeek != -1 && lastDayOfWeek != dayOfWeek)
             {
-                showExtras(foodEatenStringBuilder, additionalNotesStringBuilder, startX, availableSpace, dayStartHeight);
+                showExtras(activity, foodEatenStringBuilder, additionalNotesStringBuilder, startX, availableSpace, dayStartHeight);
             }
             lastDayOfWeek = dayOfWeek;
 
@@ -232,19 +231,19 @@ public class ADSExporter extends PDFGenerator
                 additionalNotesStringBuilder.append('\n');
             }
         }
-        showExtras(foodEatenStringBuilder, additionalNotesStringBuilder, startX, availableSpace, dayStartHeight);
+        showExtras(activity, foodEatenStringBuilder, additionalNotesStringBuilder, startX, availableSpace, dayStartHeight);
         height -= DAY_HEADER_HEIGHT * DAYS.length;
 
         // Insulin used
         height -= VERTICAL_SPACE;
-        StringBuilder insulinUsedStringBuilder = new StringBuilder("Insulin Used: ");
+        StringBuilder insulinUsedStringBuilder = new StringBuilder(" ");
         for (String insulinName : week.insulinNames)
         {
             insulinUsedStringBuilder.append(insulinName);
             insulinUsedStringBuilder.append(", ");
         }
         String insulinUsedString = insulinUsedStringBuilder.substring(0, insulinUsedStringBuilder.length() - 2);
-        height = drawText(FONT, FONT_SIZE_MEDIUM, insulinUsedString, BORDER, height);
+        height = drawText(FONT, FONT_SIZE_MEDIUM, activity.getString(R.string.insulin_used, insulinUsedString), BORDER, height);
 
         // Contact Details
         height -= VERTICAL_SPACE / 2.0f;
@@ -254,15 +253,13 @@ public class ADSExporter extends PDFGenerator
         {
             contactName = "...........................................";
         }
-        String contactNameString = String.format("Contact Name: %s", contactName);
-        drawText(FONT, FONT_SIZE_MEDIUM, contactNameString, BORDER, height);
+        drawText(FONT, FONT_SIZE_MEDIUM, activity.getString(R.string.contact_name, contactName), BORDER, height);
 
         String contactNumber = preferences.getString("contact_number", null);
         if (contactNumber == null)
         {
             contactNumber = "...........................................";
         }
-        String contactNumberString = String.format("Contact Number: %s", contactNumber);
-        drawText(FONT, FONT_SIZE_MEDIUM, contactNumberString, BORDER + (m_pageWidth / 2.0f), height);
+        drawText(FONT, FONT_SIZE_MEDIUM, activity.getString(R.string.contact_number, contactNumber), BORDER + (m_pageWidth / 2.0f), height);
     }
 }
