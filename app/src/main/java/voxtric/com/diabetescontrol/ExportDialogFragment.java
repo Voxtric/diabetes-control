@@ -7,10 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -64,7 +66,7 @@ public class ExportDialogFragment extends DialogFragment
             m_exportFinished = savedInstanceState.getBoolean("export_finished");
         }
 
-        Activity activity = getActivity();
+        final Activity activity = getActivity();
         View view = View.inflate(activity, R.layout.dialog_export_pdf, null);
         ((TextView) view.findViewById(R.id.text_view_message)).setText(m_startMessage);
         m_progressBar = view.findViewById(R.id.progress_bar_export);
@@ -78,10 +80,19 @@ public class ExportDialogFragment extends DialogFragment
                     public void onClick(DialogInterface dialog, int which)
                     {
                         Intent intentShareFile = new Intent(Intent.ACTION_SEND);
-                        if(m_file.exists())
+                        if(m_file.exists() && activity != null)
                         {
                             intentShareFile.setType("application/pdf");
-                            intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(m_file));
+                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
+                            {
+                                intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(m_file));
+                            }
+                            else
+                            {
+                                Uri uri = FileProvider.getUriForFile(activity,activity.getPackageName() + ".provider", m_file);
+                                intentShareFile.putExtra(Intent.EXTRA_STREAM, uri);
+                                intentShareFile.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            }
                             intentShareFile.putExtra(Intent.EXTRA_SUBJECT, m_file.getName());
                             intentShareFile.putExtra(Intent.EXTRA_TEXT, "Shared from 'Diabetes Control' app.");
                             startActivity(Intent.createChooser(intentShareFile, "Share File"));
