@@ -13,10 +13,12 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.time.format.TextStyle;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
@@ -216,7 +218,7 @@ public class ADSExporter extends PDFGenerator
             // Food eaten and additional notes.
             if (lastDayOfWeek != -1 && lastDayOfWeek != dayOfWeek)
             {
-                showExtras(activity, foodEatenStringBuilder, additionalNotesStringBuilder, startX, availableSpace, dayStartHeight);
+                showExtras(activity, foodEatenStringBuilder, additionalNotesStringBuilder, startX, availableSpace, height - (DAY_HEADER_HEIGHT * lastDayOfWeek));
             }
             lastDayOfWeek = dayOfWeek;
 
