@@ -7,7 +7,7 @@
 /.idea/workspace.xml
 ./idea/misc.xml
 ./idea/vcs.xml
-./release
+/app/release
 .DS_Store
 /build
 /captures
