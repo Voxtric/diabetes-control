@@ -18,10 +18,12 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
 {
     private final List<DataEntry> m_values;
     private HashMap<View, Integer> m_valueMap = new HashMap<>();
+    private MainActivity m_activity;
 
-    EntryListRecyclerViewAdapter(List<DataEntry> items)
+    EntryListRecyclerViewAdapter(List<DataEntry> items, MainActivity activity)
     {
         m_values = items;
+        m_activity = activity;
     }
 
     @NonNull
@@ -29,7 +31,7 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_entry, parent, false);
+                .inflate(R.layout.entry_row, parent, false);
         return new ViewHolder(view);
     }
 
@@ -80,6 +82,16 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
 
             // Extended view.
             m_insulinNameTextView = view.findViewById(R.id.text_view_insulin_name);
+
+            view.setOnLongClickListener(new View.OnLongClickListener()
+            {
+                @Override
+                public boolean onLongClick(View v)
+                {
+                    m_activity.openEntryMoreMenu(v);
+                    return true;
+                }
+            });
         }
 
         void setItem(DataEntry entry)

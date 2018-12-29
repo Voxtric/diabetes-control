@@ -529,7 +529,7 @@ public class MainActivity extends DatabaseActivity
 
     public void openEntryMoreMenu(View view)
     {
-        final ViewGroup dataView = (ViewGroup)view.getParent();
+        final ViewGroup dataView = view instanceof LinearLayout ? (ViewGroup)view : (ViewGroup)view.getParent();
         final ViewGroup listView = (ViewGroup)dataView.getParent();
         for (int i = 0; i < listView.getChildCount(); i++)
         {

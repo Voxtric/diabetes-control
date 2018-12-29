@@ -20,10 +20,12 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
 {
     private final List<Event> m_values;
     private HashMap<View, Integer> m_valueMap = new HashMap<>();
+    private EditEventsActivity m_activity;
 
-    EditEventsRecyclerViewAdapter(List<Event> items)
+    EditEventsRecyclerViewAdapter(List<Event> items, EditEventsActivity activity)
     {
         m_values = items;
+        m_activity = activity;
     }
 
     @NonNull
@@ -31,7 +33,7 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
     public EditEventsRecyclerViewAdapter.ViewHolder onCreateViewHolder(final @NonNull ViewGroup parent, int viewType)
     {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.activity_event, parent, false);
+                .inflate(R.layout.event_row, parent, false);
         return new EditEventsRecyclerViewAdapter.ViewHolder(view);
     }
 
@@ -119,6 +121,15 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
             super(view);
             m_eventNameTextView = view.findViewById(R.id.text_view_event_name);
             m_eventTimeTextView = view.findViewById(R.id.text_view_event_time);
+            view.setOnLongClickListener(new View.OnLongClickListener()
+            {
+                @Override
+                public boolean onLongClick(View v)
+                {
+                    m_activity.openEventMoreMenu(v);
+                    return true;
+                }
+            });
         }
 
         void setItem(Event event)

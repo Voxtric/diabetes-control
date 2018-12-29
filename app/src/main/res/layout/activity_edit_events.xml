@@ -52,7 +52,7 @@
         app:layout_constraintBottom_toTopOf="@id/button_add_new_event"
         app:layoutManager="LinearLayoutManager"
         tools:context=".EditEventsActivity"
-        tools:listitem="@layout/activity_event" />
+        tools:listitem="@layout/event_row" />
 
     <Button
         android:id="@+id/button_add_new_event"

@@ -89,7 +89,7 @@ public class EntryListFragment extends Fragment
                             {
                                 recyclerView.setVisibility(View.VISIBLE);
                                 activity.findViewById(R.id.text_view_no_data).setVisibility(View.GONE);
-                                m_adapter = new EntryListRecyclerViewAdapter(entries);
+                                m_adapter = new EntryListRecyclerViewAdapter(entries, (MainActivity)activity);
                                 recyclerView.setAdapter(m_adapter);
                             }
                         }

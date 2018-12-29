@@ -63,7 +63,7 @@ public class EditEventsActivity extends DatabaseActivity
                     @Override
                     public void run()
                     {
-                        m_adapter = new EditEventsRecyclerViewAdapter(events);
+                        m_adapter = new EditEventsRecyclerViewAdapter(events, EditEventsActivity.this);
                         recyclerView.setAdapter(m_adapter);
                         findViewById(R.id.button_add_new_event).setEnabled(events.size() < MAX_EVENT_COUNT);
                         getSupportActionBar().setTitle(getString(R.string.edit_events_name, events.size(), MAX_EVENT_COUNT));
@@ -249,7 +249,7 @@ public class EditEventsActivity extends DatabaseActivity
 
     public void openEventMoreMenu(View view)
     {
-        final ViewGroup dataView = (ViewGroup)view.getParent();
+        final ViewGroup dataView = view instanceof LinearLayout ? (ViewGroup)view : (ViewGroup)view.getParent();
         final ViewGroup listView = (ViewGroup)dataView.getParent();
         for (int i = 0; i < listView.getChildCount(); i++)
         {
@@ -325,7 +325,7 @@ public class EditEventsActivity extends DatabaseActivity
                     @Override
                     public void run()
                     {
-                        m_adapter = new EditEventsRecyclerViewAdapter(events);
+                        m_adapter = new EditEventsRecyclerViewAdapter(events, EditEventsActivity.this);
                         RecyclerView recyclerView = findViewById(R.id.recycler_view_entry_list);
                         recyclerView.setAdapter(m_adapter);
                         findViewById(R.id.button_add_new_event).setEnabled(events.size() < MAX_EVENT_COUNT);
