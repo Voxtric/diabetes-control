@@ -102,6 +102,35 @@
                 android:textAlignment="center"/>
         </LinearLayout>
 
+        <!-- Blood Glucose Level -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_label_weight"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:text="@string/blood_glucose_level_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"/>
+
+            <TextView
+                android:id="@+id/text_view_blood_glucose_level"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/view_new_entry_input_weight"
+                android:background="@drawable/no_edit_back"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"
+                android:textAlignment="center"/>
+        </LinearLayout>
+
         <!-- Insulin Name -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -134,7 +163,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_margin"
             android:orientation="horizontal">
 
             <TextView
@@ -153,34 +181,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="@integer/view_new_entry_input_weight"
                 android:background="@drawable/no_edit_back"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"
-                android:textAlignment="center"/>
-        </LinearLayout>
-
-        <!-- Blood Glucose Level -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_label_weight"
-                android:layout_marginEnd="@dimen/text_margin"
-                android:layout_marginRight="@dimen/text_margin"
-                android:text="@string/blood_glucose_level_label"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"/>
-
-            <TextView
-                android:id="@+id/text_view_blood_glucose_level"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/view_new_entry_input_weight"
-                android:background="@drawable/no_edit_back"
-                android:gravity="center"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_size"
                 android:textAlignment="center"/>
