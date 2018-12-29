@@ -1,6 +1,8 @@
 package voxtric.com.diabetescontrol;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -115,11 +117,36 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
             m_bloodGlucoseLevelTextView.setText(String.valueOf(entry.bloodGlucoseLevel));
             m_insulinDoseTextView.setText(entry.insulinDose);
             m_eventTextView.setText(entry.event);
-
-            // Extended view.
             if (m_insulinNameTextView != null)
             {
                 m_insulinNameTextView.setText(entry.insulinName);
+            }
+
+
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(m_activity);
+            boolean highlightEntry = preferences.getBoolean("highlight_entries", false);
+            if (highlightEntry)
+            {
+                float greenStart = preferences.getFloat("bgl_green_start", 4.0f);
+                float yellowStart = preferences.getFloat("bgl_yellow_start", 7.0f);
+                float orangeStart = preferences.getFloat("bgl_orange_start", 10.0f);
+                float redStart = preferences.getFloat("bgl_red_start", 13.0f);
+                if (entry.bloodGlucoseLevel >= greenStart && entry.bloodGlucoseLevel <= yellowStart)
+                {
+                    m_bloodGlucoseLevelTextView.setTextColor(m_activity.getResources().getColor(R.color.green));
+                }
+                else if (entry.bloodGlucoseLevel > yellowStart && entry.bloodGlucoseLevel <= orangeStart)
+                {
+                    m_bloodGlucoseLevelTextView.setTextColor(m_activity.getResources().getColor(R.color.yellow));
+                }
+                else if (entry.bloodGlucoseLevel > orangeStart && entry.bloodGlucoseLevel <= redStart)
+                {
+                    m_bloodGlucoseLevelTextView.setTextColor(m_activity.getResources().getColor(R.color.orange));
+                }
+                else
+                {
+                    m_bloodGlucoseLevelTextView.setTextColor(m_activity.getResources().getColor(R.color.red));
+                }
             }
         }
     }

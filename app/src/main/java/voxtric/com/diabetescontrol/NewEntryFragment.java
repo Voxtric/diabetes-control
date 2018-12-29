@@ -928,8 +928,9 @@ public class NewEntryFragment extends Fragment
 
             activity.findViewById(R.id.grid_layout).requestFocus();
 
-            clearText((EditText)activity.findViewById(R.id.auto_complete_insulin_dose));
             clearText((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level));
+            clearText((EditText)activity.findViewById(R.id.auto_complete_insulin_name));
+            clearText((EditText)activity.findViewById(R.id.auto_complete_insulin_dose));
             clearText((EditText)activity.findViewById(R.id.auto_complete_food_eaten));
             clearText((EditText)activity.findViewById(R.id.auto_complete_additional_notes));
 

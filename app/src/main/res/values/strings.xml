@@ -25,6 +25,7 @@ If not, you can do so later from the settings menu at the top right."
     <string name="title_edit_events">Edit Events</string>
     <string name="title_edit_contact_details">Edit Contact Details</string>
     <string name="title_edit_targets">Edit Targets</string>
+    <string name="title_toggle_highlight">Highlight Entries</string>
     <string name="title_export">Export</string>
     <string name="title_export_nhs">NHS Format (.pdf)</string>
     <string name="title_export_ads">ADS Format (.pdf)</string>
