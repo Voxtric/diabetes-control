@@ -2,7 +2,6 @@ package voxtric.com.diabetescontrol;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Point;
@@ -95,9 +94,9 @@ public class NewEntryFragment extends Fragment
         {
             m_database = ((DatabaseActivity)activity).getDatabase();
 
-            SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
-            String insulinName = preferences.getString("insulin_name", "");
-            ((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).setText(insulinName);
+            //SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+            //String insulinName = preferences.getString("insulin_name", "");
+            //((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).setText(insulinName);
 
             Spinner eventSpinner = activity.findViewById(R.id.spinner_event);
             m_eventSpinnerAdapter = new ArrayAdapter<String>(activity, R.layout.event_spinner_dropdown_item)
@@ -507,20 +506,20 @@ public class NewEntryFragment extends Fragment
                 final Activity activity = getActivity();
                 if (activity != null)
                 {
+                    String bloodGlucoseLevel = ((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString();
                     String insulinName = ((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString();
                     String insulinDose = ((EditText)activity.findViewById(R.id.auto_complete_insulin_dose)).getText().toString();
-                    String bloodGlucoseLevel = ((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString();
-                    if (insulinName.length() == 0)
+                    if (bloodGlucoseLevel.length() == 0)
+                    {
+                        Toast.makeText(activity, R.string.new_entry_bgl_empty_message, Toast.LENGTH_LONG).show();
+                    }
+                    else if (insulinName.length() == 0 && insulinDose.length() > 0)
                     {
                         Toast.makeText(activity, R.string.new_entry_insulin_name_empty_message, Toast.LENGTH_LONG).show();
                     }
-                    else if (insulinDose.length() == 0)
+                    else if (insulinDose.length() == 0 && insulinName.length() > 0)
                     {
                         Toast.makeText(activity, R.string.new_entry_insulin_dose_empty_message, Toast.LENGTH_LONG).show();
-                    }
-                    else if (bloodGlucoseLevel.length() == 0)
-                    {
-                        Toast.makeText(activity, R.string.new_entry_bgl_empty_message, Toast.LENGTH_LONG).show();
                     }
                     else
                     {
@@ -533,7 +532,6 @@ public class NewEntryFragment extends Fragment
 
     private void determineCriteria(View layout, Activity activity)
     {
-
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
         int defaultSelected = preferences.getInt("previous_criteria", -1);
         @IdRes int[] ids = {
@@ -795,6 +793,15 @@ public class NewEntryFragment extends Fragment
         entry.bloodGlucoseLevel = Float.parseFloat(((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString());
         entry.foodEaten = ((EditText)activity.findViewById(R.id.auto_complete_food_eaten)).getText().toString();
         entry.additionalNotes = ((EditText)activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString();
+
+        if (entry.insulinName.length() == 0)
+        {
+            entry.insulinName = "N/A";
+        }
+        if (entry.insulinDose.length() == 0)
+        {
+            entry.insulinDose = "N/A";
+        }
         return entry;
     }
 
@@ -810,8 +817,8 @@ public class NewEntryFragment extends Fragment
             @Override
             public void run()
             {
-                SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
-                preferences.edit().putString("insulin_name", entry.insulinName).apply();
+                //SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+                //preferences.edit().putString("insulin_name", entry.insulinName).apply();
                 reset();
                 Toast.makeText(activity, R.string.new_entry_added_message, Toast.LENGTH_LONG).show();
 

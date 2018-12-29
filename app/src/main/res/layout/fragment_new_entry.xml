@@ -100,6 +100,38 @@
                 android:background="@drawable/back"/>
         </LinearLayout>
 
+        <!-- Blood Glucose Level -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_label_weight"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginRight="@dimen/text_margin"
+                android:text="@string/blood_glucose_level_label"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"/>
+
+            <EditText
+                android:id="@+id/edit_text_blood_glucose_level"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="@integer/new_entry_input_weight"
+                android:background="@drawable/back"
+                android:hint="@string/blood_glucose_level_hint"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size"
+                android:imeOptions="actionNext"
+                android:nextFocusForward="@id/auto_complete_food_eaten"
+                android:inputType="numberDecimal"
+                android:gravity="center"/>
+        </LinearLayout>
+
         <!-- Insulin Name -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -164,38 +196,6 @@
                 android:imeOptions="actionNext"
                 android:nextFocusForward="@id/edit_text_blood_glucose_level"
                 android:inputType="textCapCharacters"
-                android:gravity="center"/>
-        </LinearLayout>
-
-        <!-- Blood Glucose Level -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_margin"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_label_weight"
-                android:layout_marginEnd="@dimen/text_margin"
-                android:layout_marginRight="@dimen/text_margin"
-                android:text="@string/blood_glucose_level_label"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"/>
-
-            <EditText
-                android:id="@+id/edit_text_blood_glucose_level"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_input_weight"
-                android:background="@drawable/back"
-                android:hint="@string/blood_glucose_level_hint"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"
-                android:imeOptions="actionNext"
-                android:nextFocusForward="@id/auto_complete_food_eaten"
-                android:inputType="numberDecimal"
                 android:gravity="center"/>
         </LinearLayout>
 
