@@ -25,10 +25,10 @@ If not, you can do so later from the settings menu at the top right."
     <string name="title_edit_events">Edit Events</string>
     <string name="title_edit_contact_details">Edit Contact Details</string>
     <string name="title_edit_targets">Edit Targets</string>
-    <string name="title_export">Export PDF</string>
-    <string name="title_export_nhs">NHS Format</string>
-    <string name="title_export_ads">ADS Format</string>
-    <string name="title_export_xlsx">XLSX Format</string>
+    <string name="title_export">Export</string>
+    <string name="title_export_nhs">NHS Format (.pdf)</string>
+    <string name="title_export_ads">ADS Format (.pdf)</string>
+    <string name="title_export_excel">Excel Format (.xlsx)</string>
 
     <string name="title_add_new">Add New</string>
     <string name="title_view_all">View All</string>

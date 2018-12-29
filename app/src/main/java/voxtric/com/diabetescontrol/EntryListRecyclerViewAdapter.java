@@ -1,5 +1,6 @@
 package voxtric.com.diabetescontrol;
 
+import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,9 +9,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import voxtric.com.diabetescontrol.database.DataEntry;
 
@@ -100,7 +103,15 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
             String dateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(date);
             String timeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
 
-            m_timeStampTextView.setText(String.format("%s\n%s", dateString, timeString));
+            if (m_activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+            {
+                String dayString = new SimpleDateFormat("EEEE", Locale.getDefault()).format(date);
+                m_timeStampTextView.setText(String.format("%s\n%s\n%s", dayString, dateString, timeString));
+            }
+            else
+            {
+                m_timeStampTextView.setText(String.format("%s\n%s", dateString, timeString));
+            }
             m_bloodGlucoseLevelTextView.setText(String.valueOf(entry.bloodGlucoseLevel));
             m_insulinDoseTextView.setText(entry.insulinDose);
             m_eventTextView.setText(entry.event);
