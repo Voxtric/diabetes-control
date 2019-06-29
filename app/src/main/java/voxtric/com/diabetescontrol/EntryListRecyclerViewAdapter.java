@@ -126,7 +126,7 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
 
 
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(m_activity);
-            boolean highlightEntry = preferences.getBoolean("highlight_entries", false);
+            boolean highlightEntry = preferences.getBoolean("highlight_entries", true);
             if (highlightEntry)
             {
                 float greenStart = preferences.getFloat("bgl_green_start", 4.0f);
