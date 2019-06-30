@@ -6,24 +6,24 @@ import android.arch.persistence.room.Entity;
 @Entity(tableName = "data_entries", primaryKeys = {"time_stamp"})
 public class DataEntry
 {
-    @ColumnInfo(name = "time_stamp")
-    public long timeStamp;
+  @ColumnInfo(name = "time_stamp")
+  public long timeStamp;
 
-    @ColumnInfo(name = "event")
-    public String event;
+  @ColumnInfo(name = "event")
+  public String event;
 
-    @ColumnInfo(name = "insulin_name")
-    public String insulinName;
+  @ColumnInfo(name = "insulin_name")
+  public String insulinName;
 
-    @ColumnInfo(name = "insulin_dose")
-    public String insulinDose;
+  @ColumnInfo(name = "insulin_dose")
+  public String insulinDose;
 
-    @ColumnInfo(name = "blood_glucose_level")
-    public float bloodGlucoseLevel;
+  @ColumnInfo(name = "blood_glucose_level")
+  public float bloodGlucoseLevel;
 
-    @ColumnInfo(name = "food_eaten")
-    public String foodEaten;
+  @ColumnInfo(name = "food_eaten")
+  public String foodEaten;
 
-    @ColumnInfo(name = "additional_notes")
-    public String additionalNotes;
+  @ColumnInfo(name = "additional_notes")
+  public String additionalNotes;
 }

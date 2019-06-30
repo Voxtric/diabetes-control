@@ -11,15 +11,15 @@ import java.util.List;
 @Dao
 public interface EventDao
 {
-    @Query("SELECT * FROM events ORDER BY time_in_day ASC")
-    List<Event> getEvents();
+  @Query("SELECT * FROM events ORDER BY time_in_day ASC")
+  List<Event> getEvents();
 
-    @Update
-    void updateEvent(Event event);
+  @Update
+  void updateEvent(Event event);
 
-    @Delete
-    void deleteEvent(Event event);
+  @Delete
+  void deleteEvent(Event event);
 
-    @Insert
-    void insert(Event event);
+  @Insert
+  void insert(Event event);
 }

@@ -6,9 +6,9 @@ import android.arch.persistence.room.RoomDatabase;
 @Database(entities = {DataEntry.class, Event.class, TargetChange.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase
 {
-    public abstract DataEntriesDao dataEntriesDao();
+  public abstract DataEntriesDao dataEntriesDao();
 
-    public abstract EventDao eventsDao();
+  public abstract EventDao eventsDao();
 
-    public abstract TargetChangeDao targetChangesDao();
+  public abstract TargetChangeDao targetChangesDao();
 }
