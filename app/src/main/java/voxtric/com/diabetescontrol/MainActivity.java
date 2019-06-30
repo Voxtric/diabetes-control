@@ -10,7 +10,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -21,6 +23,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +38,12 @@ import android.widget.Toast;
 
 import org.apache.pdfbox.util.PDFBoxResourceLoader;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.FileAttribute;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -144,6 +153,58 @@ public class MainActivity extends DatabaseActivity
         return true;
       case R.id.navigation_export_xlsx:
         Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
+        return true;
+
+      case R.id.action_export_database:
+        try
+        {
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+          {
+            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+
+            String[] affixes = new String[] {"", "-shm", "-wal"};
+            for (String affix : affixes)
+            {
+              File databaseFilePath = new File(getDatabasePath(DATABASE_NAME).getAbsolutePath() + affix);
+              File exportFilePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), DATABASE_NAME + affix);
+              Log.v("Export path", exportFilePath.getAbsolutePath());
+              exportFilePath.createNewFile();
+              Files.copy(databaseFilePath.toPath(), exportFilePath.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+            Toast.makeText(MainActivity.this, String.format("Database files exported to %s", path), Toast.LENGTH_LONG).show();
+          }
+        }
+        catch (IOException exception)
+        {
+          exception.printStackTrace();
+          Toast.makeText(MainActivity.this, "Failed to export database files", Toast.LENGTH_LONG).show();
+        }
+        return true;
+      case R.id.action_import_database:
+        try
+        {
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+          {
+            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+
+            String[] affixes = new String[] {"", "-shm", "-wal"};
+            for (String affix : affixes)
+            {
+              File databaseFilePath = new File(getDatabasePath(DATABASE_NAME).getAbsolutePath() + affix);
+              File importFilePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), DATABASE_NAME + affix);
+              Log.v("Import path", importFilePath.getAbsolutePath());
+              Files.copy(importFilePath.toPath(), databaseFilePath.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+            Toast.makeText(MainActivity.this, String.format("Database files imported from %s", path), Toast.LENGTH_LONG).show();
+          }
+        }
+        catch (IOException exception)
+        {
+          exception.printStackTrace();
+          Toast.makeText(MainActivity.this, "Failed to import database files", Toast.LENGTH_LONG).show();
+        }
         return true;
 
       default:

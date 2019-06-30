@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <group android:id="@+id/group_edit">
         <item
@@ -32,6 +33,24 @@
                 <item
                     android:id="@+id/navigation_export_xlsx"
                     android:title="@string/title_export_excel"/>
+            </menu>
+        </item>
+    </group>
+
+    <group android:id="@+id/group_debug"
+        tools:targetApi="26">
+        <item
+            android:id="@+id/navigation_debug"
+            android:title="Debug">
+
+            <menu>
+                <item
+                    android:id="@+id/action_export_database"
+                    android:title="Export Database"/>
+
+                <item
+                    android:id="@+id/action_import_database"
+                    android:title="Import Database"/>
             </menu>
         </item>
     </group>
