@@ -40,10 +40,8 @@ import org.apache.pdfbox.util.PDFBoxResourceLoader;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.FileAttribute;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -439,7 +437,7 @@ public class MainActivity extends DatabaseActivity
                 public void run()
                 {
                   TargetChange targetChange = new TargetChange();
-                  targetChange.timeStamp = System.currentTimeMillis();
+                  targetChange.timestamp = System.currentTimeMillis();
                   targetChange.preMealLower = Float.valueOf(newPreMealLowerString);
                   targetChange.preMealUpper = Float.valueOf(newPreMealUpperString);
                   targetChange.postMealLower = Float.valueOf(newPostMealLowerString);
@@ -653,7 +651,7 @@ public class MainActivity extends DatabaseActivity
   {
     View view = View.inflate(context, R.layout.dialog_view_full_entry, null);
 
-    Date date = new Date(entry.timeStamp);
+    Date date = new Date(entry.actualTimestamp);
     String dateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(date);
     String timeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
 

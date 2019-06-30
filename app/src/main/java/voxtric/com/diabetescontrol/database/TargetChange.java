@@ -3,11 +3,11 @@ package voxtric.com.diabetescontrol.database;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 
-@Entity(tableName = "target_changes", primaryKeys = {"time_stamp"})
+@Entity(tableName = "target_changes", primaryKeys = {"timestamp"})
 public class TargetChange
 {
-  @ColumnInfo(name = "time_stamp")
-  public long timeStamp;
+  @ColumnInfo(name = "timestamp")
+  public long timestamp;
 
   @ColumnInfo(name = "pre_meal_lower")
   public float preMealLower;

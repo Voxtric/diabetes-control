@@ -3,7 +3,6 @@ package voxtric.com.diabetescontrol;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.StringRes;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
@@ -124,7 +123,7 @@ public class EditEntryActivity extends DatabaseActivity
         if (fragment != null)
         {
           final DataEntry entry = fragment.createEntry(EditEntryActivity.this);
-          if (Math.abs(entry.timeStamp - m_entry.timeStamp) > 30000L ||
+          if (Math.abs(entry.actualTimestamp - m_entry.actualTimestamp) > 30000L ||
               !entry.event.endsWith(m_entry.event) ||
               !entry.insulinName.equals(m_entry.insulinName) ||
               !entry.insulinDose.equals(m_entry.insulinDose) ||
@@ -139,13 +138,13 @@ public class EditEntryActivity extends DatabaseActivity
               {
                 boolean changesSaved = false;
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(entry.timeStamp);
+                calendar.setTimeInMillis(entry.actualTimestamp);
                 calendar.set(Calendar.HOUR_OF_DAY, 0);
                 calendar.set(Calendar.MINUTE, 0);
                 calendar.set(Calendar.SECOND, 0);
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
-                List<DataEntry> previousEntries = m_database.dataEntriesDao().findFirstBefore(calendar.getTimeInMillis() - 1, entry.event, m_entry.timeStamp);
-                if (previousEntries.isEmpty())// || previousEntries.get(0).timeStamp == m_entry.timeStamp)
+                List<DataEntry> previousEntries = m_database.dataEntriesDao().findFirstBefore(calendar.getTimeInMillis() - 1, entry.event, m_entry.actualTimestamp);
+                if (previousEntries.isEmpty())// || previousEntries.get(0).actualTimestamp == m_entry.actualTimestamp)
                 {
                   m_database.dataEntriesDao().delete(m_entry);
                   m_database.dataEntriesDao().insert(entry);
@@ -155,9 +154,9 @@ public class EditEntryActivity extends DatabaseActivity
                 else
                 {
                   final DataEntry previousEntry = previousEntries.get(0);
-                  calendar.setTimeInMillis(entry.timeStamp);
+                  calendar.setTimeInMillis(entry.actualTimestamp);
                   Calendar previousCalendar = Calendar.getInstance();
-                  previousCalendar.setTimeInMillis(previousEntry.timeStamp);
+                  previousCalendar.setTimeInMillis(previousEntry.actualTimestamp);
                   if (calendar.get(Calendar.YEAR) != previousCalendar.get(Calendar.YEAR) ||
                       calendar.get(Calendar.MONTH) != previousCalendar.get(Calendar.MONTH) ||
                       calendar.get(Calendar.DAY_OF_MONTH) != previousCalendar.get(Calendar.DAY_OF_MONTH))

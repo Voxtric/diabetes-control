@@ -15,4 +15,7 @@ public class Event
 
   @ColumnInfo(name = "time_in_day")
   public long timeInDay;
+
+  @ColumnInfo(name = "order")
+  public int order;
 }

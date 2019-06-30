@@ -51,6 +51,6 @@ public class ViewPreviousPagerAdapter extends PagerAdapter
   @Override
   public CharSequence getPageTitle(int position)
   {
-    return String.valueOf(m_entries.get(position).timeStamp);
+    return String.valueOf(m_entries.get(position).actualTimestamp);
   }
 }

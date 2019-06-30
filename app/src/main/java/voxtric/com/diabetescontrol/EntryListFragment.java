@@ -115,7 +115,7 @@ public class EntryListFragment extends Fragment
   {
     DataEntry entry = m_adapter.getEntry(dataView);
     Intent intent = new Intent(activity, EditEntryActivity.class);
-    intent.putExtra("time_stamp", entry.timeStamp);
+    intent.putExtra("time_stamp", entry.actualTimestamp);
     startActivityForResult(intent, REQUEST_EDIT_ENTRY);
   }
 

@@ -13,12 +13,10 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
-import java.time.format.TextStyle;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
@@ -42,8 +40,8 @@ public class ADSExporter extends PDFGenerator
   {
     m_database = database;
     m_weeks = Week.splitEntries(entries);
-    Date startDate = new Date(entries.get(entries.size() - 1).timeStamp);
-    Date endDate = new Date(entries.get(0).timeStamp);
+    Date startDate = new Date(entries.get(entries.size() - 1).actualTimestamp);
+    Date endDate = new Date(entries.get(0).actualTimestamp);
     String startDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(startDate);
     String endDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(endDate);
     if (startDateString.equals(endDateString))
@@ -195,7 +193,7 @@ public class ADSExporter extends PDFGenerator
     {
       DataEntry entry = week.entries.get(i);
       Calendar calendar = Calendar.getInstance();
-      calendar.setTimeInMillis(entry.timeStamp);
+      calendar.setTimeInMillis(entry.actualTimestamp);
       calendar.set(Calendar.HOUR_OF_DAY, 0);
       calendar.clear(Calendar.MINUTE);
       calendar.clear(Calendar.SECOND);
@@ -208,7 +206,7 @@ public class ADSExporter extends PDFGenerator
       drawTextCenterAligned(FONT, FONT_SIZE_MEDIUM, String.valueOf(entry.bloodGlucoseLevel), eventStartX + (eventWidth / 2.0f), dayHeight);
 
       dayHeight -= FONT_SIZE_SMALL + DATA_GAP;
-      date = new Date(entry.timeStamp);
+      date = new Date(entry.actualTimestamp);
       String timeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
       drawTextCenterAligned(FONT, FONT_SIZE_MEDIUM, timeString, eventStartX + (eventWidth / 2.0f), dayHeight);
 

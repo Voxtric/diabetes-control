@@ -627,12 +627,12 @@ public class NewEntryFragment extends Fragment
     if (entries != null && !entries.isEmpty())
     {
       startIndex = 0;
-      List<DataEntry> surrounding = m_database.dataEntriesDao().findFirstAfter(entries.get(0).timeStamp);
+      List<DataEntry> surrounding = m_database.dataEntriesDao().findFirstAfter(entries.get(0).actualTimestamp);
       if (!surrounding.isEmpty())
       {
         entries.add(surrounding.get(0));
       }
-      surrounding = m_database.dataEntriesDao().findFirstBefore(entries.get(0).timeStamp);
+      surrounding = m_database.dataEntriesDao().findFirstBefore(entries.get(0).actualTimestamp);
       if (!surrounding.isEmpty())
       {
         entries.add(0, surrounding.get(0));
@@ -653,7 +653,7 @@ public class NewEntryFragment extends Fragment
         final Pair<Integer, List<DataEntry>> previousEntries;
         if (entries.first != -1)
         {
-          previousEntries = getEntries(activity, criteriaLayout, radioGroupButtonID, entries.second.get(entries.first).timeStamp, true);
+          previousEntries = getEntries(activity, criteriaLayout, radioGroupButtonID, entries.second.get(entries.first).actualTimestamp, true);
         }
         else
         {
@@ -697,7 +697,7 @@ public class NewEntryFragment extends Fragment
               }
               else
               {
-                configureViewPreviousButtons(activity, criteriaLayout, radioGroupButtonID, entries.second.get(entries.first).timeStamp, dialog, view);
+                configureViewPreviousButtons(activity, criteriaLayout, radioGroupButtonID, entries.second.get(entries.first).actualTimestamp, dialog, view);
               }
               dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
             }
@@ -723,7 +723,7 @@ public class NewEntryFragment extends Fragment
           public void run()
           {
             final Pair<Integer, List<DataEntry>> entries = getEntries(activity, criteriaLayout, radioGroupButtonID, timeStamp, true);
-            final Pair<Integer, List<DataEntry>> previousEntries = getEntries(activity, criteriaLayout, radioGroupButtonID, entries.second.get(entries.first).timeStamp, true);
+            final Pair<Integer, List<DataEntry>> previousEntries = getEntries(activity, criteriaLayout, radioGroupButtonID, entries.second.get(entries.first).actualTimestamp, true);
             activity.runOnUiThread(new Runnable()
             {
               @Override
@@ -735,7 +735,7 @@ public class NewEntryFragment extends Fragment
                 BubblePageIndicator indicator = layoutView.findViewById(R.id.page_indicator_previous_entries);
                 indicator.setViewPager(viewPager);
                 viewPager.setCurrentItem(entries.first);
-                configureViewPreviousButtons(activity, criteriaLayout, radioGroupButtonID, entries.second.get(entries.first).timeStamp, dialog, layoutView);
+                configureViewPreviousButtons(activity, criteriaLayout, radioGroupButtonID, entries.second.get(entries.first).actualTimestamp, dialog, layoutView);
                 if (previousEntries.first == -1)
                 {
                   view.setEnabled(false);
@@ -758,7 +758,7 @@ public class NewEntryFragment extends Fragment
           public void run()
           {
             final Pair<Integer, List<DataEntry>> entries = getEntries(activity, criteriaLayout, radioGroupButtonID, timeStamp, false);
-            final Pair<Integer, List<DataEntry>> followingEntries = getEntries(activity, criteriaLayout, radioGroupButtonID, entries.second.get(entries.first).timeStamp, false);
+            final Pair<Integer, List<DataEntry>> followingEntries = getEntries(activity, criteriaLayout, radioGroupButtonID, entries.second.get(entries.first).actualTimestamp, false);
             activity.runOnUiThread(new Runnable()
             {
               @Override
@@ -770,7 +770,7 @@ public class NewEntryFragment extends Fragment
                 BubblePageIndicator indicator = layoutView.findViewById(R.id.page_indicator_previous_entries);
                 indicator.setViewPager(viewPager);
                 viewPager.setCurrentItem(entries.first);
-                configureViewPreviousButtons(activity, criteriaLayout, radioGroupButtonID, entries.second.get(entries.first).timeStamp, dialog, layoutView);
+                configureViewPreviousButtons(activity, criteriaLayout, radioGroupButtonID, entries.second.get(entries.first).actualTimestamp, dialog, layoutView);
                 if (followingEntries.first == -1)
                 {
                   view.setEnabled(false);
@@ -786,7 +786,7 @@ public class NewEntryFragment extends Fragment
   public DataEntry createEntry(Activity activity)
   {
     DataEntry entry = new DataEntry();
-    entry.timeStamp = m_date.getTime();
+    entry.actualTimestamp = m_date.getTime();
     entry.event = ((Spinner)activity.findViewById(R.id.spinner_event)).getSelectedItem().toString();
     entry.insulinName = ((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString();
     entry.insulinDose = ((EditText)activity.findViewById(R.id.auto_complete_insulin_dose)).getText().toString();
@@ -847,7 +847,7 @@ public class NewEntryFragment extends Fragment
         public void run()
         {
           Calendar calendar = Calendar.getInstance();
-          calendar.setTimeInMillis(entry.timeStamp);
+          calendar.setTimeInMillis(entry.actualTimestamp);
           calendar.set(Calendar.HOUR_OF_DAY, 0);
           calendar.set(Calendar.MINUTE, 0);
           calendar.set(Calendar.SECOND, 0);
@@ -860,9 +860,9 @@ public class NewEntryFragment extends Fragment
           else
           {
             final DataEntry previousEntry = previousEntries.get(0);
-            calendar.setTimeInMillis(entry.timeStamp);
+            calendar.setTimeInMillis(entry.actualTimestamp);
             Calendar previousCalendar = Calendar.getInstance();
-            previousCalendar.setTimeInMillis(previousEntry.timeStamp);
+            previousCalendar.setTimeInMillis(previousEntry.actualTimestamp);
             if (calendar.get(Calendar.YEAR) != previousCalendar.get(Calendar.YEAR) ||
                 calendar.get(Calendar.MONTH) != previousCalendar.get(Calendar.MONTH) ||
                 calendar.get(Calendar.DAY_OF_MONTH) != previousCalendar.get(Calendar.DAY_OF_MONTH))
@@ -988,7 +988,7 @@ public class NewEntryFragment extends Fragment
     updateEventSpinner();
 
     Calendar calendar = Calendar.getInstance();
-    calendar.setTimeInMillis(entry.timeStamp);
+    calendar.setTimeInMillis(entry.actualTimestamp);
     m_year = calendar.get(Calendar.YEAR);
     m_month = calendar.get(Calendar.MONTH);
     m_day = calendar.get(Calendar.DAY_OF_MONTH);

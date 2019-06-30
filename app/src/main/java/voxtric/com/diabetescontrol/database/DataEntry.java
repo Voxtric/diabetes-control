@@ -3,11 +3,14 @@ package voxtric.com.diabetescontrol.database;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 
-@Entity(tableName = "data_entries", primaryKeys = {"time_stamp"})
+@Entity(tableName = "data_entries", primaryKeys = {"actual_timestamp"})
 public class DataEntry
 {
-  @ColumnInfo(name = "time_stamp")
-  public long timeStamp;
+  @ColumnInfo(name = "actual_timestamp")
+  public long actualTimestamp;
+
+  @ColumnInfo(name = "day_timestamp")
+  public long dayTimeStamp;
 
   @ColumnInfo(name = "event")
   public String event;

@@ -9,7 +9,7 @@ import android.arch.persistence.room.Update;
 import java.util.List;
 
 @Dao
-public interface EventDao
+public interface EventsDao
 {
   @Query("SELECT * FROM events ORDER BY time_in_day ASC")
   List<Event> getEvents();

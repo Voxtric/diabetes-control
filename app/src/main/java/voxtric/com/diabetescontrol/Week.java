@@ -21,7 +21,7 @@ public class Week
     for (int i = entries.size() - 1; i >= 0; i--)
     {
       DataEntry entry = entries.get(i);
-      if (currentWeek == null || entry.timeStamp > currentWeek.weekEnding)
+      if (currentWeek == null || entry.actualTimestamp > currentWeek.weekEnding)
       {
         currentWeek = new Week(entry);
         weeks.add(currentWeek);
@@ -62,7 +62,7 @@ public class Week
   private Week(DataEntry entry)
   {
     Calendar calendar = Calendar.getInstance();
-    calendar.setTimeInMillis(entry.timeStamp);
+    calendar.setTimeInMillis(entry.actualTimestamp);
     calendar.set(Calendar.HOUR_OF_DAY, 0);
     calendar.clear(Calendar.MINUTE);
     calendar.clear(Calendar.SECOND);
@@ -81,7 +81,7 @@ public class Week
     insulinNames.add(entry.insulinName);
 
     Calendar calendar = Calendar.getInstance();
-    calendar.setTimeInMillis(entry.timeStamp);
+    calendar.setTimeInMillis(entry.actualTimestamp);
     calendar.set(Calendar.YEAR, 1);
     calendar.set(Calendar.MONTH, 1);
     calendar.set(Calendar.DAY_OF_MONTH, 1);

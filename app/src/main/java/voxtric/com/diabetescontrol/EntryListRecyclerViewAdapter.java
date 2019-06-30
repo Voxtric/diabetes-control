@@ -103,7 +103,7 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
 
     void setItem(DataEntry entry)
     {
-      Date date = new Date(entry.timeStamp);
+      Date date = new Date(entry.actualTimestamp);
       String dateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(date);
       String timeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
 
