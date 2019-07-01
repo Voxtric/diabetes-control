@@ -143,8 +143,8 @@ public class EditEntryActivity extends DatabaseActivity
                 calendar.set(Calendar.MINUTE, 0);
                 calendar.set(Calendar.SECOND, 0);
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
-                List<DataEntry> previousEntries = m_database.dataEntriesDao().findFirstBefore(calendar.getTimeInMillis() - 1, entry.event, m_entry.actualTimestamp);
-                if (previousEntries.isEmpty())// || previousEntries.get(0).actualTimestamp == m_entry.actualTimestamp)
+                DataEntry previousEntry = m_database.dataEntriesDao().findFirstBefore(calendar.getTimeInMillis() - 1, entry.event, m_entry.actualTimestamp);
+                if (previousEntry == null)
                 {
                   m_database.dataEntriesDao().delete(m_entry);
                   m_database.dataEntriesDao().insert(entry);
@@ -153,7 +153,6 @@ public class EditEntryActivity extends DatabaseActivity
                 }
                 else
                 {
-                  final DataEntry previousEntry = previousEntries.get(0);
                   calendar.setTimeInMillis(entry.actualTimestamp);
                   Calendar previousCalendar = Calendar.getInstance();
                   previousCalendar.setTimeInMillis(previousEntry.actualTimestamp);

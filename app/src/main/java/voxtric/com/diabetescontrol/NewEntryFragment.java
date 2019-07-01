@@ -627,15 +627,15 @@ public class NewEntryFragment extends Fragment
     if (entries != null && !entries.isEmpty())
     {
       startIndex = 0;
-      List<DataEntry> surrounding = m_database.dataEntriesDao().findFirstAfter(entries.get(0).actualTimestamp);
-      if (!surrounding.isEmpty())
+      DataEntry surrounding = m_database.dataEntriesDao().findFirstAfter(entries.get(0).actualTimestamp);
+      if (surrounding != null)
       {
-        entries.add(surrounding.get(0));
+        entries.add(surrounding);
       }
       surrounding = m_database.dataEntriesDao().findFirstBefore(entries.get(0).actualTimestamp);
-      if (!surrounding.isEmpty())
+      if (surrounding != null)
       {
-        entries.add(0, surrounding.get(0));
+        entries.add(0, surrounding);
         startIndex = 1;
       }
     }
@@ -785,8 +785,16 @@ public class NewEntryFragment extends Fragment
 
   public DataEntry createEntry(Activity activity)
   {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(m_date);
+    calendar.set(Calendar.HOUR_OF_DAY, 0);
+    calendar.set(Calendar.MINUTE, 0);
+    calendar.set(Calendar.SECOND, 0);
+    calendar.set(Calendar.MILLISECOND, 0);
+
     DataEntry entry = new DataEntry();
     entry.actualTimestamp = m_date.getTime();
+    entry.dayTimeStamp = calendar.getTimeInMillis();
     entry.event = ((Spinner)activity.findViewById(R.id.spinner_event)).getSelectedItem().toString();
     entry.insulinName = ((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString();
     entry.insulinDose = ((EditText)activity.findViewById(R.id.auto_complete_insulin_dose)).getText().toString();
@@ -805,20 +813,13 @@ public class NewEntryFragment extends Fragment
     return entry;
   }
 
-  private void addEntry(final DataEntry entry, final Activity activity, DataEntry entryToReplace)
+  private void updateUIWithNewEntry(final Activity activity)
   {
-    if (entryToReplace != null)
-    {
-      m_database.dataEntriesDao().delete(entryToReplace);
-    }
-    m_database.dataEntriesDao().insert(entry);
     activity.runOnUiThread(new Runnable()
     {
       @Override
       public void run()
       {
-        //SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
-        //preferences.edit().putString("insulin_name", entry.insulinName).apply();
         reset();
         Toast.makeText(activity, R.string.new_entry_added_message, Toast.LENGTH_LONG).show();
 
@@ -833,6 +834,80 @@ public class NewEntryFragment extends Fragment
         }
       }
     });
+  }
+
+  private void addEntry(final DataEntry entry, final Activity activity, DataEntry entryToReplace)
+  {
+    if (entryToReplace != null)
+    {
+      m_database.dataEntriesDao().delete(entryToReplace);
+    }
+
+    boolean updateDatabase = true;
+    Event event = m_database.eventsDao().getEvent(entry.event);
+    final DataEntry previousEntry = m_database.dataEntriesDao().findFirstBefore(entry.actualTimestamp);
+    if (previousEntry != null)
+    {
+      Event previousEvent = m_database.eventsDao().getEvent(previousEntry.event);
+      // TODO: Ensure only day previous is checked
+      if (event.timeInDay < previousEvent.timeInDay && event.order > previousEvent.order) // TODO: Move from event time in day to entry time in day
+      {
+        updateDatabase = false;
+        activity.runOnUiThread(new Runnable()
+        {
+          @Override
+          public void run()
+          {
+            // TODO: Sort out the correct text.
+            // TODO: Test this but for editing existing times.
+            AlertDialog dialog = new AlertDialog.Builder(activity)
+                .setTitle("Day Mismatch")
+                .setMessage("The new entry occurs on <date1> but seems to be a continuation of <date2>\n\nWould you like to associate the entry with <date2>? (This won't affect the date and time displayed and exported)")
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+                {
+                  @Override
+                  public void onClick(DialogInterface dialogInterface, int i)
+                  {
+                    AsyncTask.execute(new Runnable()
+                    {
+                      @Override
+                      public void run()
+                      {
+                        entry.dayTimeStamp = previousEntry.dayTimeStamp;
+                        m_database.dataEntriesDao().insert(entry);
+                        updateUIWithNewEntry(activity);
+                      }
+                    });
+                  }
+                })
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
+                {
+                  @Override
+                  public void onClick(DialogInterface dialogInterface, int i)
+                  {
+                    AsyncTask.execute(new Runnable()
+                    {
+                      @Override
+                      public void run()
+                      {
+                        m_database.dataEntriesDao().insert(entry);
+                        updateUIWithNewEntry(activity);
+                      }
+                    });
+                  }
+                })
+                .create();
+            dialog.show();
+          }
+        });
+      }
+    }
+
+    if (updateDatabase)
+    {
+      m_database.dataEntriesDao().insert(entry);
+      updateUIWithNewEntry(activity);
+    }
   }
 
   private void tryAddEntry()
@@ -852,14 +927,13 @@ public class NewEntryFragment extends Fragment
           calendar.set(Calendar.MINUTE, 0);
           calendar.set(Calendar.SECOND, 0);
           calendar.add(Calendar.DAY_OF_MONTH, 1);
-          List<DataEntry> previousEntries = m_database.dataEntriesDao().findFirstBefore(calendar.getTimeInMillis() - 1, entry.event);
-          if (previousEntries.isEmpty())
+          final DataEntry previousEntry = m_database.dataEntriesDao().findFirstBefore(calendar.getTimeInMillis() - 1, entry.event);
+          if (previousEntry == null)
           {
             addEntry(entry, activity, null);
           }
           else
           {
-            final DataEntry previousEntry = previousEntries.get(0);
             calendar.setTimeInMillis(entry.actualTimestamp);
             Calendar previousCalendar = Calendar.getInstance();
             previousCalendar.setTimeInMillis(previousEntry.actualTimestamp);
