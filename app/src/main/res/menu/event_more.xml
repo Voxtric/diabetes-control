@@ -29,16 +29,14 @@
             <item
                 android:id="@+id/navigation_edit_time"
                 android:title="@string/title_edit_time"/>
-
-            <item
-                android:id="@+id/navigation_delete"
-                android:title="@string/title_delete"/>
         </menu>
     </item>
 
-    <group android:id="@+id/group_misc">
-        <item
-            android:id="@+id/navigation_cancel"
-            android:title="@string/title_cancel"/>
-    </group>
+    <item
+        android:id="@+id/navigation_delete"
+        android:title="@string/title_delete"/>
+
+    <item
+        android:id="@+id/navigation_cancel"
+        android:title="@string/title_cancel"/>
 </menu>

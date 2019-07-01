@@ -22,14 +22,12 @@ import android.widget.PopupMenu;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import java.security.InvalidParameterException;
 import java.util.Calendar;
 import java.util.List;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Event;
-import voxtric.com.diabetescontrol.database.EventsDao;
 
 public class EditEventsActivity extends DatabaseActivity
 {
@@ -43,7 +41,7 @@ public class EditEventsActivity extends DatabaseActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_edit_events);
 
-    ActionBar actionBar = getSupportActionBar();
+    final ActionBar actionBar = getSupportActionBar();
     if (actionBar != null)
     {
       actionBar.setDisplayHomeAsUpEnabled(true);
@@ -66,9 +64,31 @@ public class EditEventsActivity extends DatabaseActivity
             m_adapter = new EditEventsRecyclerViewAdapter(events, EditEventsActivity.this);
             recyclerView.setAdapter(m_adapter);
             findViewById(R.id.button_add_new_event).setEnabled(events.size() < MAX_EVENT_COUNT);
-            getSupportActionBar().setTitle(getString(R.string.edit_events_name, events.size(), MAX_EVENT_COUNT));
+            if (actionBar != null)
+            {
+              actionBar.setTitle(getString(R.string.edit_events_name, events.size(), MAX_EVENT_COUNT));
+            }
           }
         });
+      }
+    });
+  }
+
+  private void moveEvent(final View dataView, int direction)
+  {
+    final Event eventA = m_adapter.getEvent(dataView);
+    final Event eventB = m_adapter.getEvent(eventA.order + direction);
+    int tempOrder = eventA.order;
+    eventA.order = eventB.order;
+    eventB.order = tempOrder;
+    m_adapter.updateEvent(dataView, eventA, true);
+    AsyncTask.execute(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        m_database.eventsDao().updateEvent(eventA);
+        m_database.eventsDao().updateEvent(eventB);
       }
     });
   }
@@ -237,6 +257,7 @@ public class EditEventsActivity extends DatabaseActivity
                 public void run()
                 {
                   m_database.eventsDao().deleteEvent(event);
+                  m_database.eventsDao().shuffleOrders(-1, event.order);
                   displayMessage(R.string.event_deleted_message);
                 }
               });
@@ -245,25 +266,6 @@ public class EditEventsActivity extends DatabaseActivity
           .create();
       dialog.show();
     }
-  }
-
-  private void moveEvent(final View dataView, int direction)
-  {
-    final Event eventA = m_adapter.getEvent(dataView);
-    final Event eventB = m_adapter.getEvent(eventA.order + direction);
-    int tempOrder = eventA.order;
-    eventA.order = eventB.order;
-    eventB.order = tempOrder;
-    m_adapter.updateEvent(dataView, eventA, true);
-    AsyncTask.execute(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        m_database.eventsDao().updateEvent(eventA);
-        m_database.eventsDao().updateEvent(eventB);
-      }
-    });
   }
 
   public void openEventMoreMenu(View view)
@@ -353,6 +355,7 @@ public class EditEventsActivity extends DatabaseActivity
         final Event event = new Event();
         event.name = "";
         event.timeInDay = -1L;
+        event.order = m_adapter.getItemCount();
         m_database.eventsDao().insert(event);
         final List<Event> events = m_database.eventsDao().getEvents();
         runOnUiThread(new Runnable()
@@ -394,53 +397,77 @@ public class EditEventsActivity extends DatabaseActivity
     calendar.setTimeInMillis(0);
     String[] nhsEventNames = activity.getResources().getStringArray(R.array.nhs_event_names);
 
-    calendar.set(Calendar.HOUR_OF_DAY, 8);
-    Event beforeBreakfastEvent = new Event();
-    beforeBreakfastEvent.name = nhsEventNames[0];
-    beforeBreakfastEvent.timeInDay = calendar.getTimeInMillis();
-    database.eventsDao().insert(beforeBreakfastEvent);
+    {
+      calendar.set(Calendar.HOUR_OF_DAY, 8);
+      Event beforeBreakfastEvent = new Event();
+      beforeBreakfastEvent.name = nhsEventNames[0];
+      beforeBreakfastEvent.timeInDay = calendar.getTimeInMillis();
+      beforeBreakfastEvent.order = 0;
+      database.eventsDao().insert(beforeBreakfastEvent);
+    }
 
-    calendar.set(Calendar.HOUR_OF_DAY, 10);
-    Event twoHoursAfterBreakfastEvent = new Event();
-    twoHoursAfterBreakfastEvent.name = nhsEventNames[1];
-    twoHoursAfterBreakfastEvent.timeInDay = calendar.getTimeInMillis();
-    database.eventsDao().insert(twoHoursAfterBreakfastEvent);
+    {
+      calendar.set(Calendar.HOUR_OF_DAY, 10);
+      Event twoHoursAfterBreakfastEvent = new Event();
+      twoHoursAfterBreakfastEvent.name = nhsEventNames[1];
+      twoHoursAfterBreakfastEvent.timeInDay = calendar.getTimeInMillis();
+      twoHoursAfterBreakfastEvent.order = 1;
+      database.eventsDao().insert(twoHoursAfterBreakfastEvent);
+    }
 
-    calendar.set(Calendar.HOUR_OF_DAY, 13);
-    Event beforeMiddayMealEvent = new Event();
-    beforeMiddayMealEvent.name = nhsEventNames[2];
-    beforeMiddayMealEvent.timeInDay = calendar.getTimeInMillis();
-    database.eventsDao().insert(beforeMiddayMealEvent);
+    {
+      calendar.set(Calendar.HOUR_OF_DAY, 13);
+      Event beforeMiddayMealEvent = new Event();
+      beforeMiddayMealEvent.name = nhsEventNames[2];
+      beforeMiddayMealEvent.timeInDay = calendar.getTimeInMillis();
+      beforeMiddayMealEvent.order = 2;
+      database.eventsDao().insert(beforeMiddayMealEvent);
+    }
 
-    calendar.set(Calendar.HOUR_OF_DAY, 15);
-    Event twoHoursAfterMiddayMealEvent = new Event();
-    twoHoursAfterMiddayMealEvent.name = nhsEventNames[3];
-    twoHoursAfterMiddayMealEvent.timeInDay = calendar.getTimeInMillis();
-    database.eventsDao().insert(twoHoursAfterMiddayMealEvent);
+    {
+      calendar.set(Calendar.HOUR_OF_DAY, 15);
+      Event twoHoursAfterMiddayMealEvent = new Event();
+      twoHoursAfterMiddayMealEvent.name = nhsEventNames[3];
+      twoHoursAfterMiddayMealEvent.timeInDay = calendar.getTimeInMillis();
+      twoHoursAfterMiddayMealEvent.order = 3;
+      database.eventsDao().insert(twoHoursAfterMiddayMealEvent);
+    }
 
-    calendar.set(Calendar.HOUR_OF_DAY, 18);
-    Event beforeEveningMealEvent = new Event();
-    beforeEveningMealEvent.name = nhsEventNames[4];
-    beforeEveningMealEvent.timeInDay = calendar.getTimeInMillis();
-    database.eventsDao().insert(beforeEveningMealEvent);
+    {
+      calendar.set(Calendar.HOUR_OF_DAY, 18);
+      Event beforeEveningMealEvent = new Event();
+      beforeEveningMealEvent.name = nhsEventNames[4];
+      beforeEveningMealEvent.timeInDay = calendar.getTimeInMillis();
+      beforeEveningMealEvent.order = 4;
+      database.eventsDao().insert(beforeEveningMealEvent);
+    }
 
-    calendar.set(Calendar.HOUR_OF_DAY, 20);
-    Event twoHoursAfterEveningMealEvent = new Event();
-    twoHoursAfterEveningMealEvent.name = nhsEventNames[5];
-    twoHoursAfterEveningMealEvent.timeInDay = calendar.getTimeInMillis();
-    database.eventsDao().insert(twoHoursAfterEveningMealEvent);
+    {
+      calendar.set(Calendar.HOUR_OF_DAY, 20);
+      Event twoHoursAfterEveningMealEvent = new Event();
+      twoHoursAfterEveningMealEvent.name = nhsEventNames[5];
+      twoHoursAfterEveningMealEvent.timeInDay = calendar.getTimeInMillis();
+      twoHoursAfterEveningMealEvent.order = 5;
+      database.eventsDao().insert(twoHoursAfterEveningMealEvent);
+    }
 
-    calendar.set(Calendar.HOUR_OF_DAY, 22);
-    Event beforeBedEvent = new Event();
-    beforeBedEvent.name = nhsEventNames[6];
-    beforeBedEvent.timeInDay = calendar.getTimeInMillis();
-    database.eventsDao().insert(beforeBedEvent);
+    {
+      calendar.set(Calendar.HOUR_OF_DAY, 22);
+      Event beforeBedEvent = new Event();
+      beforeBedEvent.name = nhsEventNames[6];
+      beforeBedEvent.timeInDay = calendar.getTimeInMillis();
+      beforeBedEvent.order = 6;
+      database.eventsDao().insert(beforeBedEvent);
+    }
 
-    calendar.set(Calendar.HOUR_OF_DAY, 2);
-    Event duringNightEvent = new Event();
-    duringNightEvent.name = nhsEventNames[7];
-    duringNightEvent.timeInDay = calendar.getTimeInMillis();
-    database.eventsDao().insert(duringNightEvent);
+    {
+      calendar.set(Calendar.HOUR_OF_DAY, 2);
+      Event duringNightEvent = new Event();
+      duringNightEvent.name = nhsEventNames[7];
+      duringNightEvent.timeInDay = calendar.getTimeInMillis();
+      duringNightEvent.order = 7;
+      database.eventsDao().insert(duringNightEvent);
+    }
   }
 
   @Override
