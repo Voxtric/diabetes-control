@@ -18,7 +18,7 @@ import voxtric.com.diabetescontrol.database.Event;
 
 public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEventsRecyclerViewAdapter.ViewHolder>
 {
-  private final List<Event> m_values;
+  private List<Event> m_values;
   private HashMap<View, Integer> m_valueMap = new HashMap<>();
   private EditEventsActivity m_activity;
 
@@ -106,6 +106,13 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
     {
       notifyItemChanged(position);
     }
+  }
+
+  void updateAllEvents(List<Event> items)
+  {
+    m_values = items;
+    m_valueMap.clear();
+    notifyDataSetChanged();
   }
 
   void deleteEvent(View view)

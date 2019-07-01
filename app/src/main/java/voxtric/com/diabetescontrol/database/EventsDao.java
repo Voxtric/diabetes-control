@@ -14,7 +14,10 @@ public interface EventsDao
   @Query("SELECT * FROM events ORDER BY \"order\" ASC")
   List<Event> getEvents();
 
-  @Query("UPDATE events SET 'order' = 'order' - :amount WHERE 'order' > :greaterThan")
+  @Query("SELECT * FROM events ORDER BY time_in_day ASC")
+  List<Event> getEventsTimeOrdered();
+
+  @Query("UPDATE events SET 'order' = \"order\" + :amount WHERE \"order\" > :greaterThan")
   void shuffleOrders(int amount, int greaterThan);
 
   @Update

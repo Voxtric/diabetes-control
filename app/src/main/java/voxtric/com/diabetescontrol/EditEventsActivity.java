@@ -81,7 +81,6 @@ public class EditEventsActivity extends DatabaseActivity
     int tempOrder = eventA.order;
     eventA.order = eventB.order;
     eventB.order = tempOrder;
-    m_adapter.updateEvent(dataView, eventA, true);
     AsyncTask.execute(new Runnable()
     {
       @Override
@@ -89,6 +88,16 @@ public class EditEventsActivity extends DatabaseActivity
       {
         m_database.eventsDao().updateEvent(eventA);
         m_database.eventsDao().updateEvent(eventB);
+        final List<Event> allEvents = m_database.eventsDao().getEvents();
+
+        runOnUiThread(new Runnable()
+        {
+          @Override
+          public void run()
+          {
+            m_adapter.updateAllEvents(allEvents);
+          }
+        });
       }
     });
   }
@@ -181,22 +190,42 @@ public class EditEventsActivity extends DatabaseActivity
             if (calender.getTimeInMillis() != event.timeInDay)
             {
               event.timeInDay = calender.getTimeInMillis();
-              m_adapter.updateEvent(dataView, event, true);
-              setResult(MainActivity.RESULT_EVENTS_CHANGED);
               AsyncTask.execute(new Runnable()
               {
                 @Override
                 public void run()
                 {
-                  m_database.eventsDao().updateEvent(event);
                   if (!newEvent)
                   {
+                    m_database.eventsDao().updateEvent(event);
                     displayMessage(R.string.event_time_changed_message);
                   }
                   else
                   {
+                    List<Event> allEvents = m_database.eventsDao().getEventsTimeOrdered();
+                    int index = 0;
+                    while (index < allEvents.size() && event.timeInDay > allEvents.get(index).timeInDay)
+                    {
+                      index++;
+                    }
+                    int order = allEvents.get(index).order;
+                    m_database.eventsDao().shuffleOrders(1, order - 1);
+                    event.order = order;
+                    m_database.eventsDao().updateEvent(event);
+
                     displayMessage(R.string.new_event_added_message);
                   }
+
+                  final List<Event> allEvents = m_database.eventsDao().getEvents();
+                  runOnUiThread(new Runnable()
+                  {
+                    @Override
+                    public void run()
+                    {
+                      m_adapter.updateAllEvents(allEvents);
+                      setResult(MainActivity.RESULT_EVENTS_CHANGED);
+                    }
+                  });
                 }
               });
             }
@@ -500,6 +529,12 @@ public class EditEventsActivity extends DatabaseActivity
       if (!keepEditedEvent)
       {
         m_adapter.deleteEvent(dataView);
+        findViewById(R.id.button_add_new_event).setEnabled(m_adapter.getItemCount() < MAX_EVENT_COUNT);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+        {
+          actionBar.setTitle(getString(R.string.edit_events_name, m_adapter.getItemCount(), MAX_EVENT_COUNT));
+        }
         AsyncTask.execute(new Runnable()
         {
           @Override
