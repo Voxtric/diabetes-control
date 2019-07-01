@@ -35,7 +35,6 @@ If not, you can do so later from the settings menu at the top right."
     <string name="title_view_all">View All</string>
     <string name="title_graph">Graph View</string>
     <string name="title_view_full">View Full</string>
-    <string name="title_edit">Edit</string>
 
     <string name="date_label">Date:</string>
     <string name="time_label">Time:</string>
@@ -72,6 +71,11 @@ If not, you can do so later from the settings menu at the top right."
     <string name="event_name_title">Event Name</string>
     <string name="event_time_title">Event Time</string>
 
+    <string name="title_move">Move</string>
+    <string name="action_move_up">Move Up</string>
+    <string name="action_move_down">Move Down</string>
+
+    <string name="title_edit">Edit</string>
     <string name="title_edit_name">Edit Name</string>
     <string name="title_edit_time">Edit Time</string>
     <string name="title_edit_event_name">Edit event name</string>

@@ -3,18 +3,42 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_edit_name"
-        android:title="@string/title_edit_name" />
+        android:id="@+id/navigation_move"
+        android:title="@string/title_move">
+
+        <menu>
+            <item
+                android:id="@+id/action_move_up"
+                android:title="@string/action_move_up"/>
+
+            <item
+                android:id="@+id/action_move_down"
+                android:title="@string/action_move_down"/>
+        </menu>
+    </item>
 
     <item
-        android:id="@+id/navigation_edit_time"
-        android:title="@string/title_edit_time" />
+        android:id="@+id/group_edit"
+        android:title="@string/title_edit">
 
-    <item
-        android:id="@+id/navigation_delete"
-        android:title="@string/title_delete" />
+        <menu>
+            <item
+                android:id="@+id/navigation_edit_name"
+                android:title="@string/title_edit_name"/>
 
-    <item
-        android:id="@+id/navigation_cancel"
-        android:title="@string/title_cancel" />
+            <item
+                android:id="@+id/navigation_edit_time"
+                android:title="@string/title_edit_time"/>
+
+            <item
+                android:id="@+id/navigation_delete"
+                android:title="@string/title_delete"/>
+        </menu>
+    </item>
+
+    <group android:id="@+id/group_misc">
+        <item
+            android:id="@+id/navigation_cancel"
+            android:title="@string/title_cancel"/>
+    </group>
 </menu>

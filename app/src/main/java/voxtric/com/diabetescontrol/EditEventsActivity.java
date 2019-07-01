@@ -1,7 +1,6 @@
 package voxtric.com.diabetescontrol;
 
 import android.app.Activity;
-import android.arch.persistence.room.Room;
 import android.content.DialogInterface;
 import android.graphics.Point;
 import android.os.AsyncTask;
@@ -23,12 +22,14 @@ import android.widget.PopupMenu;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.security.InvalidParameterException;
 import java.util.Calendar;
 import java.util.List;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Event;
+import voxtric.com.diabetescontrol.database.EventsDao;
 
 public class EditEventsActivity extends DatabaseActivity
 {
@@ -51,7 +52,6 @@ public class EditEventsActivity extends DatabaseActivity
     final RecyclerView recyclerView = findViewById(R.id.recycler_view_entry_list);
     recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
 
-    m_database = Room.databaseBuilder(this, AppDatabase.class, "diabetes-control.db").build();
     AsyncTask.execute(new Runnable()
     {
       @Override
@@ -247,6 +247,25 @@ public class EditEventsActivity extends DatabaseActivity
     }
   }
 
+  private void moveEvent(final View dataView, int direction)
+  {
+    final Event eventA = m_adapter.getEvent(dataView);
+    final Event eventB = m_adapter.getEvent(eventA.order + direction);
+    int tempOrder = eventA.order;
+    eventA.order = eventB.order;
+    eventB.order = tempOrder;
+    m_adapter.updateEvent(dataView, eventA, true);
+    AsyncTask.execute(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        m_database.eventsDao().updateEvent(eventA);
+        m_database.eventsDao().updateEvent(eventB);
+      }
+    });
+  }
+
   public void openEventMoreMenu(View view)
   {
     final ViewGroup dataView = view instanceof LinearLayout ? (ViewGroup)view : (ViewGroup)view.getParent();
@@ -272,6 +291,12 @@ public class EditEventsActivity extends DatabaseActivity
       {
         switch (item.getItemId())
         {
+          case R.id.action_move_up:
+            moveEvent(dataView, -1);
+            return true;
+          case R.id.action_move_down:
+            moveEvent(dataView, 1);
+            return true;
           case R.id.navigation_edit_name:
             editEventName(dataView, false);
             return true;
@@ -305,7 +330,17 @@ public class EditEventsActivity extends DatabaseActivity
         }
       }
     });
+
     menu.show();
+    Event event = m_adapter.getEvent(dataView);
+    if (event.order <= 0)
+    {
+      menu.getMenu().findItem(R.id.action_move_up).setEnabled(false);
+    }
+    else if (event.order >= m_adapter.getItemCount() - 1)
+    {
+      menu.getMenu().findItem(R.id.action_move_down).setEnabled(false);
+    }
   }
 
   public void addNewEvent(View view)
@@ -411,18 +446,17 @@ public class EditEventsActivity extends DatabaseActivity
   @Override
   public boolean onOptionsItemSelected(MenuItem item)
   {
-    switch (item.getItemId())
+    if (item.getItemId() == android.R.id.home)
     {
-      case android.R.id.home:
-        finish();
-        return true;
+      finish();
+      return true;
     }
     return false;
   }
 
   class DialogInterfaceOnDismissListener implements DialogInterface.OnDismissListener
   {
-    public boolean keepEditedEvent = false;
+    boolean keepEditedEvent = false;
 
     private View dataView;
     private Event event;

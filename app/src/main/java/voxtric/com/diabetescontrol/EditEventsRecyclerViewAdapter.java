@@ -64,12 +64,17 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
     return m_values.size();
   }
 
-  public Event getEvent(View view)
+  Event getEvent(View view)
   {
     return m_values.get(m_valueMap.get(view));
   }
 
-  public void updateEvent(View view, Event event, boolean orderChanged)
+  Event getEvent(int position)
+  {
+    return m_values.get(position);
+  }
+
+  void updateEvent(View view, Event event, boolean orderChanged)
   {
     int position = m_valueMap.get(view);
     m_values.set(position, event);
@@ -80,11 +85,11 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
         @Override
         public int compare(Event o1, Event o2)
         {
-          if (o1.timeInDay < o2.timeInDay)
+          if (o1.order < o2.order)
           {
             return -1;
           }
-          else if (o1.timeInDay > o2.timeInDay)
+          else if (o1.order > o2.order)
           {
             return 1;
           }
@@ -103,7 +108,7 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
     }
   }
 
-  public void deleteEvent(View view)
+  void deleteEvent(View view)
   {
     int position = m_valueMap.get(view);
     m_values.remove(position);

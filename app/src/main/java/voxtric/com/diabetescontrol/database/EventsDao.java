@@ -11,7 +11,7 @@ import java.util.List;
 @Dao
 public interface EventsDao
 {
-  @Query("SELECT * FROM events ORDER BY time_in_day ASC")
+  @Query("SELECT * FROM events ORDER BY \"order\" ASC")
   List<Event> getEvents();
 
   @Update
