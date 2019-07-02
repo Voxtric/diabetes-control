@@ -860,7 +860,11 @@ public class NewEntryFragment extends Fragment
 
             Date date = new Date(entry.dayTimeStamp);
             String dateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
-            Date previousDate = new Date(previousEntry.dayTimeStamp);
+
+            final Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(entry.dayTimeStamp);
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+            Date previousDate = calendar.getTime();
             String previousDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(previousDate);
 
             AlertDialog dialog = new AlertDialog.Builder(activity)
@@ -876,7 +880,7 @@ public class NewEntryFragment extends Fragment
                       @Override
                       public void run()
                       {
-                        entry.dayTimeStamp = previousEntry.dayTimeStamp;
+                        entry.dayTimeStamp = calendar.getTimeInMillis();
                         m_database.dataEntriesDao().insert(entry);
                         updateUIWithNewEntry(activity);
                       }
