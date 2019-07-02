@@ -20,6 +20,9 @@ public interface EventsDao
   @Query("UPDATE events SET 'order' = \"order\" + :amount WHERE \"order\" > :greaterThan")
   void shuffleOrders(int amount, int greaterThan);
 
+  @Query("SELECT count(*) FROM events")
+  int countEvents();
+
   @Query("SELECT * FROM events WHERE name IS :name")
   Event getEvent(String name);
 

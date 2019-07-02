@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.util.Pair;
 import android.widget.ProgressBar;
 
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -21,6 +20,7 @@ import java.util.Map;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
+import voxtric.com.diabetescontrol.database.Event;
 import voxtric.com.diabetescontrol.database.TargetChange;
 
 public class ADSExporter extends PDFGenerator
@@ -39,9 +39,9 @@ public class ADSExporter extends PDFGenerator
   ADSExporter(List<DataEntry> entries, AppDatabase database)
   {
     m_database = database;
-    m_weeks = Week.splitEntries(entries);
-    Date startDate = new Date(entries.get(entries.size() - 1).actualTimestamp);
-    Date endDate = new Date(entries.get(0).actualTimestamp);
+    m_weeks = Week.splitEntries(entries, database.eventsDao());
+    Date startDate = new Date(entries.get(entries.size() - 1).dayTimeStamp);
+    Date endDate = new Date(entries.get(0).dayTimeStamp);
     String startDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(startDate);
     String endDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(endDate);
     if (startDateString.equals(endDateString))
@@ -147,12 +147,12 @@ public class ADSExporter extends PDFGenerator
     height -= VERTICAL_SPACE;
     float eventWidth = Math.min((m_pageWidth - DAY_HEADER_WIDTH - EXTRAS_MIN_WIDTH) / week.events.size(), EVENT_MAX_WIDTH);
     float startX = BORDER + DAY_HEADER_WIDTH;
-    for (Pair<String, Long> event : week.events)
+    for (Event event : week.events)
     {
-      eventStartXMap.put(event.first, startX);
+      eventStartXMap.put(event.name, startX);
       drawBox(startX, height, startX + eventWidth, height - EVENT_HEADER_HEIGHT, BLACK, null);
       //drawTextCentered(FONT, FONT_SIZE_LARGE, event.first, 90.0f, startX + (eventWidth / 2.0f), height - (EVENT_HEADER_HEIGHT / 2.0f));
-      drawCenteredTextParagraphed(FONT, FONT_SIZE_LARGE, event.first, 90.0f,
+      drawCenteredTextParagraphed(FONT, FONT_SIZE_LARGE, event.name, 90.0f,
           startX + (eventWidth / 2.0f), height - (EVENT_HEADER_HEIGHT / 2.0f), EVENT_HEADER_HEIGHT - (LINE_SPACING * 2.0f));
 
       for (int i = 0; i < DAYS.length; i++)
@@ -193,11 +193,7 @@ public class ADSExporter extends PDFGenerator
     {
       DataEntry entry = week.entries.get(i);
       Calendar calendar = Calendar.getInstance();
-      calendar.setTimeInMillis(entry.actualTimestamp);
-      calendar.set(Calendar.HOUR_OF_DAY, 0);
-      calendar.clear(Calendar.MINUTE);
-      calendar.clear(Calendar.SECOND);
-      calendar.clear(Calendar.MILLISECOND);
+      calendar.setTimeInMillis(entry.dayTimeStamp);
 
       int dayOfWeek = (calendar.get(Calendar.DAY_OF_WEEK) + 5) % DAYS.length;
       dayStartHeight = height - (DAY_HEADER_HEIGHT * dayOfWeek);

@@ -170,10 +170,24 @@ public class EditEventsActivity extends DatabaseActivity
   {
     final Event event = m_adapter.getEvent(dataView);
     final TimePicker timePicker = new TimePicker(this);
-    final Calendar calender = Calendar.getInstance();
-    calender.setTimeInMillis(event.timeInDay);
-    timePicker.setCurrentHour(calender.get(Calendar.HOUR_OF_DAY));
-    timePicker.setCurrentMinute(calender.get(Calendar.MINUTE));
+    final Calendar calendar = Calendar.getInstance();
+    if (event.timeInDay != -1)
+    {
+      calendar.setTimeInMillis(event.timeInDay);
+    }
+    else
+    {
+      calendar.clear();
+      calendar.set(
+          calendar.getMinimum(Calendar.YEAR),
+          calendar.getMinimum(Calendar.MONTH),
+          calendar.getMinimum(Calendar.DATE),
+          calendar.getMinimum(Calendar.HOUR_OF_DAY),
+          calendar.getMinimum(Calendar.MINUTE),
+          calendar.getMinimum(Calendar.SECOND));
+    }
+    timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
+    timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
 
     final DialogInterfaceOnDismissListener onDismissListener = new DialogInterfaceOnDismissListener(dataView, event);
     final AlertDialog dialog = new AlertDialog.Builder(this)
@@ -185,11 +199,11 @@ public class EditEventsActivity extends DatabaseActivity
           public void onClick(DialogInterface dialog, int which)
           {
             onDismissListener.keepEditedEvent = true;
-            calender.set(Calendar.HOUR_OF_DAY, timePicker.getCurrentHour());
-            calender.set(Calendar.MINUTE, timePicker.getCurrentMinute());
-            if (calender.getTimeInMillis() != event.timeInDay)
+            calendar.set(Calendar.HOUR_OF_DAY, timePicker.getCurrentHour());
+            calendar.set(Calendar.MINUTE, timePicker.getCurrentMinute());
+            if (calendar.getTimeInMillis() != event.timeInDay)
             {
-              event.timeInDay = calender.getTimeInMillis();
+              event.timeInDay = calendar.getTimeInMillis();
               AsyncTask.execute(new Runnable()
               {
                 @Override
@@ -422,9 +436,16 @@ public class EditEventsActivity extends DatabaseActivity
 
   public static void addNHSEvents(AppDatabase database, Activity activity)
   {
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTimeInMillis(0);
     String[] nhsEventNames = activity.getResources().getStringArray(R.array.nhs_event_names);
+    Calendar calendar = Calendar.getInstance();
+    calendar.clear();
+    calendar.set(
+        calendar.getMinimum(Calendar.YEAR),
+        calendar.getMinimum(Calendar.MONTH),
+        calendar.getMinimum(Calendar.DATE),
+        calendar.getMinimum(Calendar.HOUR_OF_DAY),
+        calendar.getMinimum(Calendar.MINUTE),
+        calendar.getMinimum(Calendar.SECOND));
 
     {
       calendar.set(Calendar.HOUR_OF_DAY, 8);

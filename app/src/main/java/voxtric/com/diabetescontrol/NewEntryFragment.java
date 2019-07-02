@@ -15,7 +15,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -37,7 +36,6 @@ import android.widget.Toast;
 import com.shuhart.bubblepagerindicator.BubblePageIndicator;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -59,11 +57,11 @@ public class NewEntryFragment extends Fragment
   private int m_minute = 0;
 
   private String m_selectedEventName = null;
+  private String m_autosetEventName = null;
 
   // Not transferred between rotations.
   private Date m_date = null;
   private AppDatabase m_database = null;
-  private boolean m_ignoreNextOnItemSelectCallback = false;
   ArrayAdapter<String> m_eventSpinnerAdapter = null;
 
   public NewEntryFragment()
@@ -236,13 +234,17 @@ public class NewEntryFragment extends Fragment
         @Override
         public void run()
         {
-          Calendar calender = Calendar.getInstance();
-          calender.setTimeInMillis(0);
-          calender.set(Calendar.HOUR_OF_DAY, m_hour);
-          calender.set(Calendar.MINUTE, m_minute);
-          long timeOnlyTimeStamp = calender.getTimeInMillis();
+          Calendar calendar = Calendar.getInstance();
+          calendar.clear();
+          calendar.set(
+              calendar.getMinimum(Calendar.YEAR),
+              calendar.getMinimum(Calendar.MONTH),
+              calendar.getMinimum(Calendar.DATE),
+              m_hour, m_minute,
+              calendar.getMinimum(Calendar.SECOND));
+          long timeOnlyTimeStamp = calendar.getTimeInMillis();
 
-          final List<Event> events = m_database.eventsDao().getEvents();
+          final List<Event> events = m_database.eventsDao().getEventsTimeOrdered();
           long smallestDifference = Long.MAX_VALUE;
           int closestEventIndex = -1;
           for (int i = 0; i < events.size(); i++)
@@ -250,8 +252,8 @@ public class NewEntryFragment extends Fragment
             long difference = Math.abs(events.get(i).timeInDay - timeOnlyTimeStamp);
             if (difference < smallestDifference)
             {
-              smallestDifference = difference;
               closestEventIndex = i;
+              smallestDifference = difference;
             }
             else
             {
@@ -266,7 +268,8 @@ public class NewEntryFragment extends Fragment
               @Override
               public void run()
               {
-                selectEvent(events.get(finalClosestEventIndex).name);
+                m_autosetEventName = events.get(finalClosestEventIndex).name;
+                selectEvent(m_autosetEventName);
               }
             });
           }
@@ -286,7 +289,6 @@ public class NewEntryFragment extends Fragment
       {
         if (eventName.equals(eventSpinner.getItemAtPosition(i).toString()))
         {
-          m_ignoreNextOnItemSelectCallback = true;
           eventSpinner.setSelection(i);
           found = true;
         }
@@ -294,7 +296,6 @@ public class NewEntryFragment extends Fragment
       if (!found)
       {
         m_eventSpinnerAdapter.add(eventName);
-        m_ignoreNextOnItemSelectCallback = true;
         eventSpinner.setSelection(eventSpinner.getCount() - 1);
         Toast.makeText(activity, R.string.new_entry_deleted_event_message, Toast.LENGTH_LONG).show();
       }
@@ -350,7 +351,7 @@ public class NewEntryFragment extends Fragment
                 m_hour = timePicker.getCurrentHour();
                 m_minute = timePicker.getCurrentMinute();
                 updateDateTime(false);
-                if (m_selectedEventName == null)
+                if (m_selectedEventName == null || m_selectedEventName.equals(m_autosetEventName))
                 {
                   pickBestEvent();
                 }
@@ -390,11 +391,7 @@ public class NewEntryFragment extends Fragment
       @Override
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
       {
-        if (!m_ignoreNextOnItemSelectCallback)
-        {
-          m_selectedEventName = eventSpinner.getItemAtPosition(position).toString();
-        }
-        m_ignoreNextOnItemSelectCallback = false;
+        m_selectedEventName = eventSpinner.getItemAtPosition(position).toString();
       }
     });
   }
@@ -851,30 +848,7 @@ public class NewEntryFragment extends Fragment
     if (previousEntry != null)
     {
       Event previousEvent = m_database.eventsDao().getEvent(previousEntry.event);
-      Calendar baseCalendar = Calendar.getInstance();
-
-      Calendar entryCalendar = Calendar.getInstance();
-      entryCalendar.setTimeInMillis(entry.actualTimestamp);
-      baseCalendar.setTimeInMillis(-1);
-      baseCalendar.set(Calendar.HOUR_OF_DAY, entryCalendar.get(Calendar.HOUR_OF_DAY));
-      baseCalendar.set(Calendar.MINUTE, entryCalendar.get(Calendar.MINUTE));
-      baseCalendar.set(Calendar.SECOND, entryCalendar.get(Calendar.SECOND));
-      long entryTimeInDay = baseCalendar.getTimeInMillis();
-
-      Calendar previousEntryCalendar = Calendar.getInstance();
-      previousEntryCalendar.setTimeInMillis(previousEntry.actualTimestamp);
-      baseCalendar.setTimeInMillis(-1);
-      baseCalendar.set(Calendar.HOUR_OF_DAY, previousEntryCalendar.get(Calendar.HOUR_OF_DAY));
-      baseCalendar.set(Calendar.MINUTE, previousEntryCalendar.get(Calendar.MINUTE));
-      baseCalendar.set(Calendar.SECOND, previousEntryCalendar.get(Calendar.SECOND));
-      long previousEntryTimeInDay = baseCalendar.getTimeInMillis();
-
-      entryCalendar.setTimeInMillis(entry.dayTimeStamp);
-      previousEntryCalendar.setTimeInMillis(previousEntry.dayTimeStamp);
-      previousEntryCalendar.add(Calendar.DAY_OF_YEAR, 1);
-      boolean singleDayDifference = entryCalendar.get(Calendar.DAY_OF_YEAR) == previousEntryCalendar.get(Calendar.DAY_OF_YEAR);
-
-      if (entryTimeInDay < previousEntryTimeInDay && event.order > previousEvent.order && singleDayDifference)
+      if (event.order > previousEvent.order && entry.dayTimeStamp > previousEntry.dayTimeStamp)
       {
         updateDatabase = false;
         activity.runOnUiThread(new Runnable()
@@ -967,7 +941,8 @@ public class NewEntryFragment extends Fragment
             calendar.setTimeInMillis(entry.actualTimestamp);
             Calendar previousCalendar = Calendar.getInstance();
             previousCalendar.setTimeInMillis(previousEntry.actualTimestamp);
-            if (calendar.get(Calendar.YEAR) != previousCalendar.get(Calendar.YEAR) ||
+            if (entry.dayTimeStamp != previousEntry.dayTimeStamp ||
+                calendar.get(Calendar.YEAR) != previousCalendar.get(Calendar.YEAR) ||
                 calendar.get(Calendar.MONTH) != previousCalendar.get(Calendar.MONTH) ||
                 calendar.get(Calendar.DAY_OF_MONTH) != previousCalendar.get(Calendar.DAY_OF_MONTH))
             {

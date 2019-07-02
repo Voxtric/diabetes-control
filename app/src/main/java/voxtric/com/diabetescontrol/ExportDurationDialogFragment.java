@@ -183,7 +183,14 @@ public class ExportDurationDialogFragment extends DialogFragment
               public void onClick(DialogInterface dialog, int which)
               {
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(0);
+                calendar.clear();
+                calendar.set(
+                    calendar.getMinimum(Calendar.YEAR),
+                    calendar.getMinimum(Calendar.MONTH),
+                    calendar.getMinimum(Calendar.DATE),
+                    calendar.getMinimum(Calendar.HOUR_OF_DAY),
+                    calendar.getMinimum(Calendar.MINUTE),
+                    calendar.getMinimum(Calendar.SECOND));
                 calendar.set(Calendar.YEAR, datePicker.getYear());
                 calendar.set(Calendar.MONTH, datePicker.getMonth());
                 calendar.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth());

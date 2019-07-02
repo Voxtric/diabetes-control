@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.Calendar;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import voxtric.com.diabetescontrol.database.DataEntry;
@@ -77,11 +76,10 @@ public class EditEntryActivity extends DatabaseActivity
   @Override
   public boolean onOptionsItemSelected(MenuItem item)
   {
-    switch (item.getItemId())
+    if (item.getItemId() == android.R.id.home)
     {
-      case android.R.id.home:
-        checkEditCancel();
-        return true;
+      checkEditCancel();
+      return true;
     }
     return false;
   }
