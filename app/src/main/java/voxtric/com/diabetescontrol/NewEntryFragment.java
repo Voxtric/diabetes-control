@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -849,8 +850,30 @@ public class NewEntryFragment extends Fragment
     if (previousEntry != null)
     {
       Event previousEvent = m_database.eventsDao().getEvent(previousEntry.event);
-      // TODO: Ensure only day previous is checked
-      if (event.timeInDay < previousEvent.timeInDay && event.order > previousEvent.order) // TODO: Move from event time in day to entry time in day
+      Calendar baseCalendar = Calendar.getInstance();
+
+      Calendar entryCalendar = Calendar.getInstance();
+      entryCalendar.setTimeInMillis(entry.actualTimestamp);
+      baseCalendar.setTimeInMillis(-1);
+      baseCalendar.set(Calendar.HOUR_OF_DAY, entryCalendar.get(Calendar.HOUR_OF_DAY));
+      baseCalendar.set(Calendar.MINUTE, entryCalendar.get(Calendar.MINUTE));
+      baseCalendar.set(Calendar.SECOND, entryCalendar.get(Calendar.SECOND));
+      long entryTimeInDay = baseCalendar.getTimeInMillis();
+
+      Calendar previousEntryCalendar = Calendar.getInstance();
+      previousEntryCalendar.setTimeInMillis(previousEntry.actualTimestamp);
+      baseCalendar.setTimeInMillis(-1);
+      baseCalendar.set(Calendar.HOUR_OF_DAY, previousEntryCalendar.get(Calendar.HOUR_OF_DAY));
+      baseCalendar.set(Calendar.MINUTE, previousEntryCalendar.get(Calendar.MINUTE));
+      baseCalendar.set(Calendar.SECOND, previousEntryCalendar.get(Calendar.SECOND));
+      long previousEntryTimeInDay = baseCalendar.getTimeInMillis();
+
+      entryCalendar.setTimeInMillis(entry.dayTimeStamp);
+      previousEntryCalendar.setTimeInMillis(previousEntry.dayTimeStamp);
+      previousEntryCalendar.add(Calendar.DAY_OF_YEAR, 1);
+      boolean singleDayDifference = entryCalendar.get(Calendar.DAY_OF_YEAR) == previousEntryCalendar.get(Calendar.DAY_OF_YEAR);
+
+      if (entryTimeInDay < previousEntryTimeInDay && event.order > previousEvent.order && singleDayDifference)
       {
         updateDatabase = false;
         activity.runOnUiThread(new Runnable()
