@@ -130,6 +130,14 @@ Do you want to overwrite the existing entry?"
     </string>
     <string name="message_event_collision">Can not save edited entry as it would overwrite an existing entry.</string>
 
+    <!-- Event date mismatch -->
+    <string name="title_event_date_mismatch">Suspected Date Mismatch</string>
+    <string name="message_event_date_mismatch">
+"The new entry occurs on %1$s but seems to be a continuation of %2$s.
+
+Would you like to associate the entry with %2$s for exporting? (This won't affect the date and time displayed)"
+    </string>
+
     <!-- Delete Entry -->
     <string name="title_delete_entry">Delete entry?</string>
     <string name="message_delete_entry">Are you sure that you want to delete this entry?</string>

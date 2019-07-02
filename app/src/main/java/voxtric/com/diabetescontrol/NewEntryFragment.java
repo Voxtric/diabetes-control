@@ -37,6 +37,7 @@ import android.widget.Toast;
 import com.shuhart.bubblepagerindicator.BubblePageIndicator;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -881,11 +882,16 @@ public class NewEntryFragment extends Fragment
           @Override
           public void run()
           {
-            // TODO: Sort out the correct text.
             // TODO: Test this but for editing existing times.
+
+            Date date = new Date(entry.dayTimeStamp);
+            String dateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
+            Date previousDate = new Date(previousEntry.dayTimeStamp);
+            String previousDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(previousDate);
+
             AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setTitle("Day Mismatch")
-                .setMessage("The new entry occurs on <date1> but seems to be a continuation of <date2>\n\nWould you like to associate the entry with <date2>? (This won't affect the date and time displayed and exported)")
+                .setTitle(R.string.title_event_date_mismatch)
+                .setMessage(getString(R.string.message_event_date_mismatch, dateString, previousDateString))
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
                 {
                   @Override
@@ -919,6 +925,7 @@ public class NewEntryFragment extends Fragment
                     });
                   }
                 })
+                .setNeutralButton(R.string.cancel, null)
                 .create();
             dialog.show();
           }
