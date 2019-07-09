@@ -11,8 +11,8 @@ import java.util.List;
 public interface DataEntriesDao
 {
 
-  @Query("SELECT * FROM data_entries ORDER BY actual_timestamp DESC LIMIT :limit")
-  List<DataEntry> getPreviousEntries(int limit);
+  @Query("SELECT * FROM data_entries WHERE actual_timestamp < :timestamp ORDER BY actual_timestamp DESC LIMIT :limit")
+  List<DataEntry> getPreviousEntries(long timestamp, int limit);
 
 
 

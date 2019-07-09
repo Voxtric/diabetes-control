@@ -1,7 +1,9 @@
 package voxtric.com.diabetescontrol;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
@@ -19,13 +21,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import voxtric.com.diabetescontrol.database.DataEntriesDao;
 import voxtric.com.diabetescontrol.database.DataEntry;
 
 public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryListRecyclerViewAdapter.ViewHolder>
 {
+  public static final int LOAD_COUNT = 100;
+
   private final List<DataEntry> m_values;
   private HashMap<View, Integer> m_valueMap = new HashMap<>();
   private MainActivity m_activity;
+
+  private boolean m_loadingMore = false;
 
   EntryListRecyclerViewAdapter(List<DataEntry> items, MainActivity activity)
   {
@@ -55,12 +62,38 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
     return m_values.size();
   }
 
-  public DataEntry getEntry(View view)
+  void loadMore(final Activity activity, final DataEntriesDao dataEntriesDao)
+  {
+    if (!m_loadingMore)
+    {
+      m_loadingMore = true;
+      AsyncTask.execute(new Runnable()
+      {
+        @Override
+        public void run()
+        {
+          List<DataEntry> newEntries = dataEntriesDao.getPreviousEntries(m_values.get(m_values.size() - 1).actualTimestamp, LOAD_COUNT);
+          m_values.addAll(newEntries);
+          activity.runOnUiThread(new Runnable()
+          {
+            @Override
+            public void run()
+            {
+              notifyDataSetChanged();
+              m_loadingMore = false;
+            }
+          });
+        }
+      });
+    }
+  }
+
+  DataEntry getEntry(View view)
   {
     return m_values.get(m_valueMap.get(view));
   }
 
-  public void deleteEntry(View view)
+  void deleteEntry(View view)
   {
     int position = m_valueMap.get(view);
     m_values.remove(position);

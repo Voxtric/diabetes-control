@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,7 +75,7 @@ public class EntryListFragment extends Fragment
         @Override
         public void run()
         {
-          final List<DataEntry> entries = m_database.dataEntriesDao().getPreviousEntries(100);
+          final List<DataEntry> entries = m_database.dataEntriesDao().getPreviousEntries(System.currentTimeMillis(), EntryListRecyclerViewAdapter.LOAD_COUNT);
           activity.runOnUiThread(new Runnable()
           {
             @Override
@@ -91,6 +92,23 @@ public class EntryListFragment extends Fragment
                 activity.findViewById(R.id.text_view_no_data).setVisibility(View.GONE);
                 m_adapter = new EntryListRecyclerViewAdapter(entries, (MainActivity)activity);
                 recyclerView.setAdapter(m_adapter);
+
+                final LinearLayoutManager layoutManager = ((LinearLayoutManager)recyclerView.getLayoutManager());
+                if (layoutManager != null)
+                {
+                  recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
+                  {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
+                    {
+                      int lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
+                      if (lastVisiblePosition == m_adapter.getItemCount() - 1)
+                      {
+                        m_adapter.loadMore(activity, m_database.dataEntriesDao());
+                      }
+                    }
+                  });
+                }
               }
             }
           });
