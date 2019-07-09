@@ -30,7 +30,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/blood_glucose_level_hint"
+            android:text="@string/blood_glucose_level_hint_newline"
             android:textColor="@android:color/white"/>
 
         <TextView

@@ -41,7 +41,7 @@ If not, you can do so later from the settings menu at the top right."
     <string name="event_label">Event:</string>
     <string name="insulin_name_label">Insulin Name:</string>
     <string name="insulin_dose_label">Insulin Dose:</string>
-    <string name="blood_glucose_level_label">Blood Glucose\nLevel:</string>
+    <string name="blood_glucose_level_label">Blood Glucose Level:</string>
     <string name="food_eaten_label">Food Eaten:</string>
     <string name="additional_notes_label">Additional Notes:</string>
 
@@ -50,6 +50,7 @@ If not, you can do so later from the settings menu at the top right."
     <string name="insulin_name_hint">Insulin Name</string>
     <string name="insulin_dose_hint">Insulin Dose</string>
     <string name="blood_glucose_level_hint">BGL (mmol/l)</string>
+    <string name="blood_glucose_level_hint_newline">BGL\n(mmol/l)</string>
     <string name="blood_glucose_level_text">Blood Glucose Level</string>
     <string name="food_eaten_hint">Food Eaten</string>
     <string name="additional_notes_hint">Addition Notes</string>
