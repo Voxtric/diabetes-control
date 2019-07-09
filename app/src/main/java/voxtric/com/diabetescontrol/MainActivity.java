@@ -39,7 +39,10 @@ import android.widget.Toast;
 import org.apache.pdfbox.util.PDFBoxResourceLoader;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
@@ -156,7 +159,7 @@ public class MainActivity extends DatabaseActivity
       case R.id.action_export_database:
         try
         {
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
           {
             requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
 
@@ -167,7 +170,14 @@ public class MainActivity extends DatabaseActivity
               File exportFilePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), DATABASE_NAME + affix);
               Log.v("Export path", exportFilePath.getAbsolutePath());
               exportFilePath.createNewFile();
-              Files.copy(databaseFilePath.toPath(), exportFilePath.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+              FileInputStream inStream = new FileInputStream(databaseFilePath);
+              FileOutputStream outStream = new FileOutputStream(exportFilePath);
+              FileChannel inChannel = inStream.getChannel();
+              FileChannel outChannel = outStream.getChannel();
+              inChannel.transferTo(0, inChannel.size(), outChannel);
+              inStream.close();
+              outStream.close();
             }
             String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
             Toast.makeText(MainActivity.this, String.format("Database files exported to %s", path), Toast.LENGTH_LONG).show();
@@ -182,7 +192,7 @@ public class MainActivity extends DatabaseActivity
       case R.id.action_import_database:
         try
         {
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
           {
             requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
 
@@ -192,7 +202,14 @@ public class MainActivity extends DatabaseActivity
               File databaseFilePath = new File(getDatabasePath(DATABASE_NAME).getAbsolutePath() + affix);
               File importFilePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), DATABASE_NAME + affix);
               Log.v("Import path", importFilePath.getAbsolutePath());
-              Files.copy(importFilePath.toPath(), databaseFilePath.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+              FileInputStream inStream = new FileInputStream(importFilePath);
+              FileOutputStream outStream = new FileOutputStream(databaseFilePath);
+              FileChannel inChannel = inStream.getChannel();
+              FileChannel outChannel = outStream.getChannel();
+              inChannel.transferTo(0, inChannel.size(), outChannel);
+              inStream.close();
+              outStream.close();
             }
             String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
             Toast.makeText(MainActivity.this, String.format("Database files imported from %s", path), Toast.LENGTH_LONG).show();

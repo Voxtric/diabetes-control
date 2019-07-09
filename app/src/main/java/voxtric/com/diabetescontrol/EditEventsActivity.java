@@ -28,6 +28,7 @@ import java.util.List;
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Event;
+import voxtric.com.diabetescontrol.database.EventsDao;
 
 public class EditEventsActivity extends DatabaseActivity
 {
@@ -388,6 +389,49 @@ public class EditEventsActivity extends DatabaseActivity
     }
   }
 
+  public void resetEvents(View view)
+  {
+    AlertDialog dialog = new AlertDialog.Builder(this)
+        .setTitle(R.string.title_reset_events)
+        .setMessage(R.string.message_reset_events)
+        .setNegativeButton(R.string.cancel, null)
+        .setPositiveButton(R.string.reset, new DialogInterface.OnClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i)
+          {
+            AsyncTask.execute(new Runnable()
+            {
+              @Override
+              public void run()
+              {
+                EventsDao eventsDao = m_database.eventsDao();
+                List<Event> events = eventsDao.getEvents();
+                for (Event event : events)
+                {
+                  eventsDao.deleteEvent(event);
+                }
+                final List<Event> nhsEvents = addNHSEvents(m_database, EditEventsActivity.this);
+
+                runOnUiThread(new Runnable()
+                {
+                  @Override
+                  public void run()
+                  {
+                    m_adapter = new EditEventsRecyclerViewAdapter(nhsEvents, EditEventsActivity.this);
+                    RecyclerView recyclerView = findViewById(R.id.recycler_view_entry_list);
+                    recyclerView.setAdapter(m_adapter);
+                    Toast.makeText(EditEventsActivity.this, R.string.events_reset_message, Toast.LENGTH_LONG).show();
+                  }
+                });
+              }
+            });
+          }
+        })
+        .create();
+    dialog.show();
+  }
+
   public void addNewEvent(View view)
   {
     AsyncTask.execute(new Runnable()
@@ -434,9 +478,10 @@ public class EditEventsActivity extends DatabaseActivity
     });
   }
 
-  public static void addNHSEvents(AppDatabase database, Activity activity)
+  public static List<Event> addNHSEvents(AppDatabase database, Activity activity)
   {
     String[] nhsEventNames = activity.getResources().getStringArray(R.array.nhs_event_names);
+    EventsDao eventsDao = database.eventsDao();
     Calendar calendar = Calendar.getInstance();
     calendar.clear();
     calendar.set(
@@ -453,7 +498,7 @@ public class EditEventsActivity extends DatabaseActivity
       beforeBreakfastEvent.name = nhsEventNames[0];
       beforeBreakfastEvent.timeInDay = calendar.getTimeInMillis();
       beforeBreakfastEvent.order = 0;
-      database.eventsDao().insert(beforeBreakfastEvent);
+      eventsDao.insert(beforeBreakfastEvent);
     }
 
     {
@@ -462,7 +507,7 @@ public class EditEventsActivity extends DatabaseActivity
       twoHoursAfterBreakfastEvent.name = nhsEventNames[1];
       twoHoursAfterBreakfastEvent.timeInDay = calendar.getTimeInMillis();
       twoHoursAfterBreakfastEvent.order = 1;
-      database.eventsDao().insert(twoHoursAfterBreakfastEvent);
+      eventsDao.insert(twoHoursAfterBreakfastEvent);
     }
 
     {
@@ -471,7 +516,7 @@ public class EditEventsActivity extends DatabaseActivity
       beforeMiddayMealEvent.name = nhsEventNames[2];
       beforeMiddayMealEvent.timeInDay = calendar.getTimeInMillis();
       beforeMiddayMealEvent.order = 2;
-      database.eventsDao().insert(beforeMiddayMealEvent);
+      eventsDao.insert(beforeMiddayMealEvent);
     }
 
     {
@@ -480,7 +525,7 @@ public class EditEventsActivity extends DatabaseActivity
       twoHoursAfterMiddayMealEvent.name = nhsEventNames[3];
       twoHoursAfterMiddayMealEvent.timeInDay = calendar.getTimeInMillis();
       twoHoursAfterMiddayMealEvent.order = 3;
-      database.eventsDao().insert(twoHoursAfterMiddayMealEvent);
+      eventsDao.insert(twoHoursAfterMiddayMealEvent);
     }
 
     {
@@ -489,7 +534,7 @@ public class EditEventsActivity extends DatabaseActivity
       beforeEveningMealEvent.name = nhsEventNames[4];
       beforeEveningMealEvent.timeInDay = calendar.getTimeInMillis();
       beforeEveningMealEvent.order = 4;
-      database.eventsDao().insert(beforeEveningMealEvent);
+      eventsDao.insert(beforeEveningMealEvent);
     }
 
     {
@@ -498,7 +543,7 @@ public class EditEventsActivity extends DatabaseActivity
       twoHoursAfterEveningMealEvent.name = nhsEventNames[5];
       twoHoursAfterEveningMealEvent.timeInDay = calendar.getTimeInMillis();
       twoHoursAfterEveningMealEvent.order = 5;
-      database.eventsDao().insert(twoHoursAfterEveningMealEvent);
+      eventsDao.insert(twoHoursAfterEveningMealEvent);
     }
 
     {
@@ -507,7 +552,7 @@ public class EditEventsActivity extends DatabaseActivity
       beforeBedEvent.name = nhsEventNames[6];
       beforeBedEvent.timeInDay = calendar.getTimeInMillis();
       beforeBedEvent.order = 6;
-      database.eventsDao().insert(beforeBedEvent);
+      eventsDao.insert(beforeBedEvent);
     }
 
     {
@@ -516,8 +561,10 @@ public class EditEventsActivity extends DatabaseActivity
       duringNightEvent.name = nhsEventNames[7];
       duringNightEvent.timeInDay = calendar.getTimeInMillis();
       duringNightEvent.order = 7;
-      database.eventsDao().insert(duringNightEvent);
+      eventsDao.insert(duringNightEvent);
     }
+
+    return eventsDao.getEvents();
   }
 
   @Override
