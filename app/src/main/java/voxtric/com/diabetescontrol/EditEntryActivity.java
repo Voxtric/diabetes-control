@@ -8,9 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import java.util.Calendar;
 import java.util.concurrent.CountDownLatch;
 
 import voxtric.com.diabetescontrol.database.DataEntry;
@@ -18,7 +16,7 @@ import voxtric.com.diabetescontrol.database.DatabaseActivity;
 
 public class EditEntryActivity extends DatabaseActivity
 {
-  private DataEntry m_entry = null;
+  private DataEntry m_editedEntry = null;
   private CountDownLatch m_latch = new CountDownLatch(1);
 
   @Override
@@ -44,7 +42,7 @@ public class EditEntryActivity extends DatabaseActivity
           @Override
           public void run()
           {
-            m_entry = m_database.dataEntriesDao().getEntry(timeStamp).get(0);
+            m_editedEntry = m_database.dataEntriesDao().getEntry(timeStamp);
             m_latch.countDown();
           }
         });
@@ -64,7 +62,7 @@ public class EditEntryActivity extends DatabaseActivity
       NewEntryFragment fragment = (NewEntryFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_edit_entry);
       if (fragment != null)
       {
-        fragment.setValues(m_entry, this);
+        fragment.setValues(m_editedEntry, this);
       }
     }
     catch (InterruptedException exception)
@@ -117,7 +115,21 @@ public class EditEntryActivity extends DatabaseActivity
       @Override
       public void onClick(View view)
       {
-        NewEntryFragment fragment = (NewEntryFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_edit_entry);
+        final NewEntryFragment newEntryFragment = (NewEntryFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_edit_entry);
+        if (newEntryFragment != null)
+        {
+          final DataEntry entry = newEntryFragment.createEntry(EditEntryActivity.this);
+          AsyncTask.execute(new Runnable()
+          {
+            @Override
+            public void run()
+            {
+              newEntryFragment.checkDateMismatch(EditEntryActivity.this, entry, m_editedEntry);
+            }
+          });
+        }
+
+        /*NewEntryFragment fragment = (NewEntryFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_edit_entry);
         if (fragment != null)
         {
           final DataEntry entry = fragment.createEntry(EditEntryActivity.this);
@@ -195,7 +207,7 @@ public class EditEntryActivity extends DatabaseActivity
             Toast.makeText(EditEntryActivity.this, R.string.changes_not_saved_message, Toast.LENGTH_LONG).show();
             finish();
           }
-        }
+        }*/
       }
     });
   }

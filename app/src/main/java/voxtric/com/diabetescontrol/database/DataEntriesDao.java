@@ -14,9 +14,6 @@ public interface DataEntriesDao
   @Query("SELECT * FROM data_entries ORDER BY actual_timestamp DESC LIMIT :limit")
   List<DataEntry> getPreviousEntries(int limit);
 
-  @Query("SELECT * FROM data_entries WHERE actual_timestamp IS :timeStamp")
-  List<DataEntry> getEntry(long timeStamp);
-
 
 
   @Query("SELECT * FROM data_entries WHERE actual_timestamp < :before AND insulin_name LIKE :insulinName ORDER BY actual_timestamp DESC LIMIT 1")
@@ -52,6 +49,9 @@ public interface DataEntriesDao
   List<DataEntry> findNextEntryWithAdditionalNotes(long after, String additionalNotes);
 
 
+
+  @Query("SELECT * FROM data_entries WHERE actual_timestamp IS :timeStamp")
+  DataEntry getEntry(long timeStamp);
 
   @Query("SELECT * FROM data_entries WHERE day_timestamp IS :dayTimeStamp AND event IS :event")
   DataEntry findOverlapping(long dayTimeStamp, String event);

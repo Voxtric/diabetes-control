@@ -43,9 +43,11 @@ import java.util.List;
 import java.util.Set;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
+import voxtric.com.diabetescontrol.database.DataEntriesDao;
 import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Event;
+import voxtric.com.diabetescontrol.database.EventsDao;
 
 public class NewEntryFragment extends Fragment
 {
@@ -503,7 +505,7 @@ public class NewEntryFragment extends Fragment
         saveAutoCompleteView(R.id.auto_complete_additional_notes);
 
         final Activity activity = getActivity();
-        if (activity != null)
+        if (activity instanceof DatabaseActivity)
         {
           boolean proceed = true;
 
@@ -537,7 +539,7 @@ public class NewEntryFragment extends Fragment
               @Override
               public void run()
               {
-                checkDateMismatch(activity, entry);
+                checkDateMismatch((DatabaseActivity)activity, entry, null);
               }
             });
           }
@@ -831,181 +833,26 @@ public class NewEntryFragment extends Fragment
 
   private void updateUIWithNewEntry(final Activity activity)
   {
-    reset();
-    Toast.makeText(activity, R.string.new_entry_added_message, Toast.LENGTH_LONG).show();
-
-    FragmentManager fragmentManager = getFragmentManager();
-    if (fragmentManager != null)
+    if (activity instanceof  EditEntryActivity)
     {
-      List<Fragment> fragments = fragmentManager.getFragments();
-      if (fragments.size() >= 2 && fragments.get(1) instanceof EntryListFragment)
-      {
-        ((EntryListFragment)fragments.get(1)).refreshEntryList();
-      }
-    }
-  }
-
-  private void addEntry(final Activity activity, DataEntry entry, DataEntry entryToReplace)
-  {
-    if (entryToReplace != null)
-    {
-      m_database.dataEntriesDao().delete(entryToReplace);
-    }
-    m_database.dataEntriesDao().insert(entry);
-    activity.runOnUiThread(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        updateUIWithNewEntry(activity);
-      }
-    });
-  }
-
-  private void queryEventOverlap(final Activity activity, final DataEntry entry, final DataEntry overlappingEntry)
-  {
-    AlertDialog dialog = new AlertDialog.Builder(activity)
-        .setTitle(R.string.title_event_collision)
-        .setMessage(R.string.message_event_collision_replace)
-        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
-        {
-          @Override
-          public void onClick(DialogInterface dialog, int which)
-          {
-            Toast.makeText(activity, R.string.new_entry_cancelled_message, Toast.LENGTH_LONG).show();
-          }
-        })
-        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
-        {
-          @Override
-          public void onClick(DialogInterface dialog, int which)
-          {
-            AsyncTask.execute(new Runnable()
-            {
-              @Override
-              public void run()
-              {
-                addEntry(activity, entry, overlappingEntry);
-              }
-            });
-          }
-        })
-        .create();
-    dialog.show();
-  }
-
-  private void checkEventOverlap(final Activity activity, final DataEntry entry)
-  {
-    final DataEntry overlappingEntry = m_database.dataEntriesDao().findOverlapping(entry.dayTimeStamp, entry.event);
-    if (overlappingEntry == null)
-    {
-      addEntry(activity, entry, null);
+      activity.setResult(EntryListFragment.RESULT_LIST_UPDATE_NEEDED);
+      activity.finish();
+      Toast.makeText(activity, R.string.changes_saved_message, Toast.LENGTH_LONG).show();
     }
     else
     {
-      activity.runOnUiThread(new Runnable()
+      reset();
+      Toast.makeText(activity, R.string.new_entry_added_message, Toast.LENGTH_LONG).show();
+
+      FragmentManager fragmentManager = getFragmentManager();
+      if (fragmentManager != null)
       {
-        @Override
-        public void run()
+        List<Fragment> fragments = fragmentManager.getFragments();
+        if (fragments.size() >= 2 && fragments.get(1) instanceof EntryListFragment)
         {
-          queryEventOverlap(activity, entry, overlappingEntry);
+          ((EntryListFragment) fragments.get(1)).refreshEntryList();
         }
-      });
-    }
-  }
-
-  private void queryDateMismatch(final Activity activity, final DataEntry entry)
-  {
-    Date date = new Date(entry.dayTimeStamp);
-    String dateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
-
-    final Calendar calendar = Calendar.getInstance();
-    calendar.setTimeInMillis(entry.dayTimeStamp);
-    calendar.add(Calendar.DAY_OF_MONTH, -1);
-    Date previousDate = calendar.getTime();
-    String previousDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(previousDate);
-
-    AlertDialog dialog = new AlertDialog.Builder(activity)
-        .setTitle(R.string.title_event_date_mismatch)
-        .setMessage(getString(R.string.message_event_date_mismatch, dateString, previousDateString))
-        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
-        {
-          @Override
-          public void onClick(DialogInterface dialogInterface, int i)
-          {
-            AsyncTask.execute(new Runnable()
-            {
-              @Override
-              public void run()
-              {
-                entry.dayTimeStamp = calendar.getTimeInMillis();
-                checkEventOverlap(activity, entry);
-              }
-            });
-          }
-        })
-        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
-        {
-          @Override
-          public void onClick(DialogInterface dialogInterface, int i)
-          {
-            AsyncTask.execute(new Runnable()
-            {
-              @Override
-              public void run()
-              {
-                checkEventOverlap(activity, entry);
-              }
-            });
-          }
-        })
-        .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener()
-        {
-          @Override
-          public void onClick(DialogInterface dialogInterface, int i)
-          {
-            Toast.makeText(activity, R.string.new_entry_cancelled_message, Toast.LENGTH_LONG).show();
-          }
-        })
-        .create();
-    dialog.show();
-  }
-
-  private void checkDateMismatch(final Activity activity, final DataEntry entry)
-  {
-    Event event = m_database.eventsDao().getEvent(entry.event);
-
-    boolean possibilityA = false;
-    DataEntry previousEntry = m_database.dataEntriesDao().findFirstBefore(entry.actualTimestamp);
-    if (previousEntry != null)
-    {
-      Event previousEvent = m_database.eventsDao().getEvent(previousEntry.event);
-      possibilityA = event.order > previousEvent.order && entry.dayTimeStamp > previousEntry.dayTimeStamp;
-    }
-
-    Event firstEvent = m_database.eventsDao().getEvents().get(0);
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTimeInMillis(entry.actualTimestamp);
-    calendar.set(
-        calendar.getMinimum(Calendar.YEAR),
-        calendar.getMinimum(Calendar.MONTH),
-        calendar.getMinimum(Calendar.DATE));
-    boolean possibilityB = event.id != firstEvent.id && firstEvent.timeInDay > calendar.getTimeInMillis();
-
-    if (possibilityA || possibilityB)
-    {
-      activity.runOnUiThread(new Runnable()
-      {
-        @Override
-        public void run()
-        {
-          queryDateMismatch(activity, entry);
-        }
-      });
-    }
-    else
-    {
-      checkEventOverlap(activity, entry);
+      }
     }
   }
 
@@ -1107,5 +954,197 @@ public class NewEntryFragment extends Fragment
       additionalNotes.setText(entry.additionalNotes);
       additionalNotes.setGravity(Gravity.START | Gravity.TOP);
     }
+  }
+
+  public void checkDateMismatch(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace)
+  {
+    AppDatabase database = activity.getDatabase();
+    DataEntriesDao dataEntriesDao = database.dataEntriesDao();
+    EventsDao eventsDao = database.eventsDao();
+
+    Event event = eventsDao.getEvent(entry.event);
+
+    boolean possibilityA = false;
+    DataEntry previousEntry = dataEntriesDao.findFirstBefore(entry.actualTimestamp);
+    if (previousEntry != null)
+    {
+      Event previousEvent = eventsDao.getEvent(previousEntry.event);
+      possibilityA = event.order > previousEvent.order && entry.dayTimeStamp > previousEntry.dayTimeStamp;
+    }
+
+    Event firstEvent = eventsDao.getEvents().get(0);
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTimeInMillis(entry.actualTimestamp);
+    calendar.set(
+        calendar.getMinimum(Calendar.YEAR),
+        calendar.getMinimum(Calendar.MONTH),
+        calendar.getMinimum(Calendar.DATE));
+    boolean possibilityB = event.id != firstEvent.id && firstEvent.timeInDay > calendar.getTimeInMillis();
+
+    if (possibilityA || possibilityB)
+    {
+      activity.runOnUiThread(new Runnable()
+      {
+        @Override
+        public void run()
+        {
+          queryDateMismatch(activity, entry, entryToReplace);
+        }
+      });
+    }
+    else
+    {
+      checkEventOverlap(activity, entry, entryToReplace);
+    }
+  }
+
+  private void queryDateMismatch(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace)
+  {
+    Date date = new Date(entry.dayTimeStamp);
+    String dateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
+
+    final Calendar calendar = Calendar.getInstance();
+    calendar.setTimeInMillis(entry.dayTimeStamp);
+    calendar.add(Calendar.DAY_OF_MONTH, -1);
+    Date previousDate = calendar.getTime();
+    String previousDateString = DateFormat.getDateInstance(DateFormat.SHORT).format(previousDate);
+
+    android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(activity)
+        .setTitle(R.string.title_event_date_mismatch)
+        .setMessage(activity.getString(R.string.message_event_date_mismatch, dateString, previousDateString))
+        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i)
+          {
+            AsyncTask.execute(new Runnable()
+            {
+              @Override
+              public void run()
+              {
+                entry.dayTimeStamp = calendar.getTimeInMillis();
+                checkEventOverlap(activity, entry, entryToReplace);
+              }
+            });
+          }
+        })
+        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i)
+          {
+            AsyncTask.execute(new Runnable()
+            {
+              @Override
+              public void run()
+              {
+                checkEventOverlap(activity, entry, entryToReplace);
+              }
+            });
+          }
+        })
+        .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i)
+          {
+            Toast.makeText(activity, R.string.new_entry_cancelled_message, Toast.LENGTH_LONG).show();
+          }
+        })
+        .create();
+    dialog.show();
+  }
+
+  private void checkEventOverlap(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace)
+  {
+    final DataEntry overlappingEntry = activity.getDatabase().dataEntriesDao().findOverlapping(entry.dayTimeStamp, entry.event);
+    if (entryToReplace != null)
+    {
+      if (overlappingEntry == null || overlappingEntry.actualTimestamp == entryToReplace.actualTimestamp)
+      {
+        addEntry(activity, entry, entryToReplace);
+      }
+      else
+      {
+        activity.runOnUiThread(new Runnable()
+        {
+          @Override
+          public void run()
+          {
+            android.support.v7.app.AlertDialog dialog = new android.support.v7.app.AlertDialog.Builder(activity)
+                .setTitle(R.string.title_event_collision)
+                .setMessage(R.string.message_event_collision)
+                .setPositiveButton(R.string.ok, null)
+                .create();
+            dialog.show();
+          }
+        });
+      }
+    }
+    else if (overlappingEntry == null)
+    {
+      addEntry(activity, entry, null);
+    }
+    else
+    {
+      activity.runOnUiThread(new Runnable()
+      {
+        @Override
+        public void run()
+        {
+          queryEventOverlap(activity, entry, overlappingEntry);
+        }
+      });
+    }
+  }
+
+  private void queryEventOverlap(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace)
+  {
+    android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(activity)
+        .setTitle(R.string.title_event_collision)
+        .setMessage(R.string.message_event_collision_replace)
+        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialog, int which)
+          {
+            Toast.makeText(activity, R.string.new_entry_cancelled_message, Toast.LENGTH_LONG).show();
+          }
+        })
+        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialog, int which)
+          {
+            AsyncTask.execute(new Runnable()
+            {
+              @Override
+              public void run()
+              {
+                addEntry(activity, entry, entryToReplace);
+              }
+            });
+          }
+        })
+        .create();
+    dialog.show();
+  }
+
+  private void addEntry(final DatabaseActivity activity, DataEntry entry, DataEntry entryToReplace)
+  {
+    DataEntriesDao dataEntriesDao = activity.getDatabase().dataEntriesDao();
+    if (entryToReplace != null)
+    {
+      dataEntriesDao.delete(entryToReplace);
+    }
+    dataEntriesDao.insert(entry);
+    activity.runOnUiThread(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        updateUIWithNewEntry(activity);
+      }
+    });
   }
 }
