@@ -35,5 +35,9 @@
       </value>
     </option>
   </component>
+  <component name="ProjectResources">
+    <resource url="http://www.corel.com/coreldraw/odm/2003" location="$PROJECT_DIR$" />
+    <resource url="http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" location="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
 </project>
