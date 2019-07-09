@@ -101,7 +101,7 @@ public class ADSExporter extends PDFGenerator
     if (foodEatenStringBuilder.length() > 0)
     {
       height = drawText(FONT_BOLD, FONT_SIZE_SMALL, activity.getString(R.string.food_eaten_label), startX + LINE_SPACING, height);
-      String foodEatenString = foodEatenStringBuilder.substring(0, foodEatenStringBuilder.length() - 2);
+      String foodEatenString = foodEatenStringBuilder.substring(0, foodEatenStringBuilder.length() - 3);
       height = drawTextParagraphed(FONT, FONT_SIZE_SMALL, foodEatenString, startX + LINE_SPACING, startX + availableSpace - LINE_SPACING, height, minimumHeight);
       foodEatenStringBuilder.setLength(0);
     }
@@ -220,7 +220,7 @@ public class ADSExporter extends PDFGenerator
       if (entry.foodEaten.length() > 0)
       {
         foodEatenStringBuilder.append(entry.foodEaten.replaceAll("\n", ", "));
-        foodEatenStringBuilder.append(", ");
+        foodEatenStringBuilder.append(" | ");
       }
       if (entry.additionalNotes.length() > 0)
       {
