@@ -17,7 +17,7 @@
         app:bpi_marginBetweenCircles="6dp"
         app:bpi_onSurfaceCount="3"/>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager_previous_entries"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

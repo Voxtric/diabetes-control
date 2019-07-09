@@ -8,15 +8,16 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -97,7 +98,6 @@ public class ExportDurationDialogFragment extends DialogFragment
           public void onClick(DialogInterface dialog, int which)
           {
             preferences.edit().putLong("last_export_time_stamp", System.currentTimeMillis()).apply();
-            //dismiss();
             FragmentManager fragmentManager = getFragmentManager();
             if (fragmentManager != null)
             {

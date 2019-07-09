@@ -10,13 +10,14 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.DialogFragment;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -265,7 +266,7 @@ public class ExportDialogFragment extends DialogFragment
             public void run()
             {
               dismiss();
-              android.support.v7.app.AlertDialog alertDialog = new android.support.v7.app.AlertDialog.Builder(activity)
+              AlertDialog alertDialog = new AlertDialog.Builder(activity)
                   .setTitle("Export Failed")
                   .setMessage("Exporting of your data failed.\n\nPlease ensure there is plenty of space on your device, and try again.")
                   .setPositiveButton(R.string.ok, null)

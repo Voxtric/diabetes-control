@@ -3,9 +3,10 @@ package voxtric.com.diabetescontrol;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.widget.ProgressBar;
+
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 

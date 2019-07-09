@@ -1,7 +1,6 @@
 package voxtric.com.diabetescontrol;
 
 import android.app.Activity;
-import android.support.v4.app.FragmentManager;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;

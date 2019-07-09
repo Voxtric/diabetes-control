@@ -1,15 +1,15 @@
 package voxtric.com.diabetescontrol.database;
 
 import android.annotation.SuppressLint;
-import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.migration.Migration;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 
-import java.time.ZoneId;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+
 import java.util.Calendar;
 
 public abstract class DatabaseActivity extends AppCompatActivity

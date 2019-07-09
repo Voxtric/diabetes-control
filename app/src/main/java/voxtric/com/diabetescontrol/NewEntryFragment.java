@@ -9,12 +9,6 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.NestedScrollView;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -32,6 +26,13 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 
 import com.shuhart.bubblepagerindicator.BubblePageIndicator;
 
@@ -1071,7 +1072,7 @@ public class NewEntryFragment extends Fragment
           @Override
           public void run()
           {
-            android.support.v7.app.AlertDialog dialog = new android.support.v7.app.AlertDialog.Builder(activity)
+            AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setTitle(R.string.title_event_collision)
                 .setMessage(R.string.message_event_collision)
                 .setPositiveButton(R.string.ok, null)
