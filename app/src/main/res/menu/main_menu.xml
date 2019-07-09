@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:id="@+id/group_edit">
         <item
@@ -37,8 +36,7 @@
         </item>
     </group>
 
-    <group android:id="@+id/group_debug"
-        tools:targetApi="26">
+    <group android:id="@+id/group_debug">
         <item
             android:id="@+id/navigation_debug"
             android:title="Debug">

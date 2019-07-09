@@ -70,9 +70,9 @@ public abstract class DatabaseActivity extends AppCompatActivity
           calendar.set(Calendar.MINUTE, 0);
           calendar.set(Calendar.SECOND, 0);
           calendar.set(Calendar.MILLISECOND, 0);
+          long dayTimestamp = calendar.getTimeInMillis();
 
-          timestamp = calendar.getTimeInMillis();
-          database.execSQL("UPDATE data_entries SET day_timestamp = :timestamp", new Object[]{timestamp});
+          database.execSQL("UPDATE data_entries SET day_timestamp = :dayTimestamp WHERE time_stamp = :timestamp", new Object[]{dayTimestamp, timestamp});
         }
       }
 

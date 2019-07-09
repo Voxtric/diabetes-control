@@ -78,10 +78,10 @@ public class Week
     Calendar calendar = Calendar.getInstance();
     calendar.setTimeInMillis(entry.actualTimestamp);
     calendar.set(Calendar.HOUR_OF_DAY, 0);
-    calendar.clear(Calendar.MINUTE);
-    calendar.clear(Calendar.SECOND);
-    calendar.clear(Calendar.MILLISECOND);
-    calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
+    calendar.set(Calendar.MINUTE, 0);
+    calendar.set(Calendar.SECOND, 0);
+    calendar.set(Calendar.MILLISECOND, 0);
+    calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
     weekBeginning = calendar.getTimeInMillis();
     calendar.add(Calendar.WEEK_OF_YEAR, 1);
