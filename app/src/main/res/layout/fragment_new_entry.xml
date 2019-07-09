@@ -195,7 +195,7 @@
                 android:textSize="@dimen/text_size"
                 android:imeOptions="actionNext"
                 android:nextFocusForward="@id/auto_complete_food_eaten"
-                android:inputType="textCapCharacters"
+                android:inputType="number"
                 android:gravity="center"/>
         </LinearLayout>
 

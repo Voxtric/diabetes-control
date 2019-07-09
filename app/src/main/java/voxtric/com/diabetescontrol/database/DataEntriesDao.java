@@ -53,6 +53,11 @@ public interface DataEntriesDao
 
 
 
+  @Query("SELECT * FROM data_entries WHERE day_timestamp IS :dayTimeStamp AND event IS :event")
+  DataEntry findOverlapping(long dayTimeStamp, String event);
+
+
+
   @Query("SELECT * FROM data_entries WHERE actual_timestamp < :timeStamp AND event IS :event AND actual_timestamp IS NOT :notTimeStamp ORDER BY actual_timestamp DESC LIMIT 1")
   DataEntry findFirstBefore(long timeStamp, String event, long notTimeStamp);
 
@@ -64,6 +69,8 @@ public interface DataEntriesDao
 
   @Query("SELECT * FROM data_entries WHERE actual_timestamp > :timeStamp ORDER BY actual_timestamp ASC LIMIT 1")
   DataEntry findFirstAfter(long timeStamp);
+
+
 
   @Query("SELECT * FROM data_entries WHERE actual_timestamp >= :startTimeStamp AND actual_timestamp <= :endTimeStamp ORDER BY actual_timestamp DESC")
   List<DataEntry> findAllBetween(long startTimeStamp, long endTimeStamp);
