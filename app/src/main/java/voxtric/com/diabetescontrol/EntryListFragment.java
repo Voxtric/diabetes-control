@@ -26,6 +26,9 @@ public class EntryListFragment extends Fragment
   public static final int REQUEST_EDIT_ENTRY = 107;
   public static final int RESULT_LIST_UPDATE_NEEDED = 108;
 
+  private static final int LOAD_COUNT = 100;
+  private static final int LOAD_BOUNDARY = 10;
+
   AppDatabase m_database = null;
   EntryListRecyclerViewAdapter m_adapter = null;
 
@@ -65,7 +68,7 @@ public class EntryListFragment extends Fragment
     }
   }
 
-  public void refreshEntryList()
+  void refreshEntryList()
   {
     final Activity activity = getActivity();
     if (activity != null)
@@ -76,7 +79,7 @@ public class EntryListFragment extends Fragment
         @Override
         public void run()
         {
-          final List<DataEntry> entries = m_database.dataEntriesDao().getPreviousEntries(System.currentTimeMillis(), EntryListRecyclerViewAdapter.LOAD_COUNT);
+          final List<DataEntry> entries = m_database.dataEntriesDao().getPreviousEntries(System.currentTimeMillis(), LOAD_COUNT);
           activity.runOnUiThread(new Runnable()
           {
             @Override
@@ -103,9 +106,9 @@ public class EntryListFragment extends Fragment
                     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
                     {
                       int lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
-                      if (lastVisiblePosition == m_adapter.getItemCount() - 1)
+                      if (lastVisiblePosition >= m_adapter.getItemCount() - LOAD_BOUNDARY)
                       {
-                        m_adapter.loadMore(activity, m_database.dataEntriesDao());
+                        m_adapter.loadMore(activity, m_database.dataEntriesDao(), LOAD_COUNT);
                       }
                     }
                   });

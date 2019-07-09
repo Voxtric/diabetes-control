@@ -27,8 +27,6 @@ import voxtric.com.diabetescontrol.database.DataEntry;
 
 public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryListRecyclerViewAdapter.ViewHolder>
 {
-  public static final int LOAD_COUNT = 100;
-
   private final List<DataEntry> m_values;
   private HashMap<View, Integer> m_valueMap = new HashMap<>();
   private MainActivity m_activity;
@@ -63,7 +61,7 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
     return m_values.size();
   }
 
-  void loadMore(final Activity activity, final DataEntriesDao dataEntriesDao)
+  void loadMore(final Activity activity, final DataEntriesDao dataEntriesDao, final int loadCount)
   {
     if (!m_loadingMore)
     {
@@ -73,7 +71,7 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
         @Override
         public void run()
         {
-          List<DataEntry> newEntries = dataEntriesDao.getPreviousEntries(m_values.get(m_values.size() - 1).actualTimestamp, LOAD_COUNT);
+          List<DataEntry> newEntries = dataEntriesDao.getPreviousEntries(m_values.get(m_values.size() - 1).actualTimestamp, loadCount);
           m_values.addAll(newEntries);
           activity.runOnUiThread(new Runnable()
           {
