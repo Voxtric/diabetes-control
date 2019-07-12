@@ -50,8 +50,11 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="line_chart" />
-                            <entry key="sourceFile" value="C:\Users\ben_qxsm9dp\Downloads\drawing.svg" />
+                            <entry key="height" value="72" />
+                            <entry key="outputName" value="icon_radiused" />
+                            <entry key="overrideSize" value="true" />
+                            <entry key="sourceFile" value="C:\Professional Work\diabetes-control\graphics\icon_rounded.svg" />
+                            <entry key="width" value="72" />
                           </map>
                         </option>
                       </PersistentState>
