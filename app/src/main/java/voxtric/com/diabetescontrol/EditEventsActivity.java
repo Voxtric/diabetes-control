@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,6 +112,7 @@ public class EditEventsActivity extends DatabaseActivity
     final Event event = m_adapter.getEvent(dataView);
     final View view = View.inflate(this, R.layout.dialog_edit_event_name, null);
     final EditText input = view.findViewById(R.id.edit_text_event_name);
+    MainActivity.addHintHide(input, Gravity.CENTER, this);
     input.append(event.name);
 
     final DialogInterfaceOnDismissListener onDismissListener = new DialogInterfaceOnDismissListener(event);
@@ -202,51 +205,60 @@ public class EditEventsActivity extends DatabaseActivity
           public void onClick(DialogInterface dialog, int which)
           {
             onDismissListener.keepEditedEvent = true;
-            calendar.set(Calendar.HOUR_OF_DAY, timePicker.getCurrentHour());
-            calendar.set(Calendar.MINUTE, timePicker.getCurrentMinute());
-            if (calendar.getTimeInMillis() != event.timeInDay)
+            calendar.clear();
+            calendar.set(
+                calendar.getMinimum(Calendar.YEAR),
+                calendar.getMinimum(Calendar.MONTH),
+                calendar.getMinimum(Calendar.DATE),
+                timePicker.getCurrentHour(),
+                timePicker.getCurrentMinute(),
+                calendar.getMinimum(Calendar.SECOND));
+            event.timeInDay = calendar.getTimeInMillis();
+            AsyncTask.execute(new Runnable()
             {
-              event.timeInDay = calendar.getTimeInMillis();
-              AsyncTask.execute(new Runnable()
+              @Override
+              public void run()
               {
-                @Override
-                public void run()
+                if (!newEvent)
                 {
-                  if (!newEvent)
+                  m_database.eventsDao().updateEvent(event);
+                  displayMessage(R.string.event_time_changed_message);
+                }
+                else
+                {
+                  List<Event> allEvents = m_database.eventsDao().getEventsTimeOrdered();
+                  int index = 0;
+                  while (index < allEvents.size() && event.timeInDay > allEvents.get(index).timeInDay)
                   {
-                    m_database.eventsDao().updateEvent(event);
-                    displayMessage(R.string.event_time_changed_message);
-                    // TODO: Check why this doesn't update UI
+                    Log.e(String.valueOf(event.timeInDay), String.valueOf(allEvents.get(index).timeInDay));
+                    index++;
+                  }
+                  if (index == allEvents.size())
+                  {
+                    event.order = allEvents.size();
                   }
                   else
                   {
-                    List<Event> allEvents = m_database.eventsDao().getEventsTimeOrdered();
-                    int index = 0;
-                    while (index < allEvents.size() && event.timeInDay > allEvents.get(index).timeInDay)
-                    {
-                      index++;
-                    }
-                    int order = allEvents.get(index).order;
-                    m_database.eventsDao().shuffleOrders(1, order - 1);
-                    event.order = order;
-                    m_database.eventsDao().updateEvent(event);
-
-                    displayMessage(R.string.new_event_added_message);
+                    event.order = allEvents.get(index).order;
+                    m_database.eventsDao().shuffleOrders(1, event.order - 1);
                   }
+                  m_database.eventsDao().updateEvent(event);
 
-                  final List<Event> allEvents = m_database.eventsDao().getEvents();
-                  runOnUiThread(new Runnable()
-                  {
-                    @Override
-                    public void run()
-                    {
-                      m_adapter.updateAllEvents(allEvents);
-                      setResult(MainActivity.RESULT_EVENTS_CHANGED);
-                    }
-                  });
+                  displayMessage(R.string.new_event_added_message);
                 }
-              });
-            }
+
+                final List<Event> allEvents = m_database.eventsDao().getEvents();
+                runOnUiThread(new Runnable()
+                {
+                  @Override
+                  public void run()
+                  {
+                    m_adapter.updateAllEvents(allEvents);
+                    setResult(MainActivity.RESULT_EVENTS_CHANGED);
+                  }
+                });
+              }
+            });
           }
         })
         .create();
@@ -290,13 +302,6 @@ public class EditEventsActivity extends DatabaseActivity
             @Override
             public void onClick(DialogInterface dialog, int which)
             {
-              findViewById(R.id.button_add_new_event).setEnabled(m_adapter.getItemCount() < MAX_EVENT_COUNT);
-              ActionBar actionBar = getSupportActionBar();
-              if (actionBar != null)
-              {
-                actionBar.setTitle(getString(R.string.edit_events_name, m_adapter.getItemCount(), MAX_EVENT_COUNT));
-              }
-              setResult(MainActivity.RESULT_EVENTS_CHANGED);
               AsyncTask.execute(new Runnable()
               {
                 @Override
@@ -313,6 +318,13 @@ public class EditEventsActivity extends DatabaseActivity
                     public void run()
                     {
                       m_adapter.updateAllEvents(events);
+                      findViewById(R.id.button_add_new_event).setEnabled(m_adapter.getItemCount() < MAX_EVENT_COUNT);
+                      ActionBar actionBar = getSupportActionBar();
+                      if (actionBar != null)
+                      {
+                        actionBar.setTitle(getString(R.string.edit_events_name, m_adapter.getItemCount(), MAX_EVENT_COUNT));
+                      }
+                      setResult(MainActivity.RESULT_EVENTS_CHANGED);
                     }
                   });
                 }
@@ -606,12 +618,6 @@ public class EditEventsActivity extends DatabaseActivity
     {
       if (!keepEditedEvent)
       {
-        findViewById(R.id.button_add_new_event).setEnabled(m_adapter.getItemCount() < MAX_EVENT_COUNT);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
-        {
-          actionBar.setTitle(getString(R.string.edit_events_name, m_adapter.getItemCount(), MAX_EVENT_COUNT));
-        }
         AsyncTask.execute(new Runnable()
         {
           @Override
@@ -627,6 +633,12 @@ public class EditEventsActivity extends DatabaseActivity
               public void run()
               {
                 m_adapter.updateAllEvents(events);
+                findViewById(R.id.button_add_new_event).setEnabled(m_adapter.getItemCount() < MAX_EVENT_COUNT);
+                ActionBar actionBar = getSupportActionBar();
+                if (actionBar != null)
+                {
+                  actionBar.setTitle(getString(R.string.edit_events_name, m_adapter.getItemCount(), MAX_EVENT_COUNT));
+                }
               }
             });
           }

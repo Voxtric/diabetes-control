@@ -52,5 +52,6 @@
         android:layout_height="match_parent"
         android:background="@drawable/back"
         android:src="@drawable/more_vertical"
-        android:onClick="openEntryMoreMenu"/>
+        android:onClick="openEntryMoreMenu"
+        android:contentDescription="@string/more_options_content_description" />
 </LinearLayout>

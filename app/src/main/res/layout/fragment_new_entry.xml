@@ -30,7 +30,8 @@
                 android:text="@string/date_label"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_size"
-                android:focusable="true"/>
+                android:focusable="true"
+                android:labelFor="@id/button_date"/>
 
             <Button
                 android:id="@+id/button_date"
@@ -60,7 +61,8 @@
                 android:layout_marginRight="@dimen/text_margin"
                 android:text="@string/time_label"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"/>
+                android:textSize="@dimen/text_size"
+                android:labelFor="@id/button_time"/>
 
             <Button
                 android:id="@+id/button_time"
@@ -91,7 +93,8 @@
                 android:gravity="center_vertical"
                 android:text="@string/event_label"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"/>
+                android:textSize="@dimen/text_size"
+                android:labelFor="@id/spinner_event"/>
 
             <Spinner
                 android:id="@+id/spinner_event"
@@ -116,7 +119,8 @@
                 android:layout_marginRight="@dimen/text_margin"
                 android:text="@string/blood_glucose_level_label"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"/>
+                android:textSize="@dimen/text_size"
+                android:labelFor="@id/edit_text_blood_glucose_level"/>
 
             <EditText
                 android:id="@+id/edit_text_blood_glucose_level"
@@ -151,7 +155,8 @@
                 android:layout_marginRight="@dimen/text_margin"
                 android:text="@string/insulin_name_label"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"/>
+                android:textSize="@dimen/text_size"
+                android:labelFor="@id/auto_complete_insulin_name"/>
 
             <AutoCompleteTextView
                 android:id="@+id/auto_complete_insulin_name"
@@ -183,7 +188,8 @@
                 android:layout_marginRight="@dimen/text_margin"
                 android:text="@string/insulin_dose_label"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"/>
+                android:textSize="@dimen/text_size"
+                android:labelFor="@id/auto_complete_insulin_dose"/>
 
             <AutoCompleteTextView
                 android:id="@+id/auto_complete_insulin_dose"
@@ -207,7 +213,8 @@
             android:layout_height="wrap_content"
             android:text="@string/food_eaten_label"
             android:textColor="@android:color/black"
-            android:textSize="@dimen/text_size"/>
+            android:textSize="@dimen/text_size"
+            android:labelFor="@id/auto_complete_food_eaten"/>
 
         <AutoCompleteTextView
             android:id="@+id/auto_complete_food_eaten"
@@ -235,7 +242,8 @@
             android:layout_height="wrap_content"
             android:text="@string/additional_notes_label"
             android:textColor="@android:color/black"
-            android:textSize="@dimen/text_size"/>
+            android:textSize="@dimen/text_size"
+            android:labelFor="@id/auto_complete_additional_notes"/>
 
         <AutoCompleteTextView
             android:id="@+id/auto_complete_additional_notes"

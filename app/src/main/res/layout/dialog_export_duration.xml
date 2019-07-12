@@ -20,21 +20,21 @@
             android:id="@+id/radio_button_all_recorded"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="All recorded"
+            android:text="@string/export_duration_all_recorded"
             android:textColor="@android:color/black"/>
 
         <RadioButton
             android:id="@+id/radio_button_since_last_export"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Since last export"
+            android:text="@string/export_duration_since_last"
             android:textColor="@android:color/black"/>
 
         <RadioButton
             android:id="@+id/radio_button_within_time_period"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Within time period"
+            android:text="@string/export_duration_within_period"
             android:textColor="@android:color/black"/>
     </RadioGroup>
 
@@ -51,10 +51,11 @@
             android:layout_weight="1"
             android:layout_marginEnd="@dimen/text_margin"
             android:layout_marginRight="@dimen/text_margin"
-            android:text="Start Date:"
+            android:text="@string/date_period_start_label"
             android:textColor="@android:color/black"
             android:textSize="@dimen/text_size"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:labelFor="@id/button_start_date"/>
 
         <Button
             android:id="@+id/button_start_date"
@@ -66,6 +67,7 @@
             android:textColor="@android:color/black"
             android:textSize="@dimen/text_size"
             android:textAlignment="center"
+            android:contentDescription="@string/date_period_start_content_description"
             style="?android:attr/borderlessButtonStyle"/>
     </LinearLayout>
 
@@ -81,10 +83,11 @@
             android:layout_weight="1"
             android:layout_marginEnd="@dimen/text_margin"
             android:layout_marginRight="@dimen/text_margin"
-            android:text="End Date:"
+            android:text="@string/date_period_end_label"
             android:textColor="@android:color/black"
             android:textSize="@dimen/text_size"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:labelFor="@id/button_end_date"/>
 
         <Button
             android:id="@+id/button_end_date"
@@ -96,6 +99,7 @@
             android:textColor="@android:color/black"
             android:textSize="@dimen/text_size"
             android:textAlignment="center"
+            android:contentDescription="@string/date_period_end_content_description"
             style="?android:attr/borderlessButtonStyle"/>
     </LinearLayout>
 </LinearLayout>

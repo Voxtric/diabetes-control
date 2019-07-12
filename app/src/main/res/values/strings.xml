@@ -68,6 +68,8 @@ If not, you can do so later from the settings menu at the top right."
     <string name="new_entry_cancelled_message">New entry cancelled</string>
     <string name="new_entry_deleted_event_message">Entry contains a deleted event</string>
 
+    <string name="more_options_content_description">More options</string>
+
     <!-- Edit Events Activity -->
     <string name="event_name_title">Event Name</string>
     <string name="event_time_title">Event Time</string>
@@ -79,9 +81,10 @@ If not, you can do so later from the settings menu at the top right."
     <string name="title_edit">Edit</string>
     <string name="title_edit_name">Edit Name</string>
     <string name="title_edit_time">Edit Time</string>
-    <string name="title_edit_event_name">Edit event name</string>
+    <string name="title_edit_event_name">Edit Event Name</string>
 
     <string name="event_name_label">Event Name:</string>
+    <string name="event_name_hint">Event Name</string>
 
     <string name="reset_events_text">Reset Events</string>
     <string name="add_new_event_text">Add New Event</string>
@@ -101,7 +104,7 @@ If not, you can do so later from the settings menu at the top right."
     <string name="changes_saved_message">Changes saved</string>
 
     <!-- Settings -->
-    <string name="title_contact_details">Edit contact details</string>
+    <string name="title_contact_details">Edit Contact Details</string>
     <string name="title_targets">Edit targets</string>
 
     <string name="contact_name_label">Contact Name:</string>
@@ -111,12 +114,14 @@ If not, you can do so later from the settings menu at the top right."
 
     <string name="contact_name_hint">Contact Name</string>
     <string name="contact_number_hint">Contact No.</string>
-    <string name="target_lower_hint">Lower (mmol/l)</string>
-    <string name="target_upper_hint">Upper (mmol/l)</string>
+    <string name="target_pre_meal_lower_hint">Pre-meal Lower (mmol/l)</string>
+    <string name="target_pre_meal_upper_hint">Pre-meal Upper (mmol/l)</string>
+    <string name="target_post_meal_lower_hint">Post-meal Lower (mmol/l)</string>
+    <string name="target_post_meal_upper_hint">Post-meal Upper (mmol/l)</string>
     <string name="target_range_indicator">-</string>
 
     <!-- View Previous Dialog -->
-    <string name="title_missing_comparison_values">Missing comparison values</string>
+    <string name="title_missing_comparison_values">Missing Comparison Values</string>
     <string name="title_see_previous_criteria">See previous with similar…</string>
     <string name="title_no_results">No results found</string>
 
@@ -177,6 +182,14 @@ Would you like to associate the entry with %2$s for exporting? (This won't affec
 Give write external storage permission?"
     </string>
     <string name="write_external_storage_permission_needed_message">Cannot export until write permissions are granted.</string>
+
+    <string name="export_duration_all_recorded">All recorded</string>
+    <string name="export_duration_since_last">Since last recorded</string>
+    <string name="export_duration_within_period">Within date period</string>
+    <string name="date_period_start_label">Start Date:</string>
+    <string name="date_period_end_label">End Date:</string>
+    <string name="date_period_start_content_description">Start Date</string>
+    <string name="date_period_end_content_description">End Date</string>
 
     <string name="ads_export_title">ADS Export</string>
     <string name="ads_export_start_message">Generating PDF…</string>

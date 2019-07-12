@@ -14,15 +14,18 @@
         android:gravity="center"
         android:text="@string/event_name_label"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/text_size"/>
+        android:textSize="@dimen/text_size"
+        android:labelFor="@id/edit_text_event_name"/>
 
     <EditText
         android:id="@+id/edit_text_event_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/back"
+        android:hint="@string/event_name_hint"
         android:gravity="center"
         android:textColor="@android:color/black"
         android:textSize="@dimen/text_size"
-        android:inputType="textCapWords|textMultiLine" />
+        android:inputType="textCapWords|textMultiLine"
+        android:autofillHints="" />
 </LinearLayout>
