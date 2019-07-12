@@ -8,7 +8,7 @@ import android.widget.ProgressBar;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import com.tom_roush.pdfbox.pdmodel.common.PDRectangle;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

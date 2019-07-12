@@ -37,8 +37,7 @@ import androidx.room.Room;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import org.apache.pdfbox.util.PDFBoxResourceLoader;
+import com.tom_roush.pdfbox.util.PDFBoxResourceLoader;
 
 import java.io.File;
 import java.io.FileInputStream;
