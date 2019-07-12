@@ -44,6 +44,7 @@ public class AboutActivity extends AppCompatActivity
     ((TextView)findViewById(R.id.database_version_text)).setText(getString(R.string.database_version_text, AppDatabase.Version));
 
     fillContent(R.id.privacy_policy_text, "privacy_policy.html");
+    fillContent(R.id.open_source_information_text, "open_source_information.html");
 
     findViewById(R.id.root).post(new Runnable()
     {

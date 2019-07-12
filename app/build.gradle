@@ -47,6 +47,5 @@ dependencies {
     annotationProcessor 'androidx.room:room-compiler:2.1.0'
 
     implementation 'com.shuhart.bubblepagerindicator:bubblepagerindicator:1.1.2'
-    //implementation 'org.apache:pdfbox-android:1.8.9.0'
     implementation 'com.tom_roush:pdfbox-android:1.8.10.1'
 }
