@@ -23,14 +23,14 @@ import voxtric.com.diabetescontrol.database.DataEntry;
 
 public class EntryListFragment extends Fragment
 {
-  public static final int REQUEST_EDIT_ENTRY = 107;
-  public static final int RESULT_LIST_UPDATE_NEEDED = 108;
+  private static final int REQUEST_EDIT_ENTRY = 107;
+  static final int RESULT_LIST_UPDATE_NEEDED = 108;
 
-  private static final int LOAD_COUNT = 100;
+  static final int LOAD_COUNT = 100;
   private static final int LOAD_BOUNDARY = 10;
 
-  AppDatabase m_database = null;
-  EntryListRecyclerViewAdapter m_adapter = null;
+  private AppDatabase m_database = null;
+  private EntryListRecyclerViewAdapter m_adapter = null;
 
   public EntryListFragment()
   {
@@ -106,9 +106,9 @@ public class EntryListFragment extends Fragment
                     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
                     {
                       int lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
-                      if (lastVisiblePosition >= m_adapter.getItemCount() - LOAD_BOUNDARY)
+                      if (m_adapter.getItemCount() >= LOAD_BOUNDARY && lastVisiblePosition >= m_adapter.getItemCount() - LOAD_BOUNDARY)
                       {
-                        m_adapter.loadMore(activity, m_database.dataEntriesDao(), LOAD_COUNT);
+                        m_adapter.loadMore(activity, m_database.dataEntriesDao());
                       }
                     }
                   });
@@ -141,7 +141,7 @@ public class EntryListFragment extends Fragment
     startActivityForResult(intent, REQUEST_EDIT_ENTRY);
   }
 
-  public void deleteEntry(final View dataView, Activity activity)
+  public void deleteEntry(final View dataView, final Activity activity)
   {
     final DataEntry entry = m_adapter.getEntry(dataView);
     AlertDialog dialog = new AlertDialog.Builder(activity)
@@ -159,13 +159,20 @@ public class EntryListFragment extends Fragment
               public void run()
               {
                 m_database.dataEntriesDao().delete(entry);
+                activity.runOnUiThread(new Runnable()
+                {
+                  @Override
+                  public void run()
+                  {
+                    m_adapter.deleteEntry(dataView);
+                    if (m_adapter.getItemCount() == 0)
+                    {
+                      refreshEntryList();
+                    }
+                  }
+                });
               }
             });
-            m_adapter.deleteEntry(dataView);
-            if (m_adapter.getItemCount() == 0)
-            {
-              refreshEntryList();
-            }
           }
         })
         .create();

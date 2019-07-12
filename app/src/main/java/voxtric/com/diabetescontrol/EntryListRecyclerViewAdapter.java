@@ -61,7 +61,7 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
     return m_values.size();
   }
 
-  void loadMore(final Activity activity, final DataEntriesDao dataEntriesDao, final int loadCount)
+  void loadMore(final Activity activity, final DataEntriesDao dataEntriesDao)
   {
     if (!m_loadingMore)
     {
@@ -71,7 +71,7 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
         @Override
         public void run()
         {
-          List<DataEntry> newEntries = dataEntriesDao.getPreviousEntries(m_values.get(m_values.size() - 1).actualTimestamp, loadCount);
+          List<DataEntry> newEntries = dataEntriesDao.getPreviousEntries(m_values.get(m_values.size() - 1).actualTimestamp, EntryListFragment.LOAD_COUNT);
           m_values.addAll(newEntries);
           activity.runOnUiThread(new Runnable()
           {
@@ -89,20 +89,28 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
 
   DataEntry getEntry(View view)
   {
-    return m_values.get(m_valueMap.get(view));
+    DataEntry entry = null;
+    Integer position = m_valueMap.get(view);
+    if (position != null)
+    {
+      entry = m_values.get(position);
+    }
+    return entry;
   }
 
   void deleteEntry(View view)
   {
-    int position = m_valueMap.get(view);
-    m_values.remove(position);
-    m_valueMap.clear();
-    notifyDataSetChanged();
+    Integer position = m_valueMap.get(view);
+    if (position != null)
+    {
+      m_values.remove((int)position);
+      m_valueMap.clear();
+      notifyDataSetChanged();
+    }
   }
 
   class ViewHolder extends RecyclerView.ViewHolder
   {
-
     private final TextView m_timeStampTextView;
     private final TextView m_bloodGlucoseLevelTextView;
     private final TextView m_insulinDoseTextView;
