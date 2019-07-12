@@ -9,8 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DateFormat;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +18,7 @@ import voxtric.com.diabetescontrol.database.Event;
 public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEventsRecyclerViewAdapter.ViewHolder>
 {
   private List<Event> m_values;
-  private HashMap<View, Integer> m_valueMap = new HashMap<>();
+  private final HashMap<View, Integer> m_valueMap = new HashMap<>();
   private EditEventsActivity m_activity;
 
   EditEventsRecyclerViewAdapter(List<Event> items, EditEventsActivity activity)
@@ -67,7 +65,13 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
 
   Event getEvent(View view)
   {
-    return m_values.get(m_valueMap.get(view));
+    Event event = null;
+    Integer position = m_valueMap.get(view);
+    if (position != null)
+    {
+      event = m_values.get(position);
+    }
+    return event;
   }
 
   Event getEvent(int position)
@@ -75,36 +79,12 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
     return m_values.get(position);
   }
 
-  void updateEvent(View view, Event event, boolean orderChanged)
+  void updateEvent(View view, Event event)
   {
-    int position = m_valueMap.get(view);
-    m_values.set(position, event);
-    if (orderChanged)
+    Integer position = m_valueMap.get(view);
+    if (position != null)
     {
-      Collections.sort(m_values, new Comparator<Event>()
-      {
-        @Override
-        public int compare(Event o1, Event o2)
-        {
-          if (o1.order < o2.order)
-          {
-            return -1;
-          }
-          else if (o1.order > o2.order)
-          {
-            return 1;
-          }
-          else
-          {
-            return 0;
-          }
-        }
-      });
-      m_valueMap.clear();
-      notifyDataSetChanged();
-    }
-    else
-    {
+      m_values.set(position, event);
       notifyItemChanged(position);
     }
   }
@@ -112,14 +92,6 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
   void updateAllEvents(List<Event> items)
   {
     m_values = items;
-    m_valueMap.clear();
-    notifyDataSetChanged();
-  }
-
-  void deleteEvent(View view)
-  {
-    int position = m_valueMap.get(view);
-    m_values.remove(position);
     m_valueMap.clear();
     notifyDataSetChanged();
   }

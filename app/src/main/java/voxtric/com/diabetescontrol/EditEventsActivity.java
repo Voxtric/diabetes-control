@@ -17,6 +17,7 @@ import android.widget.PopupMenu;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -111,7 +112,7 @@ public class EditEventsActivity extends DatabaseActivity
     final EditText input = view.findViewById(R.id.edit_text_event_name);
     input.append(event.name);
 
-    final DialogInterfaceOnDismissListener onDismissListener = new DialogInterfaceOnDismissListener(dataView, event);
+    final DialogInterfaceOnDismissListener onDismissListener = new DialogInterfaceOnDismissListener(event);
     final AlertDialog dialog = new AlertDialog.Builder(this)
         .setTitle(R.string.title_edit_event_name)
         .setView(view)
@@ -126,7 +127,7 @@ public class EditEventsActivity extends DatabaseActivity
             if (!newEventName.equals(event.name))
             {
               event.name = newEventName;
-              m_adapter.updateEvent(dataView, event, false);
+              m_adapter.updateEvent(dataView, event);
               setResult(MainActivity.RESULT_EVENTS_CHANGED);
               AsyncTask.execute(new Runnable()
               {
@@ -191,7 +192,7 @@ public class EditEventsActivity extends DatabaseActivity
     timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
     timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
 
-    final DialogInterfaceOnDismissListener onDismissListener = new DialogInterfaceOnDismissListener(dataView, event);
+    final DialogInterfaceOnDismissListener onDismissListener = new DialogInterfaceOnDismissListener(event);
     final AlertDialog dialog = new AlertDialog.Builder(this)
         .setView(timePicker)
         .setNegativeButton(R.string.cancel, null)
@@ -215,6 +216,7 @@ public class EditEventsActivity extends DatabaseActivity
                   {
                     m_database.eventsDao().updateEvent(event);
                     displayMessage(R.string.event_time_changed_message);
+                    // TODO: Check why this doesn't update UI
                   }
                   else
                   {
@@ -288,7 +290,6 @@ public class EditEventsActivity extends DatabaseActivity
             @Override
             public void onClick(DialogInterface dialog, int which)
             {
-              m_adapter.deleteEvent(dataView);
               findViewById(R.id.button_add_new_event).setEnabled(m_adapter.getItemCount() < MAX_EVENT_COUNT);
               ActionBar actionBar = getSupportActionBar();
               if (actionBar != null)
@@ -301,9 +302,19 @@ public class EditEventsActivity extends DatabaseActivity
                 @Override
                 public void run()
                 {
-                  m_database.eventsDao().deleteEvent(event);
-                  m_database.eventsDao().shuffleOrders(-1, event.order);
+                  EventsDao eventsDao = m_database.eventsDao();
+                  eventsDao.deleteEvent(event);
+                  eventsDao.shuffleOrders(-1, event.order);
+                  final List<Event> events = eventsDao.getEvents();
                   displayMessage(R.string.event_deleted_message);
+                  runOnUiThread(new Runnable()
+                  {
+                    @Override
+                    public void run()
+                    {
+                      m_adapter.updateAllEvents(events);
+                    }
+                  });
                 }
               });
             }
@@ -569,7 +580,7 @@ public class EditEventsActivity extends DatabaseActivity
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem item)
+  public boolean onOptionsItemSelected(@NonNull MenuItem item)
   {
     if (item.getItemId() == android.R.id.home)
     {
@@ -583,12 +594,10 @@ public class EditEventsActivity extends DatabaseActivity
   {
     boolean keepEditedEvent = false;
 
-    private View dataView;
     private Event event;
 
-    DialogInterfaceOnDismissListener(View dataView, Event event)
+    DialogInterfaceOnDismissListener(Event event)
     {
-      this.dataView = dataView;
       this.event = event;
     }
 
@@ -597,7 +606,6 @@ public class EditEventsActivity extends DatabaseActivity
     {
       if (!keepEditedEvent)
       {
-        m_adapter.deleteEvent(dataView);
         findViewById(R.id.button_add_new_event).setEnabled(m_adapter.getItemCount() < MAX_EVENT_COUNT);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
@@ -609,8 +617,18 @@ public class EditEventsActivity extends DatabaseActivity
           @Override
           public void run()
           {
-            m_database.eventsDao().deleteEvent(event);
+            EventsDao eventsDao = m_database.eventsDao();
+            eventsDao.deleteEvent(event);
+            final List<Event> events = eventsDao.getEvents();
             displayMessage(R.string.new_event_cancelled_message);
+            runOnUiThread(new Runnable()
+            {
+              @Override
+              public void run()
+              {
+                m_adapter.updateAllEvents(events);
+              }
+            });
           }
         });
       }
