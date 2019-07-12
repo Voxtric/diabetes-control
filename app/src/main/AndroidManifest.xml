@@ -46,7 +46,9 @@
             android:label="@string/edit_entry_name"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
-        <activity android:name=".AboutActivity"/>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_about"/>
     </application>
 
 </manifest>
