@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="voxtric.com.diabetescontrol">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="false"
@@ -21,7 +21,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
 
         <activity
@@ -39,12 +39,14 @@
 
         <activity
             android:name=".EditEventsActivity"
-            android:label="@string/edit_events_name"/>
+            android:label="@string/edit_events_name" />
 
         <activity
             android:name=".EditEntryActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:label="@string/edit_entry_name"/>
+            android:label="@string/edit_entry_name"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity android:name=".AboutActivity"/>
     </application>
 
 </manifest>

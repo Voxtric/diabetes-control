@@ -131,20 +131,30 @@ public class MainActivity extends DatabaseActivity
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem menuItem)
+  public boolean onOptionsItemSelected(@NonNull MenuItem menuItem)
   {
+    Intent intent;
     switch (menuItem.getItemId())
     {
       case R.id.navigation_edit_events:
-        Intent intent = new Intent(this, EditEventsActivity.class);
+        intent = new Intent(this, EditEventsActivity.class);
         startActivityForResult(intent, REQUEST_EDIT_EVENTS);
         return true;
+
+
+      case R.id.navigation_about:
+        intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
+        return true;
+
+
       case R.id.navigation_edit_contact_details:
         editContactDetails(false);
         return true;
       case R.id.navigation_edit_targets:
         editTargets();
         return true;
+
 
       case R.id.navigation_export_nhs:
         Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
@@ -155,6 +165,7 @@ public class MainActivity extends DatabaseActivity
       case R.id.navigation_export_xlsx:
         Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
         return true;
+
 
       case R.id.action_export_database:
         try
