@@ -102,11 +102,14 @@ If not, you can do so later from the settings menu at the top right."
 
     <!-- About Activity -->
     <string name="icon_content_description">Diabetes Control Icon</string>
+    <string name="voxtric_icon_content_description">Voxtric Icon</string>
+
     <string name="app_version_text">App Version: %1$s</string>
     <string name="database_version_text">Database Version: %1$d</string>
     <string name="legal_notice_label">Legal Notice</string>
     <string name="privacy_policy_label">Privacy Policy</string>
     <string name="open_source_information_label">Open Source Information</string>
+    <string name="created_by_text">Created by Voxtric</string>
 
     <!-- Edit Entry Activity -->
     <string name="title_cancel_entry_edit">Cancel Entry Edit?</string>
