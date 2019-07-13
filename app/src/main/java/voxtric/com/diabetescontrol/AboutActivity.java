@@ -21,8 +21,8 @@ import voxtric.com.diabetescontrol.database.AppDatabase;
 
 public class AboutActivity extends AppCompatActivity
 {
-  private final int EXPAND_DURATION = 6000;
-  private final int COLLAPSE_DURATION = 600;
+  private final int EXPAND_DURATION = 2;
+  private final int COLLAPSE_DURATION = 8;
 
   private final HashMap<View, ExpansionState> m_expansionStates = new HashMap<>();
   private long m_expandDuration = 0;
@@ -43,6 +43,7 @@ public class AboutActivity extends AppCompatActivity
     ((TextView)findViewById(R.id.app_version_text)).setText(getString(R.string.app_version_text, BuildConfig.VERSION_NAME));
     ((TextView)findViewById(R.id.database_version_text)).setText(getString(R.string.database_version_text, AppDatabase.Version));
 
+    fillContent(R.id.disclaimer_text, "disclaimer.html");
     fillContent(R.id.privacy_policy_text, "privacy_policy.html");
     fillContent(R.id.open_source_information_text, "open_source_information.html");
 
@@ -51,11 +52,11 @@ public class AboutActivity extends AppCompatActivity
       @Override
       public void run()
       {
-        m_expansionStates.put(findViewById(R.id.legal_notice_label), new ExpansionState(findViewById(R.id.legal_notice_text)));
+        m_expansionStates.put(findViewById(R.id.disclaimer_label), new ExpansionState(findViewById(R.id.disclaimer_text)));
         m_expansionStates.put(findViewById(R.id.privacy_policy_label), new ExpansionState(findViewById(R.id.privacy_policy_text)));
         m_expansionStates.put(findViewById(R.id.open_source_information_label), new ExpansionState(findViewById(R.id.open_source_information_text)));
 
-        toggleVisibility(findViewById(R.id.legal_notice_label));
+        toggleVisibility(findViewById(R.id.disclaimer_label));
         toggleVisibility(findViewById(R.id.privacy_policy_label));
         toggleVisibility(findViewById(R.id.open_source_information_label));
 
@@ -128,9 +129,9 @@ public class AboutActivity extends AppCompatActivity
 
   public ValueAnimator expand(final View view, long duration, int targetHeight)
   {
-    int prevHeight = view.getHeight();
+    int previousHeight = view.getHeight();
     view.setVisibility(View.VISIBLE);
-    ValueAnimator valueAnimator = ValueAnimator.ofInt(prevHeight, targetHeight);
+    ValueAnimator valueAnimator = ValueAnimator.ofInt(previousHeight, targetHeight);
     valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
     {
       @Override
@@ -141,7 +142,7 @@ public class AboutActivity extends AppCompatActivity
       }
     });
     valueAnimator.setInterpolator(new DecelerateInterpolator());
-    valueAnimator.setDuration(duration);
+    valueAnimator.setDuration(targetHeight / duration);
     valueAnimator.start();
 
     return valueAnimator;
@@ -149,8 +150,8 @@ public class AboutActivity extends AppCompatActivity
 
   public ValueAnimator collapse(final View view, long duration, int targetHeight)
   {
-    int prevHeight = view.getHeight();
-    ValueAnimator valueAnimator = ValueAnimator.ofInt(prevHeight, targetHeight);
+    int previousHeight = view.getHeight();
+    ValueAnimator valueAnimator = ValueAnimator.ofInt(previousHeight, targetHeight);
     valueAnimator.setInterpolator(new DecelerateInterpolator());
     valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
     {
@@ -162,7 +163,14 @@ public class AboutActivity extends AppCompatActivity
       }
     });
     valueAnimator.setInterpolator(new DecelerateInterpolator());
-    valueAnimator.setDuration(duration);
+    if (duration == 0)
+    {
+      valueAnimator.setDuration(0);
+    }
+    else
+    {
+      valueAnimator.setDuration(previousHeight / duration);
+    }
     valueAnimator.start();
 
     return valueAnimator;
