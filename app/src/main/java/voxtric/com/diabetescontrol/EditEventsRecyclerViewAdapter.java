@@ -79,16 +79,6 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
     return m_values.get(position);
   }
 
-  void updateEvent(View view, Event event)
-  {
-    Integer position = m_valueMap.get(view);
-    if (position != null)
-    {
-      m_values.set(position, event);
-      notifyItemChanged(position);
-    }
-  }
-
   void updateAllEvents(List<Event> items)
   {
     m_values = items;

@@ -130,17 +130,26 @@ public class EditEventsActivity extends DatabaseActivity
             if (!newEventName.equals(event.name))
             {
               event.name = newEventName;
-              m_adapter.updateEvent(dataView, event);
-              setResult(MainActivity.RESULT_EVENTS_CHANGED);
               AsyncTask.execute(new Runnable()
               {
                 @Override
                 public void run()
                 {
-                  m_database.eventsDao().updateEvent(event);
+                  EventsDao eventsDao = m_database.eventsDao();
+                  eventsDao.updateEvent(event);
+                  final List<Event> allEvents = eventsDao.getEvents();
                   if (!newEvent)
                   {
                     displayMessage(R.string.event_name_changed_message);
+                    runOnUiThread(new Runnable()
+                    {
+                      @Override
+                      public void run()
+                      {
+                        m_adapter.updateAllEvents(allEvents);
+                        setResult(MainActivity.RESULT_EVENTS_CHANGED);
+                      }
+                    });
                   }
                 }
               });
