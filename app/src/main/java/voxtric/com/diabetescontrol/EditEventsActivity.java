@@ -138,18 +138,18 @@ public class EditEventsActivity extends DatabaseActivity
                   EventsDao eventsDao = m_database.eventsDao();
                   eventsDao.updateEvent(event);
                   final List<Event> allEvents = eventsDao.getEvents();
+                  runOnUiThread(new Runnable()
+                  {
+                    @Override
+                    public void run()
+                    {
+                      m_adapter.updateAllEvents(allEvents);
+                      setResult(MainActivity.RESULT_EVENTS_CHANGED);
+                    }
+                  });
                   if (!newEvent)
                   {
                     displayMessage(R.string.event_name_changed_message);
-                    runOnUiThread(new Runnable()
-                    {
-                      @Override
-                      public void run()
-                      {
-                        m_adapter.updateAllEvents(allEvents);
-                        setResult(MainActivity.RESULT_EVENTS_CHANGED);
-                      }
-                    });
                   }
                 }
               });
