@@ -50,7 +50,7 @@
         android:hint="@string/contact_name_hint"
         android:gravity="center_horizontal"
         style="@style/BasicText"
-        android:inputType="textPersonName"
+        android:inputType="textPersonName|textCapWords"
         android:imeOptions="actionNext"
         android:nextFocusForward="@id/edit_text_contact_number"/>
 

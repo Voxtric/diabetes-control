@@ -23,6 +23,8 @@ import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.Event;
+import voxtric.com.diabetescontrol.database.Preference;
+import voxtric.com.diabetescontrol.database.PreferencesDao;
 import voxtric.com.diabetescontrol.database.TargetChange;
 
 public class ADSExporter extends PDFGenerator
@@ -245,19 +247,14 @@ public class ADSExporter extends PDFGenerator
 
     // Contact Details
     height -= VERTICAL_SPACE / 2.0f;
-    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
-    String contactName = preferences.getString("contact_name", null);
-    if (contactName == null)
-    {
-      contactName = "...........................................";
-    }
+
+    PreferencesDao preferencesDao = m_database.preferencesDao();
+    Preference preference = preferencesDao.getPreference(activity.getResources().getResourceName(R.id.edit_text_contact_name));
+    String contactName = preference != null && preference.value.length() > 0 ? preference.value : "...........................................";
     drawText(FONT, FONT_SIZE_MEDIUM, activity.getString(R.string.contact_name, contactName), BORDER, height);
 
-    String contactNumber = preferences.getString("contact_number", null);
-    if (contactNumber == null)
-    {
-      contactNumber = "...........................................";
-    }
+    preference = preferencesDao.getPreference(activity.getResources().getResourceName(R.id.edit_text_contact_number));
+    String contactNumber = preference != null && preference.value.length() > 0  ? preference.value : "...........................................";
     drawText(FONT, FONT_SIZE_MEDIUM, activity.getString(R.string.contact_number, contactNumber), BORDER + (m_pageWidth / 2.0f), height);
   }
 }

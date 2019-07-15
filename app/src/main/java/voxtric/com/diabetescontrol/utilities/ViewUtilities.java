@@ -56,7 +56,9 @@ public class ViewUtilities
     }
     else
     {
-      viewWithHint.setOnFocusChangeListener(new CompositeOnFocusChangeListener(HINT_HIDE_LISTENER));
+      CompositeOnFocusChangeListener newFocusChangeListener = new CompositeOnFocusChangeListener(focusChangeListener);
+      newFocusChangeListener.registerListener(HINT_HIDE_LISTENER);
+      viewWithHint.setOnFocusChangeListener(newFocusChangeListener);
     }
   }
 
