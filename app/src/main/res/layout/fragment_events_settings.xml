@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/activity_horizontal_margin"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".settings.fragments.EventsSettingsFragment">
@@ -23,11 +22,11 @@
         android:layout_height="2dp"
         android:layout_marginLeft="@dimen/text_box_padding"
         android:layout_marginStart="@dimen/text_box_padding"
-        android:background="@drawable/back"
         app:layout_constraintTop_toTopOf="@id/title_events_settings"
         app:layout_constraintBottom_toBottomOf="@id/title_events_settings"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/title_events_settings"/>
+        app:layout_constraintLeft_toRightOf="@id/title_events_settings"
+        android:background="@drawable/back"/>
 
     <Button
         android:layout_width="0dp"
