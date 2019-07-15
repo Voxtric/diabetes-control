@@ -1,4 +1,4 @@
-package voxtric.com.diabetescontrol;
+package voxtric.com.diabetescontrol.exporting;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -27,9 +27,11 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
 
+import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
+import voxtric.com.diabetescontrol.exporting.ADSExporter;
 
 public class ExportDialogFragment extends DialogFragment
 {

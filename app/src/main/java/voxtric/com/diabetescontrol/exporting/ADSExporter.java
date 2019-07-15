@@ -1,4 +1,4 @@
-package voxtric.com.diabetescontrol;
+package voxtric.com.diabetescontrol.exporting;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.Event;

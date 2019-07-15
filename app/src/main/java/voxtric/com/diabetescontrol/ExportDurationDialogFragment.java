@@ -23,6 +23,8 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import voxtric.com.diabetescontrol.exporting.ExportDialogFragment;
+
 public class ExportDurationDialogFragment extends DialogFragment
 {
   public static final String TAG = "ExportDurationDialogFragment";
