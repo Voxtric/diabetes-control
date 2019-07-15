@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".settings.fragments.TargetsSettingsFragment">
+
+    <TextView
+        android:id="@+id/title_events_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/text_size"
+        android:text="@string/title_mean_targets_settings"/>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginLeft="@dimen/text_box_padding"
+        android:layout_marginStart="@dimen/text_box_padding"
+        app:layout_constraintTop_toTopOf="@id/title_events_settings"
+        app:layout_constraintBottom_toBottomOf="@id/title_events_settings"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/title_events_settings"
+        android:background="@drawable/back"/>
+
+    <TextView
+        android:id="@+id/pre_meal_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/title_events_settings"
+        style="@style/BasicText"
+        android:text="@string/target_pre_meal_label"/>
+
+    <EditText
+        android:id="@+id/edit_text_target_pre_meal_lower"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/pre_meal_label"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/pre_meal_divider"
+        android:background="@drawable/back"
+        android:gravity="center_horizontal"
+        android:hint="@string/target_pre_meal_lower_hint"
+        android:imeOptions="actionNext"
+        android:inputType="numberDecimal"
+        android:nextFocusForward="@id/edit_text_target_pre_meal_upper"
+        style="@style/BasicText"/>
+
+    <TextView
+        android:id="@+id/pre_meal_divider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/text_box_padding"
+        android:layout_marginLeft="@dimen/text_box_padding"
+        android:layout_marginRight="@dimen/text_box_padding"
+        android:layout_marginStart="@dimen/text_box_padding"
+        app:layout_constraintTop_toBottomOf="@id/pre_meal_label"
+        app:layout_constraintLeft_toRightOf="@id/edit_text_target_pre_meal_lower"
+        app:layout_constraintRight_toLeftOf="@id/edit_text_target_pre_meal_upper"
+        style="@style/BasicText"
+        android:text="@string/target_range_indicator"/>
+
+    <EditText
+        android:id="@+id/edit_text_target_pre_meal_upper"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/pre_meal_label"
+        app:layout_constraintLeft_toRightOf="@id/pre_meal_divider"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/back"
+        android:gravity="center_horizontal"
+        android:hint="@string/target_pre_meal_upper_hint"
+        android:imeOptions="actionNext"
+        android:inputType="numberDecimal"
+        android:nextFocusForward="@id/edit_text_target_post_meal_lower"
+        style="@style/BasicText"/>
+
+    <TextView
+        android:id="@+id/post_meal_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        app:layout_constraintTop_toBottomOf="@id/edit_text_target_pre_meal_lower"
+        style="@style/BasicText"
+        android:text="@string/target_pre_meal_label"/>
+
+    <EditText
+        android:id="@+id/edit_text_target_post_meal_lower"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/post_meal_label"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/post_meal_divider"
+        android:background="@drawable/back"
+        android:gravity="center_horizontal"
+        android:hint="@string/target_post_meal_lower_hint"
+        android:imeOptions="actionNext"
+        android:inputType="numberDecimal"
+        android:nextFocusForward="@id/edit_text_target_post_meal_upper"
+        style="@style/BasicText"/>
+
+    <TextView
+        android:id="@+id/post_meal_divider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/text_box_padding"
+        android:layout_marginLeft="@dimen/text_box_padding"
+        android:layout_marginRight="@dimen/text_box_padding"
+        android:layout_marginStart="@dimen/text_box_padding"
+        app:layout_constraintTop_toBottomOf="@id/post_meal_label"
+        app:layout_constraintLeft_toRightOf="@id/edit_text_target_post_meal_lower"
+        app:layout_constraintRight_toLeftOf="@id/edit_text_target_post_meal_upper"
+        style="@style/BasicText"
+        android:text="@string/target_range_indicator"/>
+
+    <EditText
+        android:id="@+id/edit_text_target_post_meal_upper"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/post_meal_label"
+        app:layout_constraintLeft_toRightOf="@id/post_meal_divider"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/back"
+        android:gravity="center_horizontal"
+        android:hint="@string/target_post_meal_upper_hint"
+        android:imeOptions="actionDone"
+        android:inputType="numberDecimal"
+        style="@style/BasicText"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
