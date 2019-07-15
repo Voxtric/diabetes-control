@@ -53,6 +53,7 @@ import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.TargetChange;
 import voxtric.com.diabetescontrol.settings.EditEventsActivity;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
+import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class MainActivity extends DatabaseActivity
 {
@@ -316,49 +317,14 @@ public class MainActivity extends DatabaseActivity
     dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
   }
 
-  public static void addHintHide(final EditText viewWithHint, final int targetGravity, final Activity activity)
-  {
-    viewWithHint.setOnFocusChangeListener(new View.OnFocusChangeListener()
-    {
-      private String originalHint = null;
-
-      @Override
-      public void onFocusChange(View view, boolean hasFocus)
-      {
-        if (originalHint == null)
-        {
-          originalHint = viewWithHint.getHint().toString();
-        }
-
-        if (hasFocus)
-        {
-          viewWithHint.setGravity(targetGravity);
-          viewWithHint.setHint("");
-
-          // They keyboard may fail to be raised normally on some versions of Android, so do it manually.
-          InputMethodManager inputMethodManager = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-          if (inputMethodManager != null)
-          {
-            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
-          }
-        }
-        else if (viewWithHint.getText().length() == 0)
-        {
-          viewWithHint.setGravity(Gravity.CENTER);
-          viewWithHint.setHint(originalHint);
-        }
-      }
-    });
-  }
-
   private void editContactDetails(final boolean firstTimeLaunch)
   {
     final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
     View view = View.inflate(this, R.layout.dialog_edit_contact_details, null);
     final EditText contactName = view.findViewById(R.id.edit_text_contact_name);
     final EditText contactNumber = view.findViewById(R.id.edit_text_contact_number);
-    addHintHide(contactName, Gravity.CENTER, this);
-    addHintHide(contactNumber, Gravity.CENTER, this);
+    ViewUtilities.addHintHide(contactName, Gravity.CENTER, this);
+    ViewUtilities.addHintHide(contactNumber, Gravity.CENTER, this);
     contactName.setText(preferences.getString("contact_name", ""));
     contactNumber.setText(preferences.getString("contact_number", ""));
 
@@ -414,10 +380,10 @@ public class MainActivity extends DatabaseActivity
     final EditText preMealUpper = view.findViewById(R.id.edit_text_target_pre_meal_upper);
     final EditText postMealLower = view.findViewById(R.id.edit_text_target_post_meal_lower);
     final EditText postMealUpper = view.findViewById(R.id.edit_text_target_post_meal_upper);
-    addHintHide(preMealLower, Gravity.CENTER, this);
-    addHintHide(preMealUpper, Gravity.CENTER, this);
-    addHintHide(postMealLower, Gravity.CENTER, this);
-    addHintHide(postMealUpper, Gravity.CENTER, this);
+    ViewUtilities.addHintHide(preMealLower, Gravity.CENTER, this);
+    ViewUtilities.addHintHide(preMealUpper, Gravity.CENTER, this);
+    ViewUtilities.addHintHide(postMealLower, Gravity.CENTER, this);
+    ViewUtilities.addHintHide(postMealUpper, Gravity.CENTER, this);
     final String preMealLowerString = preferences.getString("pre_meal_lower_target", "");
     final String preMealUpperString = preferences.getString("pre_meal_upper_target", "");
     final String postMealLowerString = preferences.getString("post_meal_lower_target", "");

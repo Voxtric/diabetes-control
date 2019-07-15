@@ -23,6 +23,7 @@ public abstract class DatabaseActivity extends AppCompatActivity
   {
     super.onCreate(savedInstanceState);
     m_database = Room.databaseBuilder(this, AppDatabase.class, DATABASE_NAME)
+        .addMigrations(MIGRATION_2_3)
         .addMigrations(MIGRATION_1_2)
         .build();
   }
@@ -31,6 +32,15 @@ public abstract class DatabaseActivity extends AppCompatActivity
   {
     return m_database;
   }
+
+  static final Migration MIGRATION_2_3 = new Migration(2, 3)
+  {
+    @Override
+    public void migrate(@NonNull SupportSQLiteDatabase database)
+    {
+      database.execSQL("CREATE TABLE preferences(name TEXT PRIMARY KEY, int_value INTEGER, float_value REAL, string_value TEXT)");
+    }
+  };
 
   static final Migration MIGRATION_1_2 = new Migration(1, 2)
   {

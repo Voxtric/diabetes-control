@@ -36,6 +36,7 @@ import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Event;
 import voxtric.com.diabetescontrol.database.EventsDao;
+import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class EditEventsActivity extends DatabaseActivity
 {
@@ -115,7 +116,7 @@ public class EditEventsActivity extends DatabaseActivity
     final Event event = m_adapter.getEvent(dataView);
     final View view = View.inflate(this, R.layout.dialog_edit_event_name, null);
     final EditText input = view.findViewById(R.id.edit_text_event_name);
-    MainActivity.addHintHide(input, Gravity.CENTER, this);
+    ViewUtilities.addHintHide(input, Gravity.CENTER, this);
     input.append(event.name);
 
     final DialogInterfaceOnDismissListener onDismissListener = new DialogInterfaceOnDismissListener(event);
