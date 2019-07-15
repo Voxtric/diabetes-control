@@ -122,9 +122,11 @@ If not, you can do so later from the settings menu at the top right."
     <string name="ideal_range_upper_hint">Ideal Upper</string>
     <string name="high_range_lower_hint">High Lower</string>
     <string name="high_range_upper_hint">High Upper</string>
+    <string name="reset_bgl_values_hint">Reset BGL Values</string>
 
     <string name="bgl_range_value_out_of_range_message">BGL range value must be higher than the previous value and lower than the next</string>
-    <string name="bgl_range_value_empty_message">"BGL range value cannot be empty"</string>
+    <string name="bgl_range_value_empty_message">BGL range value cannot be empty</string>
+    <string name="bgl_range_values_reset">BGL values reset to defaults</string>
 
     <string name="title_contact_details_settings">Contact Details</string>
     <string name="contact_name_label">Contact Name:</string>

@@ -52,6 +52,28 @@ public class Preference
     });
   }
 
+  public static void remove(final DatabaseActivity activity, final String name, final Runnable onCompletionMainThread)
+  {
+    AsyncTask.execute(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        PreferencesDao preferencesDao = activity.getDatabase().preferencesDao();
+        Preference preference = preferencesDao.getPreference(name);
+        if (preference != null)
+        {
+          preferencesDao.delete(preference);
+        }
+
+        if (onCompletionMainThread != null)
+        {
+          activity.runOnUiThread(onCompletionMainThread);
+        }
+      }
+    });
+  }
+
   public static void get(final DatabaseActivity activity, final String name, final String defaultValue, @NonNull final ResultRunnable onCompletionMainThread)
   {
     AsyncTask.execute(new Runnable()
@@ -103,6 +125,31 @@ public class Preference
         }
         onCompletionMainThread.setResults(results);
         activity.runOnUiThread(onCompletionMainThread);
+      }
+    });
+  }
+
+  public static void remove(final DatabaseActivity activity, final String[] names, final Runnable onCompletionMainThread)
+  {
+    AsyncTask.execute(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        PreferencesDao preferencesDao = activity.getDatabase().preferencesDao();
+        for (String name : names)
+        {
+          Preference preference = preferencesDao.getPreference(name);
+          if (preference != null)
+          {
+            preferencesDao.delete(preference);
+          }
+        }
+
+        if (onCompletionMainThread != null)
+        {
+          activity.runOnUiThread(onCompletionMainThread);
+        }
       }
     });
   }

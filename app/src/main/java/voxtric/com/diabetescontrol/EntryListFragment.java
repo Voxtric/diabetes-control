@@ -99,11 +99,18 @@ public class EntryListFragment extends Fragment
                 activity.findViewById(R.id.text_view_no_data).setVisibility(View.GONE);
 
                 Preference.get(activity,
-                    new String[]{"bgl_highlighting_enabled", "ideal_minimum", "high_minimum", "action_required_minimum",},
-                    new String[]{"true",
-                        String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get("ideal_minimum")),
-                        String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get("high_minimum")),
-                        String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get("action_required_minimum"))},
+                    new String[] {
+                        BGLHighlightingSettingsFragment.HIGHLIGHTING_ENABLED_PREFERENCE,
+                        BGLHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE,
+                        BGLHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE,
+                        BGLHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE
+                    },
+                    new String[] {
+                        String.valueOf(true),
+                        String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get(BGLHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE)),
+                        String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get(BGLHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE)),
+                        String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get(BGLHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE))
+                    },
                     new Preference.ResultRunnable()
                     {
                       @Override
@@ -111,12 +118,12 @@ public class EntryListFragment extends Fragment
                       {
                         float[] bglHighlightingValues = null;
                         HashMap<String, String> results = getResults();
-                        if (Boolean.valueOf(results.get("bgl_highlighting_enabled")))
+                        if (Boolean.valueOf(results.get(BGLHighlightingSettingsFragment.HIGHLIGHTING_ENABLED_PREFERENCE)))
                         {
                           bglHighlightingValues = new float[3];
-                          bglHighlightingValues[0] = Float.valueOf(results.get("ideal_minimum"));
-                          bglHighlightingValues[1] = Float.valueOf(results.get("high_minimum"));
-                          bglHighlightingValues[2] = Float.valueOf(results.get("action_required_minimum"));
+                          bglHighlightingValues[0] = Float.valueOf(results.get(BGLHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE));
+                          bglHighlightingValues[1] = Float.valueOf(results.get(BGLHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE));
+                          bglHighlightingValues[2] = Float.valueOf(results.get(BGLHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE));
                         }
 
                         m_adapter = new EntryListRecyclerViewAdapter(activity, entries, bglHighlightingValues);

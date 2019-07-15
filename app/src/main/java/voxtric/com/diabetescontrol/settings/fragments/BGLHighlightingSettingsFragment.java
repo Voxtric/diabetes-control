@@ -1,6 +1,7 @@
 package voxtric.com.diabetescontrol.settings.fragments;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -8,13 +9,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 
 import java.util.Collections;
@@ -24,23 +26,29 @@ import java.util.Map;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Preference;
+import voxtric.com.diabetescontrol.database.PreferencesDao;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class BGLHighlightingSettingsFragment extends Fragment
 {
+  public static final String HIGHLIGHTING_ENABLED_PREFERENCE = "bgl_highlighting_enabled";
+  public static final String IDEAL_MINIMUM_PREFERENCE = "bgl_ideal_minimum";
+  public static final String HIGH_MINIMUM_PREFERENCE = "bgl_high_minimum";
+  public static final String ACTION_REQUIRED_MINIMUM_PREFERENCE = "bgl_action_required_minimum";
+  
   public static final Map<String, Float> DEFAULT_VALUES;
   static
   {
     Map<String, Float> defaults = new HashMap<>();
-    defaults.put("ideal_minimum", 2.6f);
-    defaults.put("high_minimum", 8.2f);
-    defaults.put("action_required_minimum", 11.9f);
+    defaults.put(IDEAL_MINIMUM_PREFERENCE, 2.6f);
+    defaults.put(HIGH_MINIMUM_PREFERENCE, 8.2f);
+    defaults.put(ACTION_REQUIRED_MINIMUM_PREFERENCE, 11.9f);
     DEFAULT_VALUES = Collections.unmodifiableMap(defaults);
   }
 
-  HashMap<String, String> m_bglRangeValues = null;
+  private HashMap<String, String> m_bglRangeValues = null;
 
   public BGLHighlightingSettingsFragment()
   {
@@ -63,7 +71,31 @@ public class BGLHighlightingSettingsFragment extends Fragment
         public void onCheckedChanged(CompoundButton compoundButton, boolean checked)
         {
           setBGLHighlightingEnabled(activity, checked);
-          Preference.put(activity, "bgl_highlighting_enabled", String.valueOf(checked), null);
+          Preference.put(activity, HIGHLIGHTING_ENABLED_PREFERENCE, String.valueOf(checked), null);
+        }
+      });
+
+      final Button resetBGLValuesButton = view.findViewById(R.id.button_reset_bgl_values);
+      resetBGLValuesButton.setOnClickListener(new View.OnClickListener()
+      {
+        @Override
+        public void onClick(final View view)
+        {
+          Preference.remove(activity,
+              new String[]{
+                  IDEAL_MINIMUM_PREFERENCE,
+                  HIGH_MINIMUM_PREFERENCE,
+                  ACTION_REQUIRED_MINIMUM_PREFERENCE
+              },
+              new Runnable()
+              {
+                @Override
+                public void run()
+                {
+                  setValues(activity, view.getRootView());
+                  Toast.makeText(activity, R.string.bgl_range_values_reset, Toast.LENGTH_LONG).show();
+                }
+              });
         }
       });
 
@@ -84,33 +116,54 @@ public class BGLHighlightingSettingsFragment extends Fragment
       idealRangeUpper.addTextChangedListener(idealRangeUpperTextWatcher);
       highRangeLower.addTextChangedListener(highRangeLowerTextWatcher);
 
-      saveValuesToDatabaseWhenUnfocused(activity, idealRangeLower, "ideal_minimum");
-      saveValuesToDatabaseWhenUnfocused(activity, idealRangeUpper, "high_minimum");
-      saveValuesToDatabaseWhenUnfocused(activity, highRangeLower, "high_minimum");
-      saveValuesToDatabaseWhenUnfocused(activity, highRangeUpper, "action_required_minimum");
+      saveValuesToDatabaseWhenUnfocused(activity, idealRangeLower, IDEAL_MINIMUM_PREFERENCE);
+      saveValuesToDatabaseWhenUnfocused(activity, idealRangeUpper, HIGH_MINIMUM_PREFERENCE);
+      saveValuesToDatabaseWhenUnfocused(activity, highRangeLower, HIGH_MINIMUM_PREFERENCE);
+      saveValuesToDatabaseWhenUnfocused(activity, highRangeUpper, ACTION_REQUIRED_MINIMUM_PREFERENCE);
 
-      Preference.get(activity,
-          new String[]{ "bgl_highlighting_enabled", "ideal_minimum", "high_minimum", "action_required_minimum" },
-          new String[]{ "true", String.valueOf(DEFAULT_VALUES.get("ideal_minimum")), String.valueOf(DEFAULT_VALUES.get("high_minimum")), String.valueOf(DEFAULT_VALUES.get("action_required_minimum")) },
-          new Preference.ResultRunnable()
-          {
-            @Override
-            public void run()
-            {
-              m_bglRangeValues = getResults();
-              idealRangeLower.setText(m_bglRangeValues.get("ideal_minimum"));
-              idealRangeUpper.setText(m_bglRangeValues.get("high_minimum"));
-              highRangeLower.setText(m_bglRangeValues.get("high_minimum"));
-              highRangeUpper.setText(m_bglRangeValues.get("action_required_minimum"));
-
-              boolean highlightingEnabled = Boolean.valueOf(m_bglRangeValues.get("bgl_highlighting_enabled"));
-              highlightingEnabledSwitch.setChecked(highlightingEnabled);
-              setBGLHighlightingEnabled(activity, highlightingEnabled);
-            }
-          });
+      setValues(activity, view);
     }
 
     return view;
+  }
+
+  private void setValues(final DatabaseActivity activity, View view)
+  {
+    final Switch highlightingEnabledSwitch = view.findViewById(R.id.highlighting_enabled);
+    final EditText idealRangeLower = view.findViewById(R.id.ideal_range_lower);
+    final EditText idealRangeUpper = view.findViewById(R.id.ideal_range_upper);
+    final EditText highRangeLower = view.findViewById(R.id.high_range_lower);
+    final EditText highRangeUpper = view.findViewById(R.id.high_range_upper);
+
+    Preference.get(activity,
+        new String[] {
+            HIGHLIGHTING_ENABLED_PREFERENCE,
+            IDEAL_MINIMUM_PREFERENCE,
+            HIGH_MINIMUM_PREFERENCE,
+            ACTION_REQUIRED_MINIMUM_PREFERENCE
+        },
+        new String[] {
+            String.valueOf(true),
+            String.valueOf(DEFAULT_VALUES.get(IDEAL_MINIMUM_PREFERENCE)),
+            String.valueOf(DEFAULT_VALUES.get(HIGH_MINIMUM_PREFERENCE)),
+            String.valueOf(DEFAULT_VALUES.get(ACTION_REQUIRED_MINIMUM_PREFERENCE))
+        },
+        new Preference.ResultRunnable()
+        {
+          @Override
+          public void run()
+          {
+            m_bglRangeValues = getResults();
+            idealRangeLower.setText(m_bglRangeValues.get(IDEAL_MINIMUM_PREFERENCE));
+            idealRangeUpper.setText(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE));
+            highRangeLower.setText(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE));
+            highRangeUpper.setText(m_bglRangeValues.get(ACTION_REQUIRED_MINIMUM_PREFERENCE));
+
+            boolean highlightingEnabled = Boolean.valueOf(m_bglRangeValues.get(HIGHLIGHTING_ENABLED_PREFERENCE));
+            highlightingEnabledSwitch.setChecked(highlightingEnabled);
+            setBGLHighlightingEnabled(activity, highlightingEnabled);
+          }
+        });
   }
 
   private void setBGLHighlightingEnabled(Activity activity, boolean enabled)
@@ -122,6 +175,8 @@ public class BGLHighlightingSettingsFragment extends Fragment
     activity.findViewById(R.id.high_range_label).setEnabled(enabled);
     activity.findViewById(R.id.high_range_lower).setEnabled(enabled);
     activity.findViewById(R.id.high_range_upper).setEnabled(enabled);
+
+    activity.findViewById(R.id.button_reset_bgl_values).setEnabled(enabled);
   }
 
   private void saveValuesToDatabaseWhenUnfocused(final DatabaseActivity activity, final EditText view, final String preferenceName)
@@ -145,15 +200,15 @@ public class BGLHighlightingSettingsFragment extends Fragment
             boolean valueValid;
             switch (preferenceName)
             {
-              case "ideal_minimum":
-                valueValid = value < Float.valueOf(m_bglRangeValues.get("high_minimum"));
+              case IDEAL_MINIMUM_PREFERENCE:
+                valueValid = value < Float.valueOf(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE));
                 break;
-              case "high_minimum":
-                valueValid = value > Float.valueOf(m_bglRangeValues.get("ideal_minimum")) &&
-                    value < Float.valueOf(m_bglRangeValues.get("action_required_minimum"));
+              case HIGH_MINIMUM_PREFERENCE:
+                valueValid = value > Float.valueOf(m_bglRangeValues.get(IDEAL_MINIMUM_PREFERENCE)) &&
+                    value < Float.valueOf(m_bglRangeValues.get(ACTION_REQUIRED_MINIMUM_PREFERENCE));
                 break;
-              case "action_required_minimum":
-                valueValid = value > Float.valueOf(m_bglRangeValues.get("high_minimum"));
+              case ACTION_REQUIRED_MINIMUM_PREFERENCE:
+                valueValid = value > Float.valueOf(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE));
                 break;
               default:
                 valueValid = false;

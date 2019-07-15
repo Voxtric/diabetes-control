@@ -19,4 +19,7 @@ public interface PreferencesDao
 
   @Insert
   void insert(Preference preference);
+
+  @Delete
+  void delete(Preference preference);
 }
