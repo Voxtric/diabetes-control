@@ -58,6 +58,9 @@
         app:layout_constraintTop_toTopOf="@id/ideal_range_label"
         app:layout_constraintLeft_toRightOf="@id/ideal_range_label"
         app:layout_constraintRight_toLeftOf="@id/ideal_range_divider"
+        android:inputType="numberDecimal"
+        android:imeOptions="actionNext"
+        android:nextFocusForward="@id/ideal_range_upper"
         android:gravity="center"
         android:background="@drawable/back"
         android:hint="@string/ideal_range_lower_hint"/>
@@ -83,6 +86,9 @@
         app:layout_constraintTop_toTopOf="@id/ideal_range_label"
         app:layout_constraintLeft_toRightOf="@id/ideal_range_divider"
         app:layout_constraintRight_toRightOf="parent"
+        android:inputType="numberDecimal"
+        android:imeOptions="actionNext"
+        android:nextFocusForward="@id/high_range_lower"
         android:gravity="center"
         android:background="@drawable/back"
         android:hint="@string/ideal_range_upper_hint"/>
@@ -106,6 +112,9 @@
         app:layout_constraintTop_toTopOf="@id/high_range_label"
         app:layout_constraintLeft_toRightOf="@id/ideal_range_label"
         app:layout_constraintRight_toLeftOf="@id/high_range_divider"
+        android:inputType="numberDecimal"
+        android:imeOptions="actionNext"
+        android:nextFocusForward="@id/high_range_upper"
         android:gravity="center"
         android:background="@drawable/back"
         android:hint="@string/high_range_lower_hint"/>
@@ -131,6 +140,8 @@
         app:layout_constraintTop_toTopOf="@id/high_range_label"
         app:layout_constraintLeft_toRightOf="@id/high_range_divider"
         app:layout_constraintRight_toRightOf="parent"
+        android:inputType="numberDecimal"
+        android:imeOptions="actionDone"
         android:gravity="center"
         android:background="@drawable/back"
         android:hint="@string/ideal_range_upper_hint"/>
