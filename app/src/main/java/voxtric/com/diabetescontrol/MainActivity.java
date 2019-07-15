@@ -51,6 +51,8 @@ import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.TargetChange;
+import voxtric.com.diabetescontrol.settings.EditEventsActivity;
+import voxtric.com.diabetescontrol.settings.SettingsActivity;
 
 public class MainActivity extends DatabaseActivity
 {
@@ -135,26 +137,6 @@ public class MainActivity extends DatabaseActivity
     Intent intent;
     switch (menuItem.getItemId())
     {
-      case R.id.navigation_edit_events:
-        intent = new Intent(this, EditEventsActivity.class);
-        startActivityForResult(intent, REQUEST_EDIT_EVENTS);
-        return true;
-
-
-      case R.id.navigation_about:
-        intent = new Intent(this, AboutActivity.class);
-        startActivity(intent);
-        return true;
-
-
-      case R.id.navigation_edit_contact_details:
-        editContactDetails(false);
-        return true;
-      case R.id.navigation_edit_targets:
-        editTargets();
-        return true;
-
-
       case R.id.navigation_export_nhs:
         Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
         return true;
@@ -163,6 +145,16 @@ public class MainActivity extends DatabaseActivity
         return true;
       case R.id.navigation_export_xlsx:
         Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
+        return true;
+
+
+      case R.id.navigation_about:
+        intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
+        return true;
+      case R.id.navigation_settings:
+        intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
         return true;
 
 
@@ -258,21 +250,20 @@ public class MainActivity extends DatabaseActivity
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
   {
-    switch (requestCode)
+    if (requestCode == REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE)
     {
-      case REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE:
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-        {
-          export(m_exportTitle, m_exportStartMessage, m_exportEndMessage);
-        }
-        else
-        {
-          Toast.makeText(this, R.string.write_external_storage_permission_needed_message, Toast.LENGTH_LONG).show();
-        }
-        break;
-      default:
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        break;
+      if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+      {
+        export(m_exportTitle, m_exportStartMessage, m_exportEndMessage);
+      }
+      else
+      {
+        Toast.makeText(this, R.string.write_external_storage_permission_needed_message, Toast.LENGTH_LONG).show();
+      }
+    }
+    else
+    {
+      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
   }
 

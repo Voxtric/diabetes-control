@@ -1,4 +1,4 @@
-package voxtric.com.diabetescontrol;
+package voxtric.com.diabetescontrol.settings;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -29,6 +29,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Calendar;
 import java.util.List;
 
+import voxtric.com.diabetescontrol.EditEventsRecyclerViewAdapter;
+import voxtric.com.diabetescontrol.MainActivity;
+import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Event;

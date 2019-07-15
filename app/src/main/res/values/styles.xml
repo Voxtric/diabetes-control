@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="BasicText">
+        <item name="android:textSize">@dimen/text_size</item>
+        <item name="android:textColor">@color/colorText</item>
+    </style>
+
 </resources>

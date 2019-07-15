@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import voxtric.com.diabetescontrol.database.Event;
+import voxtric.com.diabetescontrol.settings.EditEventsActivity;
 
 public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEventsRecyclerViewAdapter.ViewHolder>
 {
@@ -21,7 +22,7 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
   private final HashMap<View, Integer> m_valueMap = new HashMap<>();
   private EditEventsActivity m_activity;
 
-  EditEventsRecyclerViewAdapter(List<Event> items, EditEventsActivity activity)
+  public EditEventsRecyclerViewAdapter(List<Event> items, EditEventsActivity activity)
   {
     m_values = items;
     m_activity = activity;
@@ -63,7 +64,7 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
     return m_values.size();
   }
 
-  Event getEvent(View view)
+  public Event getEvent(View view)
   {
     Event event = null;
     Integer position = m_valueMap.get(view);
@@ -74,12 +75,12 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
     return event;
   }
 
-  Event getEvent(int position)
+  public Event getEvent(int position)
   {
     return m_values.get(position);
   }
 
-  void updateAllEvents(List<Event> items)
+  public void updateAllEvents(List<Event> items)
   {
     m_values = items;
     m_valueMap.clear();

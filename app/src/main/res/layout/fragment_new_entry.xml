@@ -27,9 +27,8 @@
                 android:layout_weight="@integer/new_entry_label_weight"
                 android:layout_marginEnd="@dimen/text_margin"
                 android:layout_marginRight="@dimen/text_margin"
+                style="@style/BasicText"
                 android:text="@string/date_label"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"
                 android:focusable="true"
                 android:labelFor="@id/button_date"/>
 
@@ -40,10 +39,8 @@
                 android:layout_weight="@integer/new_entry_input_weight"
                 android:background="@drawable/back"
                 android:minHeight="0dp"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"
-                android:textAlignment="center"
-                style="?android:attr/borderlessButtonStyle"/>
+                style="@style/BasicText"
+                android:textAlignment="center"/>
         </LinearLayout>
 
         <!-- Time -->
@@ -59,9 +56,8 @@
                 android:layout_weight="@integer/new_entry_label_weight"
                 android:layout_marginEnd="@dimen/text_margin"
                 android:layout_marginRight="@dimen/text_margin"
+                style="@style/BasicText"
                 android:text="@string/time_label"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"
                 android:labelFor="@id/button_time"/>
 
             <Button
@@ -71,10 +67,8 @@
                 android:layout_weight="@integer/new_entry_input_weight"
                 android:background="@drawable/back"
                 android:minHeight="0dp"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"
-                android:textAlignment="center"
-                style="?android:attr/borderlessButtonStyle"/>
+                style="@style/BasicText"
+                android:textAlignment="center"/>
         </LinearLayout>
 
         <!-- Event -->
@@ -117,9 +111,8 @@
                 android:layout_weight="@integer/new_entry_label_weight"
                 android:layout_marginEnd="@dimen/text_margin"
                 android:layout_marginRight="@dimen/text_margin"
+                style="@style/BasicText"
                 android:text="@string/blood_glucose_level_label"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"
                 android:labelFor="@id/edit_text_blood_glucose_level"/>
 
             <EditText
@@ -129,8 +122,7 @@
                 android:layout_weight="@integer/new_entry_input_weight"
                 android:background="@drawable/back"
                 android:hint="@string/blood_glucose_level_hint"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"
+                style="@style/BasicText"
                 android:imeOptions="actionNext"
                 android:inputType="numberDecimal"
                 android:nextFocusForward="@id/auto_complete_insulin_name"
@@ -153,9 +145,8 @@
                 android:layout_weight="@integer/new_entry_label_weight"
                 android:layout_marginEnd="@dimen/text_margin"
                 android:layout_marginRight="@dimen/text_margin"
+                style="@style/BasicText"
                 android:text="@string/insulin_name_label"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"
                 android:labelFor="@id/auto_complete_insulin_name"/>
 
             <AutoCompleteTextView
@@ -165,8 +156,7 @@
                 android:layout_weight="@integer/new_entry_input_weight"
                 android:background="@drawable/back"
                 android:hint="@string/insulin_name_hint"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"
+                style="@style/BasicText"
                 android:imeOptions="actionNext"
                 android:nextFocusForward="@id/auto_complete_insulin_dose"
                 android:inputType="textCapWords"
@@ -186,9 +176,8 @@
                 android:layout_weight="@integer/new_entry_label_weight"
                 android:layout_marginEnd="@dimen/text_margin"
                 android:layout_marginRight="@dimen/text_margin"
+                style="@style/BasicText"
                 android:text="@string/insulin_dose_label"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"
                 android:labelFor="@id/auto_complete_insulin_dose"/>
 
             <AutoCompleteTextView
@@ -198,8 +187,7 @@
                 android:layout_weight="@integer/new_entry_input_weight"
                 android:background="@drawable/back"
                 android:hint="@string/insulin_dose_hint"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"
+                style="@style/BasicText"
                 android:imeOptions="actionNext"
                 android:nextFocusForward="@id/auto_complete_food_eaten"
                 android:inputType="number"
@@ -211,9 +199,8 @@
             android:id="@+id/text_view_food_eaten"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/BasicText"
             android:text="@string/food_eaten_label"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/text_size"
             android:labelFor="@id/auto_complete_food_eaten"/>
 
         <AutoCompleteTextView
@@ -227,8 +214,7 @@
             android:paddingEnd="@dimen/text_box_padding"
             android:background="@drawable/back"
             android:hint="@string/food_eaten_hint"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/text_size"
+            style="@style/BasicText"
             android:inputType="textCapWords|textMultiLine"
             android:imeOptions="actionNext"
             android:nextFocusForward="@id/auto_complete_additional_notes"
@@ -240,9 +226,8 @@
             android:id="@+id/text_view_additional_notes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/BasicText"
             android:text="@string/additional_notes_label"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/text_size"
             android:labelFor="@id/auto_complete_additional_notes"/>
 
         <AutoCompleteTextView
@@ -256,8 +241,7 @@
             android:paddingEnd="@dimen/text_box_padding"
             android:background="@drawable/back"
             android:hint="@string/additional_notes_hint"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/text_size"
+            style="@style/BasicText"
             android:inputType="textCapSentences|textMultiLine"
             android:imeOptions="actionDone"
             android:gravity="center"
@@ -273,16 +257,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/see_previous_text"
-                tools:ignore="ButtonStyle" />
+                android:text="@string/see_previous_text" />
 
             <Button
                 android:id="@+id/button_add_new_entry"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/add_new_entry_text"
-                tools:ignore="ButtonStyle" />
+                android:text="@string/add_new_entry_text" />
         </LinearLayout>
 
     </LinearLayout>

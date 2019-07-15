@@ -22,7 +22,6 @@ If not, you can do so later from the settings menu at the top right."
     </string>
 
     <!-- Main Activity -->
-    <string name="title_edit_events">Edit Events</string>
     <string name="title_export">Export</string>
     <string name="title_export_nhs">NHS Format (.pdf)</string>
     <string name="title_export_ads">ADS Format (.pdf)</string>
@@ -110,6 +109,10 @@ If not, you can do so later from the settings menu at the top right."
     <string name="privacy_policy_label">Privacy Policy</string>
     <string name="open_source_information_label">Open Source Information</string>
     <string name="created_by_text">Created by Voxtric</string>
+
+    <!-- Settings Activity -->
+    <string name="title_events_settings">Events Settings</string>
+    <string name="edit_events_text">Edit Events</string>
 
     <!-- Edit Entry Activity -->
     <string name="title_cancel_entry_edit">Cancel Entry Edit?</string>
@@ -242,4 +245,7 @@ Give write external storage permission?"
         <item>Saturday</item>
         <item>Sunday</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

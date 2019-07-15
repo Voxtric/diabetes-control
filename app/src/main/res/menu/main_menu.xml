@@ -3,10 +3,6 @@
 
     <group android:id="@+id/group_action">
         <item
-            android:id="@+id/navigation_edit_events"
-            android:title="@string/title_edit_events" />
-
-        <item
             android:id="@+id/navigation_export"
             android:title="@string/title_export" >
 
@@ -32,18 +28,7 @@
             android:title="@string/title_about"/>
 
         <item android:id="@+id/navigation_settings"
-            android:title="@string/title_settings">
-
-            <menu>
-                <item
-                    android:id="@+id/navigation_edit_contact_details"
-                    android:title="@string/title_edit_contact_details"/>
-
-                <item
-                    android:id="@+id/navigation_edit_targets"
-                    android:title="@string/title_edit_targets"/>
-            </menu>
-        </item>
+            android:title="@string/title_settings"/>
     </group>
 
     <group android:id="@+id/group_debug">

@@ -38,31 +38,28 @@
                 android:id="@+id/app_name_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/app_icon"
                 android:gravity="center"
-                android:text="@string/app_name"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/text_size"
-                app:layout_constraintTop_toBottomOf="@id/app_icon" />
+                style="@style/BasicText"
+                android:text="@string/app_name"/>
 
             <TextView
                 android:id="@+id/app_version_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/app_name_text"
                 android:gravity="center"
-                android:text="@string/app_version_text"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/text_size"
-                app:layout_constraintTop_toBottomOf="@id/app_name_text" />
+                style="@style/BasicText"
+                android:text="@string/app_version_text" />
 
             <TextView
                 android:id="@+id/database_version_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/app_version_text"
                 android:gravity="center"
-                android:text="@string/database_version_text"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/text_size"
-                app:layout_constraintTop_toBottomOf="@id/app_version_text" />
+                style="@style/BasicText"
+                android:text="@string/database_version_text"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -85,17 +82,16 @@
                 android:layout_height="wrap_content"
                 android:labelFor="@id/disclaimer_text"
                 android:onClick="toggleVisibility"
-                android:text="@string/disclaimer_label"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/large_text_size"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:text="@string/disclaimer_label" />
 
             <TextView
                 android:id="@+id/disclaimer_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/text_size" />
+                style="@style/BasicText" />
 
             <TextView
                 android:id="@+id/privacy_policy_label"
@@ -103,17 +99,16 @@
                 android:layout_height="wrap_content"
                 android:labelFor="@id/privacy_policy_text"
                 android:onClick="toggleVisibility"
-                android:text="@string/privacy_policy_label"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/large_text_size"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:text="@string/privacy_policy_label" />
 
             <TextView
                 android:id="@+id/privacy_policy_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/text_size" />
+                style="@style/BasicText" />
 
             <TextView
                 android:id="@+id/open_source_information_label"
@@ -121,17 +116,16 @@
                 android:layout_height="wrap_content"
                 android:labelFor="@id/open_source_information_text"
                 android:onClick="toggleVisibility"
-                android:text="@string/open_source_information_label"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/large_text_size"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:text="@string/open_source_information_label"/>
 
             <TextView
                 android:id="@+id/open_source_information_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/text_size" />
+                style="@style/BasicText" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -139,22 +133,21 @@
         android:id="@+id/voxtric_icon"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:contentDescription="@string/voxtric_icon_content_description"
-        android:src="@drawable/voxtric_icon_rounded"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintHeight_percent=".05"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        android:contentDescription="@string/voxtric_icon_content_description"
+        android:src="@drawable/voxtric_icon_rounded" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/text_box_padding"
         android:layout_marginRight="@dimen/text_box_padding"
-        android:text="@string/created_by_text"
-        android:textColor="@color/colorText"
-        android:textSize="@dimen/text_size"
         app:layout_constraintBottom_toBottomOf="@id/voxtric_icon"
         app:layout_constraintRight_toLeftOf="@id/voxtric_icon"
-        app:layout_constraintTop_toTopOf="@id/voxtric_icon" />
+        app:layout_constraintTop_toTopOf="@id/voxtric_icon"
+        style="@style/BasicText"
+        android:text="@string/created_by_text"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
