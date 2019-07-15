@@ -6,34 +6,34 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".settings.fragments.TargetsSettingsFragment">
+    tools:context=".settings.fragments.MealTargetsSettingsFragment">
 
     <TextView
-        android:id="@+id/title_events_settings"
+        android:id="@+id/title_meal_targets_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:textColor="@color/colorAccent"
         android:textSize="@dimen/text_size"
-        android:text="@string/title_mean_targets_settings"/>
+        android:text="@string/title_meal_targets_settings"/>
 
     <View
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:layout_marginLeft="@dimen/text_box_padding"
         android:layout_marginStart="@dimen/text_box_padding"
-        app:layout_constraintTop_toTopOf="@id/title_events_settings"
-        app:layout_constraintBottom_toBottomOf="@id/title_events_settings"
+        app:layout_constraintTop_toTopOf="@id/title_meal_targets_settings"
+        app:layout_constraintBottom_toBottomOf="@id/title_meal_targets_settings"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/title_events_settings"
+        app:layout_constraintLeft_toRightOf="@id/title_meal_targets_settings"
         android:background="@drawable/back"/>
 
     <TextView
         android:id="@+id/pre_meal_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/title_events_settings"
+        app:layout_constraintTop_toBottomOf="@id/title_meal_targets_settings"
         style="@style/BasicText"
         android:text="@string/target_pre_meal_label"/>
 

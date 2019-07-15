@@ -114,30 +114,26 @@ If not, you can do so later from the settings menu at the top right."
     <string name="title_events_settings">Events</string>
     <string name="edit_events_text">Edit Events</string>
 
-    <string name="title_mean_targets_settings">Meal Targets</string>
+    <string name="title_contact_details_settings">Contact Details</string>
+    <string name="contact_name_label">Contact Name:</string>
+    <string name="contact_number_label">Contact Number:</string>
+    <string name="contact_name_hint">Contact Name</string>
+    <string name="contact_number_hint">Contact No.</string>
+
+    <string name="title_meal_targets_settings">Meal Targets</string>
+    <string name="target_pre_meal_label">Pre-meal blood glucose range (mmol/l):</string>
+    <string name="target_post_meal_label">Post-meal blood glucose range (mmol/l):</string>
+    <string name="target_pre_meal_lower_hint">Pre-meal Lower</string>
+    <string name="target_pre_meal_upper_hint">Pre-meal Upper</string>
+    <string name="target_post_meal_lower_hint">Post-meal Lower</string>
+    <string name="target_post_meal_upper_hint">Post-meal Upper</string>
+    <string name="target_range_indicator">-</string>
 
     <!-- Edit Entry Activity -->
     <string name="title_cancel_entry_edit">Cancel Entry Edit?</string>
     <string name="message_cancel_entry_edit">Any changes made to this entry will be lost. Are you sure you want to cancel the edit?</string>
 
     <string name="changes_saved_message">Changes saved</string>
-
-    <!-- Settings -->
-    <string name="title_contact_details">Edit Contact Details</string>
-    <string name="title_targets">Edit Targets</string>
-
-    <string name="contact_name_label">Contact Name:</string>
-    <string name="contact_number_label">Contact Number:</string>
-    <string name="target_pre_meal_label">Pre-meal blood glucose range (mmol/l):</string>
-    <string name="target_post_meal_label">Post-meal blood glucose range (mmol/l):</string>
-
-    <string name="contact_name_hint">Contact Name</string>
-    <string name="contact_number_hint">Contact No.</string>
-    <string name="target_pre_meal_lower_hint">Pre-meal Lower</string>
-    <string name="target_pre_meal_upper_hint">Pre-meal Upper</string>
-    <string name="target_post_meal_lower_hint">Post-meal Lower</string>
-    <string name="target_post_meal_upper_hint">Post-meal Upper</string>
-    <string name="target_range_indicator">-</string>
 
     <!-- View Previous Dialog -->
     <string name="title_missing_comparison_values">Missing Comparison Values</string>

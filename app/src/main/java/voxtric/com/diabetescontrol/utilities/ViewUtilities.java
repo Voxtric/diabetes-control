@@ -7,11 +7,13 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import java.util.ArrayList;
+
 public class ViewUtilities
 {
   public static void addHintHide(final EditText viewWithHint, final int targetGravity, final Activity activity)
   {
-    viewWithHint.setOnFocusChangeListener(new View.OnFocusChangeListener()
+    final View.OnFocusChangeListener HINT_HIDE_LISTENER = new View.OnFocusChangeListener()
     {
       private String originalHint = null;
 
@@ -41,6 +43,49 @@ public class ViewUtilities
           viewWithHint.setHint(originalHint);
         }
       }
-    });
+    };
+
+    View.OnFocusChangeListener focusChangeListener = viewWithHint.getOnFocusChangeListener();
+    if (focusChangeListener == null)
+    {
+      viewWithHint.setOnFocusChangeListener(HINT_HIDE_LISTENER);
+    }
+    else if (focusChangeListener instanceof CompositeOnFocusChangeListener)
+    {
+      ((CompositeOnFocusChangeListener)focusChangeListener).registerListener(HINT_HIDE_LISTENER);
+    }
+    else
+    {
+      viewWithHint.setOnFocusChangeListener(new CompositeOnFocusChangeListener(HINT_HIDE_LISTENER));
+    }
+  }
+
+  static class CompositeOnFocusChangeListener implements View.OnFocusChangeListener
+  {
+    private ArrayList<View.OnFocusChangeListener> m_registeredListeners = new ArrayList<>();
+
+    CompositeOnFocusChangeListener(View.OnFocusChangeListener onFocusChangeListener)
+    {
+      m_registeredListeners.add(onFocusChangeListener);
+    }
+
+    void registerListener(View.OnFocusChangeListener listener)
+    {
+      m_registeredListeners.add(listener);
+    }
+
+    public void unregisterListener(View.OnFocusChangeListener listener)
+    {
+      m_registeredListeners.remove(listener);
+    }
+
+    @Override
+    public void onFocusChange(View view, boolean hasFocus)
+    {
+      for(View.OnFocusChangeListener listener: m_registeredListeners)
+      {
+        listener.onFocusChange(view, hasFocus);
+      }
+    }
   }
 }

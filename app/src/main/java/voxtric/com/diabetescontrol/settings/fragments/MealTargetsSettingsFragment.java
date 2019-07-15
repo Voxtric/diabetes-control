@@ -18,7 +18,7 @@ import voxtric.com.diabetescontrol.database.TargetChange;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
-public class TargetsSettingsFragment extends Fragment
+public class MealTargetsSettingsFragment extends Fragment
 {
   private final @IdRes int[] VIEW_IDS = new int[] {
       R.id.edit_text_target_pre_meal_lower,
@@ -64,7 +64,7 @@ public class TargetsSettingsFragment extends Fragment
     }
   };
 
-  public TargetsSettingsFragment()
+  public MealTargetsSettingsFragment()
   {
     // Required empty public constructor
   }
@@ -79,7 +79,7 @@ public class TargetsSettingsFragment extends Fragment
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState)
   {
-    View view = inflater.inflate(R.layout.fragment_targets_settings, container, false);
+    View view = inflater.inflate(R.layout.fragment_meal_targets_settings, container, false);
 
     SettingsActivity activity = (SettingsActivity)getActivity();
     if (activity != null)
@@ -87,9 +87,9 @@ public class TargetsSettingsFragment extends Fragment
       for (@IdRes int id : VIEW_IDS)
       {
         EditText editText = view.findViewById(id);
-        ViewUtilities.addHintHide(editText, Gravity.CENTER, activity);
         activity.setTextFromDatabase(editText);
         activity.saveTextToDatabaseWhenUnfocused(editText, UPDATE_DATABASE);
+        ViewUtilities.addHintHide(editText, Gravity.CENTER, activity);
       }
     }
 

@@ -24,9 +24,16 @@
             class="voxtric.com.diabetescontrol.settings.fragments.EventsSettingsFragment"/>
 
         <fragment
+            android:id="@+id/contact_details_settings_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            class="voxtric.com.diabetescontrol.settings.fragments.ContactDetailsSettingsFragment"/>
+
+        <fragment
             android:id="@+id/meal_targets_settings_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            class="voxtric.com.diabetescontrol.settings.fragments.TargetsSettingsFragment"/>
+            class="voxtric.com.diabetescontrol.settings.fragments.MealTargetsSettingsFragment"/>
     </LinearLayout>
 </ScrollView>
