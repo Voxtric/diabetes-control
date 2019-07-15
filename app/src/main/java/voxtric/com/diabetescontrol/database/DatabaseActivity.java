@@ -38,7 +38,7 @@ public abstract class DatabaseActivity extends AppCompatActivity
     @Override
     public void migrate(@NonNull SupportSQLiteDatabase database)
     {
-      database.execSQL("CREATE TABLE preferences(name TEXT PRIMARY KEY, int_value INTEGER, float_value REAL, string_value TEXT)");
+      database.execSQL("CREATE TABLE preferences(name TEXT PRIMARY KEY, value TEXT)");
     }
   };
 

@@ -2,14 +2,19 @@ package voxtric.com.diabetescontrol.settings;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import voxtric.com.diabetescontrol.R;
+import voxtric.com.diabetescontrol.database.DatabaseActivity;
+import voxtric.com.diabetescontrol.database.Preference;
 
-public class SettingsActivity extends AppCompatActivity
+public class SettingsActivity extends DatabaseActivity
 {
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -33,5 +38,63 @@ public class SettingsActivity extends AppCompatActivity
       return true;
     }
     return false;
+  }
+
+  @Override
+  public void onPause()
+  {
+    View view = getCurrentFocus();
+    if (view != null)
+    {
+      view.clearFocus();
+    }
+    super.onPause();
+  }
+
+  @Override
+  public void onResume()
+  {
+    super.onResume();
+    View view = findViewById(R.id.root);
+    view.requestFocus();
+    InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+    if (inputMethodManager != null)
+    {
+      inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+  }
+
+  public void setTextFromDatabase(final EditText view)
+  {
+    String viewName = view.getResources().getResourceName(view.getId());
+    Preference.get(this, viewName, "", new Preference.ResultRunnable()
+    {
+      @Override
+      public void run()
+      {
+        view.setText(getResult());
+      }
+    });
+  }
+
+  public void saveTextToDatabaseWhenUnfocused(final EditText view, final Runnable additionalAction)
+  {
+    final String viewName = view.getResources().getResourceName(view.getId());
+    view.setOnFocusChangeListener(new View.OnFocusChangeListener()
+    {
+      @Override
+      public void onFocusChange(View v, boolean hasFocus)
+      {
+        if (!hasFocus)
+        {
+          Preference.put(SettingsActivity.this, viewName, view.getText().toString(), null);
+
+          if (additionalAction != null)
+          {
+            additionalAction.run();
+          }
+        }
+      }
+    });
   }
 }

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "b3b38a62d842f18c42fb723e677dc9db",
+    "identityHash": "1116222ea99339e507876294e896c91b",
     "entities": [
       {
         "tableName": "data_entries",
@@ -150,7 +150,7 @@
       },
       {
         "tableName": "preferences",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `int_value` INTEGER NOT NULL, `float_value` REAL NOT NULL, `string_value` TEXT, PRIMARY KEY(`name`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `value` TEXT, PRIMARY KEY(`name`))",
         "fields": [
           {
             "fieldPath": "name",
@@ -159,20 +159,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "int_value",
-            "columnName": "int_value",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "float_value",
-            "columnName": "float_value",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "string_value",
-            "columnName": "string_value",
+            "fieldPath": "value",
+            "columnName": "value",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -190,7 +178,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b3b38a62d842f18c42fb723e677dc9db')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1116222ea99339e507876294e896c91b')"
     ]
   }
 }

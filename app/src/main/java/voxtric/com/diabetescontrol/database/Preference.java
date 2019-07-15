@@ -14,14 +14,8 @@ public class Preference
   @PrimaryKey()
   public String name;
 
-  @ColumnInfo(name = "int_value")
-  public int int_value;
-
-  @ColumnInfo(name = "float_value")
-  public float float_value;
-
-  @ColumnInfo(name = "string_value")
-  public String string_value;
+  @ColumnInfo(name = "value")
+  public String value;
 
   private static Preference ensurePreferenceExists(PreferencesDao preferencesDao, String name)
   {
@@ -35,7 +29,7 @@ public class Preference
     return preference;
   }
 
-  static void put(final DatabaseActivity activity, final String name, final int value, final Runnable onCompletionMainThread)
+  public static void put(final DatabaseActivity activity, final String name, final String value, final Runnable onCompletionMainThread)
   {
     AsyncTask.execute(new Runnable()
     {
@@ -44,7 +38,7 @@ public class Preference
       {
         PreferencesDao preferencesDao = activity.getDatabase().preferencesDao();
         Preference preference = ensurePreferenceExists(preferencesDao, name);
-        preference.int_value = value;
+        preference.value = value;
         preferencesDao.update(preference);
 
         if (onCompletionMainThread != null)
@@ -55,47 +49,7 @@ public class Preference
     });
   }
 
-  static void put(final DatabaseActivity activity, final String name, final float value, final Runnable onCompletionMainThread)
-  {
-    AsyncTask.execute(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        PreferencesDao preferencesDao = activity.getDatabase().preferencesDao();
-        Preference preference = ensurePreferenceExists(preferencesDao, name);
-        preference.float_value = value;
-        preferencesDao.update(preference);
-
-        if (onCompletionMainThread != null)
-        {
-          activity.runOnUiThread(onCompletionMainThread);
-        }
-      }
-    });
-  }
-
-  static void put(final DatabaseActivity activity, final String name, final String value, final Runnable onCompletionMainThread)
-  {
-    AsyncTask.execute(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        PreferencesDao preferencesDao = activity.getDatabase().preferencesDao();
-        Preference preference = ensurePreferenceExists(preferencesDao, name);
-        preference.string_value = value;
-        preferencesDao.update(preference);
-
-        if (onCompletionMainThread != null)
-        {
-          activity.runOnUiThread(onCompletionMainThread);
-        }
-      }
-    });
-  }
-
-  static void get(final DatabaseActivity activity, final String name, final int defaultValue, @NonNull final ResultRunnable onCompletionMainThread)
+  public static void get(final DatabaseActivity activity, final String name, final String defaultValue, @NonNull final ResultRunnable onCompletionMainThread)
   {
     AsyncTask.execute(new Runnable()
     {
@@ -106,59 +60,29 @@ public class Preference
         Preference preference = preferencesDao.getPreference(name);
         if (preference == null)
         {
-          preference = new Preference();
-          preference.int_value = defaultValue;
+          onCompletionMainThread.setResult(defaultValue);
         }
-        activity.runOnUiThread(onCompletionMainThread);
-      }
-    });
-  }
-
-  static void get(final DatabaseActivity activity, final String name, final float defaultValue, @NonNull final ResultRunnable onCompletionMainThread)
-  {
-    AsyncTask.execute(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        PreferencesDao preferencesDao = activity.getDatabase().preferencesDao();
-        Preference preference = preferencesDao.getPreference(name);
-        if (preference == null)
+        else
         {
-          preference = new Preference();
-          preference.float_value = defaultValue;
+          onCompletionMainThread.setResult(preference.value);
         }
         activity.runOnUiThread(onCompletionMainThread);
       }
     });
   }
 
-  static void get(final DatabaseActivity activity, final String name, final String defaultValue, @NonNull final ResultRunnable onCompletionMainThread)
+  public abstract static class ResultRunnable implements Runnable
   {
-    AsyncTask.execute(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        PreferencesDao preferencesDao = activity.getDatabase().preferencesDao();
-        Preference preference = preferencesDao.getPreference(name);
-        if (preference == null)
-        {
-          preference = new Preference();
-          preference.string_value = defaultValue;
-        }
-        activity.runOnUiThread(onCompletionMainThread);
-      }
-    });
-  }
+    private String result;
 
-  abstract class ResultRunnable implements Runnable
-  {
-    final Preference preference;
-
-    ResultRunnable(Preference preference)
+    private void setResult(String result)
     {
-      this.preference = preference;
+      this.result = result;
+    }
+
+    public String getResult()
+    {
+      return result;
     }
   }
 }
