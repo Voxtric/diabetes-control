@@ -1,4 +1,4 @@
-package voxtric.com.diabetescontrol;
+package voxtric.com.diabetescontrol.exporting;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,6 +23,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.exporting.ExportDialogFragment;
 
 public class ExportDurationDialogFragment extends DialogFragment
