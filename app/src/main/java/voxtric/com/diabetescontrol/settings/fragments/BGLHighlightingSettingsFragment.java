@@ -13,7 +13,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import java.text.ParseException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +34,9 @@ public class BGLHighlightingSettingsFragment extends Fragment
     defaults.put("high_minimum", 8.2f);
     defaults.put("action_required_minimum", 11.9f);
     DEFAULT_VALUES = Collections.unmodifiableMap(defaults);
-}
+  }
+
+  HashMap<String, String> m_bglRangeValues = null;
 
   public BGLHighlightingSettingsFragment()
   {
@@ -81,11 +82,11 @@ public class BGLHighlightingSettingsFragment extends Fragment
             @Override
             public void run()
             {
-              HashMap<String, String> results = getResults();
-              idealRangeLower.setText(results.get("ideal_minimum"));
-              idealRangeUpper.setText(results.get("high_minimum"));
-              highRangeLower.setText(results.get("high_minimum"));
-              highRangeUpper.setText(results.get("action_required_minimum"));
+              m_bglRangeValues = getResults();
+              idealRangeLower.setText(m_bglRangeValues.get("ideal_minimum"));
+              idealRangeUpper.setText(m_bglRangeValues.get("high_minimum"));
+              highRangeLower.setText(m_bglRangeValues.get("high_minimum"));
+              highRangeUpper.setText(m_bglRangeValues.get("action_required_minimum"));
             }
           });
     }
@@ -111,24 +112,39 @@ public class BGLHighlightingSettingsFragment extends Fragment
           try
           {
             float value = Float.valueOf(text);
+            boolean valueValid;
+            switch (preferenceName)
+            {
+              case "ideal_minimum":
+                valueValid = value < Float.valueOf(m_bglRangeValues.get("high_minimum"));
+                break;
+              case "high_minimum":
+                valueValid = value > Float.valueOf(m_bglRangeValues.get("ideal_minimum")) &&
+                    value < Float.valueOf(m_bglRangeValues.get("action_required_minimum"));
+                break;
+              case "action_required_minimum":
+                valueValid = value > Float.valueOf(m_bglRangeValues.get("high_minimum"));
+                break;
+              default:
+                valueValid = false;
+                break;
+            }
 
-            // TODO: Validate for higher than 0
-            // TODO: Validate for higher or lower than previous or next value
-
-
-            Preference.put(activity, preferenceName, text, null);
-            view.setText(String.valueOf(value));
+            if (valueValid)
+            {
+              Preference.put(activity, preferenceName, text, null);
+              view.setText(String.valueOf(value));
+              m_bglRangeValues.put(preferenceName, text);
+            }
+            else
+            {
+              view.setText(m_bglRangeValues.get(preferenceName));
+              Toast.makeText(activity, R.string.bgl_range_value_out_of_range_message, Toast.LENGTH_LONG).show();
+            }
           }
           catch (NumberFormatException ignored)
           {
-            Preference.get(activity, preferenceName, String.valueOf(DEFAULT_VALUES.get(preferenceName)), new Preference.ResultRunnable()
-            {
-              @Override
-              public void run()
-              {
-                view.append(getResult());
-              }
-            });
+            view.append(m_bglRangeValues.get(preferenceName));
             Toast.makeText(activity, R.string.bgl_range_value_empty_message, Toast.LENGTH_LONG).show();
           }
         }

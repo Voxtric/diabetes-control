@@ -123,6 +123,7 @@ If not, you can do so later from the settings menu at the top right."
     <string name="high_range_lower_hint">High Lower</string>
     <string name="high_range_upper_hint">High Upper</string>
 
+    <string name="bgl_range_value_out_of_range_message">BGL range value must be higher than the previous value and lower than the next</string>
     <string name="bgl_range_value_empty_message">"BGL range value cannot be empty"</string>
 
     <string name="title_contact_details_settings">Contact Details</string>
