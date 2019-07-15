@@ -1,5 +1,6 @@
 package voxtric.com.diabetescontrol.settings.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -7,7 +8,10 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -47,11 +51,22 @@ public class BGLHighlightingSettingsFragment extends Fragment
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState)
   {
-    View view = inflater.inflate(R.layout.fragment_bgl_highlighting_settings, container, false);
+    final View view = inflater.inflate(R.layout.fragment_bgl_highlighting_settings, container, false);
 
-    SettingsActivity activity = (SettingsActivity)getActivity();
+    final SettingsActivity activity = (SettingsActivity)getActivity();
     if (activity != null)
     {
+      final Switch highlightingEnabledSwitch = view.findViewById(R.id.highlighting_enabled);
+      highlightingEnabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+      {
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean checked)
+        {
+          setBGLHighlightingEnabled(activity, checked);
+          Preference.put(activity, "bgl_highlighting_enabled", String.valueOf(checked), null);
+        }
+      });
+
       final EditText idealRangeLower = view.findViewById(R.id.ideal_range_lower);
       final EditText idealRangeUpper = view.findViewById(R.id.ideal_range_upper);
       final EditText highRangeLower = view.findViewById(R.id.high_range_lower);
@@ -75,8 +90,8 @@ public class BGLHighlightingSettingsFragment extends Fragment
       saveValuesToDatabaseWhenUnfocused(activity, highRangeUpper, "action_required_minimum");
 
       Preference.get(activity,
-          new String[]{ "ideal_minimum", "high_minimum", "action_required_minimum" },
-          new String[]{ String.valueOf(DEFAULT_VALUES.get("ideal_minimum")), String.valueOf(DEFAULT_VALUES.get("high_minimum")), String.valueOf(DEFAULT_VALUES.get("action_required_minimum")) },
+          new String[]{ "bgl_highlighting_enabled", "ideal_minimum", "high_minimum", "action_required_minimum" },
+          new String[]{ "true", String.valueOf(DEFAULT_VALUES.get("ideal_minimum")), String.valueOf(DEFAULT_VALUES.get("high_minimum")), String.valueOf(DEFAULT_VALUES.get("action_required_minimum")) },
           new Preference.ResultRunnable()
           {
             @Override
@@ -87,11 +102,26 @@ public class BGLHighlightingSettingsFragment extends Fragment
               idealRangeUpper.setText(m_bglRangeValues.get("high_minimum"));
               highRangeLower.setText(m_bglRangeValues.get("high_minimum"));
               highRangeUpper.setText(m_bglRangeValues.get("action_required_minimum"));
+
+              boolean highlightingEnabled = Boolean.valueOf(m_bglRangeValues.get("bgl_highlighting_enabled"));
+              highlightingEnabledSwitch.setChecked(highlightingEnabled);
+              setBGLHighlightingEnabled(activity, highlightingEnabled);
             }
           });
     }
 
     return view;
+  }
+
+  private void setBGLHighlightingEnabled(Activity activity, boolean enabled)
+  {
+    activity.findViewById(R.id.ideal_range_label).setEnabled(enabled);
+    activity.findViewById(R.id.ideal_range_lower).setEnabled(enabled);
+    activity.findViewById(R.id.ideal_range_upper).setEnabled(enabled);
+
+    activity.findViewById(R.id.high_range_label).setEnabled(enabled);
+    activity.findViewById(R.id.high_range_lower).setEnabled(enabled);
+    activity.findViewById(R.id.high_range_upper).setEnabled(enabled);
   }
 
   private void saveValuesToDatabaseWhenUnfocused(final DatabaseActivity activity, final EditText view, final String preferenceName)
