@@ -1,11 +1,8 @@
 package voxtric.com.diabetescontrol;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,16 +24,19 @@ import voxtric.com.diabetescontrol.database.DataEntry;
 
 public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryListRecyclerViewAdapter.ViewHolder>
 {
-  private final List<DataEntry> m_values;
-  private HashMap<View, Integer> m_valueMap = new HashMap<>();
   private MainActivity m_activity;
 
+  private final List<DataEntry> m_values;
+  private HashMap<View, Integer> m_valueMap = new HashMap<>();
   private boolean m_loadingMore = false;
 
-  EntryListRecyclerViewAdapter(List<DataEntry> items, MainActivity activity)
+  private final float[] m_highlightingValues;
+
+  EntryListRecyclerViewAdapter(MainActivity activity, List<DataEntry> items, float[] highlightingValues)
   {
-    m_values = items;
     m_activity = activity;
+    m_values = items;
+    m_highlightingValues = highlightingValues;
   }
 
   @NonNull
@@ -164,40 +164,26 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
         m_insulinNameTextView.setText(entry.insulinName);
       }
 
-
-      SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(m_activity);
-      boolean highlightEntry = preferences.getBoolean("highlight_entries", true);
-      if (highlightEntry)
+      if (m_highlightingValues != null)
       {
-        float greenStart = preferences.getFloat("bgl_green_start", 4.0f);
-        float yellowStart = preferences.getFloat("bgl_yellow_start", 7.0f);
-        float orangeStart = preferences.getFloat("bgl_orange_start", 10.0f);
-        float redStart = preferences.getFloat("bgl_red_start", 13.0f);
-        @ColorRes final int color;
-        if (entry.bloodGlucoseLevel >= greenStart && entry.bloodGlucoseLevel <= yellowStart)
+        @ColorRes int color;
+        if (entry.bloodGlucoseLevel >= m_highlightingValues[0])
         {
           color = R.color.green;
-        }
-        else if (entry.bloodGlucoseLevel > yellowStart && entry.bloodGlucoseLevel <= orangeStart)
-        {
-          color = R.color.yellow;
-        }
-        else if (entry.bloodGlucoseLevel > orangeStart && entry.bloodGlucoseLevel <= redStart)
-        {
-          color = R.color.orange;
+          if (entry.bloodGlucoseLevel >= m_highlightingValues[1])
+          {
+            color = R.color.yellow;
+            if (entry.bloodGlucoseLevel >= m_highlightingValues[2])
+            {
+              color = R.color.red;
+            }
+          }
         }
         else
         {
           color = R.color.red;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        {
-          m_bloodGlucoseLevelTextView.setTextColor(m_activity.getColor(color));
-        }
-        else
-        {
-          m_bloodGlucoseLevelTextView.setTextColor(m_activity.getResources().getColor(color));
-        }
+        m_bloodGlucoseLevelTextView.setTextColor(m_activity.getResources().getColor(color));
       }
     }
   }

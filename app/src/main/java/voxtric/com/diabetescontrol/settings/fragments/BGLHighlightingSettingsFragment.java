@@ -26,7 +26,7 @@ import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class BGLHighlightingSettingsFragment extends Fragment
 {
-  private static final Map<String, Float> DEFAULT_VALUES;
+  public static final Map<String, Float> DEFAULT_VALUES;
   static
   {
     Map<String, Float> defaults = new HashMap<>();

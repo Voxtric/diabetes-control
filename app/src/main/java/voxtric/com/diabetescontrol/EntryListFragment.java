@@ -16,10 +16,13 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.HashMap;
 import java.util.List;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
+import voxtric.com.diabetescontrol.database.Preference;
+import voxtric.com.diabetescontrol.settings.fragments.BGLHighlightingSettingsFragment;
 
 public class EntryListFragment extends Fragment
 {
@@ -70,7 +73,7 @@ public class EntryListFragment extends Fragment
 
   void refreshEntryList()
   {
-    final Activity activity = getActivity();
+    final MainActivity activity = (MainActivity)getActivity();
     if (activity != null)
     {
       final RecyclerView recyclerView = activity.findViewById(R.id.recycler_view_entry_list);
@@ -94,25 +97,49 @@ public class EntryListFragment extends Fragment
               {
                 recyclerView.setVisibility(View.VISIBLE);
                 activity.findViewById(R.id.text_view_no_data).setVisibility(View.GONE);
-                m_adapter = new EntryListRecyclerViewAdapter(entries, (MainActivity)activity);
-                recyclerView.setAdapter(m_adapter);
 
-                final LinearLayoutManager layoutManager = ((LinearLayoutManager)recyclerView.getLayoutManager());
-                if (layoutManager != null)
-                {
-                  recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
-                  {
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
+                Preference.get(activity,
+                    new String[]{"bgl_highlighting_enabled", "ideal_minimum", "high_minimum", "action_required_minimum",},
+                    new String[]{"true",
+                        String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get("ideal_minimum")),
+                        String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get("high_minimum")),
+                        String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get("action_required_minimum"))},
+                    new Preference.ResultRunnable()
                     {
-                      int lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
-                      if (m_adapter.getItemCount() >= LOAD_BOUNDARY && lastVisiblePosition >= m_adapter.getItemCount() - LOAD_BOUNDARY)
+                      @Override
+                      public void run()
                       {
-                        m_adapter.loadMore(activity, m_database.dataEntriesDao());
+                        float[] bglHighlightingValues = null;
+                        HashMap<String, String> results = getResults();
+                        if (Boolean.valueOf(results.get("bgl_highlighting_enabled")))
+                        {
+                          bglHighlightingValues = new float[3];
+                          bglHighlightingValues[0] = Float.valueOf(results.get("ideal_minimum"));
+                          bglHighlightingValues[1] = Float.valueOf(results.get("high_minimum"));
+                          bglHighlightingValues[2] = Float.valueOf(results.get("action_required_minimum"));
+                        }
+
+                        m_adapter = new EntryListRecyclerViewAdapter(activity, entries, bglHighlightingValues);
+                        recyclerView.setAdapter(m_adapter);
+
+                        final LinearLayoutManager layoutManager = ((LinearLayoutManager) recyclerView.getLayoutManager());
+                        if (layoutManager != null)
+                        {
+                          recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
+                          {
+                            @Override
+                            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
+                            {
+                              int lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
+                              if (m_adapter.getItemCount() >= LOAD_BOUNDARY && lastVisiblePosition >= m_adapter.getItemCount() - LOAD_BOUNDARY)
+                              {
+                                m_adapter.loadMore(activity, m_database.dataEntriesDao());
+                              }
+                            }
+                          });
+                        }
                       }
-                    }
-                  });
-                }
+                    });
               }
             }
           });
