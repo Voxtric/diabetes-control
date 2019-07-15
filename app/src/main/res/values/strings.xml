@@ -104,7 +104,7 @@ If not, you can do so later from the settings menu at the top right."
     <string name="voxtric_icon_content_description">Voxtric Icon</string>
 
     <string name="app_version_text">App Version: %1$s</string>
-    <string name="database_version_text">Database Version: %1$d</string>
+    <string name="database_version_text">Database Version: %1$s-%2$d</string>
     <string name="disclaimer_label">Disclaimer</string>
     <string name="privacy_policy_label">Privacy Policy</string>
     <string name="open_source_information_label">Open Source Information</string>

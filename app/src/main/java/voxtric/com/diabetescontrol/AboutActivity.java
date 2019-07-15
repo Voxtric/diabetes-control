@@ -18,8 +18,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
+import voxtric.com.diabetescontrol.database.DatabaseActivity;
+import voxtric.com.diabetescontrol.database.Preference;
 
-public class AboutActivity extends AppCompatActivity
+public class AboutActivity extends DatabaseActivity
 {
   private final int EXPAND_DURATION = 2;
   private final int COLLAPSE_DURATION = 8;
@@ -41,7 +43,14 @@ public class AboutActivity extends AppCompatActivity
     }
 
     ((TextView)findViewById(R.id.app_version_text)).setText(getString(R.string.app_version_text, BuildConfig.VERSION_NAME));
-    ((TextView)findViewById(R.id.database_version_text)).setText(getString(R.string.database_version_text, AppDatabase.Version));
+    Preference.get(this, "database_version", String.valueOf(AppDatabase.Version), new Preference.ResultRunnable()
+    {
+      @Override
+      public void run()
+      {
+        ((TextView)findViewById(R.id.database_version_text)).setText(getString(R.string.database_version_text, getResult(), AppDatabase.Version));
+      }
+    });
 
     fillContent(R.id.disclaimer_text, "disclaimer.html");
     fillContent(R.id.privacy_policy_text, "privacy_policy.html");

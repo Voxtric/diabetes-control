@@ -38,7 +38,9 @@ public abstract class DatabaseActivity extends AppCompatActivity
     @Override
     public void migrate(@NonNull SupportSQLiteDatabase database)
     {
-      database.execSQL("CREATE TABLE preferences(name TEXT PRIMARY KEY, value TEXT)");
+      database.execSQL("CREATE TABLE preferences(name TEXT PRIMARY KEY NOT NULL, value TEXT)");
+      String versionString = String.valueOf(AppDatabase.Version);
+      database.execSQL("INSERT INTO preferences (name, value) VALUES ('database_version', :versionString)", new Object[] {versionString});
     }
   };
 
