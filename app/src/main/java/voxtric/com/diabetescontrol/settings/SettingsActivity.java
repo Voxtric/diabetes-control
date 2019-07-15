@@ -13,6 +13,7 @@ import android.widget.EditText;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Preference;
+import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 
 public class SettingsActivity extends DatabaseActivity
 {
@@ -77,10 +78,10 @@ public class SettingsActivity extends DatabaseActivity
     });
   }
 
-  public void saveTextToDatabaseWhenUnfocused(final EditText view, final Runnable additionalAction)
+  public void saveTextToDatabaseWhenUnfocused(final EditText view)
   {
     final String viewName = view.getResources().getResourceName(view.getId());
-    view.setOnFocusChangeListener(new View.OnFocusChangeListener()
+    CompositeOnFocusChangeListener.applyListenerToView(view, new View.OnFocusChangeListener()
     {
       @Override
       public void onFocusChange(View v, boolean hasFocus)
@@ -88,11 +89,6 @@ public class SettingsActivity extends DatabaseActivity
         if (!hasFocus)
         {
           Preference.put(SettingsActivity.this, viewName, view.getText().toString(), null);
-
-          if (additionalAction != null)
-          {
-            additionalAction.run();
-          }
         }
       }
     });

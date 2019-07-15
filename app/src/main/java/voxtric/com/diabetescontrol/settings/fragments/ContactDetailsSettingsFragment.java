@@ -41,7 +41,7 @@ public class ContactDetailsSettingsFragment extends Fragment
       {
         EditText editText = view.findViewById(id);
         activity.setTextFromDatabase(editText);
-        activity.saveTextToDatabaseWhenUnfocused(editText, null);
+        activity.saveTextToDatabaseWhenUnfocused(editText);
         ViewUtilities.addHintHide(editText, Gravity.CENTER, activity);
       }
     }

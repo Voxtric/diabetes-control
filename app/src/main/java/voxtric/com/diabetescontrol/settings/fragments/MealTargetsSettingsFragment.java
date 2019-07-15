@@ -2,6 +2,7 @@ package voxtric.com.diabetescontrol.settings.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.TargetChange;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
+import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class MealTargetsSettingsFragment extends Fragment
@@ -27,38 +29,41 @@ public class MealTargetsSettingsFragment extends Fragment
       R.id.edit_text_target_post_meal_upper
   };
 
-  private final Runnable UPDATE_DATABASE = new Runnable()
+  private final View.OnFocusChangeListener UPDATE_DATABASE = new View.OnFocusChangeListener()
   {
     @Override
-    public void run()
+    public void onFocusChange(View view, boolean hasFocus)
     {
-      final DatabaseActivity activity = (DatabaseActivity)getActivity();
-      if (activity != null)
+      if (!hasFocus)
       {
-        boolean proceed = true;
-        final String[] values = new String[VIEW_IDS.length];
-        for (int i = 0; i < values.length && proceed; i++)
+        final DatabaseActivity activity = (DatabaseActivity)getActivity();
+        if (activity != null)
         {
-          values[i] = ((EditText)activity.findViewById(VIEW_IDS[i])).getText().toString();
-          proceed = values[i] != null && values[i].length() > 0;
-        }
-
-        if (proceed)
-        {
-          AsyncTask.execute(new Runnable()
+          boolean proceed = true;
+          final String[] values = new String[VIEW_IDS.length];
+          for (int i = 0; i < values.length && proceed; i++)
           {
-            @Override
-            public void run()
+            values[i] = ((EditText) activity.findViewById(VIEW_IDS[i])).getText().toString();
+            proceed = values[i] != null && values[i].length() > 0;
+          }
+
+          if (proceed)
+          {
+            AsyncTask.execute(new Runnable()
             {
-              TargetChange targetChange = new TargetChange();
-              targetChange.timestamp = System.currentTimeMillis();
-              targetChange.preMealLower = Float.valueOf(values[0]);
-              targetChange.preMealUpper = Float.valueOf(values[1]);
-              targetChange.postMealLower = Float.valueOf(values[2]);
-              targetChange.postMealUpper = Float.valueOf(values[3]);
-              activity.getDatabase().targetChangesDao().insert(targetChange);
-            }
-          });
+              @Override
+              public void run()
+              {
+                TargetChange targetChange = new TargetChange();
+                targetChange.timestamp = System.currentTimeMillis();
+                targetChange.preMealLower = Float.valueOf(values[0]);
+                targetChange.preMealUpper = Float.valueOf(values[1]);
+                targetChange.postMealLower = Float.valueOf(values[2]);
+                targetChange.postMealUpper = Float.valueOf(values[3]);
+                activity.getDatabase().targetChangesDao().insert(targetChange);
+              }
+            });
+          }
         }
       }
     }
@@ -87,9 +92,10 @@ public class MealTargetsSettingsFragment extends Fragment
       for (@IdRes int id : VIEW_IDS)
       {
         EditText editText = view.findViewById(id);
-        activity.setTextFromDatabase(editText);
-        activity.saveTextToDatabaseWhenUnfocused(editText, UPDATE_DATABASE);
         ViewUtilities.addHintHide(editText, Gravity.CENTER, activity);
+        activity.setTextFromDatabase(editText);
+        activity.saveTextToDatabaseWhenUnfocused(editText);
+        CompositeOnFocusChangeListener.applyListenerToView(editText, UPDATE_DATABASE);
       }
     }
 
