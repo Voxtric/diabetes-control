@@ -114,6 +114,15 @@ If not, you can do so later from the settings menu at the top right."
     <string name="title_events_settings">Events</string>
     <string name="edit_events_text">Edit Events</string>
 
+    <string name="title_bgl_highlighting_settings">Blood Glucose Level Highlighting</string>
+    <string name="highlighting_enabled_text">Highlighting Enabled</string>
+    <string name="ideal_range_label">Ideal Range (BGL):</string>
+    <string name="high_range_label">High Range (BGL):</string>
+    <string name="ideal_range_lower_hint">Ideal Lower</string>
+    <string name="ideal_range_upper_hint">Ideal Upper</string>
+    <string name="high_range_lower_hint">High Lower</string>
+    <string name="high_range_upper_hint">High Upper</string>
+
     <string name="title_contact_details_settings">Contact Details</string>
     <string name="contact_name_label">Contact Name:</string>
     <string name="contact_number_label">Contact Number:</string>

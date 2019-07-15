@@ -7,6 +7,9 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.security.InvalidParameterException;
+import java.util.HashMap;
+
 @Entity(tableName = "preferences")
 public class Preference
 {
@@ -71,18 +74,62 @@ public class Preference
     });
   }
 
-  public abstract static class ResultRunnable implements Runnable
+  public static void get(final DatabaseActivity activity, final String[] names, final String[] defaultValues, @NonNull final ResultRunnable onCompletionMainThread)
   {
-    private String result;
-
-    private void setResult(String result)
+    if (names.length != defaultValues.length)
     {
-      this.result = result;
+      throw new InvalidParameterException("Length of 'names' must equal length of 'defaultValues'");
     }
 
-    public String getResult()
+    AsyncTask.execute(new Runnable()
     {
-      return result;
+      @Override
+      public void run()
+      {
+        PreferencesDao preferencesDao = activity.getDatabase().preferencesDao();
+        HashMap<String, String> results = new HashMap<>();
+
+        for (int i = 0; i < names.length; i++)
+        {
+          Preference preference = preferencesDao.getPreference(names[i]);
+          if (preference == null)
+          {
+            results.put(names[i], defaultValues[i]);
+          }
+          else
+          {
+            results.put(names[i], preference.value);
+          }
+        }
+        onCompletionMainThread.setResults(results);
+        activity.runOnUiThread(onCompletionMainThread);
+      }
+    });
+  }
+
+  public abstract static class ResultRunnable implements Runnable
+  {
+    private HashMap<String, String> m_results;
+
+    private void setResult(String value)
+    {
+      m_results = new HashMap<>();
+      m_results.put("", value);
+    }
+
+    private void setResults(HashMap<String, String> values)
+    {
+      m_results = values;
+    }
+
+    protected String getResult()
+    {
+      return m_results.get("");
+    }
+
+    protected HashMap<String, String> getResults()
+    {
+      return m_results;
     }
   }
 }
