@@ -26,7 +26,7 @@ public class CompositeOnFocusChangeListener implements View.OnFocusChangeListene
   @Override
   public void onFocusChange(View view, boolean hasFocus)
   {
-    for(View.OnFocusChangeListener listener: m_registeredListeners)
+    for (View.OnFocusChangeListener listener: m_registeredListeners)
     {
       listener.onFocusChange(view, hasFocus);
     }

@@ -2,6 +2,7 @@ package voxtric.com.diabetescontrol.settings;
 
 import android.content.DialogInterface;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -9,6 +10,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -18,6 +20,7 @@ import android.widget.PopupMenu;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
@@ -41,6 +44,7 @@ public class EditEventsActivity extends DatabaseActivity
   private static final int MAX_EVENT_COUNT = 8;
 
   private EditEventsRecyclerViewAdapter m_adapter = null;
+  private boolean m_popupOptionClicked = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -54,7 +58,7 @@ public class EditEventsActivity extends DatabaseActivity
       actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    final RecyclerView recyclerView = findViewById(R.id.recycler_view_entry_list);
+    final RecyclerView recyclerView = findViewById(R.id.recycler_view_event_list);
     recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
 
     AsyncTask.execute(new Runnable()
@@ -81,8 +85,49 @@ public class EditEventsActivity extends DatabaseActivity
     });
   }
 
-  private void moveEvent(final View dataView, int direction)
+  @Override
+  public boolean dispatchTouchEvent(MotionEvent event)
   {
+    LinearLayout movementButtons = m_adapter.getActiveMovementButtons();
+    if (movementButtons != null)
+    {
+      Rect viewRect = new Rect();
+      movementButtons.getGlobalVisibleRect(viewRect);
+      if (!viewRect.contains((int)event.getRawX(), (int)event.getRawY()))
+      {
+        highlightSelected(null);
+        LinearLayout activeMovementButtons = m_adapter.getActiveMovementButtons();
+        setMoveButtonVisible(getDataView(activeMovementButtons), false);
+        return true;
+      }
+    }
+    return super.dispatchTouchEvent(event);
+  }
+
+  ViewGroup getDataView(View view)
+  {
+    ViewGroup dataView = null;
+    View priorView = view;
+    View parentView = (View)view.getParent();
+    while (dataView == null)
+    {
+      if (parentView instanceof RecyclerView)
+      {
+        dataView = (ViewGroup)priorView;
+      }
+      else
+      {
+        priorView = parentView;
+        parentView = (View)parentView.getParent();
+      }
+    }
+    return dataView;
+  }
+
+  public void moveEvent(final View view)
+  {
+    final ViewGroup dataView = getDataView(view);
+    int direction = view.getId() == R.id.button_down ? 1 : -1;
     final Event eventA = m_adapter.getEvent(dataView);
     final Event eventB = m_adapter.getEvent(eventA.order + direction);
     int tempOrder = eventA.order;
@@ -102,7 +147,7 @@ public class EditEventsActivity extends DatabaseActivity
           @Override
           public void run()
           {
-            m_adapter.updateAllEvents(allEvents);
+            m_adapter.updateAllEvents(allEvents, eventA, true);
           }
         });
       }
@@ -117,7 +162,7 @@ public class EditEventsActivity extends DatabaseActivity
     ViewUtilities.addHintHide(input, Gravity.CENTER, this);
     input.append(event.name);
 
-    final DialogInterfaceOnDismissListener onDismissListener = new DialogInterfaceOnDismissListener(event);
+    final DialogInterfaceOnDismissListener onDismissListener = new DialogInterfaceOnDismissListener(event, newEvent);
     final AlertDialog dialog = new AlertDialog.Builder(this)
         .setTitle(R.string.title_edit_event_name)
         .setView(view)
@@ -145,7 +190,7 @@ public class EditEventsActivity extends DatabaseActivity
                     @Override
                     public void run()
                     {
-                      m_adapter.updateAllEvents(allEvents);
+                      m_adapter.updateAllEvents(allEvents, event, false);
                       setResult(EventsSettingsFragment.RESULT_UPDATE_EVENTS);
                     }
                   });
@@ -198,15 +243,18 @@ public class EditEventsActivity extends DatabaseActivity
       }
     });
 
-    if (newEvent)
-    {
-      dialog.setOnDismissListener(onDismissListener);
-    }
+    dialog.setOnDismissListener(onDismissListener);
   }
 
   public void editEventTime(final View dataView, final boolean newEvent)
   {
     final Event event = m_adapter.getEvent(dataView);
+
+    if (newEvent)
+    {
+      highlightSelected(dataView);
+    }
+
     final TimePicker timePicker = new TimePicker(this);
     final Calendar calendar = Calendar.getInstance();
     if (event.timeInDay != -1)
@@ -227,7 +275,7 @@ public class EditEventsActivity extends DatabaseActivity
     timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
     timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
 
-    final DialogInterfaceOnDismissListener onDismissListener = new DialogInterfaceOnDismissListener(event);
+    final DialogInterfaceOnDismissListener onDismissListener = new DialogInterfaceOnDismissListener(event, newEvent);
     final AlertDialog dialog = new AlertDialog.Builder(this)
         .setView(timePicker)
         .setNegativeButton(R.string.cancel, null)
@@ -285,7 +333,7 @@ public class EditEventsActivity extends DatabaseActivity
                   @Override
                   public void run()
                   {
-                    m_adapter.updateAllEvents(allEvents);
+                    m_adapter.updateAllEvents(allEvents, null, false);
                     setResult(EventsSettingsFragment.RESULT_UPDATE_EVENTS);
                   }
                 });
@@ -345,10 +393,7 @@ public class EditEventsActivity extends DatabaseActivity
       }
     });
 
-    if (newEvent)
-    {
-      dialog.setOnDismissListener(onDismissListener);
-    }
+    dialog.setOnDismissListener(onDismissListener);
   }
 
   private void deleteEvent(final View dataView)
@@ -384,7 +429,7 @@ public class EditEventsActivity extends DatabaseActivity
                     @Override
                     public void run()
                     {
-                      m_adapter.updateAllEvents(events);
+                      m_adapter.updateAllEvents(events, null, false);
                       findViewById(R.id.button_add_new_event).setEnabled(m_adapter.getItemCount() < MAX_EVENT_COUNT);
                       ActionBar actionBar = getSupportActionBar();
                       if (actionBar != null)
@@ -403,21 +448,41 @@ public class EditEventsActivity extends DatabaseActivity
     }
   }
 
-  public void openEventMoreMenu(View view)
+  private void setMoveButtonVisible(View dataView, boolean visible)
   {
-    final ViewGroup dataView = view instanceof LinearLayout ? (ViewGroup)view : (ViewGroup)view.getParent();
-    final ViewGroup listView = (ViewGroup)dataView.getParent();
+    LinearLayout movementButtons = dataView.findViewById(R.id.movement_buttons);
+    if (visible)
+    {
+      movementButtons.setVisibility(View.VISIBLE);
+      m_adapter.setActiveMovementButtons(movementButtons);
+    }
+    else
+    {
+      movementButtons.setVisibility(View.GONE);
+      m_adapter.setActiveMovementButtons(null);
+    }
+  }
+
+  private void highlightSelected(View dataView)
+  {
+    m_adapter.setEventToHighlight(m_adapter.getEvent(dataView));
+
+    ViewGroup listView = findViewById(R.id.recycler_view_event_list);
     for (int i = 0; i < listView.getChildCount(); i++)
     {
-      if (listView.getChildAt(i) != dataView)
+      LinearLayout layout = listView.getChildAt(i).findViewById(R.id.contents);
+      @DrawableRes int drawableRes = listView.getChildAt(i) == dataView || dataView == null ? R.drawable.back : R.drawable.blank;
+      for (int j = 0; j < layout.getChildCount(); j++)
       {
-        ViewGroup layout = (LinearLayout)listView.getChildAt(i);
-        for (int j = 0; j < layout.getChildCount(); j++)
-        {
-          layout.getChildAt(j).setBackgroundResource(R.drawable.blank);
-        }
+        layout.getChildAt(j).setBackgroundResource(drawableRes);
       }
     }
+  }
+
+  public void openEventMoreMenu(View view)
+  {
+    final ViewGroup dataView = getDataView(view);
+    highlightSelected(dataView);
 
     PopupMenu menu = new PopupMenu(view.getContext(), view);
     menu.getMenuInflater().inflate(R.menu.event_more, menu.getMenu());
@@ -426,13 +491,11 @@ public class EditEventsActivity extends DatabaseActivity
       @Override
       public boolean onMenuItemClick(MenuItem item)
       {
+        m_popupOptionClicked = true;
         switch (item.getItemId())
         {
-          case R.id.action_move_up:
-            moveEvent(dataView, -1);
-            return true;
-          case R.id.action_move_down:
-            moveEvent(dataView, 1);
+          case R.id.action_move:
+            setMoveButtonVisible(dataView, true);
             return true;
           case R.id.navigation_edit_name:
             editEventName(dataView, false);
@@ -445,39 +508,27 @@ public class EditEventsActivity extends DatabaseActivity
             return true;
           case R.id.navigation_cancel:
             return true;
-        }
-        return false;
-      }
-    });
-    menu.setOnDismissListener(new PopupMenu.OnDismissListener()
-    {
-      @Override
-      public void onDismiss(PopupMenu menu)
-      {
-        for (int i = 0; i < listView.getChildCount(); i++)
-        {
-          if (listView.getChildAt(i) != dataView)
-          {
-            ViewGroup layout = (LinearLayout)listView.getChildAt(i);
-            for (int j = 0; j < layout.getChildCount(); j++)
-            {
-              layout.getChildAt(j).setBackgroundResource(R.drawable.back);
-            }
-          }
+          default:
+            m_popupOptionClicked = false;
+            return false;
         }
       }
     });
 
+    menu.setOnDismissListener(new PopupMenu.OnDismissListener()
+    {
+      @Override
+      public void onDismiss(PopupMenu popupMenu)
+      {
+        if (!m_popupOptionClicked)
+        {
+          highlightSelected(null);
+        }
+        m_popupOptionClicked = false;
+      }
+    });
+
     menu.show();
-    Event event = m_adapter.getEvent(dataView);
-    if (event.order <= 0)
-    {
-      menu.getMenu().findItem(R.id.action_move_up).setEnabled(false);
-    }
-    else if (event.order >= m_adapter.getItemCount() - 1)
-    {
-      menu.getMenu().findItem(R.id.action_move_down).setEnabled(false);
-    }
   }
 
   public void resetEvents(View view)
@@ -509,9 +560,7 @@ public class EditEventsActivity extends DatabaseActivity
                   @Override
                   public void run()
                   {
-                    m_adapter = new EditEventsRecyclerViewAdapter(nhsEvents, EditEventsActivity.this);
-                    RecyclerView recyclerView = findViewById(R.id.recycler_view_entry_list);
-                    recyclerView.setAdapter(m_adapter);
+                    m_adapter.updateAllEvents(nhsEvents, null, false);
                     Toast.makeText(EditEventsActivity.this, R.string.events_reset_message, Toast.LENGTH_LONG).show();
                     setResult(EventsSettingsFragment.RESULT_UPDATE_EVENTS);
                   }
@@ -542,15 +591,15 @@ public class EditEventsActivity extends DatabaseActivity
           @Override
           public void run()
           {
-            m_adapter = new EditEventsRecyclerViewAdapter(events, EditEventsActivity.this);
-            RecyclerView recyclerView = findViewById(R.id.recycler_view_entry_list);
-            recyclerView.setAdapter(m_adapter);
+            m_adapter.updateAllEvents(events, events.get(events.size() - 1), false);
             findViewById(R.id.button_add_new_event).setEnabled(events.size() < MAX_EVENT_COUNT);
+
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null)
             {
               actionBar.setTitle(getString(R.string.edit_events_name, events.size(), MAX_EVENT_COUNT));
             }
+
             setResult(EventsSettingsFragment.RESULT_UPDATE_EVENTS);
           }
         });
@@ -674,17 +723,21 @@ public class EditEventsActivity extends DatabaseActivity
   {
     boolean keepEditedEvent = false;
 
-    private Event event;
+    private final Event m_event;
+    private final boolean m_newEvent;
 
-    DialogInterfaceOnDismissListener(Event event)
+    DialogInterfaceOnDismissListener(Event event, boolean newEvent)
     {
-      this.event = event;
+      m_event = event;
+      m_newEvent = newEvent;
     }
 
     @Override
     public void onDismiss(DialogInterface dialog)
     {
-      if (!keepEditedEvent)
+      highlightSelected(null);
+
+      if (m_newEvent && !keepEditedEvent)
       {
         AsyncTask.execute(new Runnable()
         {
@@ -692,7 +745,7 @@ public class EditEventsActivity extends DatabaseActivity
           public void run()
           {
             EventsDao eventsDao = m_database.eventsDao();
-            eventsDao.deleteEvent(event);
+            eventsDao.deleteEvent(m_event);
             final List<Event> events = eventsDao.getEvents();
             displayMessage(R.string.new_event_cancelled_message);
             runOnUiThread(new Runnable()
@@ -700,7 +753,7 @@ public class EditEventsActivity extends DatabaseActivity
               @Override
               public void run()
               {
-                m_adapter.updateAllEvents(events);
+                m_adapter.updateAllEvents(events, null, false);
                 findViewById(R.id.button_add_new_event).setEnabled(m_adapter.getItemCount() < MAX_EVENT_COUNT);
                 ActionBar actionBar = getSupportActionBar();
                 if (actionBar != null)
