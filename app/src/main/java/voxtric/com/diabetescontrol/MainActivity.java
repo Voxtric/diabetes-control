@@ -91,8 +91,6 @@ public class MainActivity extends DatabaseActivity
     setContentView(R.layout.activity_main);
     PDFBoxResourceLoader.init(this);
 
-    m_database = Room.databaseBuilder(this, AppDatabase.class, "diabetes-control.db").build();
-
     BottomNavigationView navigation = findViewById(R.id.navigation);
     navigation.setOnNavigationItemSelectedListener(m_onNavigationItemSelectedListener);
 
@@ -372,13 +370,13 @@ public class MainActivity extends DatabaseActivity
         switch (item.getItemId())
         {
           case R.id.navigation_view_full:
-            ((EntryListFragment)getSupportFragmentManager().getFragments().get(1)).viewFull(dataView, MainActivity.this);
+            ((EntryListFragment)getSupportFragmentManager().getFragments().get(1)).viewFull(MainActivity.this, dataView);
             return true;
           case R.id.navigation_edit:
-            ((EntryListFragment)getSupportFragmentManager().getFragments().get(1)).launchEdit(dataView, MainActivity.this);
+            ((EntryListFragment)getSupportFragmentManager().getFragments().get(1)).launchEdit(MainActivity.this, dataView);
             return true;
           case R.id.navigation_delete:
-            ((EntryListFragment)getSupportFragmentManager().getFragments().get(1)).deleteEntry(dataView, MainActivity.this);
+            ((EntryListFragment)getSupportFragmentManager().getFragments().get(1)).deleteEntry(MainActivity.this, dataView);
             return true;
           case R.id.navigation_cancel:
             return true;

@@ -1,6 +1,5 @@
 package voxtric.com.diabetescontrol;
 
-import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
@@ -19,8 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import voxtric.com.diabetescontrol.database.DataEntriesDao;
 import voxtric.com.diabetescontrol.database.DataEntry;
+import voxtric.com.diabetescontrol.database.DatabaseActivity;
 
 public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryListRecyclerViewAdapter.ViewHolder>
 {
@@ -61,7 +60,7 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
     return m_values.size();
   }
 
-  void loadMore(final Activity activity, final DataEntriesDao dataEntriesDao)
+  void loadMore(final DatabaseActivity activity)
   {
     if (!m_loadingMore)
     {
@@ -71,7 +70,8 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
         @Override
         public void run()
         {
-          List<DataEntry> newEntries = dataEntriesDao.getPreviousEntries(m_values.get(m_values.size() - 1).actualTimestamp, EntryListFragment.LOAD_COUNT);
+          List<DataEntry> newEntries = activity.getDatabase().dataEntriesDao().getPreviousEntries(
+              m_values.get(m_values.size() - 1).actualTimestamp, EntryListFragment.LOAD_COUNT);
           m_values.addAll(newEntries);
           activity.runOnUiThread(new Runnable()
           {

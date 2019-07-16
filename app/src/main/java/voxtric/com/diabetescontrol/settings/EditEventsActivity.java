@@ -1,6 +1,5 @@
 package voxtric.com.diabetescontrol.settings;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Point;
 import android.os.AsyncTask;
@@ -31,7 +30,6 @@ import java.util.List;
 
 import voxtric.com.diabetescontrol.EditEventsRecyclerViewAdapter;
 import voxtric.com.diabetescontrol.R;
-import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Event;
 import voxtric.com.diabetescontrol.database.EventsDao;
@@ -65,7 +63,6 @@ public class EditEventsActivity extends DatabaseActivity
       public void run()
       {
         final List<Event> events = m_database.eventsDao().getEvents();
-        // TODO: Check and add if empty.
         runOnUiThread(new Runnable()
         {
           @Override
@@ -505,7 +502,7 @@ public class EditEventsActivity extends DatabaseActivity
                 {
                   eventsDao.deleteEvent(event);
                 }
-                final List<Event> nhsEvents = addNHSEvents(m_database, EditEventsActivity.this);
+                final List<Event> nhsEvents = addNHSEvents(EditEventsActivity.this);
 
                 runOnUiThread(new Runnable()
                 {
@@ -573,10 +570,10 @@ public class EditEventsActivity extends DatabaseActivity
     });
   }
 
-  public static List<Event> addNHSEvents(AppDatabase database, Activity activity)
+  public static List<Event> addNHSEvents(DatabaseActivity activity)
   {
     String[] nhsEventNames = activity.getResources().getStringArray(R.array.nhs_event_names);
-    EventsDao eventsDao = database.eventsDao();
+    EventsDao eventsDao = activity.getDatabase().eventsDao();
     Calendar calendar = Calendar.getInstance();
     calendar.clear();
     calendar.set(

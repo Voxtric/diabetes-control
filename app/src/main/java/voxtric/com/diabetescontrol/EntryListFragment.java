@@ -19,8 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.HashMap;
 import java.util.List;
 
-import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
+import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.settings.fragments.BGLHighlightingSettingsFragment;
 
@@ -32,7 +32,6 @@ public class EntryListFragment extends Fragment
   static final int LOAD_COUNT = 100;
   private static final int LOAD_BOUNDARY = 10;
 
-  private AppDatabase m_database = null;
   private EntryListRecyclerViewAdapter m_adapter = null;
 
   public EntryListFragment()
@@ -56,8 +55,6 @@ public class EntryListFragment extends Fragment
     {
       final RecyclerView recyclerView = activity.findViewById(R.id.recycler_view_entry_list);
       recyclerView.setLayoutManager(new GridLayoutManager(activity, 1));
-
-      m_database = ((MainActivity) activity).getDatabase();
       refreshEntryList();
     }
   }
@@ -82,7 +79,7 @@ public class EntryListFragment extends Fragment
         @Override
         public void run()
         {
-          final List<DataEntry> entries = m_database.dataEntriesDao().getPreviousEntries(System.currentTimeMillis(), LOAD_COUNT);
+          final List<DataEntry> entries = activity.getDatabase().dataEntriesDao().getPreviousEntries(System.currentTimeMillis(), LOAD_COUNT);
           activity.runOnUiThread(new Runnable()
           {
             @Override
@@ -140,7 +137,7 @@ public class EntryListFragment extends Fragment
                               int lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
                               if (m_adapter.getItemCount() >= LOAD_BOUNDARY && lastVisiblePosition >= m_adapter.getItemCount() - LOAD_BOUNDARY)
                               {
-                                m_adapter.loadMore(activity, m_database.dataEntriesDao());
+                                m_adapter.loadMore(activity);
                               }
                             }
                           });
@@ -155,7 +152,7 @@ public class EntryListFragment extends Fragment
     }
   }
 
-  void viewFull(View dataView, Activity activity)
+  void viewFull(Activity activity, View dataView)
   {
     DataEntry entry = m_adapter.getEntry(dataView);
     View view = MainActivity.getFullView(activity, entry);
@@ -167,7 +164,7 @@ public class EntryListFragment extends Fragment
     dialog.show();
   }
 
-  void launchEdit(final View dataView, Activity activity)
+  void launchEdit(Activity activity, final View dataView)
   {
     DataEntry entry = m_adapter.getEntry(dataView);
     Intent intent = new Intent(activity, EditEntryActivity.class);
@@ -175,7 +172,7 @@ public class EntryListFragment extends Fragment
     startActivityForResult(intent, REQUEST_EDIT_ENTRY);
   }
 
-  void deleteEntry(final View dataView, final Activity activity)
+  void deleteEntry(final DatabaseActivity activity, final View dataView)
   {
     final DataEntry entry = m_adapter.getEntry(dataView);
     AlertDialog dialog = new AlertDialog.Builder(activity)
@@ -192,7 +189,7 @@ public class EntryListFragment extends Fragment
               @Override
               public void run()
               {
-                m_database.dataEntriesDao().delete(entry);
+                activity.getDatabase().dataEntriesDao().delete(entry);
                 activity.runOnUiThread(new Runnable()
                 {
                   @Override

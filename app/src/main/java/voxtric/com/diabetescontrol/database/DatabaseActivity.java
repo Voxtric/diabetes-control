@@ -3,6 +3,7 @@ package voxtric.com.diabetescontrol.database;
 import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,8 +24,7 @@ public abstract class DatabaseActivity extends AppCompatActivity
   {
     super.onCreate(savedInstanceState);
     m_database = Room.databaseBuilder(this, AppDatabase.class, DATABASE_NAME)
-        .addMigrations(MIGRATION_2_3)
-        .addMigrations(MIGRATION_1_2)
+        .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
         .build();
   }
 
@@ -38,6 +38,8 @@ public abstract class DatabaseActivity extends AppCompatActivity
     @Override
     public void migrate(@NonNull SupportSQLiteDatabase database)
     {
+      Log.i("Migration", "v2 to v3");
+
       database.execSQL("CREATE TABLE preferences(name TEXT PRIMARY KEY NOT NULL, value TEXT)");
       String versionString = String.valueOf(AppDatabase.Version);
       database.execSQL("INSERT INTO preferences (name, value) VALUES ('database_version', :versionString)", new Object[] {versionString});
@@ -50,6 +52,8 @@ public abstract class DatabaseActivity extends AppCompatActivity
     @Override
     public void migrate(@NonNull SupportSQLiteDatabase database)
     {
+      Log.i("Migration", "v1 to v2");
+
       // Add 'order' column to 'events' table and order by timestamp.
       {
         database.execSQL("ALTER TABLE events ADD COLUMN 'order' INTEGER NOT NULL DEFAULT -1");

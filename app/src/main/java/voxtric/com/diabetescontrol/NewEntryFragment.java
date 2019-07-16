@@ -50,6 +50,7 @@ import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Event;
 import voxtric.com.diabetescontrol.database.EventsDao;
+import voxtric.com.diabetescontrol.settings.EditEventsActivity;
 import voxtric.com.diabetescontrol.utilities.DecimalDigitsInputFilter;
 import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
@@ -142,7 +143,6 @@ public class NewEntryFragment extends Fragment
     }
 
     refreshAutoCompleteView(R.id.auto_complete_insulin_name);
-    refreshAutoCompleteView(R.id.auto_complete_insulin_dose);
     refreshAutoCompleteView(R.id.auto_complete_food_eaten);
     refreshAutoCompleteView(R.id.auto_complete_additional_notes);
 
@@ -195,7 +195,7 @@ public class NewEntryFragment extends Fragment
 
   void updateEventSpinner()
   {
-    final Activity activity = getActivity();
+    final DatabaseActivity activity = (DatabaseActivity)getActivity();
     if (activity != null)
     {
       AsyncTask.execute(new Runnable()
@@ -204,6 +204,10 @@ public class NewEntryFragment extends Fragment
         public void run()
         {
           final List<Event> events = m_database.eventsDao().getEvents();
+          if (events.isEmpty())
+          {
+            events.addAll(EditEventsActivity.addNHSEvents(activity));
+          }
           activity.runOnUiThread(new Runnable()
           {
             @Override
