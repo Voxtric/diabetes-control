@@ -66,7 +66,7 @@ public class NewEntryFragment extends Fragment
   // Not transferred between rotations.
   private Date m_date = null;
   private AppDatabase m_database = null;
-  ArrayAdapter<String> m_eventSpinnerAdapter = null;
+  private ArrayAdapter<String> m_eventSpinnerAdapter = null;
 
   public NewEntryFragment()
   {
@@ -191,7 +191,7 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  public void updateEventSpinner()
+  void updateEventSpinner()
   {
     final Activity activity = getActivity();
     if (activity != null)
@@ -251,6 +251,7 @@ public class NewEntryFragment extends Fragment
           final List<Event> events = m_database.eventsDao().getEventsTimeOrdered();
           long smallestDifference = Long.MAX_VALUE;
           int closestEventIndex = -1;
+
           for (int i = 0; i < events.size(); i++)
           {
             long difference = Math.abs(events.get(i).timeInDay - timeOnlyTimeStamp);
@@ -259,11 +260,24 @@ public class NewEntryFragment extends Fragment
               closestEventIndex = i;
               smallestDifference = difference;
             }
-            else
+
+            // Account for 24 hour roll-over backwards.
+            difference = Math.abs(events.get(i).timeInDay - (timeOnlyTimeStamp - 86400000));
+            if (difference < smallestDifference)
             {
-              break;
+              closestEventIndex = i;
+              smallestDifference = difference;
+            }
+
+            // Account for 24 hour roll-over forwards.
+            difference = Math.abs(events.get(i).timeInDay - (timeOnlyTimeStamp + 86400000));
+            if (difference < smallestDifference)
+            {
+              closestEventIndex = i;
+              smallestDifference = difference;
             }
           }
+
           if (closestEventIndex != -1)
           {
             final int finalClosestEventIndex = closestEventIndex;
@@ -803,7 +817,7 @@ public class NewEntryFragment extends Fragment
     });
   }
 
-  public DataEntry createEntry(Activity activity)
+  DataEntry createEntry(Activity activity)
   {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(m_date);
@@ -884,7 +898,7 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  protected void saveAutoCompleteView(@IdRes int input)
+  private void saveAutoCompleteView(@IdRes int input)
   {
     Activity activity = getActivity();
     if (activity != null)
@@ -907,7 +921,7 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  protected void refreshAutoCompleteView(@IdRes int input)
+  private void refreshAutoCompleteView(@IdRes int input)
   {
     Activity activity = getActivity();
     if (activity != null)
@@ -927,7 +941,7 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  public void setValues(DataEntry entry, Activity activity)
+  void setValues(DataEntry entry, Activity activity)
   {
     m_selectedEventName = entry.event;
     updateEventSpinner();
@@ -958,7 +972,7 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  public void checkDateMismatch(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace)
+  void checkDateMismatch(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace)
   {
     AppDatabase database = activity.getDatabase();
     DataEntriesDao dataEntriesDao = database.dataEntriesDao();
