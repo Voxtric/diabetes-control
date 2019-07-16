@@ -26,6 +26,9 @@ public interface EventsDao
   @Query("SELECT * FROM events WHERE name IS :name")
   Event getEvent(String name);
 
+  @Query("SELECT * FROM events WHERE time_in_day > :lower AND time_in_day < :upper")
+  Event getEvent(long lower, long upper);
+
   @Update
   void updateEvent(Event event);
 

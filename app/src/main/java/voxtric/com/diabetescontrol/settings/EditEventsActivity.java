@@ -65,6 +65,7 @@ public class EditEventsActivity extends DatabaseActivity
       public void run()
       {
         final List<Event> events = m_database.eventsDao().getEvents();
+        // TODO: Check and add if empty.
         runOnUiThread(new Runnable()
         {
           @Override
@@ -185,10 +186,15 @@ public class EditEventsActivity extends DatabaseActivity
             public void run()
             {
               EventsDao eventsDao = m_database.eventsDao();
-              if (eventsDao.getEvent(text.toString()) != null)
+              final boolean asyncEnableButton = eventsDao.getEvent(text.toString()) == null;
+              runOnUiThread(new Runnable()
               {
-                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
-              }
+                @Override
+                public void run()
+                {
+                  dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(asyncEnableButton);
+                }
+              });
             }
           });
         }
@@ -306,6 +312,41 @@ public class EditEventsActivity extends DatabaseActivity
       timePicker.getLayoutParams().width = WindowManager.LayoutParams.MATCH_PARENT;
       timePicker.getLayoutParams().height = WindowManager.LayoutParams.WRAP_CONTENT;
     }
+
+    timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener()
+    {
+      @Override
+      public void onTimeChanged(TimePicker tp, int i, int i1)
+      {
+        final Calendar validateCalendar = Calendar.getInstance();
+        validateCalendar.clear();
+        validateCalendar.set(
+            validateCalendar.getMinimum(Calendar.YEAR),
+            validateCalendar.getMinimum(Calendar.MONTH),
+            validateCalendar.getMinimum(Calendar.DATE),
+            timePicker.getCurrentHour(),
+            timePicker.getCurrentMinute(),
+            validateCalendar.getMinimum(Calendar.SECOND));
+        AsyncTask.execute(new Runnable()
+        {
+          @Override
+          public void run()
+          {
+
+            EventsDao eventsDao = m_database.eventsDao();
+            final boolean enableButton = eventsDao.getEvent(validateCalendar.getTimeInMillis() - 999, validateCalendar.getTimeInMillis() + 999) == null;
+            runOnUiThread(new Runnable()
+            {
+              @Override
+              public void run()
+              {
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(enableButton);
+              }
+            });
+          }
+        });
+      }
+    });
 
     if (newEvent)
     {
