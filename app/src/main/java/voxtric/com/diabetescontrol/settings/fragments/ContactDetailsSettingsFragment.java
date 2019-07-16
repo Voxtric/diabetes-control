@@ -19,8 +19,7 @@ import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class ContactDetailsSettingsFragment extends Fragment
 {
-  private final @IdRes
-  int[] VIEW_IDS = new int[] {
+  private final @IdRes int[] VIEW_IDS = new int[] {
       R.id.edit_text_contact_name,
       R.id.edit_text_contact_number
   };

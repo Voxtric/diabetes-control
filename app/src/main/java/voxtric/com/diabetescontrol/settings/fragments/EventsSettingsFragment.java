@@ -18,7 +18,7 @@ import voxtric.com.diabetescontrol.settings.SettingsActivity;
 
 public class EventsSettingsFragment extends Fragment
 {
-  public static final int REQUEST_EDIT_EVENTS = 200;
+  private static final int REQUEST_EDIT_EVENTS = 200;
   public static final int RESULT_UPDATE_EVENTS = -200;
 
   public EventsSettingsFragment()

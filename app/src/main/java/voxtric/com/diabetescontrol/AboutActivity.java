@@ -3,14 +3,15 @@ package voxtric.com.diabetescontrol;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -61,13 +62,13 @@ public class AboutActivity extends DatabaseActivity
       @Override
       public void run()
       {
-        m_expansionStates.put(findViewById(R.id.disclaimer_label), new ExpansionState(findViewById(R.id.disclaimer_text)));
-        m_expansionStates.put(findViewById(R.id.privacy_policy_label), new ExpansionState(findViewById(R.id.privacy_policy_text)));
-        m_expansionStates.put(findViewById(R.id.open_source_information_label), new ExpansionState(findViewById(R.id.open_source_information_text)));
+        m_expansionStates.put(findViewById(R.id.disclaimer_layout), new ExpansionState(findViewById(R.id.disclaimer_text)));
+        m_expansionStates.put(findViewById(R.id.privacy_policy_layout), new ExpansionState(findViewById(R.id.privacy_policy_text)));
+        m_expansionStates.put(findViewById(R.id.open_source_information_layout), new ExpansionState(findViewById(R.id.open_source_information_text)));
 
-        toggleVisibility(findViewById(R.id.disclaimer_label));
-        toggleVisibility(findViewById(R.id.privacy_policy_label));
-        toggleVisibility(findViewById(R.id.open_source_information_label));
+        toggleVisibility(findViewById(R.id.disclaimer_layout));
+        toggleVisibility(findViewById(R.id.privacy_policy_layout));
+        toggleVisibility(findViewById(R.id.open_source_information_layout));
 
         m_expandDuration = EXPAND_DURATION;
         m_collapseDuration = COLLAPSE_DURATION;
@@ -126,10 +127,12 @@ public class AboutActivity extends DatabaseActivity
       if (state.expanding)
       {
         valueAnimator = collapse(state.view, m_collapseDuration, 0);
+        ((LinearLayout)view).getChildAt(1).animate().rotation(90.0f).start();
       }
       else
       {
         valueAnimator = expand(state.view, m_expandDuration, state.fullHeight);
+        ((LinearLayout)view).getChildAt(1).animate().rotation(0.0f).start();
       }
       state.expanding = !state.expanding;
       state.activeAnimator = valueAnimator;

@@ -62,16 +62,30 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/disclaimer_label"
+            <LinearLayout
+                android:id="@+id/disclaimer_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:labelFor="@id/disclaimer_text"
-                android:onClick="toggleVisibility"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/large_text_size"
-                android:textStyle="bold"
-                android:text="@string/disclaimer_label" />
+                android:orientation="horizontal"
+                android:onClick="toggleVisibility">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:labelFor="@id/disclaimer_text"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/large_text_size"
+                    android:textStyle="bold"
+                    android:text="@string/disclaimer_label" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/arrow"/>
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/disclaimer_text"
@@ -79,16 +93,29 @@
                 android:layout_height="wrap_content"
                 style="@style/BasicText" />
 
-            <TextView
-                android:id="@+id/privacy_policy_label"
+            <LinearLayout
+                android:id="@+id/privacy_policy_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:labelFor="@id/privacy_policy_text"
-                android:onClick="toggleVisibility"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/large_text_size"
-                android:textStyle="bold"
-                android:text="@string/privacy_policy_label"/>
+                android:orientation="horizontal"
+                android:onClick="toggleVisibility">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:labelFor="@id/privacy_policy_text"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/large_text_size"
+                    android:textStyle="bold"
+                    android:text="@string/privacy_policy_label"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/arrow"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/privacy_policy_text"
@@ -96,16 +123,29 @@
                 android:layout_height="wrap_content"
                 style="@style/BasicText"/>
 
-            <TextView
-                android:id="@+id/open_source_information_label"
+            <LinearLayout
+                android:id="@+id/open_source_information_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:labelFor="@id/open_source_information_text"
-                android:onClick="toggleVisibility"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/large_text_size"
-                android:textStyle="bold"
-                android:text="@string/open_source_information_label"/>
+                android:orientation="horizontal"
+                android:onClick="toggleVisibility">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:labelFor="@id/open_source_information_text"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/large_text_size"
+                    android:textStyle="bold"
+                    android:text="@string/open_source_information_label"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/arrow"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/open_source_information_text"

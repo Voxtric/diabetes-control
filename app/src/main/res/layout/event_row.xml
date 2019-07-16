@@ -66,7 +66,7 @@
             android:layout_weight="1"
             android:padding="0dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/arrow_down"
+            android:src="@drawable/arrow"
             android:onClick="moveEvent"/>
 
         <ImageButton
@@ -76,7 +76,8 @@
             android:layout_weight="1"
             android:padding="0dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/arrow_up"
+            android:src="@drawable/arrow"
+            android:rotation="180"
             android:onClick="moveEvent"/>
     </LinearLayout>
 </LinearLayout>
