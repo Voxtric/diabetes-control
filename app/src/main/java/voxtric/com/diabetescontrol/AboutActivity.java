@@ -5,11 +5,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 
 import android.animation.ValueAnimator;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,12 +25,11 @@ import voxtric.com.diabetescontrol.database.Preference;
 
 public class AboutActivity extends DatabaseActivity
 {
-  private final int EXPAND_DURATION = 2;
-  private final int COLLAPSE_DURATION = 8;
+  private final int EXPAND_COLLAPSE_DURATION = 2;
 
   private final HashMap<View, ExpansionState> m_expansionStates = new HashMap<>();
-  private long m_expandDuration = 0;
-  private long m_collapseDuration = 0;
+
+  private int m_expandCollapseDuration = 0;
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -70,8 +70,7 @@ public class AboutActivity extends DatabaseActivity
         toggleVisibility(findViewById(R.id.privacy_policy_layout));
         toggleVisibility(findViewById(R.id.open_source_information_layout));
 
-        m_expandDuration = EXPAND_DURATION;
-        m_collapseDuration = COLLAPSE_DURATION;
+        m_expandCollapseDuration = EXPAND_COLLAPSE_DURATION;
       }
     });
   }
@@ -126,12 +125,12 @@ public class AboutActivity extends DatabaseActivity
       ValueAnimator valueAnimator;
       if (state.expanding)
       {
-        valueAnimator = collapse(state.view, m_collapseDuration, 0);
+        valueAnimator = collapse(state.view, m_expandCollapseDuration, 0);
         ((LinearLayout)view).getChildAt(1).animate().rotation(90.0f).start();
       }
       else
       {
-        valueAnimator = expand(state.view, m_expandDuration, state.fullHeight);
+        valueAnimator = expand(state.view, m_expandCollapseDuration, state.fullHeight);
         ((LinearLayout)view).getChildAt(1).animate().rotation(0.0f).start();
       }
       state.expanding = !state.expanding;
@@ -139,8 +138,12 @@ public class AboutActivity extends DatabaseActivity
     }
   }
 
-  public ValueAnimator expand(final View view, long duration, int targetHeight)
+  public ValueAnimator expand(final View view, long duration, final int targetHeight)
   {
+    Display display = getWindowManager().getDefaultDisplay();
+    final Point screenSize = new Point();
+    display.getSize(screenSize);
+
     int previousHeight = view.getHeight();
     view.setVisibility(View.VISIBLE);
     ValueAnimator valueAnimator = ValueAnimator.ofInt(previousHeight, targetHeight);
@@ -149,7 +152,17 @@ public class AboutActivity extends DatabaseActivity
       @Override
       public void onAnimationUpdate(ValueAnimator animation)
       {
-        view.getLayoutParams().height = (int)animation.getAnimatedValue();
+        int height = (int)animation.getAnimatedValue();
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+
+        if (location[1] + height > screenSize.y)
+        {
+          height = targetHeight;
+          animation.cancel();
+        }
+
+        view.getLayoutParams().height = height;
         view.requestLayout();
       }
     });
@@ -162,7 +175,13 @@ public class AboutActivity extends DatabaseActivity
 
   public ValueAnimator collapse(final View view, long duration, int targetHeight)
   {
-    int previousHeight = view.getHeight();
+    int[] location = new int[2];
+    view.getLocationOnScreen(location);
+    Display display = getWindowManager().getDefaultDisplay();
+    final Point screenSize = new Point();
+    display.getSize(screenSize);
+    int previousHeight = screenSize.y - location[1];
+
     ValueAnimator valueAnimator = ValueAnimator.ofInt(previousHeight, targetHeight);
     valueAnimator.setInterpolator(new DecelerateInterpolator());
     valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
@@ -170,7 +189,7 @@ public class AboutActivity extends DatabaseActivity
       @Override
       public void onAnimationUpdate(ValueAnimator animation)
       {
-        view.getLayoutParams().height = (int) animation.getAnimatedValue();
+        view.getLayoutParams().height = (int)animation.getAnimatedValue();
         view.requestLayout();
       }
     });
