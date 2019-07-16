@@ -56,9 +56,16 @@ public class BGLHighlightingSettingsFragment extends Fragment
   }
 
   @Override
-  public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                           Bundle savedInstanceState)
+  public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
   {
+    if (savedInstanceState != null)
+    {
+      m_bglRangeValues = new HashMap<>();
+      m_bglRangeValues.put(IDEAL_MINIMUM_PREFERENCE, savedInstanceState.getString(IDEAL_MINIMUM_PREFERENCE));
+      m_bglRangeValues.put(HIGH_MINIMUM_PREFERENCE, savedInstanceState.getString(HIGH_MINIMUM_PREFERENCE));
+      m_bglRangeValues.put(ACTION_REQUIRED_MINIMUM_PREFERENCE, savedInstanceState.getString(ACTION_REQUIRED_MINIMUM_PREFERENCE));
+    }
+
     final View view = inflater.inflate(R.layout.fragment_bgl_highlighting_settings, container, false);
 
     final SettingsActivity activity = (SettingsActivity)getActivity();
@@ -133,6 +140,15 @@ public class BGLHighlightingSettingsFragment extends Fragment
     }
 
     return view;
+  }
+
+  @Override
+  public void onSaveInstanceState(@NonNull Bundle outState)
+  {
+    super.onSaveInstanceState(outState);
+    outState.putString(IDEAL_MINIMUM_PREFERENCE, m_bglRangeValues.get(IDEAL_MINIMUM_PREFERENCE));
+    outState.putString(HIGH_MINIMUM_PREFERENCE, m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE));
+    outState.putString(ACTION_REQUIRED_MINIMUM_PREFERENCE, m_bglRangeValues.get(ACTION_REQUIRED_MINIMUM_PREFERENCE));
   }
 
   private void setValues(final DatabaseActivity activity, View view)
