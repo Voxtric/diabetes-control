@@ -30,7 +30,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import voxtric.com.diabetescontrol.EditEventsRecyclerViewAdapter;
-import voxtric.com.diabetescontrol.MainActivity;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
@@ -174,9 +173,25 @@ public class EditEventsActivity extends DatabaseActivity
       public void afterTextChanged(Editable s) {}
 
       @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count)
+      public void onTextChanged(final CharSequence text, int start, int before, int count)
       {
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(s.length() > 0);
+        boolean enableButton = text.length() > 0;
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(enableButton);
+        if (enableButton)
+        {
+          AsyncTask.execute(new Runnable()
+          {
+            @Override
+            public void run()
+            {
+              EventsDao eventsDao = m_database.eventsDao();
+              if (eventsDao.getEvent(text.toString()) != null)
+              {
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+              }
+            }
+          });
+        }
       }
     });
 

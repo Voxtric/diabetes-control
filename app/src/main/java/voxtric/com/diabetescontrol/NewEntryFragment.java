@@ -521,7 +521,6 @@ public class NewEntryFragment extends Fragment
       public void onClick(View view)
       {
         saveAutoCompleteView(R.id.auto_complete_insulin_name);
-        saveAutoCompleteView(R.id.auto_complete_insulin_dose);
         saveAutoCompleteView(R.id.auto_complete_food_eaten);
         saveAutoCompleteView(R.id.auto_complete_additional_notes);
 
