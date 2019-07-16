@@ -2,6 +2,7 @@ package voxtric.com.diabetescontrol.settings.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.database.TargetChange;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
+import voxtric.com.diabetescontrol.utilities.DecimalDigitsInputFilter;
 import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class MealTargetsSettingsFragment extends Fragment
@@ -92,6 +94,7 @@ public class MealTargetsSettingsFragment extends Fragment
       for (@IdRes int id : VIEW_IDS)
       {
         EditText editText = view.findViewById(id);
+        editText.setFilters(new InputFilter[] { new DecimalDigitsInputFilter(2, 1) });
         ViewUtilities.addHintHide(editText, Gravity.CENTER, activity);
         activity.setTextFromDatabase(editText);
         activity.saveTextToDatabaseWhenUnfocused(editText);

@@ -3,6 +3,7 @@ package voxtric.com.diabetescontrol.settings.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
+import voxtric.com.diabetescontrol.utilities.DecimalDigitsInputFilter;
 import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class BGLHighlightingSettingsFragment extends Fragment
@@ -103,6 +105,12 @@ public class BGLHighlightingSettingsFragment extends Fragment
       final EditText idealRangeUpper = view.findViewById(R.id.ideal_range_upper);
       final EditText highRangeLower = view.findViewById(R.id.high_range_lower);
       final EditText highRangeUpper = view.findViewById(R.id.high_range_upper);
+
+      DecimalDigitsInputFilter inputFilter = new DecimalDigitsInputFilter(2, 1);
+      idealRangeLower.setFilters(new InputFilter[] { inputFilter });
+      idealRangeUpper.setFilters(new InputFilter[] { inputFilter });
+      highRangeLower.setFilters(new InputFilter[] { inputFilter });
+      highRangeUpper.setFilters(new InputFilter[] { inputFilter });
 
       ViewUtilities.addHintHide(idealRangeLower, Gravity.CENTER, activity);
       ViewUtilities.addHintHide(idealRangeUpper, Gravity.CENTER, activity);

@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.InputFilter;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -49,6 +50,7 @@ import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Event;
 import voxtric.com.diabetescontrol.database.EventsDao;
+import voxtric.com.diabetescontrol.utilities.DecimalDigitsInputFilter;
 import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class NewEntryFragment extends Fragment
@@ -119,6 +121,9 @@ public class NewEntryFragment extends Fragment
       ViewUtilities.addHintHide((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level), Gravity.CENTER, activity);
       ViewUtilities.addHintHide((EditText)activity.findViewById(R.id.auto_complete_food_eaten), Gravity.START | Gravity.TOP, activity);
       ViewUtilities.addHintHide((EditText)activity.findViewById(R.id.auto_complete_additional_notes), Gravity.START | Gravity.TOP, activity);
+
+      ((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).setFilters(
+          new InputFilter[] { new DecimalDigitsInputFilter(2, 1) });
     }
 
     if (savedInstanceState == null)
