@@ -60,8 +60,9 @@ public class NewEntryFragment extends Fragment
   private int m_hour = 0;
   private int m_minute = 0;
 
-  private String m_selectedEventName = null;
-  private String m_autosetEventName = null;
+  private String m_currentEventName = null;
+  private boolean m_eventNameAutoSelected = true;
+  private boolean m_eventNameAutoSelecting = false;
 
   // Not transferred between rotations.
   private Date m_date = null;
@@ -98,10 +99,6 @@ public class NewEntryFragment extends Fragment
     {
       m_database = ((DatabaseActivity)activity).getDatabase();
 
-      //SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
-      //String insulinName = preferences.getString("insulin_name", "");
-      //((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).setText(insulinName);
-
       Spinner eventSpinner = activity.findViewById(R.id.spinner_event);
       m_eventSpinnerAdapter = new ArrayAdapter<String>(activity, R.layout.event_spinner_dropdown_item)
       {
@@ -135,7 +132,7 @@ public class NewEntryFragment extends Fragment
       m_day = savedInstanceState.getInt("day");
       m_hour = savedInstanceState.getInt("hour");
       m_minute = savedInstanceState.getInt("minute");
-      m_selectedEventName = savedInstanceState.getString("selected_event_name");
+      m_currentEventName = savedInstanceState.getString("current_event_name");
       updateDateTime(false);
     }
 
@@ -156,7 +153,7 @@ public class NewEntryFragment extends Fragment
     outState.putInt("day", m_day);
     outState.putInt("hour", m_hour);
     outState.putInt("minute", m_minute);
-    outState.putString("selected_event_name", m_selectedEventName);
+    outState.putString("current_event_name", m_currentEventName);
   }
 
   private void updateDateTime(boolean forceNew)
@@ -213,13 +210,13 @@ public class NewEntryFragment extends Fragment
                 m_eventSpinnerAdapter.add(events.get(i).name);
               }
 
-              if (m_selectedEventName != null)
+              if (m_currentEventName == null || m_eventNameAutoSelected)
               {
-                selectEvent(m_selectedEventName);
+                pickBestEvent();
               }
               else
               {
-                pickBestEvent();
+                selectEvent(m_currentEventName);
               }
             }
           });
@@ -286,8 +283,9 @@ public class NewEntryFragment extends Fragment
               @Override
               public void run()
               {
-                m_autosetEventName = events.get(finalClosestEventIndex).name;
-                selectEvent(m_autosetEventName);
+                m_currentEventName = events.get(finalClosestEventIndex).name;
+                m_eventNameAutoSelecting = true;
+                selectEvent(m_currentEventName);
               }
             });
           }
@@ -369,7 +367,7 @@ public class NewEntryFragment extends Fragment
                 m_hour = timePicker.getCurrentHour();
                 m_minute = timePicker.getCurrentMinute();
                 updateDateTime(false);
-                if (m_selectedEventName == null || m_selectedEventName.equals(m_autosetEventName))
+                if (m_currentEventName == null || m_eventNameAutoSelected)
                 {
                   pickBestEvent();
                 }
@@ -409,7 +407,9 @@ public class NewEntryFragment extends Fragment
       @Override
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
       {
-        m_selectedEventName = eventSpinner.getItemAtPosition(position).toString();
+        m_eventNameAutoSelected = m_eventNameAutoSelecting;
+        m_currentEventName = eventSpinner.getItemAtPosition(position).toString();
+        m_eventNameAutoSelecting = false;
       }
     });
   }
@@ -893,7 +893,8 @@ public class NewEntryFragment extends Fragment
       clearText((EditText)activity.findViewById(R.id.auto_complete_food_eaten));
       clearText((EditText)activity.findViewById(R.id.auto_complete_additional_notes));
 
-      m_selectedEventName = null;
+      m_currentEventName = null;
+      m_eventNameAutoSelected = true;
       pickBestEvent();
     }
   }
@@ -943,7 +944,7 @@ public class NewEntryFragment extends Fragment
 
   void setValues(DataEntry entry, Activity activity)
   {
-    m_selectedEventName = entry.event;
+    m_currentEventName = entry.event;
     updateEventSpinner();
 
     Calendar calendar = Calendar.getInstance();

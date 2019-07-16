@@ -460,6 +460,7 @@ public class EditEventsActivity extends DatabaseActivity
                     RecyclerView recyclerView = findViewById(R.id.recycler_view_entry_list);
                     recyclerView.setAdapter(m_adapter);
                     Toast.makeText(EditEventsActivity.this, R.string.events_reset_message, Toast.LENGTH_LONG).show();
+                    setResult(EventsSettingsFragment.RESULT_UPDATE_EVENTS);
                   }
                 });
               }

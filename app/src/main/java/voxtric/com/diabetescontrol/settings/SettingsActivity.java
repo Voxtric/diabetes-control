@@ -62,11 +62,14 @@ public class SettingsActivity extends DatabaseActivity
   {
     super.onResume();
     View view = findViewById(R.id.root);
-    view.requestFocus();
-    InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-    if (inputMethodManager != null)
+    if (view != null)
     {
-      inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+      view.requestFocus();
+      InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+      if (inputMethodManager != null)
+      {
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+      }
     }
   }
 
