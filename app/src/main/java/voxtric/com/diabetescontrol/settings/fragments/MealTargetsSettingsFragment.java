@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
+import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.database.TargetChange;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
@@ -84,9 +85,9 @@ public class MealTargetsSettingsFragment extends Fragment
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState)
   {
-    View view = inflater.inflate(R.layout.fragment_meal_targets_settings, container, false);
+    final View view = inflater.inflate(R.layout.fragment_meal_targets_settings, container, false);
 
-    SettingsActivity activity = (SettingsActivity)getActivity();
+    final SettingsActivity activity = (SettingsActivity)getActivity();
     if (activity != null)
     {
       for (@IdRes int id : VIEW_IDS)
@@ -97,6 +98,45 @@ public class MealTargetsSettingsFragment extends Fragment
         activity.saveTextToDatabaseWhenUnfocused(editText);
         CompositeOnFocusChangeListener.applyListenerToView(editText, UPDATE_DATABASE);
       }
+
+      view.findViewById(R.id.set_from_bgl_highlighting_button).setOnClickListener(new View.OnClickListener()
+      {
+        @Override
+        public void onClick(View v)
+        {
+          Preference.get(activity,
+              new String[]{
+                  BGLHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE,
+                  BGLHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE,
+                  BGLHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE
+              },
+              new String[]{
+                  String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get(BGLHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE)),
+                  String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get(BGLHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE)),
+                  String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get(BGLHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE))
+              },
+              new Preference.ResultRunnable()
+              {
+                @Override
+                public void run()
+                {
+                  String[] preferences = new String[]{
+                      BGLHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE,
+                      BGLHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE,
+                      BGLHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE,
+                      BGLHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE
+                  };
+
+                  for (int i = 0; i < VIEW_IDS.length; i++)
+                  {
+                    EditText editText = view.findViewById(VIEW_IDS[i]);
+                    editText.setText(getResults().get(preferences[i]));
+                    editText.requestFocus();  // Necessary for values to be stored in database.
+                  }
+                }
+              });
+        }
+      });
     }
 
     return view;

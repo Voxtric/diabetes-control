@@ -132,4 +132,12 @@
         android:imeOptions="actionDone"
         android:inputType="numberDecimal"
         style="@style/BasicText"/>
+
+    <Button
+        android:id="@+id/set_from_bgl_highlighting_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        app:layout_constraintTop_toBottomOf="@id/edit_text_target_post_meal_lower"
+        android:text="@string/target_set_from_bgl_highlighting_hint"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

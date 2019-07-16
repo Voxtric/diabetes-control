@@ -142,6 +142,7 @@ If not, you can do so later from the settings menu at the top right."
     <string name="target_post_meal_lower_hint">Post-meal Lower</string>
     <string name="target_post_meal_upper_hint">Post-meal Upper</string>
     <string name="target_range_indicator">-</string>
+    <string name="target_set_from_bgl_highlighting_hint">Set From BGL Highlighting Values</string>
 
     <!-- Edit Entry Activity -->
     <string name="title_cancel_entry_edit">Cancel Entry Edit?</string>
