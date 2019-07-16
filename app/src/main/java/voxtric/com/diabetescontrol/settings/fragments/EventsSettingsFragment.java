@@ -11,11 +11,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import voxtric.com.diabetescontrol.MainActivity;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.settings.EditEventsActivity;
+import voxtric.com.diabetescontrol.settings.SettingsActivity;
 
 public class EventsSettingsFragment extends Fragment
 {
+  public static final int REQUEST_EDIT_EVENTS = 200;
+  public static final int RESULT_UPDATE_EVENTS = -200;
+
   public EventsSettingsFragment()
   {
     // Required empty public constructor
@@ -35,10 +40,24 @@ public class EventsSettingsFragment extends Fragment
         if (activity != null)
         {
           Intent intent = new Intent(activity, EditEventsActivity.class);
-          startActivity(intent);
+          startActivityForResult(intent, REQUEST_EDIT_EVENTS);
         }
       }
     });
     return view;
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data)
+  {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == EventsSettingsFragment.REQUEST_EDIT_EVENTS && resultCode == EventsSettingsFragment.RESULT_UPDATE_EVENTS)
+    {
+      SettingsActivity activity = (SettingsActivity)getActivity();
+      if (activity != null)
+      {
+        activity.applyResultFlag(MainActivity.RESULT_UPDATE_EVENT_SPINNER);
+      }
+    }
   }
 }

@@ -1,7 +1,6 @@
 package voxtric.com.diabetescontrol.settings.fragments;
 
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,17 +15,16 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import voxtric.com.diabetescontrol.MainActivity;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Preference;
-import voxtric.com.diabetescontrol.database.PreferencesDao;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 import voxtric.com.diabetescontrol.utilities.ViewUtilities;
@@ -72,6 +70,7 @@ public class BGLHighlightingSettingsFragment extends Fragment
         {
           setBGLHighlightingEnabled(activity, checked);
           Preference.put(activity, HIGHLIGHTING_ENABLED_PREFERENCE, String.valueOf(checked), null);
+          activity.applyResultFlag(MainActivity.RESULT_UPDATE_BGL_HIGHLIGHTING);
         }
       });
 
@@ -94,6 +93,7 @@ public class BGLHighlightingSettingsFragment extends Fragment
                 {
                   setValues(activity, view.getRootView());
                   Toast.makeText(activity, R.string.bgl_range_values_reset, Toast.LENGTH_LONG).show();
+                  activity.applyResultFlag(MainActivity.RESULT_UPDATE_BGL_HIGHLIGHTING);
                 }
               });
         }
@@ -179,7 +179,7 @@ public class BGLHighlightingSettingsFragment extends Fragment
     activity.findViewById(R.id.button_reset_bgl_values).setEnabled(enabled);
   }
 
-  private void saveValuesToDatabaseWhenUnfocused(final DatabaseActivity activity, final EditText view, final String preferenceName)
+  private void saveValuesToDatabaseWhenUnfocused(final SettingsActivity activity, final EditText view, final String preferenceName)
   {
     CompositeOnFocusChangeListener.applyListenerToView(view, new View.OnFocusChangeListener()
     {
@@ -220,6 +220,7 @@ public class BGLHighlightingSettingsFragment extends Fragment
               Preference.put(activity, preferenceName, text, null);
               view.setText(String.valueOf(value));
               m_bglRangeValues.put(preferenceName, text);
+              activity.applyResultFlag(MainActivity.RESULT_UPDATE_BGL_HIGHLIGHTING);
             }
             else
             {

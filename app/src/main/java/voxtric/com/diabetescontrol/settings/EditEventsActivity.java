@@ -36,6 +36,7 @@ import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Event;
 import voxtric.com.diabetescontrol.database.EventsDao;
+import voxtric.com.diabetescontrol.settings.fragments.EventsSettingsFragment;
 import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class EditEventsActivity extends DatabaseActivity
@@ -148,7 +149,7 @@ public class EditEventsActivity extends DatabaseActivity
                     public void run()
                     {
                       m_adapter.updateAllEvents(allEvents);
-                      setResult(MainActivity.RESULT_EVENTS_CHANGED);
+                      setResult(EventsSettingsFragment.RESULT_UPDATE_EVENTS);
                     }
                   });
                   if (!newEvent)
@@ -267,7 +268,7 @@ public class EditEventsActivity extends DatabaseActivity
                   public void run()
                   {
                     m_adapter.updateAllEvents(allEvents);
-                    setResult(MainActivity.RESULT_EVENTS_CHANGED);
+                    setResult(EventsSettingsFragment.RESULT_UPDATE_EVENTS);
                   }
                 });
               }
@@ -337,7 +338,7 @@ public class EditEventsActivity extends DatabaseActivity
                       {
                         actionBar.setTitle(getString(R.string.edit_events_name, m_adapter.getItemCount(), MAX_EVENT_COUNT));
                       }
-                      setResult(MainActivity.RESULT_EVENTS_CHANGED);
+                      setResult(EventsSettingsFragment.RESULT_UPDATE_EVENTS);
                     }
                   });
                 }
@@ -496,7 +497,7 @@ public class EditEventsActivity extends DatabaseActivity
             {
               actionBar.setTitle(getString(R.string.edit_events_name, events.size(), MAX_EVENT_COUNT));
             }
-            setResult(MainActivity.RESULT_EVENTS_CHANGED);
+            setResult(EventsSettingsFragment.RESULT_UPDATE_EVENTS);
           }
         });
       }

@@ -5,13 +5,10 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -47,20 +44,18 @@ import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.exporting.ExportDurationDialogFragment;
-import voxtric.com.diabetescontrol.settings.EditEventsActivity;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 
 public class MainActivity extends DatabaseActivity
 {
   private static final int START_FRAGMENT = 0;
 
-  private static final int REQUEST_FIRST_LAUNCH_SETUP = 109;
-  private static final int REQUEST_EDIT_EVENTS = 110;
-  public static final int RESULT_EVENTS_CHANGED = 111;
+  private static final int REQUEST_EDIT_SETTINGS = 100;
+  public static final int RESULT_UPDATE_EVENT_SPINNER = 0x01;
+  public static final int RESULT_UPDATE_BGL_HIGHLIGHTING = 0x02;
 
   private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 112;
 
-  private AppDatabase m_database = null;
   private ViewPager m_viewPager = null;
 
   private String m_exportTitle = null;
@@ -109,14 +104,6 @@ public class MainActivity extends DatabaseActivity
       navigation.getMenu().getItem(START_FRAGMENT).setChecked(true);
       m_viewPager.setCurrentItem(START_FRAGMENT);
     }
-
-    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-    boolean firstTime = preferences.getBoolean("first_launch", true);
-    if (firstTime)
-    {
-      preferences.edit().putBoolean("first_launch", false).apply();
-      runFirstLaunchSetup();
-    }
   }
 
   @Override
@@ -150,7 +137,7 @@ public class MainActivity extends DatabaseActivity
         return true;
       case R.id.navigation_settings:
         intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_EDIT_SETTINGS);
         return true;
 
 
@@ -167,6 +154,7 @@ public class MainActivity extends DatabaseActivity
               File databaseFilePath = new File(getDatabasePath(DATABASE_NAME).getAbsolutePath() + affix);
               File exportFilePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), DATABASE_NAME + affix);
               Log.v("Export path", exportFilePath.getAbsolutePath());
+              //noinspection ResultOfMethodCallIgnored
               exportFilePath.createNewFile();
 
               FileInputStream inStream = new FileInputStream(databaseFilePath);
@@ -229,17 +217,16 @@ public class MainActivity extends DatabaseActivity
   protected void onActivityResult(int requestCode, int resultCode, Intent data)
   {
     super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == REQUEST_FIRST_LAUNCH_SETUP)
+    if (requestCode == REQUEST_EDIT_SETTINGS)
     {
-      requestExportDetails();
-      if (resultCode == RESULT_EVENTS_CHANGED)
+      if ((resultCode & RESULT_UPDATE_EVENT_SPINNER) == RESULT_UPDATE_EVENT_SPINNER)
       {
-        ((NewEntryFragment)getSupportFragmentManager().getFragments().get(0)).updateEventSpinner();
+        ((NewEntryFragment) getSupportFragmentManager().getFragments().get(0)).updateEventSpinner();
       }
-    }
-    else if (requestCode == REQUEST_EDIT_EVENTS && resultCode == RESULT_EVENTS_CHANGED)
-    {
-      ((NewEntryFragment)getSupportFragmentManager().getFragments().get(0)).updateEventSpinner();
+      else if ((resultCode & RESULT_UPDATE_BGL_HIGHLIGHTING) == RESULT_UPDATE_BGL_HIGHLIGHTING)
+      {
+        ((EntryListFragment)getSupportFragmentManager().getFragments().get(1)).refreshEntryList();
+      }
     }
   }
 
@@ -310,67 +297,6 @@ public class MainActivity extends DatabaseActivity
     ExportDurationDialogFragment dialog = new ExportDurationDialogFragment();
     dialog.setText(title, startMessage, endMessage);
     dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
-  }
-
-  private void runFirstLaunchSetup()
-  {
-    // Ensure default values have been placed into the database.
-    AsyncTask.execute(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        if (m_database.eventsDao().getEvents().isEmpty())
-        {
-          EditEventsActivity.addNHSEvents(m_database, MainActivity.this);
-        }
-      }
-    });
-
-    // Show the user how to configure their app.
-    final AlertDialog dialog = new AlertDialog.Builder(this)
-        .setTitle(R.string.first_launch_setup_title)
-        .setMessage(R.string.first_launch_setup_message_1)
-        .setNegativeButton(R.string.no, null)
-        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
-        {
-          @Override
-          public void onClick(DialogInterface dialog, int which)
-          {
-            Intent intent = new Intent(MainActivity.this, EditEventsActivity.class);
-            startActivityForResult(intent, REQUEST_FIRST_LAUNCH_SETUP);
-          }
-        })
-        .create();
-    dialog.show();
-
-    dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener()
-    {
-      @Override
-      public void onClick(View view)
-      {
-        dialog.cancel();
-        requestExportDetails();
-      }
-    });
-  }
-
-  private void requestExportDetails()
-  {
-    AlertDialog dialog = new AlertDialog.Builder(this)
-        .setTitle(R.string.first_launch_setup_title)
-        .setMessage(R.string.first_launch_setup_message_2)
-        .setNegativeButton(R.string.no, null)
-        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
-        {
-          @Override
-          public void onClick(DialogInterface dialog, int which)
-          {
-            //TODO: Launch fragment for editing contact details
-          }
-        })
-        .create();
-    dialog.show();
   }
 
   private void initialiseViewPager(ViewPager viewPager, final BottomNavigationView navigation)

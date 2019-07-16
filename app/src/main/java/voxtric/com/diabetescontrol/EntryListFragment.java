@@ -155,7 +155,7 @@ public class EntryListFragment extends Fragment
     }
   }
 
-  public void viewFull(View dataView, Activity activity)
+  void viewFull(View dataView, Activity activity)
   {
     DataEntry entry = m_adapter.getEntry(dataView);
     View view = MainActivity.getFullView(activity, entry);
@@ -167,7 +167,7 @@ public class EntryListFragment extends Fragment
     dialog.show();
   }
 
-  public void launchEdit(final View dataView, Activity activity)
+  void launchEdit(final View dataView, Activity activity)
   {
     DataEntry entry = m_adapter.getEntry(dataView);
     Intent intent = new Intent(activity, EditEntryActivity.class);
@@ -175,7 +175,7 @@ public class EntryListFragment extends Fragment
     startActivityForResult(intent, REQUEST_EDIT_ENTRY);
   }
 
-  public void deleteEntry(final View dataView, final Activity activity)
+  void deleteEntry(final View dataView, final Activity activity)
   {
     final DataEntry entry = m_adapter.getEntry(dataView);
     AlertDialog dialog = new AlertDialog.Builder(activity)

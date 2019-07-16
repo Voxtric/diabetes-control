@@ -4,19 +4,24 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import voxtric.com.diabetescontrol.MainActivity;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Preference;
+import voxtric.com.diabetescontrol.settings.fragments.EventsSettingsFragment;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 
 public class SettingsActivity extends DatabaseActivity
 {
+  private int m_result = 0;
+
   @Override
   protected void onCreate(Bundle savedInstanceState)
   {
@@ -92,5 +97,11 @@ public class SettingsActivity extends DatabaseActivity
         }
       }
     });
+  }
+
+  public void applyResultFlag(int resultFlag)
+  {
+    m_result |= resultFlag;
+    setResult(m_result);
   }
 }
