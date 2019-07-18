@@ -40,9 +40,7 @@ import com.shuhart.bubblepagerindicator.BubblePageIndicator;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntriesDao;
@@ -51,6 +49,7 @@ import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Event;
 import voxtric.com.diabetescontrol.database.EventsDao;
 import voxtric.com.diabetescontrol.settings.EditEventsActivity;
+import voxtric.com.diabetescontrol.utilities.AutoCompleteTextViewUtilities;
 import voxtric.com.diabetescontrol.utilities.DecimalDigitsInputFilter;
 import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
@@ -125,6 +124,15 @@ public class NewEntryFragment extends Fragment
 
       ((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).setFilters(
           new InputFilter[] { new DecimalDigitsInputFilter(2, 1) });
+
+      Calendar calendar = Calendar.getInstance();
+      calendar.add(Calendar.DAY_OF_MONTH, -5);
+      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, R.id.auto_complete_insulin_name, calendar.getTimeInMillis());
+      calendar.add(Calendar.DAY_OF_MONTH, 5);
+      calendar.add(Calendar.MONTH, -2);
+      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, R.id.auto_complete_food_eaten, calendar.getTimeInMillis());
+      calendar.add(Calendar.MONTH, 1);
+      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, R.id.auto_complete_additional_notes, calendar.getTimeInMillis());
     }
 
     if (savedInstanceState == null)
@@ -141,10 +149,6 @@ public class NewEntryFragment extends Fragment
       m_currentEventName = savedInstanceState.getString("current_event_name");
       updateDateTime(false);
     }
-
-    refreshAutoCompleteView(R.id.auto_complete_insulin_name);
-    refreshAutoCompleteView(R.id.auto_complete_food_eaten);
-    refreshAutoCompleteView(R.id.auto_complete_additional_notes);
 
     updateEventSpinner();
   }
@@ -524,13 +528,13 @@ public class NewEntryFragment extends Fragment
       @Override
       public void onClick(View view)
       {
-        saveAutoCompleteView(R.id.auto_complete_insulin_name);
-        saveAutoCompleteView(R.id.auto_complete_food_eaten);
-        saveAutoCompleteView(R.id.auto_complete_additional_notes);
-
         final Activity activity = getActivity();
         if (activity instanceof DatabaseActivity)
         {
+          AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, R.id.auto_complete_insulin_name);
+          AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, R.id.auto_complete_food_eaten);
+          AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, R.id.auto_complete_additional_notes);
+
           boolean proceed = true;
 
           String bloodGlucoseLevel = ((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString();
@@ -904,49 +908,6 @@ public class NewEntryFragment extends Fragment
       m_currentEventName = null;
       m_eventNameAutoSelected = true;
       pickBestEvent();
-    }
-  }
-
-  private void saveAutoCompleteView(@IdRes int input)
-  {
-    Activity activity = getActivity();
-    if (activity != null)
-    {
-      String idName = getResources().getResourceName(input);
-      SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
-      SharedPreferences.Editor editor = preferences.edit();
-      Set<String> strings = preferences.getStringSet(idName, null);
-      Set<String> newStrings = new HashSet<>();
-      if (strings != null)
-      {
-        newStrings.addAll(strings);
-      }
-      AutoCompleteTextView textView = activity.findViewById(input);
-      String name = textView.getText().toString();
-      newStrings.add(name);
-      editor.putStringSet(idName, newStrings);
-      editor.apply();
-      refreshAutoCompleteView(input);
-    }
-  }
-
-  private void refreshAutoCompleteView(@IdRes int input)
-  {
-    Activity activity = getActivity();
-    if (activity != null)
-    {
-      String idName = getResources().getResourceName(input);
-      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-      Set<String> strings = prefs.getStringSet(idName, null);
-      String[] stringArray = new String[0];
-      if (strings != null)
-      {
-        stringArray = strings.toArray(stringArray);
-      }
-
-      AutoCompleteTextView autoText = activity.findViewById(input);
-      ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, android.R.layout.simple_dropdown_item_1line, stringArray);
-      autoText.setAdapter(adapter);
     }
   }
 

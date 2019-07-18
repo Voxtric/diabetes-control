@@ -26,7 +26,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.room.Room;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -40,7 +39,6 @@ import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.util.Date;
 
-import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.exporting.ExportDurationDialogFragment;
