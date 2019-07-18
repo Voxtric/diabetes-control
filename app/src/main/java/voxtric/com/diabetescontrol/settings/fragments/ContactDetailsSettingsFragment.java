@@ -1,8 +1,6 @@
 package voxtric.com.diabetescontrol.settings.fragments;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +13,8 @@ import androidx.fragment.app.Fragment;
 
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
-import voxtric.com.diabetescontrol.utilities.ViewUtilities;
+import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
+import voxtric.com.diabetescontrol.utilities.HintHideOnFocusChangeListener;
 
 public class ContactDetailsSettingsFragment extends Fragment
 {
@@ -43,7 +42,7 @@ public class ContactDetailsSettingsFragment extends Fragment
         EditText editText = view.findViewById(id);
         activity.setTextFromDatabase(editText);
         activity.saveTextToDatabaseWhenUnfocused(editText);
-        ViewUtilities.addHintHide(editText, Gravity.CENTER, activity);
+        CompositeOnFocusChangeListener.applyListenerToView(editText, new HintHideOnFocusChangeListener(editText, Gravity.CENTER));
       }
     }
 

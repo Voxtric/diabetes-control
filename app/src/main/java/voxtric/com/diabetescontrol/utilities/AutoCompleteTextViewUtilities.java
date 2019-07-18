@@ -6,8 +6,6 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
-import androidx.annotation.IdRes;
-
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,15 +64,14 @@ public class AutoCompleteTextViewUtilities
     }
   }
 
-  public static void clearAgedValuesAutoCompleteValues(final Activity activity, @IdRes final int input, final long olderThan)
+  public static void clearAgedValuesAutoCompleteValues(final Activity activity, final AutoCompleteTextView inputView, final long olderThan)
   {
     AsyncTask.execute(new Runnable()
     {
       @Override
       public void run()
       {
-        final String idName = activity.getResources().getResourceName(input).replaceAll(".*/", "");
-        File file = new File(activity.getFilesDir(), idName);
+        File file = new File(activity.getFilesDir(), (String)inputView.getTag());
         HashMap<String, Long> autoCompleteValues = readAutocompleteValue(file);
         ArrayList<String> toRemove = new ArrayList<>();
         for (String value : autoCompleteValues.keySet())
@@ -89,15 +86,14 @@ public class AutoCompleteTextViewUtilities
         {
           autoCompleteValues.remove(value);
         }
-        refreshAutoCompleteView(activity, input, autoCompleteValues);
+        refreshAutoCompleteView(activity, inputView, autoCompleteValues);
       }
     });
   }
 
-  public static void saveAutoCompleteView(final Activity activity, @IdRes final int input)
+  public static void saveAutoCompleteView(final Activity activity, final AutoCompleteTextView inputView)
   {
-    AutoCompleteTextView textView = activity.findViewById(input);
-    final String text = textView.getText().toString();
+    final String text = inputView.getText().toString();
     if (text.length() > 0)
     {
       AsyncTask.execute(new Runnable()
@@ -105,22 +101,20 @@ public class AutoCompleteTextViewUtilities
         @Override
         public void run()
         {
-          String idName = activity.getResources().getResourceName(input).replaceAll(".*/", "");
-          File file = new File(activity.getFilesDir(), idName);
+          File file = new File(activity.getFilesDir(), (String)inputView.getTag());
           HashMap<String, Long> autocompleteValues = readAutocompleteValue(file);
           autocompleteValues.put(text, System.currentTimeMillis());
           writeAutoCompleteValues(file, autocompleteValues);
 
-          refreshAutoCompleteView(activity, input, autocompleteValues);
+          refreshAutoCompleteView(activity, inputView, autocompleteValues);
         }
       });
     }
   }
 
-  private static void refreshAutoCompleteView(final Activity activity, @IdRes final int input, HashMap<String, Long> autoCompleteValues)
+  public static void refreshAutoCompleteView(final Activity activity, final AutoCompleteTextView inputView, HashMap<String, Long> autoCompleteValues)
   {
-    String idName = activity.getResources().getResourceName(input).replaceAll(".*/", "");
-    File file = new File(activity.getFilesDir(), idName);
+    File file = new File(activity.getFilesDir(), (String)inputView.getTag());
     if (autoCompleteValues == null)
     {
       autoCompleteValues = readAutocompleteValue(file);
@@ -134,9 +128,8 @@ public class AutoCompleteTextViewUtilities
       @Override
       public void run()
       {
-        AutoCompleteTextView autoText = activity.findViewById(input);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, android.R.layout.simple_dropdown_item_1line, finalStringArray);
-        autoText.setAdapter(adapter);
+        inputView.setAdapter(adapter);
       }
     });
   }

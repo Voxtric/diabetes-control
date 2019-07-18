@@ -158,9 +158,10 @@
                 android:hint="@string/insulin_name_hint"
                 style="@style/BasicText"
                 android:imeOptions="actionNext"
-                android:nextFocusForward="@id/auto_complete_insulin_dose"
+                android:nextFocusForward="@id/edit_text_insulin_dose"
                 android:inputType="textCapWords"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:tag="insulin_name"/>
         </LinearLayout>
 
         <!-- Insulin Dose -->
@@ -178,18 +179,17 @@
                 android:layout_marginRight="@dimen/text_margin"
                 style="@style/BasicText"
                 android:text="@string/insulin_dose_label"
-                android:labelFor="@id/auto_complete_insulin_dose"/>
+                android:labelFor="@id/edit_text_insulin_dose"/>
 
-            <AutoCompleteTextView
-                android:id="@+id/auto_complete_insulin_dose"
+            <EditText
+                android:id="@+id/edit_text_insulin_dose"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="@integer/new_entry_input_weight"
                 android:background="@drawable/back"
                 android:hint="@string/insulin_dose_hint"
                 style="@style/BasicText"
-                android:imeOptions="actionNext"
-                android:nextFocusForward="@id/auto_complete_food_eaten"
+                android:imeOptions="actionDone"
                 android:inputType="number"
                 android:gravity="center"/>
         </LinearLayout>
@@ -201,9 +201,33 @@
             android:layout_height="wrap_content"
             style="@style/BasicText"
             android:text="@string/food_eaten_label"
-            android:labelFor="@id/auto_complete_food_eaten"/>
+            android:labelFor="@id/food_eaten_items"/>
 
-        <AutoCompleteTextView
+        <LinearLayout
+            android:id="@+id/food_eaten_items"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_margin"
+            android:orientation="vertical">
+
+            <AutoCompleteTextView
+                android:id="@+id/food_eaten_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/back"
+                android:paddingLeft="@dimen/text_box_padding"
+                android:paddingStart="@dimen/text_box_padding"
+                android:paddingRight="@dimen/text_box_padding"
+                android:paddingEnd="@dimen/text_box_padding"
+                style="@style/BasicText"
+                android:inputType="textCapWords"
+                android:imeOptions="actionDone"
+                android:gravity="start"
+                android:hint="@string/food_item_hint"
+                android:tag="food_eaten"/>
+        </LinearLayout>
+
+        <!--<AutoCompleteTextView
             android:id="@+id/auto_complete_food_eaten"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -219,7 +243,7 @@
             android:imeOptions="actionNext"
             android:nextFocusForward="@id/auto_complete_additional_notes"
             android:gravity="center"
-            android:minLines="3"/>
+            android:minLines="3"/>-->
 
         <!-- Additional Notes -->
         <TextView
@@ -245,7 +269,8 @@
             android:inputType="textCapSentences|textMultiLine"
             android:imeOptions="actionDone"
             android:gravity="center"
-            android:minLines="3"/>
+            android:minLines="3"
+            android:tag="additional_notes"/>
 
         <LinearLayout
             android:layout_width="match_parent"

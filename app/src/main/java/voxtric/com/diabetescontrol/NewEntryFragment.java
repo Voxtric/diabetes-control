@@ -8,20 +8,26 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -30,6 +36,7 @@ import android.widget.Toast;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -50,8 +57,9 @@ import voxtric.com.diabetescontrol.database.Event;
 import voxtric.com.diabetescontrol.database.EventsDao;
 import voxtric.com.diabetescontrol.settings.EditEventsActivity;
 import voxtric.com.diabetescontrol.utilities.AutoCompleteTextViewUtilities;
+import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 import voxtric.com.diabetescontrol.utilities.DecimalDigitsInputFilter;
-import voxtric.com.diabetescontrol.utilities.ViewUtilities;
+import voxtric.com.diabetescontrol.utilities.HintHideOnFocusChangeListener;
 
 public class NewEntryFragment extends Fragment
 {
@@ -116,23 +124,37 @@ public class NewEntryFragment extends Fragment
       };
       eventSpinner.setAdapter(m_eventSpinnerAdapter);
 
-      ViewUtilities.addHintHide((EditText)activity.findViewById(R.id.auto_complete_insulin_name), Gravity.CENTER, activity);
-      ViewUtilities.addHintHide((EditText)activity.findViewById(R.id.auto_complete_insulin_dose), Gravity.CENTER, activity);
-      ViewUtilities.addHintHide((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level), Gravity.CENTER, activity);
-      ViewUtilities.addHintHide((EditText)activity.findViewById(R.id.auto_complete_food_eaten), Gravity.START | Gravity.TOP, activity);
-      ViewUtilities.addHintHide((EditText)activity.findViewById(R.id.auto_complete_additional_notes), Gravity.START | Gravity.TOP, activity);
+      EditText bglInput = activity.findViewById(R.id.edit_text_blood_glucose_level);
+      CompositeOnFocusChangeListener.applyListenerToView(bglInput, new HintHideOnFocusChangeListener(bglInput, Gravity.CENTER));
+
+      AutoCompleteTextView insulinNameInput = activity.findViewById(R.id.auto_complete_insulin_name);
+      CompositeOnFocusChangeListener.applyListenerToView(insulinNameInput, new HintHideOnFocusChangeListener(insulinNameInput, Gravity.CENTER));
+
+      EditText insulinDoseInput = activity.findViewById(R.id.edit_text_insulin_dose);
+      CompositeOnFocusChangeListener.applyListenerToView(insulinDoseInput, new HintHideOnFocusChangeListener(insulinDoseInput, Gravity.CENTER));
+
+      AutoCompleteTextView foodEatenItemInput = activity.findViewById(R.id.food_eaten_item);
+      CompositeOnFocusChangeListener.applyListenerToView(foodEatenItemInput, new HintHideOnFocusChangeListener(foodEatenItemInput, Gravity.START));
+
+      AutoCompleteTextView additionalNotesInput = activity.findViewById(R.id.auto_complete_additional_notes);
+      CompositeOnFocusChangeListener.applyListenerToView(additionalNotesInput, new HintHideOnFocusChangeListener(additionalNotesInput, Gravity.START | Gravity.TOP));
 
       ((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).setFilters(
           new InputFilter[] { new DecimalDigitsInputFilter(2, 1) });
 
       Calendar calendar = Calendar.getInstance();
       calendar.add(Calendar.DAY_OF_MONTH, -5);
-      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, R.id.auto_complete_insulin_name, calendar.getTimeInMillis());
+      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name), calendar.getTimeInMillis());
       calendar.add(Calendar.DAY_OF_MONTH, 5);
       calendar.add(Calendar.MONTH, -2);
-      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, R.id.auto_complete_food_eaten, calendar.getTimeInMillis());
+      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, (AutoCompleteTextView)activity.findViewById(R.id.food_eaten_item), calendar.getTimeInMillis());
       calendar.add(Calendar.MONTH, 1);
-      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, R.id.auto_complete_additional_notes, calendar.getTimeInMillis());
+      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_additional_notes), calendar.getTimeInMillis());
+
+      LinearLayout foodEatenItemList = activity.findViewById(R.id.food_eaten_items);
+      foodEatenItemInput.setHint(getString(R.string.food_item_hint, 1));
+      foodEatenItemInput.addTextChangedListener(new ListItemTextWatcher(activity, foodEatenItemList, "food_item", R.string.food_item_hint));
+      CompositeOnFocusChangeListener.applyListenerToView(foodEatenItemInput, new ListItemOnFocusChangeListener(foodEatenItemList, R.string.food_item_hint));
     }
 
     if (savedInstanceState == null)
@@ -444,7 +466,7 @@ public class NewEntryFragment extends Fragment
             layout.findViewById(R.id.radio_insulin_name).setEnabled(false);
             totalActiveRadioButtons--;
           }
-          if (((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_dose)).getText().length() == 0)
+          if (((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().length() == 0)
           {
             layout.findViewById(R.id.radio_insulin_dose).setEnabled(false);
             totalActiveRadioButtons--;
@@ -454,7 +476,7 @@ public class NewEntryFragment extends Fragment
             layout.findViewById(R.id.radio_blood_glucose_level).setEnabled(false);
             totalActiveRadioButtons--;
           }
-          if (((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_food_eaten)).getText().length() == 0)
+          if (((AutoCompleteTextView)((LinearLayout)activity.findViewById(R.id.food_eaten_items)).getChildAt(0)).getText().length() == 0)
           {
             layout.findViewById(R.id.radio_food_eaten).setEnabled(false);
             totalActiveRadioButtons--;
@@ -531,15 +553,14 @@ public class NewEntryFragment extends Fragment
         final Activity activity = getActivity();
         if (activity instanceof DatabaseActivity)
         {
-          AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, R.id.auto_complete_insulin_name);
-          AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, R.id.auto_complete_food_eaten);
-          AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, R.id.auto_complete_additional_notes);
+          AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name));
+          AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_additional_notes));
 
           boolean proceed = true;
 
           String bloodGlucoseLevel = ((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString();
           String insulinName = ((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString();
-          String insulinDose = ((EditText)activity.findViewById(R.id.auto_complete_insulin_dose)).getText().toString();
+          String insulinDose = ((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString();
           if (bloodGlucoseLevel.length() == 0)
           {
             proceed = false;
@@ -622,7 +643,7 @@ public class NewEntryFragment extends Fragment
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_dose).getId())
       {
         entries = m_database.dataEntriesDao().findPreviousEntryWithInsulinDose(
-            timeStamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_insulin_dose)).getText().toString() + '%');
+            timeStamp, '%' + ((EditText) activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString() + '%');
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
       {
@@ -631,8 +652,7 @@ public class NewEntryFragment extends Fragment
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_food_eaten).getId())
       {
-        entries = m_database.dataEntriesDao().findPreviousEntryWithFoodEaten(
-            timeStamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_food_eaten)).getText().toString() + '%');
+        // TODO: Do something here.
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_additional_notes).getId())
       {
@@ -650,7 +670,7 @@ public class NewEntryFragment extends Fragment
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_dose).getId())
       {
         entries = m_database.dataEntriesDao().findNextEntryWithInsulinDose(
-            timeStamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_insulin_dose)).getText().toString() + '%');
+            timeStamp, '%' + ((EditText) activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString() + '%');
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
       {
@@ -659,8 +679,7 @@ public class NewEntryFragment extends Fragment
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_food_eaten).getId())
       {
-        entries = m_database.dataEntriesDao().findNextEntryWithFoodEaten(
-            timeStamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_food_eaten)).getText().toString() + '%');
+        // TODO: Do something here.
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_additional_notes).getId())
       {
@@ -843,9 +862,10 @@ public class NewEntryFragment extends Fragment
     entry.dayTimeStamp = calendar.getTimeInMillis();
     entry.event = ((Spinner)activity.findViewById(R.id.spinner_event)).getSelectedItem().toString();
     entry.insulinName = ((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString();
-    entry.insulinDose = ((EditText)activity.findViewById(R.id.auto_complete_insulin_dose)).getText().toString();
+    entry.insulinDose = ((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString();
     entry.bloodGlucoseLevel = Float.parseFloat(((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString());
-    entry.foodEaten = ((EditText)activity.findViewById(R.id.auto_complete_food_eaten)).getText().toString();
+    // TODO: Set food eaten.
+    entry.foodEaten = "";
     entry.additionalNotes = ((EditText)activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString();
 
     if (entry.insulinName.length() == 0)
@@ -901,8 +921,8 @@ public class NewEntryFragment extends Fragment
 
       clearText((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level));
       clearText((EditText)activity.findViewById(R.id.auto_complete_insulin_name));
-      clearText((EditText)activity.findViewById(R.id.auto_complete_insulin_dose));
-      clearText((EditText)activity.findViewById(R.id.auto_complete_food_eaten));
+      clearText((EditText)activity.findViewById(R.id.edit_text_insulin_dose));
+      // TODO: Clear food eaten text boxes.
       clearText((EditText)activity.findViewById(R.id.auto_complete_additional_notes));
 
       m_currentEventName = null;
@@ -925,15 +945,10 @@ public class NewEntryFragment extends Fragment
     m_minute = calendar.get(Calendar.MINUTE);
     updateDateTime(false);
 
-    ((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name)).setText(entry.insulinName);
-    ((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_dose)).setText(entry.insulinDose);
     ((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).setText(String.valueOf(entry.bloodGlucoseLevel));
-    if (entry.foodEaten.length() > 0)
-    {
-      AutoCompleteTextView foodEaten = activity.findViewById(R.id.auto_complete_food_eaten);
-      foodEaten.setText(entry.foodEaten);
-      foodEaten.setGravity(Gravity.START | Gravity.TOP);
-    }
+    ((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name)).setText(entry.insulinName);
+    ((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).setText(entry.insulinDose);
+    // TODO: Set food eaten text boxes.
     if (entry.additionalNotes.length() > 0)
     {
       AutoCompleteTextView additionalNotes = activity.findViewById(R.id.auto_complete_additional_notes);
@@ -1132,5 +1147,121 @@ public class NewEntryFragment extends Fragment
         updateUIWithNewEntry(activity);
       }
     });
+  }
+
+  private class ListItemTextWatcher implements TextWatcher
+  {
+    private final Activity m_activity;
+    private final LinearLayout m_owningLayout;
+    private final String m_newViewTag;
+    private final @StringRes int m_hintResourceID;
+
+    ListItemTextWatcher(Activity activity, LinearLayout owningLayout, String newViewTag, @StringRes int hintResourceID)
+    {
+      m_activity = activity;
+      m_owningLayout = owningLayout;
+      m_newViewTag = newViewTag;
+      m_hintResourceID = hintResourceID;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+    @Override
+    public void afterTextChanged(Editable editable)
+    {
+      if (editable.length() > 0)
+      {
+        boolean addNew = true;
+        AutoCompleteTextView lastItem = null;
+        for (int i = 0; i < m_owningLayout.getChildCount() && addNew; i++)
+        {
+          lastItem = (AutoCompleteTextView)m_owningLayout.getChildAt(i);
+          if (lastItem.getText().length() == 0)
+          {
+            addNew = false;
+          }
+        }
+
+        if (addNew && lastItem != null)
+        {
+          int padding = m_owningLayout.getResources().getDimensionPixelSize(R.dimen.text_box_padding);
+          AutoCompleteTextView newItem = new AutoCompleteTextView(m_owningLayout.getContext());
+          newItem.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+          newItem.setHint(getString(m_hintResourceID, m_owningLayout.getChildCount() + 1));
+          newItem.setBackgroundResource(R.drawable.back);
+          newItem.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+          newItem.setImeOptions(EditorInfo.IME_ACTION_DONE);
+          newItem.setPadding(padding, 0, padding, 0);
+          newItem.addTextChangedListener(new ListItemTextWatcher(m_activity, m_owningLayout, m_newViewTag, m_hintResourceID));
+          newItem.setTag(m_newViewTag);
+          CompositeOnFocusChangeListener.applyListenerToView(newItem, new HintHideOnFocusChangeListener(newItem, Gravity.START));
+          CompositeOnFocusChangeListener.applyListenerToView(newItem, new ListItemOnFocusChangeListener(m_owningLayout, m_hintResourceID));
+          AutoCompleteTextViewUtilities.refreshAutoCompleteView(m_activity, newItem, null);
+
+          m_owningLayout.addView(newItem);
+          lastItem.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+          lastItem.setNextFocusForwardId(newItem.getId());
+          newItem.requestFocus();
+          final AutoCompleteTextView finalLastItem = lastItem;
+          new Handler().post(new Runnable()
+          {
+            @Override
+            public void run()
+            {
+              finalLastItem.requestFocus();
+            }
+          });
+        }
+      }
+    }
+  }
+
+  private class ListItemOnFocusChangeListener implements View.OnFocusChangeListener
+  {
+    private final LinearLayout m_owningLayout;
+    private final @StringRes int m_hintResourceID;
+
+    ListItemOnFocusChangeListener(LinearLayout owningLayout, @StringRes int hintResourceID)
+    {
+      m_owningLayout = owningLayout;
+      m_hintResourceID = hintResourceID;
+    }
+
+    @Override
+    public void onFocusChange(final View view, boolean hasFocus)
+    {
+      if (!hasFocus && ((AutoCompleteTextView)view).getText().length() == 0)
+      {
+        int offset = 0;
+        for (int i = 0; i < m_owningLayout.getChildCount(); i++)
+        {
+          AutoCompleteTextView inputView = (AutoCompleteTextView)m_owningLayout.getChildAt(i);
+          if (inputView.getText().length() == 0 && i < m_owningLayout.getChildCount() - 1)
+          {
+            offset++;
+            new Handler().post(new Runnable()
+            {
+              @Override
+              public void run()
+              {
+                m_owningLayout.removeView(view);
+              }
+            });
+          }
+          else if (offset > 0)
+          {
+            String newHint = getString(m_hintResourceID, i - offset + 1);
+            inputView.setHint(newHint);
+            CompositeOnFocusChangeListener compositeOnFocusChangeListener = (CompositeOnFocusChangeListener)inputView.getOnFocusChangeListener();
+            HintHideOnFocusChangeListener hintHideOnFocusChangeListener = compositeOnFocusChangeListener.getInstance(HintHideOnFocusChangeListener.class);
+            hintHideOnFocusChangeListener.changeOriginalHint(newHint);
+          }
+        }
+      }
+    }
   }
 }

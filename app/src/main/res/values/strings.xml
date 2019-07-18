@@ -57,6 +57,8 @@ If not, you can do so later from the settings menu at the top right."
     <string name="food_eaten_hint">Food Eaten</string>
     <string name="additional_notes_hint">Addition Notes</string>
 
+    <string name="food_item_hint">Food Item %1$d</string>
+
     <string name="see_previous_text">See Previous</string>
     <string name="add_new_entry_text">Add New Entry</string>
     <string name="save_changes_text">Save Changes</string>

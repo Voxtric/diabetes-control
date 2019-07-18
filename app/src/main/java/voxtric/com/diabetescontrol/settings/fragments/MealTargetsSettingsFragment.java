@@ -20,7 +20,7 @@ import voxtric.com.diabetescontrol.database.TargetChange;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 import voxtric.com.diabetescontrol.utilities.DecimalDigitsInputFilter;
-import voxtric.com.diabetescontrol.utilities.ViewUtilities;
+import voxtric.com.diabetescontrol.utilities.HintHideOnFocusChangeListener;
 
 public class MealTargetsSettingsFragment extends Fragment
 {
@@ -95,10 +95,10 @@ public class MealTargetsSettingsFragment extends Fragment
       {
         EditText editText = view.findViewById(id);
         editText.setFilters(new InputFilter[] { new DecimalDigitsInputFilter(2, 1) });
-        ViewUtilities.addHintHide(editText, Gravity.CENTER, activity);
         activity.setTextFromDatabase(editText);
         activity.saveTextToDatabaseWhenUnfocused(editText);
         CompositeOnFocusChangeListener.applyListenerToView(editText, UPDATE_DATABASE);
+        CompositeOnFocusChangeListener.applyListenerToView(editText, new HintHideOnFocusChangeListener(editText, Gravity.CENTER));
       }
 
       view.findViewById(R.id.set_from_bgl_highlighting_button).setOnClickListener(new View.OnClickListener()

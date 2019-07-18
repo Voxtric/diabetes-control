@@ -8,19 +8,9 @@ public class CompositeOnFocusChangeListener implements View.OnFocusChangeListene
 {
   private ArrayList<View.OnFocusChangeListener> m_registeredListeners = new ArrayList<>();
 
-  CompositeOnFocusChangeListener(View.OnFocusChangeListener onFocusChangeListener)
+  private CompositeOnFocusChangeListener(View.OnFocusChangeListener onFocusChangeListener)
   {
     m_registeredListeners.add(onFocusChangeListener);
-  }
-
-  void registerListener(View.OnFocusChangeListener listener)
-  {
-    m_registeredListeners.add(listener);
-  }
-
-  public void unregisterListener(View.OnFocusChangeListener listener)
-  {
-    m_registeredListeners.remove(listener);
   }
 
   @Override
@@ -30,6 +20,29 @@ public class CompositeOnFocusChangeListener implements View.OnFocusChangeListene
     {
       listener.onFocusChange(view, hasFocus);
     }
+  }
+
+  private void registerListener(View.OnFocusChangeListener listener)
+  {
+    m_registeredListeners.add(listener);
+  }
+
+  public void unregisterListener(View.OnFocusChangeListener listener)
+  {
+    m_registeredListeners.remove(listener);
+  }
+
+  public <E extends View.OnFocusChangeListener> E getInstance(Class<E> classType)
+  {
+    for (View.OnFocusChangeListener listener: m_registeredListeners)
+    {
+      if (classType.isInstance(listener))
+      {
+        //noinspection unchecked
+        return (E)listener;
+      }
+    }
+    return null;
   }
 
   public static void applyListenerToView(View view, View.OnFocusChangeListener listener)

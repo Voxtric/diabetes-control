@@ -29,7 +29,7 @@ import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 import voxtric.com.diabetescontrol.utilities.DecimalDigitsInputFilter;
-import voxtric.com.diabetescontrol.utilities.ViewUtilities;
+import voxtric.com.diabetescontrol.utilities.HintHideOnFocusChangeListener;
 
 public class BGLHighlightingSettingsFragment extends Fragment
 {
@@ -119,10 +119,10 @@ public class BGLHighlightingSettingsFragment extends Fragment
       highRangeLower.setFilters(new InputFilter[] { inputFilter });
       highRangeUpper.setFilters(new InputFilter[] { inputFilter });
 
-      ViewUtilities.addHintHide(idealRangeLower, Gravity.CENTER, activity);
-      ViewUtilities.addHintHide(idealRangeUpper, Gravity.CENTER, activity);
-      ViewUtilities.addHintHide(highRangeLower, Gravity.CENTER, activity);
-      ViewUtilities.addHintHide(highRangeUpper, Gravity.CENTER, activity);
+      CompositeOnFocusChangeListener.applyListenerToView(idealRangeLower, new HintHideOnFocusChangeListener(idealRangeLower, Gravity.CENTER));
+      CompositeOnFocusChangeListener.applyListenerToView(idealRangeUpper, new HintHideOnFocusChangeListener(idealRangeLower, Gravity.CENTER));
+      CompositeOnFocusChangeListener.applyListenerToView(highRangeLower, new HintHideOnFocusChangeListener(idealRangeLower, Gravity.CENTER));
+      CompositeOnFocusChangeListener.applyListenerToView(highRangeUpper, new HintHideOnFocusChangeListener(idealRangeLower, Gravity.CENTER));
 
       LinkedEditTextsTextWatcher idealRangeUpperTextWatcher = new LinkedEditTextsTextWatcher(highRangeLower);
       LinkedEditTextsTextWatcher highRangeLowerTextWatcher = new LinkedEditTextsTextWatcher(idealRangeUpper);
