@@ -4,7 +4,9 @@ import android.content.DialogInterface;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -31,7 +33,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Calendar;
 import java.util.List;
 
-import voxtric.com.diabetescontrol.EditEventsRecyclerViewAdapter;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Event;
@@ -45,6 +46,8 @@ public class EditEventsActivity extends DatabaseActivity
 
   private EditEventsRecyclerViewAdapter m_adapter = null;
   private boolean m_popupOptionClicked = false;
+
+  private boolean m_eventMoving = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -93,7 +96,7 @@ public class EditEventsActivity extends DatabaseActivity
     {
       Rect viewRect = new Rect();
       movementButtons.getGlobalVisibleRect(viewRect);
-      if (!viewRect.contains((int)event.getRawX(), (int)event.getRawY()))
+      if (!m_eventMoving && !viewRect.contains((int)event.getRawX(), (int)event.getRawY()))
       {
         highlightSelected(null);
         LinearLayout activeMovementButtons = m_adapter.getActiveMovementButtons();
@@ -127,7 +130,7 @@ public class EditEventsActivity extends DatabaseActivity
   public void moveEvent(final View view)
   {
     final ViewGroup dataView = getDataView(view);
-    int direction = view.getId() == R.id.button_down ? 1 : -1;
+    final int direction = view.getId() == R.id.button_down ? 1 : -1;
     final Event eventA = m_adapter.getEvent(dataView);
     final Event eventB = m_adapter.getEvent(eventA.order + direction);
     int tempOrder = eventA.order;
@@ -147,7 +150,53 @@ public class EditEventsActivity extends DatabaseActivity
           @Override
           public void run()
           {
-            m_adapter.updateAllEvents(allEvents, eventA, true);
+            final long ANIMATION_DURATION = 200;
+
+            View swappingView = null;
+            RecyclerView recyclerView = findViewById(R.id.recycler_view_event_list);
+            for (int i = 0; i < recyclerView.getChildCount(); i++)
+            {
+              if (recyclerView.getChildAt(i) == dataView)
+              {
+                swappingView = recyclerView.getChildAt(i + direction);
+                break;
+              }
+            }
+
+            if (swappingView == null)
+            {
+              m_adapter.updateAllEvents(allEvents, eventA, true);
+            }
+            else
+            {
+              m_eventMoving = true;
+              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+              {
+                dataView.setZ(1.0f);
+              }
+              else
+              {
+                dataView.bringToFront();
+                recyclerView.requestLayout();
+                recyclerView.invalidate();
+              }
+              dataView.animate().translationYBy(swappingView.getHeight() * direction).setDuration(ANIMATION_DURATION).start();
+              swappingView.animate().translationYBy(dataView.getHeight() * -direction).setDuration(ANIMATION_DURATION).start();
+
+              final View finalSwappingView = swappingView;
+              new Handler().postDelayed(new Runnable()
+              {
+                @Override
+                public void run()
+                {
+                  dataView.animate().translationY(0.0f).setDuration(0).start();
+                  finalSwappingView.animate().translationY(0.0f).setDuration(0).start();
+                  m_eventMoving = false;
+
+                  m_adapter.updateAllEvents(allEvents, eventA, true);
+                }
+              }, ANIMATION_DURATION);
+            }
           }
         });
       }

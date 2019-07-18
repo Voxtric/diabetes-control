@@ -1,6 +1,5 @@
-package voxtric.com.diabetescontrol;
+package voxtric.com.diabetescontrol.settings;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +16,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.Event;
-import voxtric.com.diabetescontrol.settings.EditEventsActivity;
 
 public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEventsRecyclerViewAdapter.ViewHolder>
 {
