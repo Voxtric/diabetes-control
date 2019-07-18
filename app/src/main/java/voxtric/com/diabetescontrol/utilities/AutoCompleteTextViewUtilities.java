@@ -27,10 +27,7 @@ public class AutoCompleteTextViewUtilities
     {
       if (!file.exists())
       {
-        if (file.createNewFile())
-        {
-          autocompleteValues = new HashMap<>();
-        }
+        autocompleteValues = new HashMap<>();
       }
       else
       {
@@ -46,12 +43,7 @@ public class AutoCompleteTextViewUtilities
         autocompleteValues = new HashMap<>();
       }
     }
-    catch (IOException exception)
-    {
-      Log.e(AutoCompleteTextViewUtilities.class.getCanonicalName(), exception.toString());
-      exception.printStackTrace();
-    }
-    catch (ClassNotFoundException exception)
+    catch (Exception exception)
     {
       Log.e(AutoCompleteTextViewUtilities.class.getCanonicalName(), exception.toString());
       exception.printStackTrace();
