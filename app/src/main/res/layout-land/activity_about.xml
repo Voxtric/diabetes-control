@@ -97,7 +97,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/arrow"/>
+                    android:src="@drawable/arrow_enabled"/>
             </LinearLayout>
 
             <TextView
@@ -127,7 +127,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/arrow"/>
+                    android:src="@drawable/arrow_enabled"/>
             </LinearLayout>
 
             <TextView
@@ -157,7 +157,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/arrow"/>
+                    android:src="@drawable/arrow_enabled"/>
             </LinearLayout>
 
             <TextView
@@ -187,7 +187,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/arrow"/>
+                    android:src="@drawable/arrow_enabled"/>
             </LinearLayout>
 
             <LinearLayout

@@ -29,7 +29,7 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
   private boolean m_showButtonsOnHighlightedEvent = false;
   private LinearLayout m_activeMovementButtons = null;
 
-  public EditEventsRecyclerViewAdapter(List<Event> items, EditEventsActivity activity)
+  EditEventsRecyclerViewAdapter(List<Event> items, EditEventsActivity activity)
   {
     m_values = items;
     m_activity = activity;
@@ -71,7 +71,7 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
     return m_values.size();
   }
 
-  public Event getEvent(View view)
+  Event getEvent(View view)
   {
     Event event = null;
     Integer position = m_valueMap.get(view);
@@ -82,12 +82,12 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
     return event;
   }
 
-  public Event getEvent(int position)
+  Event getEvent(int position)
   {
     return m_values.get(position);
   }
 
-  public void updateAllEvents(List<Event> items, Event eventToHighlight, boolean showButtonsOnHighlightedEvent)
+  void updateAllEvents(List<Event> items, Event eventToHighlight, boolean showButtonsOnHighlightedEvent)
   {
     m_values = items;
     m_eventToHighlight = eventToHighlight;
@@ -97,17 +97,17 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
     notifyDataSetChanged();
   }
 
-  public void setEventToHighlight(Event event)
+  void setEventToHighlight(Event event)
   {
     m_eventToHighlight = event;
   }
 
-  public void setActiveMovementButtons(LinearLayout activeMovementButtons)
+  void setActiveMovementButtons(LinearLayout activeMovementButtons)
   {
     m_activeMovementButtons = activeMovementButtons;
   }
 
-  public LinearLayout getActiveMovementButtons()
+  LinearLayout getActiveMovementButtons()
   {
     return m_activeMovementButtons;
   }
@@ -171,6 +171,9 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
       m_eventTimeTextView.setBackgroundResource(drawableRes);
       m_eventMoreImageButton.setBackgroundResource(drawableRes);
       m_movementButtons.setVisibility(movementButtonVisibility);
+
+      m_movementButtons.getChildAt(0).setEnabled(event.order < getItemCount() - 1);
+      m_movementButtons.getChildAt(1).setEnabled(event.order > 0);
     }
   }
 }
