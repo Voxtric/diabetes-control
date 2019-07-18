@@ -221,29 +221,11 @@
                 android:paddingEnd="@dimen/text_box_padding"
                 style="@style/BasicText"
                 android:inputType="textCapWords"
-                android:imeOptions="actionDone"
+                android:imeOptions="actionNext"
                 android:gravity="start"
                 android:hint="@string/food_item_hint"
                 android:tag="food_eaten"/>
         </LinearLayout>
-
-        <!--<AutoCompleteTextView
-            android:id="@+id/auto_complete_food_eaten"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_margin"
-            android:paddingLeft="@dimen/text_box_padding"
-            android:paddingStart="@dimen/text_box_padding"
-            android:paddingRight="@dimen/text_box_padding"
-            android:paddingEnd="@dimen/text_box_padding"
-            android:background="@drawable/back"
-            android:hint="@string/food_eaten_hint"
-            style="@style/BasicText"
-            android:inputType="textCapWords|textMultiLine"
-            android:imeOptions="actionNext"
-            android:nextFocusForward="@id/auto_complete_additional_notes"
-            android:gravity="center"
-            android:minLines="3"/>-->
 
         <!-- Additional Notes -->
         <TextView

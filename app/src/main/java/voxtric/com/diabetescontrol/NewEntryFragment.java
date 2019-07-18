@@ -16,6 +16,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -155,6 +157,7 @@ public class NewEntryFragment extends Fragment
       foodEatenItemInput.setHint(getString(R.string.food_item_hint, 1));
       foodEatenItemInput.addTextChangedListener(new ListItemTextWatcher(activity, foodEatenItemList, "food_item", R.string.food_item_hint));
       CompositeOnFocusChangeListener.applyListenerToView(foodEatenItemInput, new ListItemOnFocusChangeListener(foodEatenItemList, R.string.food_item_hint));
+      foodEatenItemInput.setOnEditorActionListener(new ListItemOnEditActionListener());
     }
 
     if (savedInstanceState == null)
@@ -1194,27 +1197,17 @@ public class NewEntryFragment extends Fragment
           newItem.setHint(getString(m_hintResourceID, m_owningLayout.getChildCount() + 1));
           newItem.setBackgroundResource(R.drawable.back);
           newItem.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
-          newItem.setImeOptions(EditorInfo.IME_ACTION_DONE);
+          newItem.setImeOptions(EditorInfo.IME_ACTION_NEXT);
           newItem.setPadding(padding, 0, padding, 0);
           newItem.addTextChangedListener(new ListItemTextWatcher(m_activity, m_owningLayout, m_newViewTag, m_hintResourceID));
           newItem.setTag(m_newViewTag);
+          newItem.setOnEditorActionListener(new ListItemOnEditActionListener());
           CompositeOnFocusChangeListener.applyListenerToView(newItem, new HintHideOnFocusChangeListener(newItem, Gravity.START));
           CompositeOnFocusChangeListener.applyListenerToView(newItem, new ListItemOnFocusChangeListener(m_owningLayout, m_hintResourceID));
           AutoCompleteTextViewUtilities.refreshAutoCompleteView(m_activity, newItem, null);
 
           m_owningLayout.addView(newItem);
-          lastItem.setImeOptions(EditorInfo.IME_ACTION_NEXT);
           lastItem.setNextFocusForwardId(newItem.getId());
-          newItem.requestFocus();
-          final AutoCompleteTextView finalLastItem = lastItem;
-          new Handler().post(new Runnable()
-          {
-            @Override
-            public void run()
-            {
-              finalLastItem.requestFocus();
-            }
-          });
         }
       }
     }
@@ -1243,7 +1236,7 @@ public class NewEntryFragment extends Fragment
           if (inputView.getText().length() == 0 && i < m_owningLayout.getChildCount() - 1)
           {
             offset++;
-            new Handler().post(new Runnable()
+            new Handler().post(new Runnable() // Must be delayed otherwise there are weird layout bugs.
             {
               @Override
               public void run()
@@ -1262,6 +1255,21 @@ public class NewEntryFragment extends Fragment
           }
         }
       }
+    }
+  }
+
+  class ListItemOnEditActionListener implements TextView.OnEditorActionListener
+  {
+    @Override
+    public boolean onEditorAction(TextView textView, int actionID, KeyEvent keyEvent)
+    {
+      boolean actionHandled = false;
+      if (actionID == EditorInfo.IME_ACTION_NEXT && textView.getText().length() == 0)
+      {
+        textView.onEditorAction(EditorInfo.IME_ACTION_DONE);
+        actionHandled = true;
+      }
+      return actionHandled;
     }
   }
 }
