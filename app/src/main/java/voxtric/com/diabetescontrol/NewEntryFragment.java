@@ -925,8 +925,17 @@ public class NewEntryFragment extends Fragment
       clearText((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level));
       clearText((EditText)activity.findViewById(R.id.auto_complete_insulin_name));
       clearText((EditText)activity.findViewById(R.id.edit_text_insulin_dose));
-      // TODO: Clear food eaten text boxes.
       clearText((EditText)activity.findViewById(R.id.auto_complete_additional_notes));
+
+      LinearLayout foodItemsLayout = activity.findViewById(R.id.food_eaten_items);
+      AutoCompleteTextView foodItemInput = (AutoCompleteTextView)foodItemsLayout.getChildAt(foodItemsLayout.getChildCount() - 1);
+      foodItemsLayout.removeAllViews();
+      foodItemsLayout.addView(foodItemInput);
+      String newHint = getString(R.string.food_item_hint, 1);
+      foodItemInput.setHint(newHint);
+      CompositeOnFocusChangeListener compositeOnFocusChangeListener = (CompositeOnFocusChangeListener)foodItemInput.getOnFocusChangeListener();
+      HintHideOnFocusChangeListener hintHideOnFocusChangeListener = compositeOnFocusChangeListener.getInstance(HintHideOnFocusChangeListener.class);
+      hintHideOnFocusChangeListener.changeOriginalHint(newHint);
 
       m_currentEventName = null;
       m_eventNameAutoSelected = true;
