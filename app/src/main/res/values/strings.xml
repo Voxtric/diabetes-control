@@ -51,8 +51,8 @@ If not, you can do so later from the settings menu at the top right."
     <string name="event_hint">Event</string>
     <string name="insulin_name_hint">Insulin Name</string>
     <string name="insulin_dose_hint">Insulin Dose</string>
-    <string name="blood_glucose_level_hint">BGL (mmol/l)</string>
-    <string name="blood_glucose_level_hint_newline">BGL\n(mmol/l)</string>
+    <string name="blood_glucose_level_hint">BGL (mmol/L)</string>
+    <string name="blood_glucose_level_hint_newline">BGL\n(mmol/L)</string>
     <string name="blood_glucose_level_text">Blood Glucose Level</string>
     <string name="food_eaten_hint">Food Eaten</string>
     <string name="additional_notes_hint">Addition Notes</string>
@@ -108,6 +108,19 @@ If not, you can do so later from the settings menu at the top right."
     <string name="disclaimer_label">Disclaimer</string>
     <string name="privacy_policy_label">Privacy Policy</string>
     <string name="open_source_information_label">Open Source Information</string>
+
+    <string name="donation_links_label">Donation Links</string>
+    <string-array name="donation_button_hints">
+        <item>Diabetes UK</item>
+        <item>American Diabetes Association</item>
+        <item>Diabetes Australia</item>
+    </string-array>
+    <string-array name="donation_button_links">
+        <item>https://donate.diabetes.org.uk/donate/</item>
+        <item>https://donations.diabetes.org/site/Donation2?idb=826845666&amp;df_id=19705</item>
+        <item>https://www.diabetesaustralia.com.au/donation</item>
+    </string-array>
+
     <string name="created_by_text">Created by Voxtric</string>
 
     <!-- Settings Activity -->
@@ -135,8 +148,8 @@ If not, you can do so later from the settings menu at the top right."
     <string name="contact_number_hint">Contact No.</string>
 
     <string name="title_meal_targets_settings">Meal Targets</string>
-    <string name="target_pre_meal_label">Pre-meal blood glucose range (mmol/l):</string>
-    <string name="target_post_meal_label">Post-meal blood glucose range (mmol/l):</string>
+    <string name="target_pre_meal_label">Pre-meal blood glucose range (mmol/L):</string>
+    <string name="target_post_meal_label">Post-meal blood glucose range (mmol/L):</string>
     <string name="target_pre_meal_lower_hint">Pre-meal Lower</string>
     <string name="target_pre_meal_upper_hint">Pre-meal Upper</string>
     <string name="target_post_meal_lower_hint">Post-meal Lower</string>
@@ -226,8 +239,8 @@ Give write external storage permission?"
     <string name="ads_export_end_message">PDF generated!</string>
 
     <string name="week_commencing">Week Commencing: %1$s</string>
-    <string name="blood_glucose_targets">Blood Glucose Targets (mmol/l): Pre-meal %1$.1f - %2$.1f, Post-meal %3$.1f - %4$.1f</string>
-    <string name="blood_glucose_targets_empty">Blood Glucose Targets (mmol/l): Pre-meal ........., Post-meal .........</string>
+    <string name="blood_glucose_targets">Blood Glucose Targets (mmol/L): Pre-meal %1$.1f - %2$.1f, Post-meal %3$.1f - %4$.1f</string>
+    <string name="blood_glucose_targets_empty">Blood Glucose Targets (mmol/L): Pre-meal ........., Post-meal .........</string>
     <string name="reading">Reading</string>
     <string name="time">Time</string>
     <string name="dose">Dose</string>

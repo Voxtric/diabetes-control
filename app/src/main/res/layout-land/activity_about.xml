@@ -165,6 +165,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/BasicText" />
+
+            <LinearLayout
+                android:id="@+id/donation_links_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:onClick="toggleVisibility">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:labelFor="@id/open_source_information_text"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/large_text_size"
+                    android:textStyle="bold"
+                    android:text="@string/donation_links_label"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/arrow"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/donation_links_buttons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

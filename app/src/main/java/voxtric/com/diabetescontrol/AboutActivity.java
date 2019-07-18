@@ -5,13 +5,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -57,6 +62,8 @@ public class AboutActivity extends DatabaseActivity
     fillContent(R.id.privacy_policy_text, "privacy_policy.html");
     fillContent(R.id.open_source_information_text, "open_source_information.html");
 
+    createDonationLinkButtons();
+
     findViewById(R.id.root).post(new Runnable()
     {
       @Override
@@ -65,10 +72,12 @@ public class AboutActivity extends DatabaseActivity
         m_expansionStates.put(findViewById(R.id.disclaimer_layout), new ExpansionState(findViewById(R.id.disclaimer_text)));
         m_expansionStates.put(findViewById(R.id.privacy_policy_layout), new ExpansionState(findViewById(R.id.privacy_policy_text)));
         m_expansionStates.put(findViewById(R.id.open_source_information_layout), new ExpansionState(findViewById(R.id.open_source_information_text)));
+        m_expansionStates.put(findViewById(R.id.donation_links_layout), new ExpansionState(findViewById(R.id.donation_links_buttons)));
 
         toggleVisibility(findViewById(R.id.disclaimer_layout));
         toggleVisibility(findViewById(R.id.privacy_policy_layout));
         toggleVisibility(findViewById(R.id.open_source_information_layout));
+        toggleVisibility(findViewById(R.id.donation_links_layout));
 
         m_expandCollapseDuration = EXPAND_COLLAPSE_DURATION;
       }
@@ -108,6 +117,55 @@ public class AboutActivity extends DatabaseActivity
           inputStream.close();
         }
         catch (IOException ignored) {}
+      }
+    }
+  }
+
+  private void createDonationLinkButtons()
+  {
+    String[] buttonHints = getResources().getStringArray(R.array.donation_button_hints);
+    String[] buttonLinks = getResources().getStringArray(R.array.donation_button_links);
+    if (buttonHints.length != buttonLinks.length)
+    {
+      throw new RuntimeException("Donation button hints array must contain the same number of strings as the donation button links array.");
+    }
+
+    int buttonHeightPixels = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60.0f, getResources().getDisplayMetrics());
+    LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, buttonHeightPixels);
+    LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
+    buttonLayoutParams.weight = 1.0f;
+
+    LinearLayout donationLinkButtons = findViewById(R.id.donation_links_buttons);
+    LinearLayout currentButtonContainer = null;
+    for (int i = 0; i < buttonHints.length; i++)
+    {
+      if (currentButtonContainer == null)
+      {
+        currentButtonContainer = new LinearLayout(this);
+        currentButtonContainer.setLayoutParams(linearLayoutParams);
+        currentButtonContainer.setOrientation(LinearLayout.HORIZONTAL);
+        currentButtonContainer.setWeightSum(2.0f);
+        donationLinkButtons.addView(currentButtonContainer);
+      }
+
+      final String donationLink = buttonLinks[i];
+      Button button = new Button(this);
+      button.setLayoutParams(buttonLayoutParams);
+      button.setText(buttonHints[i]);
+      button.setOnClickListener(new View.OnClickListener()
+      {
+        @Override
+        public void onClick(View view)
+        {
+          Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(donationLink));
+          startActivity(browserIntent);
+        }
+      });
+      currentButtonContainer.addView(button);
+
+      if (i % 2 == 1)
+      {
+        currentButtonContainer = null;
       }
     }
   }
