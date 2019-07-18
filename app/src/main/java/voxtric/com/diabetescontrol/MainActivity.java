@@ -2,10 +2,12 @@ package voxtric.com.diabetescontrol;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -38,9 +40,11 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 
 import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
+import voxtric.com.diabetescontrol.database.Food;
 import voxtric.com.diabetescontrol.exporting.ExportDurationDialogFragment;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 
@@ -403,9 +407,9 @@ public class MainActivity extends DatabaseActivity
     menu.show();
   }
 
-  public static View getFullView(Context context, DataEntry entry)
+  public static View getFullView(final DatabaseActivity activity, final DataEntry entry)
   {
-    View view = View.inflate(context, R.layout.dialog_view_full_entry, null);
+    final View view = View.inflate(activity, R.layout.dialog_view_full_entry, null);
 
     Date date = new Date(entry.actualTimestamp);
     String dateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(date);
@@ -414,21 +418,42 @@ public class MainActivity extends DatabaseActivity
     ((TextView)view.findViewById(R.id.text_view_date)).setText(dateString);
     ((TextView)view.findViewById(R.id.text_view_time)).setText(timeString);
     ((TextView)view.findViewById(R.id.text_view_event)).setText(entry.event);
-    ((TextView)view.findViewById(R.id.text_view_insulin_name)).setText(entry.insulinName);
-    ((TextView)view.findViewById(R.id.text_view_insulin_dose)).setText(entry.insulinDose);
+    ((TextView)view.findViewById(R.id.text_view_insulin_name)).setText(entry.insulinDose > 0 ? entry.insulinName : "N/A");
+    ((TextView)view.findViewById(R.id.text_view_insulin_dose)).setText(entry.insulinDose > 0 ? String.valueOf(entry.insulinDose) : "N/A");
     ((TextView)view.findViewById(R.id.text_view_blood_glucose_level)).setText(String.valueOf(entry.bloodGlucoseLevel));
 
-    TextView foodEatenTextView = view.findViewById(R.id.text_view_food_eaten);
-    if (entry.foodEaten.length() == 0)
+    AsyncTask.execute(new Runnable()
     {
-      foodEatenTextView.setVisibility(View.GONE);
-      view.findViewById(R.id.text_view_food_eaten_label).setVisibility(View.GONE);
-    }
-    else
-    {
-      foodEatenTextView.setText(entry.foodEaten);
-      foodEatenTextView.setGravity(Gravity.TOP | Gravity.START);
-    }
+      @Override
+      public void run()
+      {
+        final List<Food> foodList = activity.getDatabase().foodsDao().getFoods(entry.actualTimestamp);
+        activity.runOnUiThread(new Runnable()
+        {
+          @Override
+          public void run()
+          {
+            TextView foodEatenTextView = view.findViewById(R.id.text_view_food_eaten);
+            if (foodList.size() == 0)
+            {
+              foodEatenTextView.setVisibility(View.GONE);
+              view.findViewById(R.id.text_view_food_eaten_label).setVisibility(View.GONE);
+            }
+            else
+            {
+              StringBuilder foodText = new StringBuilder(foodList.get(0).name);
+              for (int i = 1; i < foodList.size(); i++)
+              {
+                foodText.append("\n");
+                foodText.append(foodList.get(i).name);
+              }
+              foodEatenTextView.setText(foodText);
+              foodEatenTextView.setGravity(Gravity.TOP | Gravity.START);
+            }
+          }
+        });
+      }
+    });
 
     TextView additionalNotesTextView = view.findViewById(R.id.text_view_additional_notes);
     if (entry.additionalNotes.length() == 0)

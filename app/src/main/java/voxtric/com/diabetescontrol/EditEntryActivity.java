@@ -7,17 +7,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
+import voxtric.com.diabetescontrol.database.Food;
 
 public class EditEntryActivity extends DatabaseActivity
 {
   private DataEntry m_editedEntry = null;
+  private List<Food> m_editedFoods = null;
+
   private CountDownLatch m_latch = new CountDownLatch(1);
 
   @Override
@@ -35,15 +40,16 @@ public class EditEntryActivity extends DatabaseActivity
     Bundle extras = getIntent().getExtras();
     if (extras != null)
     {
-      final long timeStamp = extras.getLong("time_stamp", 0);
-      if (timeStamp != 0)
+      final long timestamp = extras.getLong("timestamp", 0);
+      if (timestamp != 0)
       {
         AsyncTask.execute(new Runnable()
         {
           @Override
           public void run()
           {
-            m_editedEntry = m_database.dataEntriesDao().getEntry(timeStamp);
+            m_editedEntry = m_database.dataEntriesDao().getEntry(timestamp);
+            m_editedFoods = m_database.foodsDao().getFoods(timestamp);
             m_latch.countDown();
           }
         });
@@ -63,7 +69,7 @@ public class EditEntryActivity extends DatabaseActivity
       NewEntryFragment fragment = (NewEntryFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_edit_entry);
       if (fragment != null)
       {
-        fragment.setValues(m_editedEntry, this);
+        fragment.setValues(this, m_editedEntry, m_editedFoods);
       }
     }
     catch (InterruptedException exception)
@@ -73,7 +79,7 @@ public class EditEntryActivity extends DatabaseActivity
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem item)
+  public boolean onOptionsItemSelected(@NonNull MenuItem item)
   {
     if (item.getItemId() == android.R.id.home)
     {
@@ -120,95 +126,16 @@ public class EditEntryActivity extends DatabaseActivity
         if (newEntryFragment != null)
         {
           final DataEntry entry = newEntryFragment.createEntry(EditEntryActivity.this);
+          final List<Food> foodList = newEntryFragment.createFoodList(EditEntryActivity.this, entry);
           AsyncTask.execute(new Runnable()
           {
             @Override
             public void run()
             {
-              newEntryFragment.checkDateMismatch(EditEntryActivity.this, entry, m_editedEntry);
+              newEntryFragment.checkDateMismatch(EditEntryActivity.this, entry, m_editedEntry, foodList);
             }
           });
         }
-
-        /*NewEntryFragment fragment = (NewEntryFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_edit_entry);
-        if (fragment != null)
-        {
-          final DataEntry entry = fragment.createEntry(EditEntryActivity.this);
-          if (Math.abs(entry.actualTimestamp - m_entry.actualTimestamp) > 30000L ||
-              !entry.event.endsWith(m_entry.event) ||
-              !entry.insulinName.equals(m_entry.insulinName) ||
-              !entry.insulinDose.equals(m_entry.insulinDose) ||
-              entry.bloodGlucoseLevel != m_entry.bloodGlucoseLevel ||
-              !entry.foodEaten.equals(m_entry.foodEaten) ||
-              !entry.additionalNotes.equals(m_entry.additionalNotes))
-          {
-            AsyncTask.execute(new Runnable()
-            {
-              @Override
-              public void run()
-              {
-                boolean changesSaved = false;
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(entry.actualTimestamp);
-                calendar.set(Calendar.HOUR_OF_DAY, 0);
-                calendar.set(Calendar.MINUTE, 0);
-                calendar.set(Calendar.SECOND, 0);
-                calendar.add(Calendar.DAY_OF_MONTH, 1);
-                DataEntry previousEntry = m_database.dataEntriesDao().findFirstBefore(calendar.getTimeInMillis() - 1, entry.event, m_entry.actualTimestamp);
-                if (previousEntry == null)
-                {
-                  m_database.dataEntriesDao().delete(m_entry);
-                  m_database.dataEntriesDao().insert(entry);
-                  changesSaved = true;
-                  setResult(EntryListFragment.RESULT_LIST_UPDATE_NEEDED);
-                }
-                else
-                {
-                  calendar.setTimeInMillis(entry.actualTimestamp);
-                  Calendar previousCalendar = Calendar.getInstance();
-                  previousCalendar.setTimeInMillis(previousEntry.actualTimestamp);
-                  if (calendar.get(Calendar.YEAR) != previousCalendar.get(Calendar.YEAR) ||
-                      calendar.get(Calendar.MONTH) != previousCalendar.get(Calendar.MONTH) ||
-                      calendar.get(Calendar.DAY_OF_MONTH) != previousCalendar.get(Calendar.DAY_OF_MONTH))
-                  {
-                    m_database.dataEntriesDao().delete(m_entry);
-                    m_database.dataEntriesDao().insert(entry);
-                    changesSaved = true;
-                    setResult(EntryListFragment.RESULT_LIST_UPDATE_NEEDED);
-                  }
-                }
-
-                final boolean finalChangesSaved = changesSaved;
-                runOnUiThread(new Runnable()
-                {
-                  @Override
-                  public void run()
-                  {
-                    if (finalChangesSaved)
-                    {
-                      Toast.makeText(EditEntryActivity.this, R.string.changes_saved_message, Toast.LENGTH_LONG).show();
-                      finish();
-                    }
-                    else
-                    {
-                      AlertDialog dialog = new AlertDialog.Builder(EditEntryActivity.this)
-                          .setTitle(R.string.title_event_collision)
-                          .setMessage(R.string.message_event_collision)
-                          .setPositiveButton(R.string.ok, null)
-                          .create();
-                      dialog.show();
-                    }
-                  }
-                });
-              }
-            });
-          }
-          else
-          {
-            Toast.makeText(EditEntryActivity.this, R.string.changes_not_saved_message, Toast.LENGTH_LONG).show();
-            finish();
-          }
-        }*/
       }
     });
   }

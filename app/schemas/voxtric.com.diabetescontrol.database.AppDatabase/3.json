@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "1116222ea99339e507876294e896c91b",
+    "identityHash": "f73f42484bf785fd622e8229162b2c23",
     "entities": [
       {
         "tableName": "data_entries",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`actual_timestamp` INTEGER NOT NULL, `day_timestamp` INTEGER NOT NULL, `event` TEXT, `insulin_name` TEXT, `insulin_dose` TEXT, `blood_glucose_level` REAL NOT NULL, `food_eaten` TEXT, `additional_notes` TEXT, PRIMARY KEY(`actual_timestamp`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`actual_timestamp` INTEGER NOT NULL, `day_timestamp` INTEGER NOT NULL, `event` TEXT, `insulin_name` TEXT, `insulin_dose` INTEGER NOT NULL, `blood_glucose_level` REAL NOT NULL, `additional_notes` TEXT, PRIMARY KEY(`actual_timestamp`))",
         "fields": [
           {
             "fieldPath": "actualTimestamp",
@@ -35,20 +35,14 @@
           {
             "fieldPath": "insulinDose",
             "columnName": "insulin_dose",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "bloodGlucoseLevel",
             "columnName": "blood_glucose_level",
             "affinity": "REAL",
             "notNull": true
-          },
-          {
-            "fieldPath": "foodEaten",
-            "columnName": "food_eaten",
-            "affinity": "TEXT",
-            "notNull": false
           },
           {
             "fieldPath": "additionalNotes",
@@ -173,12 +167,51 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "foods",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`data_entry_timestamp` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`data_entry_timestamp`, `name`), FOREIGN KEY(`data_entry_timestamp`) REFERENCES `data_entries`(`actual_timestamp`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "dataEntryTimestamp",
+            "columnName": "data_entry_timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "data_entry_timestamp",
+            "name"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "data_entries",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "data_entry_timestamp"
+            ],
+            "referencedColumns": [
+              "actual_timestamp"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1116222ea99339e507876294e896c91b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f73f42484bf785fd622e8229162b2c23')"
     ]
   }
 }

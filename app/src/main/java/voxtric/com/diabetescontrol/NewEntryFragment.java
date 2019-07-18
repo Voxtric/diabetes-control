@@ -47,8 +47,10 @@ import androidx.viewpager.widget.ViewPager;
 import com.shuhart.bubblepagerindicator.BubblePageIndicator;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
@@ -57,6 +59,8 @@ import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Event;
 import voxtric.com.diabetescontrol.database.EventsDao;
+import voxtric.com.diabetescontrol.database.Food;
+import voxtric.com.diabetescontrol.database.FoodsDao;
 import voxtric.com.diabetescontrol.settings.EditEventsActivity;
 import voxtric.com.diabetescontrol.utilities.AutoCompleteTextViewUtilities;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
@@ -80,6 +84,8 @@ public class NewEntryFragment extends Fragment
   private Date m_date = null;
   private AppDatabase m_database = null;
   private ArrayAdapter<String> m_eventSpinnerAdapter = null;
+
+  private HashMap<View, ListItemTextWatcher> m_foodListTextWatchers = new HashMap<>();
 
   public NewEntryFragment()
   {
@@ -135,9 +141,6 @@ public class NewEntryFragment extends Fragment
       EditText insulinDoseInput = activity.findViewById(R.id.edit_text_insulin_dose);
       CompositeOnFocusChangeListener.applyListenerToView(insulinDoseInput, new HintHideOnFocusChangeListener(insulinDoseInput, Gravity.CENTER));
 
-      AutoCompleteTextView foodEatenItemInput = activity.findViewById(R.id.food_eaten_item);
-      CompositeOnFocusChangeListener.applyListenerToView(foodEatenItemInput, new HintHideOnFocusChangeListener(foodEatenItemInput, Gravity.START));
-
       AutoCompleteTextView additionalNotesInput = activity.findViewById(R.id.auto_complete_additional_notes);
       CompositeOnFocusChangeListener.applyListenerToView(additionalNotesInput, new HintHideOnFocusChangeListener(additionalNotesInput, Gravity.START | Gravity.TOP));
 
@@ -148,16 +151,11 @@ public class NewEntryFragment extends Fragment
       calendar.add(Calendar.DAY_OF_MONTH, -5);
       AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name), calendar.getTimeInMillis());
       calendar.add(Calendar.DAY_OF_MONTH, 5);
-      calendar.add(Calendar.MONTH, -2);
-      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, (AutoCompleteTextView)activity.findViewById(R.id.food_eaten_item), calendar.getTimeInMillis());
-      calendar.add(Calendar.MONTH, 1);
+      calendar.add(Calendar.MONTH, -1);
       AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_additional_notes), calendar.getTimeInMillis());
 
-      LinearLayout foodEatenItemList = activity.findViewById(R.id.food_eaten_items);
-      foodEatenItemInput.setHint(getString(R.string.food_item_hint, 1));
-      foodEatenItemInput.addTextChangedListener(new ListItemTextWatcher(activity, foodEatenItemList, "food_item", R.string.food_item_hint));
-      CompositeOnFocusChangeListener.applyListenerToView(foodEatenItemInput, new ListItemOnFocusChangeListener(foodEatenItemList, R.string.food_item_hint));
-      foodEatenItemInput.setOnEditorActionListener(new ListItemOnEditActionListener());
+      LinearLayout foodEatenItemList = activity.findViewById(R.id.food_eaten_item_list);
+      addNewListItemAutoCompleteTextView(activity, foodEatenItemList, R.string.food_item_hint, Food.TAG, null);
     }
 
     if (savedInstanceState == null)
@@ -459,7 +457,7 @@ public class NewEntryFragment extends Fragment
       @Override
       public void onClick(View view)
       {
-        final Activity activity = getActivity();
+        final DatabaseActivity activity = (DatabaseActivity)getActivity();
         if (activity != null)
         {
           final View layout = View.inflate(activity, R.layout.dialog_choose_criteria, null);
@@ -479,7 +477,7 @@ public class NewEntryFragment extends Fragment
             layout.findViewById(R.id.radio_blood_glucose_level).setEnabled(false);
             totalActiveRadioButtons--;
           }
-          if (((AutoCompleteTextView)((LinearLayout)activity.findViewById(R.id.food_eaten_items)).getChildAt(0)).getText().length() == 0)
+          if (((AutoCompleteTextView)((LinearLayout)activity.findViewById(R.id.food_eaten_item_list)).getChildAt(0)).getText().length() == 0)
           {
             layout.findViewById(R.id.radio_food_eaten).setEnabled(false);
             totalActiveRadioButtons--;
@@ -558,6 +556,15 @@ public class NewEntryFragment extends Fragment
         {
           AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name));
           AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_additional_notes));
+          LinearLayout foodEatenItemList = activity.findViewById(R.id.food_eaten_item_list);
+          for (int i = 0; i < foodEatenItemList.getChildCount(); i++)
+          {
+            AutoCompleteTextView foodEatenItem = (AutoCompleteTextView)foodEatenItemList.getChildAt(i);
+            if (foodEatenItem.getText().length() > 0)
+            {
+              AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, foodEatenItem);
+            }
+          }
 
           boolean proceed = true;
 
@@ -586,12 +593,13 @@ public class NewEntryFragment extends Fragment
           if (proceed)
           {
             final DataEntry entry = createEntry(activity);
+            final List<Food> foods = createFoodList(activity, entry);
             AsyncTask.execute(new Runnable()
             {
               @Override
               public void run()
               {
-                checkDateMismatch((DatabaseActivity)activity, entry, null);
+                checkDateMismatch((DatabaseActivity)activity, entry, null, foods);
               }
             });
           }
@@ -710,7 +718,7 @@ public class NewEntryFragment extends Fragment
     return new Pair<>(startIndex, entries);
   }
 
-  private void displaySimilar(final Activity activity, final View criteriaLayout, final int radioGroupButtonID)
+  private void displaySimilar(final DatabaseActivity activity, final View criteriaLayout, final int radioGroupButtonID)
   {
     AsyncTask.execute(new Runnable()
     {
@@ -776,7 +784,7 @@ public class NewEntryFragment extends Fragment
   }
 
   private void configureViewPreviousButtons(
-      final Activity activity, final View criteriaLayout, final int radioGroupButtonID, final long timeStamp,
+      final DatabaseActivity activity, final View criteriaLayout, final int radioGroupButtonID, final long timeStamp,
       final AlertDialog dialog, final View layoutView)
   {
     dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener()
@@ -864,22 +872,41 @@ public class NewEntryFragment extends Fragment
     entry.actualTimestamp = m_date.getTime();
     entry.dayTimeStamp = calendar.getTimeInMillis();
     entry.event = ((Spinner)activity.findViewById(R.id.spinner_event)).getSelectedItem().toString();
-    entry.insulinName = ((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString();
-    entry.insulinDose = ((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString();
-    entry.bloodGlucoseLevel = Float.parseFloat(((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString());
-    // TODO: Set food eaten.
-    entry.foodEaten = "";
-    entry.additionalNotes = ((EditText)activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString();
 
-    if (entry.insulinName.length() == 0)
+    String insulinName = ((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString();
+    if (insulinName.length() > 0)
     {
-      entry.insulinName = "N/A";
+      entry.insulinName = insulinName;
+      entry.insulinDose = Integer.valueOf(((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString());
     }
-    if (entry.insulinDose.length() == 0)
+    else
     {
-      entry.insulinDose = "N/A";
+      entry.insulinName = null;
+      entry.insulinDose = 0;
     }
+
+    entry.bloodGlucoseLevel = Float.parseFloat(((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString());
+    entry.additionalNotes = ((EditText)activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString();
     return entry;
+  }
+
+  List<Food> createFoodList(Activity activity, DataEntry associatedEntry)
+  {
+    List<Food> foodList = new ArrayList<>();
+    LinearLayout foodItemList = activity.findViewById(R.id.food_eaten_item_list);
+    for (int i = 0; i < foodItemList.getChildCount(); i++)
+    {
+      AutoCompleteTextView foodItemInput = (AutoCompleteTextView)foodItemList.getChildAt(i);
+      String foodName = foodItemInput.getText().toString();
+      if (foodName.length() > 0)
+      {
+        Food food = new Food();
+        food.dataEntryTimestamp = associatedEntry.actualTimestamp;
+        food.name = foodName;
+        foodList.add(food);
+      }
+    }
+    return foodList;
   }
 
   private void updateUIWithNewEntry(final Activity activity)
@@ -927,7 +954,7 @@ public class NewEntryFragment extends Fragment
       clearText((EditText)activity.findViewById(R.id.edit_text_insulin_dose));
       clearText((EditText)activity.findViewById(R.id.auto_complete_additional_notes));
 
-      LinearLayout foodItemsLayout = activity.findViewById(R.id.food_eaten_items);
+      LinearLayout foodItemsLayout = activity.findViewById(R.id.food_eaten_item_list);
       AutoCompleteTextView foodItemInput = (AutoCompleteTextView)foodItemsLayout.getChildAt(foodItemsLayout.getChildCount() - 1);
       foodItemsLayout.removeAllViews();
       foodItemsLayout.addView(foodItemInput);
@@ -943,7 +970,7 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  void setValues(DataEntry entry, Activity activity)
+  void setValues(Activity activity, DataEntry entry, List<Food> foodList)
   {
     m_currentEventName = entry.event;
     updateEventSpinner();
@@ -958,9 +985,25 @@ public class NewEntryFragment extends Fragment
     updateDateTime(false);
 
     ((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).setText(String.valueOf(entry.bloodGlucoseLevel));
-    ((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name)).setText(entry.insulinName);
-    ((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).setText(entry.insulinDose);
-    // TODO: Set food eaten text boxes.
+    ((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name)).setText(entry.insulinDose > 0 ? entry.insulinName : "");
+    ((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).setText(entry.insulinDose > 0 ? String.valueOf(entry.insulinDose) : "");
+
+    if (foodList.size() > 0)
+    {
+      LinearLayout foodItemList = activity.findViewById(R.id.food_eaten_item_list);
+      AutoCompleteTextView lastItem = (AutoCompleteTextView)foodItemList.getChildAt(0);
+      m_foodListTextWatchers.get(lastItem).m_ignoreTextChanges = true;
+      lastItem.setText(foodList.get(0).name);
+      for (int i = 1; i < foodList.size(); i++)
+      {
+        AutoCompleteTextView newItem = addNewListItemAutoCompleteTextView(activity, foodItemList, R.string.food_item_hint, Food.TAG, foodList.get(i).name);
+        lastItem.setNextFocusForwardId(newItem.getId());
+        lastItem = newItem;
+      }
+      AutoCompleteTextView finalEmptyItem = addNewListItemAutoCompleteTextView(activity, foodItemList, R.string.food_item_hint, Food.TAG, null);
+      lastItem.setNextFocusForwardId(finalEmptyItem.getId());
+    }
+
     if (entry.additionalNotes.length() > 0)
     {
       AutoCompleteTextView additionalNotes = activity.findViewById(R.id.auto_complete_additional_notes);
@@ -969,7 +1012,7 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  void checkDateMismatch(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace)
+  void checkDateMismatch(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
   {
     AppDatabase database = activity.getDatabase();
     DataEntriesDao dataEntriesDao = database.dataEntriesDao();
@@ -1001,17 +1044,17 @@ public class NewEntryFragment extends Fragment
         @Override
         public void run()
         {
-          queryDateMismatch(activity, entry, entryToReplace);
+          queryDateMismatch(activity, entry, entryToReplace, foodList);
         }
       });
     }
     else
     {
-      checkEventOverlap(activity, entry, entryToReplace);
+      checkEventOverlap(activity, entry, entryToReplace, foodList);
     }
   }
 
-  private void queryDateMismatch(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace)
+  private void queryDateMismatch(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
   {
     Date date = new Date(entry.dayTimeStamp);
     String dateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
@@ -1036,7 +1079,7 @@ public class NewEntryFragment extends Fragment
               public void run()
               {
                 entry.dayTimeStamp = calendar.getTimeInMillis();
-                checkEventOverlap(activity, entry, entryToReplace);
+                checkEventOverlap(activity, entry, entryToReplace, foodList);
               }
             });
           }
@@ -1051,7 +1094,7 @@ public class NewEntryFragment extends Fragment
               @Override
               public void run()
               {
-                checkEventOverlap(activity, entry, entryToReplace);
+                checkEventOverlap(activity, entry, entryToReplace, foodList);
               }
             });
           }
@@ -1068,14 +1111,14 @@ public class NewEntryFragment extends Fragment
     dialog.show();
   }
 
-  private void checkEventOverlap(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace)
+  private void checkEventOverlap(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
   {
     final DataEntry overlappingEntry = activity.getDatabase().dataEntriesDao().findOverlapping(entry.dayTimeStamp, entry.event);
     if (entryToReplace != null)
     {
       if (overlappingEntry == null || overlappingEntry.actualTimestamp == entryToReplace.actualTimestamp)
       {
-        addEntry(activity, entry, entryToReplace);
+        addEntry(activity, entry, entryToReplace, foodList);
       }
       else
       {
@@ -1096,7 +1139,7 @@ public class NewEntryFragment extends Fragment
     }
     else if (overlappingEntry == null)
     {
-      addEntry(activity, entry, null);
+      addEntry(activity, entry, null, foodList);
     }
     else
     {
@@ -1105,13 +1148,13 @@ public class NewEntryFragment extends Fragment
         @Override
         public void run()
         {
-          queryEventOverlap(activity, entry, overlappingEntry);
+          queryEventOverlap(activity, entry, overlappingEntry, foodList);
         }
       });
     }
   }
 
-  private void queryEventOverlap(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace)
+  private void queryEventOverlap(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
   {
     android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(activity)
         .setTitle(R.string.title_event_collision)
@@ -1134,7 +1177,7 @@ public class NewEntryFragment extends Fragment
               @Override
               public void run()
               {
-                addEntry(activity, entry, entryToReplace);
+                addEntry(activity, entry, entryToReplace, foodList);
               }
             });
           }
@@ -1143,14 +1186,19 @@ public class NewEntryFragment extends Fragment
     dialog.show();
   }
 
-  private void addEntry(final DatabaseActivity activity, DataEntry entry, DataEntry entryToReplace)
+  private void addEntry(final DatabaseActivity activity, DataEntry entry, DataEntry entryToReplace, final List<Food> foodList)
   {
     DataEntriesDao dataEntriesDao = activity.getDatabase().dataEntriesDao();
+    FoodsDao foodsDao = activity.getDatabase().foodsDao();
     if (entryToReplace != null)
     {
       dataEntriesDao.delete(entryToReplace);
     }
     dataEntriesDao.insert(entry);
+    for (Food food : foodList)
+    {
+      foodsDao.insert(food);
+    }
     activity.runOnUiThread(new Runnable()
     {
       @Override
@@ -1161,12 +1209,41 @@ public class NewEntryFragment extends Fragment
     });
   }
 
+  private AutoCompleteTextView addNewListItemAutoCompleteTextView(Activity activity, LinearLayout owningLayout, @StringRes int hintResourceID, String tag, String text)
+  {
+    int padding = activity.getResources().getDimensionPixelSize(R.dimen.text_box_padding);
+    AutoCompleteTextView newItem = new AutoCompleteTextView(activity);
+    newItem.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+    newItem.setHint(activity.getString(hintResourceID, owningLayout.getChildCount() + 1));
+    newItem.setBackgroundResource(R.drawable.back);
+    newItem.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+    newItem.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+    newItem.setPadding(padding, 0, padding, 0);
+    ListItemTextWatcher textWatcher = new ListItemTextWatcher(activity, owningLayout, tag, hintResourceID);
+    newItem.addTextChangedListener(textWatcher);
+    m_foodListTextWatchers.put(newItem, textWatcher);
+    newItem.setTag(tag);
+    newItem.setOnEditorActionListener(new ListItemOnEditActionListener(owningLayout));
+    CompositeOnFocusChangeListener.applyListenerToView(newItem, new HintHideOnFocusChangeListener(newItem, Gravity.START));
+    CompositeOnFocusChangeListener.applyListenerToView(newItem, new ListItemOnFocusChangeListener(owningLayout, hintResourceID));
+    AutoCompleteTextViewUtilities.refreshAutoCompleteView(activity, newItem, null);
+    if (text != null)
+    {
+      textWatcher.m_ignoreTextChanges = true;
+      newItem.setText(text);
+    }
+    owningLayout.addView(newItem);
+    return newItem;
+  }
+
   private class ListItemTextWatcher implements TextWatcher
   {
     private final Activity m_activity;
     private final LinearLayout m_owningLayout;
     private final String m_newViewTag;
     private final @StringRes int m_hintResourceID;
+
+    private boolean m_ignoreTextChanges = false;
 
     ListItemTextWatcher(Activity activity, LinearLayout owningLayout, String newViewTag, @StringRes int hintResourceID)
     {
@@ -1185,7 +1262,11 @@ public class NewEntryFragment extends Fragment
     @Override
     public void afterTextChanged(Editable editable)
     {
-      if (editable.length() > 0)
+      if (m_ignoreTextChanges)
+      {
+        m_ignoreTextChanges = false;
+      }
+      else if (editable.length() > 0)
       {
         boolean addNew = true;
         AutoCompleteTextView lastItem = null;
@@ -1200,22 +1281,8 @@ public class NewEntryFragment extends Fragment
 
         if (addNew && lastItem != null)
         {
-          int padding = m_owningLayout.getResources().getDimensionPixelSize(R.dimen.text_box_padding);
-          AutoCompleteTextView newItem = new AutoCompleteTextView(m_owningLayout.getContext());
-          newItem.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-          newItem.setHint(getString(m_hintResourceID, m_owningLayout.getChildCount() + 1));
-          newItem.setBackgroundResource(R.drawable.back);
-          newItem.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
-          newItem.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-          newItem.setPadding(padding, 0, padding, 0);
-          newItem.addTextChangedListener(new ListItemTextWatcher(m_activity, m_owningLayout, m_newViewTag, m_hintResourceID));
-          newItem.setTag(m_newViewTag);
-          newItem.setOnEditorActionListener(new ListItemOnEditActionListener());
-          CompositeOnFocusChangeListener.applyListenerToView(newItem, new HintHideOnFocusChangeListener(newItem, Gravity.START));
-          CompositeOnFocusChangeListener.applyListenerToView(newItem, new ListItemOnFocusChangeListener(m_owningLayout, m_hintResourceID));
-          AutoCompleteTextViewUtilities.refreshAutoCompleteView(m_activity, newItem, null);
-
-          m_owningLayout.addView(newItem);
+          AutoCompleteTextView newItem = addNewListItemAutoCompleteTextView(
+              m_activity, m_owningLayout, m_hintResourceID, m_newViewTag, null);
           lastItem.setNextFocusForwardId(newItem.getId());
         }
       }
@@ -1256,7 +1323,7 @@ public class NewEntryFragment extends Fragment
           }
           else if (offset > 0)
           {
-            String newHint = getString(m_hintResourceID, i - offset + 1);
+            String newHint = view.getContext().getString(m_hintResourceID, i - offset + 1);
             inputView.setHint(newHint);
             CompositeOnFocusChangeListener compositeOnFocusChangeListener = (CompositeOnFocusChangeListener)inputView.getOnFocusChangeListener();
             HintHideOnFocusChangeListener hintHideOnFocusChangeListener = compositeOnFocusChangeListener.getInstance(HintHideOnFocusChangeListener.class);
@@ -1267,13 +1334,22 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  class ListItemOnEditActionListener implements TextView.OnEditorActionListener
+  private class ListItemOnEditActionListener implements TextView.OnEditorActionListener
   {
+    private final LinearLayout m_owningLayout;
+
+    ListItemOnEditActionListener(LinearLayout owningLayout)
+    {
+      m_owningLayout = owningLayout;
+    }
+
     @Override
     public boolean onEditorAction(TextView textView, int actionID, KeyEvent keyEvent)
     {
       boolean actionHandled = false;
-      if (actionID == EditorInfo.IME_ACTION_NEXT && textView.getText().length() == 0)
+      if (actionID == EditorInfo.IME_ACTION_NEXT &&
+          textView.getText().length() == 0 &&
+          m_owningLayout.getChildAt(m_owningLayout.getChildCount() - 1) == textView)
       {
         textView.onEditorAction(EditorInfo.IME_ACTION_DONE);
         actionHandled = true;

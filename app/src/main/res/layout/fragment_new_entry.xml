@@ -201,30 +201,14 @@
             android:layout_height="wrap_content"
             style="@style/BasicText"
             android:text="@string/food_eaten_label"
-            android:labelFor="@id/food_eaten_items"/>
+            android:labelFor="@id/food_eaten_item_list"/>
 
         <LinearLayout
-            android:id="@+id/food_eaten_items"
+            android:id="@+id/food_eaten_item_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/text_margin"
             android:orientation="vertical">
-
-            <AutoCompleteTextView
-                android:id="@+id/food_eaten_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/back"
-                android:paddingLeft="@dimen/text_box_padding"
-                android:paddingStart="@dimen/text_box_padding"
-                android:paddingRight="@dimen/text_box_padding"
-                android:paddingEnd="@dimen/text_box_padding"
-                style="@style/BasicText"
-                android:inputType="textCapWords"
-                android:imeOptions="actionNext"
-                android:gravity="start"
-                android:hint="@string/food_item_hint"
-                android:tag="food_eaten"/>
         </LinearLayout>
 
         <!-- Additional Notes -->

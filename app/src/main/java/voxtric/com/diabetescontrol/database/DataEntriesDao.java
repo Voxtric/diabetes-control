@@ -25,9 +25,6 @@ public interface DataEntriesDao
   @Query("SELECT * FROM data_entries WHERE actual_timestamp < :before AND blood_glucose_level IS :bloodGlucoseLevel ORDER BY actual_timestamp DESC LIMIT 1")
   List<DataEntry> findPreviousEntryWithBloodGlucoseLevel(long before, float bloodGlucoseLevel);
 
-  @Query("SELECT * FROM data_entries WHERE actual_timestamp < :before AND food_eaten LIKE :foodEaten ORDER BY actual_timestamp DESC LIMIT 1")
-  List<DataEntry> findPreviousEntryWithFoodEaten(long before, String foodEaten);
-
   @Query("SELECT * FROM data_entries WHERE actual_timestamp < :before AND additional_notes LIKE :additionalNotes ORDER BY actual_timestamp DESC LIMIT 1")
   List<DataEntry> findPreviousEntryWithAdditionalNotes(long before, String additionalNotes);
 
@@ -41,9 +38,6 @@ public interface DataEntriesDao
 
   @Query("SELECT * FROM data_entries WHERE actual_timestamp > :after AND blood_glucose_level IS :bloodGlucoseLevel ORDER BY actual_timestamp ASC LIMIT 1")
   List<DataEntry> findNextEntryWithBloodGlucoseLevel(long after, float bloodGlucoseLevel);
-
-  @Query("SELECT * FROM data_entries WHERE actual_timestamp > :after AND food_eaten LIKE :foodEaten ORDER BY actual_timestamp ASC LIMIT 1")
-  List<DataEntry> findNextEntryWithFoodEaten(long after, String foodEaten);
 
   @Query("SELECT * FROM data_entries WHERE actual_timestamp > :after AND additional_notes LIKE :additionalNotes ORDER BY actual_timestamp ASC LIMIT 1")
   List<DataEntry> findNextEntryWithAdditionalNotes(long after, String additionalNotes);

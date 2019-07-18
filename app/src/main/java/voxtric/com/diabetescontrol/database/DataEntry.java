@@ -19,13 +19,10 @@ public class DataEntry
   public String insulinName;
 
   @ColumnInfo(name = "insulin_dose")
-  public String insulinDose;
+  public int insulinDose;
 
   @ColumnInfo(name = "blood_glucose_level")
   public float bloodGlucoseLevel;
-
-  @ColumnInfo(name = "food_eaten")
-  public String foodEaten;
 
   @ColumnInfo(name = "additional_notes")
   public String additionalNotes;

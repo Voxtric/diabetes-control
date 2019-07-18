@@ -1,6 +1,5 @@
 package voxtric.com.diabetescontrol;
 
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -10,15 +9,16 @@ import androidx.viewpager.widget.PagerAdapter;
 import java.util.List;
 
 import voxtric.com.diabetescontrol.database.DataEntry;
+import voxtric.com.diabetescontrol.database.DatabaseActivity;
 
 public class ViewPreviousPagerAdapter extends PagerAdapter
 {
-  private Context m_context;
+  private DatabaseActivity m_activity;
   private List<DataEntry> m_entries;
 
-  ViewPreviousPagerAdapter(Context context, List<DataEntry> entries)
+  ViewPreviousPagerAdapter(DatabaseActivity activity, List<DataEntry> entries)
   {
-    m_context = context;
+    m_activity = activity;
     m_entries = entries;
   }
 
@@ -26,7 +26,7 @@ public class ViewPreviousPagerAdapter extends PagerAdapter
   @Override
   public Object instantiateItem(@NonNull ViewGroup collection, int position)
   {
-    View layout = MainActivity.getFullView(m_context, m_entries.get(position));
+    View layout = MainActivity.getFullView(m_activity, m_entries.get(position));
     collection.addView(layout);
     return layout;
   }

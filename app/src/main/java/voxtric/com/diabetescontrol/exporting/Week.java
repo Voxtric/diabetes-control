@@ -92,7 +92,10 @@ public class Week
   private void addEntry(DataEntry entry, EventsDao eventsDao)
   {
     entries.add(entry);
-    insulinNames.add(entry.insulinName);
+    if (entry.insulinDose > 0)
+    {
+      insulinNames.add(entry.insulinName);
+    }
 
     Event event = eventsDao.getEvent(entry.event);
     if (event == null)

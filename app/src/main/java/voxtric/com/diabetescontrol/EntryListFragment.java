@@ -152,7 +152,7 @@ public class EntryListFragment extends Fragment
     }
   }
 
-  void viewFull(Activity activity, View dataView)
+  void viewFull(DatabaseActivity activity, View dataView)
   {
     DataEntry entry = m_adapter.getEntry(dataView);
     View view = MainActivity.getFullView(activity, entry);
@@ -168,7 +168,7 @@ public class EntryListFragment extends Fragment
   {
     DataEntry entry = m_adapter.getEntry(dataView);
     Intent intent = new Intent(activity, EditEntryActivity.class);
-    intent.putExtra("time_stamp", entry.actualTimestamp);
+    intent.putExtra("timestamp", entry.actualTimestamp);
     startActivityForResult(intent, REQUEST_EDIT_ENTRY);
   }
 

@@ -3,7 +3,13 @@ package voxtric.com.diabetescontrol.database;
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {DataEntry.class, Event.class, TargetChange.class, Preference.class}, version = AppDatabase.Version)
+@Database(version = AppDatabase.Version, entities = {
+    DataEntry.class,
+    Event.class,
+    TargetChange.class,
+    Preference.class,
+    Food.class
+})
 public abstract class AppDatabase extends RoomDatabase
 {
   public static final int Version = 3;
@@ -15,4 +21,6 @@ public abstract class AppDatabase extends RoomDatabase
   public abstract TargetChangesDao targetChangesDao();
 
   public abstract PreferencesDao preferencesDao();
+
+  public abstract FoodsDao foodsDao();
 }
