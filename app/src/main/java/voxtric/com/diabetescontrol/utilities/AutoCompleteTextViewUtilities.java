@@ -93,7 +93,7 @@ public class AutoCompleteTextViewUtilities
 
   public static void saveAutoCompleteView(final Activity activity, final AutoCompleteTextView inputView)
   {
-    final String text = inputView.getText().toString();
+    final String text = inputView.getText().toString().trim();
     if (text.length() > 0)
     {
       AsyncTask.execute(new Runnable()

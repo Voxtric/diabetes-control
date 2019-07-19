@@ -569,7 +569,7 @@ public class NewEntryFragment extends Fragment
           for (int i = 0; i < foodEatenItemList.getChildCount(); i++)
           {
             AutoCompleteTextView foodEatenItem = (AutoCompleteTextView)foodEatenItemList.getChildAt(i);
-            if (foodEatenItem.getText().length() > 0)
+            if (foodEatenItem.getText().toString().trim().length() > 0)
             {
               AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, foodEatenItem);
             }
@@ -991,14 +991,15 @@ public class NewEntryFragment extends Fragment
       clearText((EditText)activity.findViewById(R.id.auto_complete_additional_notes));
 
       LinearLayout foodItemsLayout = activity.findViewById(R.id.food_eaten_item_layout);
-      AutoCompleteTextView foodItemInput = (AutoCompleteTextView)foodItemsLayout.getChildAt(foodItemsLayout.getChildCount() - 1);
+      AutoCompleteTextView foodEatenItemInput = (AutoCompleteTextView)foodItemsLayout.getChildAt(foodItemsLayout.getChildCount() - 1);
       foodItemsLayout.removeAllViews();
-      foodItemsLayout.addView(foodItemInput);
+      foodItemsLayout.addView(foodEatenItemInput);
       String newHint = getString(R.string.food_item_hint, 1);
-      foodItemInput.setHint(newHint);
-      CompositeOnFocusChangeListener compositeOnFocusChangeListener = (CompositeOnFocusChangeListener)foodItemInput.getOnFocusChangeListener();
+      foodEatenItemInput.setHint(newHint);
+      CompositeOnFocusChangeListener compositeOnFocusChangeListener = (CompositeOnFocusChangeListener)foodEatenItemInput.getOnFocusChangeListener();
       HintHideOnFocusChangeListener hintHideOnFocusChangeListener = compositeOnFocusChangeListener.getInstance(HintHideOnFocusChangeListener.class);
       hintHideOnFocusChangeListener.changeOriginalHint(newHint);
+      AutoCompleteTextViewUtilities.refreshAutoCompleteView(activity, foodEatenItemInput, null);
 
       m_currentEventName = null;
       m_eventNameAutoSelected = true;
@@ -1256,7 +1257,7 @@ public class NewEntryFragment extends Fragment
     newItem.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     newItem.setHint(activity.getString(hintResourceID, owningLayout.getChildCount() + 1));
     newItem.setBackgroundResource(R.drawable.back);
-    newItem.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+    newItem.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
     newItem.setImeOptions(EditorInfo.IME_ACTION_NEXT);
     newItem.setPadding(padding, 0, padding, 0);
     ListItemTextWatcher textWatcher = new ListItemTextWatcher(activity, owningLayout, tag, hintResourceID);
