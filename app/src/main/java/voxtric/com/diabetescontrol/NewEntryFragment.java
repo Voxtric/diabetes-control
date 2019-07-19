@@ -1319,7 +1319,11 @@ public class NewEntryFragment extends Fragment
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
     {
-      activity.findViewById(R.id.food_eaten_label).setLabelFor(newItem.getId());
+      TextView foodEatenLabel = activity.findViewById(R.id.food_eaten_label);
+      if (foodEatenLabel != null)
+      {
+        foodEatenLabel.setLabelFor(newItem.getId());
+      }
     }
 
     return newItem;

@@ -6,8 +6,8 @@ android {
         applicationId "voxtric.com.diabetescontrol"
         minSdkVersion 15
         targetSdkVersion 29
-        versionCode 10301
-        versionName "1.3.1"
+        versionCode 10302
+        versionName "1.3.2"
         resConfigs "en", "en_US", "en_UK", "en_AU"
         //project.ext.set("archivesBaseName", "diabetes-control v" + defaultConfig.versionName)
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
