@@ -42,9 +42,9 @@ public class BGLHighlightingSettingsFragment extends Fragment
   static
   {
     Map<String, Float> defaults = new HashMap<>();
-    defaults.put(IDEAL_MINIMUM_PREFERENCE, 2.6f);
-    defaults.put(HIGH_MINIMUM_PREFERENCE, 8.2f);
-    defaults.put(ACTION_REQUIRED_MINIMUM_PREFERENCE, 11.9f);
+    defaults.put(IDEAL_MINIMUM_PREFERENCE, 4.0f);
+    defaults.put(HIGH_MINIMUM_PREFERENCE, 8.0f);
+    defaults.put(ACTION_REQUIRED_MINIMUM_PREFERENCE, 12.0f);
     DEFAULT_VALUES = Collections.unmodifiableMap(defaults);
   }
 

@@ -95,9 +95,13 @@ public abstract class DatabaseActivity extends AppCompatActivity
         {
           long timestamp = cursor.getLong(0);
           String[] foodEaten = cursor.getString(1).split(",");
-          for (String food : foodEaten)
+          for (int i = 0; i < foodEaten.length; i++)
           {
-            database.execSQL("INSERT INTO foods VALUES (:timestamp, :food)", new Object[] { timestamp, food });
+            String food = foodEaten[i].trim();
+            if (food.length() > 0)
+            {
+              database.execSQL("INSERT INTO foods VALUES (:timestamp, :food)", new Object[]{ timestamp, food });
+            }
           }
         }
         database.execSQL("DROP TABLE data_entries_OLD");

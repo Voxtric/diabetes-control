@@ -578,7 +578,7 @@ public class NewEntryFragment extends Fragment
           boolean proceed = true;
 
           String bloodGlucoseLevel = ((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString();
-          String insulinName = ((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString();
+          String insulinName = ((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString().trim();
           String insulinDose = ((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString();
           if (bloodGlucoseLevel.length() == 0)
           {
@@ -664,7 +664,7 @@ public class NewEntryFragment extends Fragment
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_dose).getId())
       {
         entry = dataEntriesDao.findPreviousEntryWithInsulinDose(
-            timestamp, '%' + ((EditText) activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString() + '%');
+            timestamp, Integer.parseInt(((EditText) activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString() + '%'));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
       {
@@ -681,7 +681,7 @@ public class NewEntryFragment extends Fragment
           String foodName = foodEatenItemInput.getText().toString().trim();
           if (foodName.length() > 0)
           {
-            foodNames.add(foodName);
+            foodNames.add('%' + foodName + '%');
           }
         }
         entry = findPreviousEntryWithFood(activity, timestamp, foodNames);
@@ -702,7 +702,7 @@ public class NewEntryFragment extends Fragment
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_dose).getId())
       {
         entry = dataEntriesDao.findNextEntryWithInsulinDose(
-            timestamp, '%' + ((EditText) activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString() + '%');
+            timestamp, Integer.parseInt(((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString()));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
       {
@@ -719,7 +719,7 @@ public class NewEntryFragment extends Fragment
           String foodName = foodEatenItemInput.getText().toString().trim();
           if (foodName.length() > 0)
           {
-            foodNames.add(foodName);
+            foodNames.add('%' + foodName + '%');
           }
         }
         entry = findFollowingEntryWithFood(activity, timestamp, foodNames);
@@ -909,7 +909,7 @@ public class NewEntryFragment extends Fragment
     entry.dayTimeStamp = calendar.getTimeInMillis();
     entry.event = ((Spinner)activity.findViewById(R.id.spinner_event)).getSelectedItem().toString();
 
-    String insulinName = ((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString();
+    String insulinName = ((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString().trim();
     if (insulinName.length() > 0)
     {
       entry.insulinName = insulinName;
@@ -922,7 +922,7 @@ public class NewEntryFragment extends Fragment
     }
 
     entry.bloodGlucoseLevel = Float.parseFloat(((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString());
-    entry.additionalNotes = ((EditText)activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString();
+    entry.additionalNotes = ((EditText)activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString().trim();
     return entry;
   }
 
@@ -933,7 +933,7 @@ public class NewEntryFragment extends Fragment
     for (int i = 0; i < foodItemList.getChildCount(); i++)
     {
       AutoCompleteTextView foodItemInput = (AutoCompleteTextView)foodItemList.getChildAt(i);
-      String foodName = foodItemInput.getText().toString();
+      String foodName = foodItemInput.getText().toString().trim();
       if (foodName.length() > 0)
       {
         Food food = new Food();

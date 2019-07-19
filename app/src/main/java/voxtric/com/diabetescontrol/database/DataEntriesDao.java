@@ -20,7 +20,7 @@ public interface DataEntriesDao
   DataEntry findPreviousEntryWithInsulinName(long before, String insulinName);
 
   @Query("SELECT * FROM data_entries WHERE actual_timestamp < :before AND insulin_dose LIKE :insulinDose ORDER BY actual_timestamp DESC LIMIT 1")
-  DataEntry findPreviousEntryWithInsulinDose(long before, String insulinDose);
+  DataEntry findPreviousEntryWithInsulinDose(long before, int insulinDose);
 
   @Query("SELECT * FROM data_entries WHERE actual_timestamp < :before AND blood_glucose_level IS :bloodGlucoseLevel ORDER BY actual_timestamp DESC LIMIT 1")
   DataEntry findPreviousEntryWithBloodGlucoseLevel(long before, float bloodGlucoseLevel);
@@ -34,7 +34,7 @@ public interface DataEntriesDao
   DataEntry findNextEntryWithInsulinName(long after, String insulinName);
 
   @Query("SELECT * FROM data_entries WHERE actual_timestamp > :after AND insulin_dose LIKE :insulinDose ORDER BY actual_timestamp ASC LIMIT 1")
-  DataEntry findNextEntryWithInsulinDose(long after, String insulinDose);
+  DataEntry findNextEntryWithInsulinDose(long after, int insulinDose);
 
   @Query("SELECT * FROM data_entries WHERE actual_timestamp > :after AND blood_glucose_level IS :bloodGlucoseLevel ORDER BY actual_timestamp ASC LIMIT 1")
   DataEntry findNextEntryWithBloodGlucoseLevel(long after, float bloodGlucoseLevel);

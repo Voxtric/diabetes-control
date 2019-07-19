@@ -223,7 +223,7 @@ public class EditEventsActivity extends DatabaseActivity
           public void onClick(DialogInterface dialog, int which)
           {
             onDismissListener.keepEditedEvent = true;
-            String newEventName = input.getText().toString();
+            String newEventName = input.getText().toString().trim();
             if (!newEventName.equals(event.name))
             {
               event.name = newEventName;
@@ -268,7 +268,7 @@ public class EditEventsActivity extends DatabaseActivity
       @Override
       public void onTextChanged(final CharSequence text, int start, int before, int count)
       {
-        boolean enableButton = text.length() > 0;
+        boolean enableButton = text.toString().trim().length() > 0;
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(enableButton);
         if (enableButton)
         {
@@ -278,7 +278,7 @@ public class EditEventsActivity extends DatabaseActivity
             public void run()
             {
               EventsDao eventsDao = m_database.eventsDao();
-              final boolean asyncEnableButton = eventsDao.getEvent(text.toString()) == null;
+              final boolean asyncEnableButton = eventsDao.getEvent(text.toString().trim()) == null;
               runOnUiThread(new Runnable()
               {
                 @Override
