@@ -23,6 +23,7 @@ import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.Event;
+import voxtric.com.diabetescontrol.database.Food;
 import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.database.PreferencesDao;
 import voxtric.com.diabetescontrol.database.TargetChange;
@@ -220,12 +221,17 @@ public class ADSExporter extends PDFGenerator
       }
       lastDayOfWeek = dayOfWeek;
 
-      // TODO: Work out what to do with this
-      /*if (entry.foodEaten.length() > 0)
+      List<Food> foodList = m_database.foodsDao().getFoods(entry.actualTimestamp);
+      if (foodList.size() > 0)
       {
-        foodEatenStringBuilder.append(entry.foodEaten.replaceAll("\n", ", "));
+        foodEatenStringBuilder.append(foodList.get(0).name);
+        for (int j = 1; j < foodList.size(); j++)
+        {
+          foodEatenStringBuilder.append(", ");
+          foodEatenStringBuilder.append(foodList.get(j).name);
+        }
         foodEatenStringBuilder.append(" | ");
-      }*/
+      }
       if (entry.additionalNotes.length() > 0)
       {
         additionalNotesStringBuilder.append(entry.additionalNotes);

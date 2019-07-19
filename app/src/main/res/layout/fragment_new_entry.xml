@@ -201,10 +201,10 @@
             android:layout_height="wrap_content"
             style="@style/BasicText"
             android:text="@string/food_eaten_label"
-            android:labelFor="@id/food_eaten_item_list"/>
+            android:labelFor="@id/food_eaten_item_layout"/>
 
         <LinearLayout
-            android:id="@+id/food_eaten_item_list"
+            android:id="@+id/food_eaten_item_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/text_margin"

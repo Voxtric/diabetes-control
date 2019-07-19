@@ -82,7 +82,6 @@ public class NewEntryFragment extends Fragment
 
   // Not transferred between rotations.
   private Date m_date = null;
-  private AppDatabase m_database = null;
   private ArrayAdapter<String> m_eventSpinnerAdapter = null;
 
   private HashMap<View, ListItemTextWatcher> m_foodListTextWatchers = new HashMap<>();
@@ -115,8 +114,6 @@ public class NewEntryFragment extends Fragment
     Activity activity = getActivity();
     if (activity != null)
     {
-      m_database = ((DatabaseActivity)activity).getDatabase();
-
       Spinner eventSpinner = activity.findViewById(R.id.spinner_event);
       m_eventSpinnerAdapter = new ArrayAdapter<String>(activity, R.layout.event_spinner_dropdown_item)
       {
@@ -154,7 +151,7 @@ public class NewEntryFragment extends Fragment
       calendar.add(Calendar.MONTH, -1);
       AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_additional_notes), calendar.getTimeInMillis());
 
-      LinearLayout foodEatenItemList = activity.findViewById(R.id.food_eaten_item_list);
+      LinearLayout foodEatenItemList = activity.findViewById(R.id.food_eaten_item_layout);
       addNewListItemAutoCompleteTextView(activity, foodEatenItemList, R.string.food_item_hint, Food.TAG, null);
     }
 
@@ -230,7 +227,7 @@ public class NewEntryFragment extends Fragment
         @Override
         public void run()
         {
-          final List<Event> events = m_database.eventsDao().getEvents();
+          final List<Event> events = activity.getDatabase().eventsDao().getEvents();
           if (events.isEmpty())
           {
             events.addAll(EditEventsActivity.addNHSEvents(activity));
@@ -263,7 +260,7 @@ public class NewEntryFragment extends Fragment
 
   private void pickBestEvent()
   {
-    final Activity activity = getActivity();
+    final DatabaseActivity activity = (DatabaseActivity)getActivity();
     if (activity != null)
     {
       AsyncTask.execute(new Runnable()
@@ -281,7 +278,7 @@ public class NewEntryFragment extends Fragment
               calendar.getMinimum(Calendar.SECOND));
           long timeOnlyTimeStamp = calendar.getTimeInMillis();
 
-          final List<Event> events = m_database.eventsDao().getEventsTimeOrdered();
+          final List<Event> events = activity.getDatabase().eventsDao().getEventsTimeOrdered();
           long smallestDifference = Long.MAX_VALUE;
           int closestEventIndex = -1;
 
@@ -462,26 +459,38 @@ public class NewEntryFragment extends Fragment
         {
           final View layout = View.inflate(activity, R.layout.dialog_choose_criteria, null);
           int totalActiveRadioButtons = 5;
+
           if (((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name)).getText().length() == 0)
           {
             layout.findViewById(R.id.radio_insulin_name).setEnabled(false);
             totalActiveRadioButtons--;
           }
+
           if (((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().length() == 0)
           {
             layout.findViewById(R.id.radio_insulin_dose).setEnabled(false);
             totalActiveRadioButtons--;
           }
+
           if (((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().length() == 0)
           {
             layout.findViewById(R.id.radio_blood_glucose_level).setEnabled(false);
             totalActiveRadioButtons--;
           }
-          if (((AutoCompleteTextView)((LinearLayout)activity.findViewById(R.id.food_eaten_item_list)).getChildAt(0)).getText().length() == 0)
+
+          LinearLayout foodEatenItemsLayout = activity.findViewById(R.id.food_eaten_item_layout);
+          boolean foundText = false;
+          for (int i = 0; i < foodEatenItemsLayout.getChildCount() && !foundText; i++)
+          {
+            AutoCompleteTextView foodEatenItemInput = (AutoCompleteTextView)foodEatenItemsLayout.getChildAt(i);
+            foundText = foodEatenItemInput.getText().toString().trim().length() > 0;
+          }
+          if (!foundText)
           {
             layout.findViewById(R.id.radio_food_eaten).setEnabled(false);
             totalActiveRadioButtons--;
           }
+
           if (((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_additional_notes)).getText().length() == 0)
           {
             layout.findViewById(R.id.radio_additional_notes).setEnabled(false);
@@ -556,7 +565,7 @@ public class NewEntryFragment extends Fragment
         {
           AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name));
           AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_additional_notes));
-          LinearLayout foodEatenItemList = activity.findViewById(R.id.food_eaten_item_list);
+          LinearLayout foodEatenItemList = activity.findViewById(R.id.food_eaten_item_layout);
           for (int i = 0; i < foodEatenItemList.getChildCount(); i++)
           {
             AutoCompleteTextView foodEatenItem = (AutoCompleteTextView)foodEatenItemList.getChildAt(i);
@@ -641,74 +650,101 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  private Pair<Integer, List<DataEntry>> getEntries(Activity activity, View criteriaLayout, int radioGroupButtonID, long timeStamp, boolean before)
+  private Pair<Integer, List<DataEntry>> getEntries(DatabaseActivity activity, View criteriaLayout, int radioGroupButtonID, long timestamp, boolean before)
   {
-    List<DataEntry> entries = null;
+    DataEntriesDao dataEntriesDao = activity.getDatabase().dataEntriesDao();
+    DataEntry entry = null;
     if (before)
     {
       if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_name).getId())
       {
-        entries = m_database.dataEntriesDao().findPreviousEntryWithInsulinName(
-            timeStamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString() + '%');
+        entry = dataEntriesDao.findPreviousEntryWithInsulinName(
+            timestamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString() + '%');
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_dose).getId())
       {
-        entries = m_database.dataEntriesDao().findPreviousEntryWithInsulinDose(
-            timeStamp, '%' + ((EditText) activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString() + '%');
+        entry = dataEntriesDao.findPreviousEntryWithInsulinDose(
+            timestamp, '%' + ((EditText) activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString() + '%');
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
       {
-        entries = m_database.dataEntriesDao().findPreviousEntryWithBloodGlucoseLevel(
-            timeStamp, Float.valueOf(((EditText) activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString()));
+        entry = dataEntriesDao.findPreviousEntryWithBloodGlucoseLevel(
+            timestamp, Float.valueOf(((EditText) activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString()));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_food_eaten).getId())
       {
-        // TODO: Do something here.
+        LinearLayout foodEatenItemsLayout = activity.findViewById(R.id.food_eaten_item_layout);
+        List<String> foodNames = new ArrayList<>();
+        for (int i = 0; i < foodEatenItemsLayout.getChildCount(); i++)
+        {
+          AutoCompleteTextView foodEatenItemInput = (AutoCompleteTextView)foodEatenItemsLayout.getChildAt(i);
+          String foodName = foodEatenItemInput.getText().toString().trim();
+          if (foodName.length() > 0)
+          {
+            foodNames.add(foodName);
+          }
+        }
+        entry = findPreviousEntryWithFood(activity, timestamp, foodNames);
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_additional_notes).getId())
       {
-        entries = m_database.dataEntriesDao().findPreviousEntryWithAdditionalNotes(
-            timeStamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString() + '%');
+        entry = dataEntriesDao.findPreviousEntryWithAdditionalNotes(
+            timestamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString() + '%');
       }
     }
     else
     {
       if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_name).getId())
       {
-        entries = m_database.dataEntriesDao().findNextEntryWithInsulinName(
-            timeStamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString() + '%');
+        entry = dataEntriesDao.findNextEntryWithInsulinName(
+            timestamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString() + '%');
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_dose).getId())
       {
-        entries = m_database.dataEntriesDao().findNextEntryWithInsulinDose(
-            timeStamp, '%' + ((EditText) activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString() + '%');
+        entry = dataEntriesDao.findNextEntryWithInsulinDose(
+            timestamp, '%' + ((EditText) activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString() + '%');
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
       {
-        entries = m_database.dataEntriesDao().findNextEntryWithBloodGlucoseLevel(
-            timeStamp, Float.valueOf(((EditText) activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString()));
+        entry = dataEntriesDao.findNextEntryWithBloodGlucoseLevel(
+            timestamp, Float.valueOf(((EditText) activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString()));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_food_eaten).getId())
       {
-        // TODO: Do something here.
+        LinearLayout foodEatenItemsLayout = activity.findViewById(R.id.food_eaten_item_layout);
+        List<String> foodNames = new ArrayList<>();
+        for (int i = 0; i < foodEatenItemsLayout.getChildCount(); i++)
+        {
+          AutoCompleteTextView foodEatenItemInput = (AutoCompleteTextView)foodEatenItemsLayout.getChildAt(i);
+          String foodName = foodEatenItemInput.getText().toString().trim();
+          if (foodName.length() > 0)
+          {
+            foodNames.add(foodName);
+          }
+        }
+        entry = findFollowingEntryWithFood(activity, timestamp, foodNames);
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_additional_notes).getId())
       {
-        entries = m_database.dataEntriesDao().findNextEntryWithAdditionalNotes(
-            timeStamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString() + '%');
+        entry = dataEntriesDao.findNextEntryWithAdditionalNotes(
+            timestamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString() + '%');
       }
     }
 
     int startIndex = -1;
-    if (entries != null && !entries.isEmpty())
+    List<DataEntry> entries = null;
+    if (entry != null)
     {
+      entries = new ArrayList<>();
+      entries.add(entry);
+
       startIndex = 0;
-      DataEntry surrounding = m_database.dataEntriesDao().findFirstAfter(entries.get(0).actualTimestamp);
+      DataEntry surrounding = dataEntriesDao.findFirstAfter(entries.get(0).actualTimestamp);
       if (surrounding != null)
       {
         entries.add(surrounding);
       }
-      surrounding = m_database.dataEntriesDao().findFirstBefore(entries.get(0).actualTimestamp);
+      surrounding = dataEntriesDao.findFirstBefore(entries.get(0).actualTimestamp);
       if (surrounding != null)
       {
         entries.add(0, surrounding);
@@ -893,7 +929,7 @@ public class NewEntryFragment extends Fragment
   List<Food> createFoodList(Activity activity, DataEntry associatedEntry)
   {
     List<Food> foodList = new ArrayList<>();
-    LinearLayout foodItemList = activity.findViewById(R.id.food_eaten_item_list);
+    LinearLayout foodItemList = activity.findViewById(R.id.food_eaten_item_layout);
     for (int i = 0; i < foodItemList.getChildCount(); i++)
     {
       AutoCompleteTextView foodItemInput = (AutoCompleteTextView)foodItemList.getChildAt(i);
@@ -954,7 +990,7 @@ public class NewEntryFragment extends Fragment
       clearText((EditText)activity.findViewById(R.id.edit_text_insulin_dose));
       clearText((EditText)activity.findViewById(R.id.auto_complete_additional_notes));
 
-      LinearLayout foodItemsLayout = activity.findViewById(R.id.food_eaten_item_list);
+      LinearLayout foodItemsLayout = activity.findViewById(R.id.food_eaten_item_layout);
       AutoCompleteTextView foodItemInput = (AutoCompleteTextView)foodItemsLayout.getChildAt(foodItemsLayout.getChildCount() - 1);
       foodItemsLayout.removeAllViews();
       foodItemsLayout.addView(foodItemInput);
@@ -990,9 +1026,13 @@ public class NewEntryFragment extends Fragment
 
     if (foodList.size() > 0)
     {
-      LinearLayout foodItemList = activity.findViewById(R.id.food_eaten_item_list);
+      LinearLayout foodItemList = activity.findViewById(R.id.food_eaten_item_layout);
       AutoCompleteTextView lastItem = (AutoCompleteTextView)foodItemList.getChildAt(0);
-      m_foodListTextWatchers.get(lastItem).m_ignoreTextChanges = true;
+      ListItemTextWatcher textWatcher = m_foodListTextWatchers.get(lastItem);
+      if (textWatcher != null)
+      {
+        textWatcher.m_ignoreTextChanges = true;
+      }
       lastItem.setText(foodList.get(0).name);
       for (int i = 1; i < foodList.size(); i++)
       {
@@ -1234,6 +1274,74 @@ public class NewEntryFragment extends Fragment
     }
     owningLayout.addView(newItem);
     return newItem;
+  }
+
+  private DataEntry findPreviousEntryWithFood(DatabaseActivity activity, long before, List<String> foodList)
+  {
+    DataEntriesDao dataEntriesDao = activity.getDatabase().dataEntriesDao();
+    FoodsDao foodsDao = activity.getDatabase().foodsDao();
+    DataEntry entry = null;
+
+    // Get the foods.
+    List<Food> foods = new ArrayList<>();
+    for (String foodName : foodList)
+    {
+      Food food = foodsDao.getFoodBefore(before, foodName);
+      if (food != null)
+      {
+        foods.add(food);
+      }
+    }
+
+    if (foods.size() > 0)
+    {
+      // Find the most recent food.
+      Food mostRecentFood = foods.get(0);
+      for (int i = 1; i < foods.size(); i++)
+      {
+        if (foods.get(i).dataEntryTimestamp > mostRecentFood.dataEntryTimestamp)
+        {
+          mostRecentFood = foods.get(i);
+        }
+      }
+      entry = dataEntriesDao.getEntry(mostRecentFood.dataEntryTimestamp);
+    }
+
+    return entry;
+  }
+
+  private DataEntry findFollowingEntryWithFood(DatabaseActivity activity, long after, List<String> foodList)
+  {
+    DataEntriesDao dataEntriesDao = activity.getDatabase().dataEntriesDao();
+    FoodsDao foodsDao = activity.getDatabase().foodsDao();
+    DataEntry entry = null;
+
+    // Get the foods.
+    List<Food> foods = new ArrayList<>();
+    for (String foodName : foodList)
+    {
+      Food food = foodsDao.getFoodAfter(after, foodName);
+      if (food != null)
+      {
+        foods.add(food);
+      }
+    }
+
+    if (foods.size() > 0)
+    {
+      // Find the most recent food.
+      Food mostRecentFood = foods.get(0);
+      for (int i = 1; i < foods.size(); i++)
+      {
+        if (foods.get(i).dataEntryTimestamp < mostRecentFood.dataEntryTimestamp)
+        {
+          mostRecentFood = foods.get(i);
+        }
+      }
+      entry = dataEntriesDao.getEntry(mostRecentFood.dataEntryTimestamp);
+    }
+
+    return entry;
   }
 
   private class ListItemTextWatcher implements TextWatcher

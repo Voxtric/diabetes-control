@@ -79,7 +79,7 @@ public class EntryListFragment extends Fragment
         @Override
         public void run()
         {
-          final List<DataEntry> entries = activity.getDatabase().dataEntriesDao().getPreviousEntries(System.currentTimeMillis(), LOAD_COUNT);
+          final List<DataEntry> entries = activity.getDatabase().dataEntriesDao().getPreviousEntries(Long.MAX_VALUE, LOAD_COUNT);
           activity.runOnUiThread(new Runnable()
           {
             @Override

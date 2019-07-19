@@ -40,11 +40,68 @@ public abstract class DatabaseActivity extends AppCompatActivity
     {
       Log.i("Migration", "v2 to v3");
 
-      database.execSQL("CREATE TABLE preferences(name TEXT PRIMARY KEY NOT NULL, value TEXT)");
-      String versionString = String.valueOf(AppDatabase.Version);
-      database.execSQL("INSERT INTO preferences (name, value) VALUES ('database_version', :versionString)", new Object[] {versionString});
+      // Add preference table with the database version as the first entry.
+      {
+        database.execSQL("CREATE TABLE preferences(name TEXT PRIMARY KEY NOT NULL, value TEXT)");
+        String versionString = String.valueOf(AppDatabase.Version);
+        database.execSQL("INSERT INTO preferences (name, value) VALUES ('database_version', :versionString)", new Object[]{ versionString });
+      }
 
-      // TODO: Handle full migration.
+      // Migrate to the new layout for data entries.
+      {
+        database.execSQL("ALTER TABLE data_entries RENAME TO data_entries_OLD");
+        database.execSQL("CREATE TABLE data_entries (" +
+            "actual_timestamp INTEGER PRIMARY KEY NOT NULL, " +
+            "day_timestamp INTEGER NOT NULL, " +
+            "event TEXT, " +
+            "blood_glucose_level REAL NOT NULL, " +
+            "insulin_name TEXT, " +
+            "insulin_dose INTEGER NOT NULL, " +
+            "additional_notes TEXT)");
+        Cursor cursor = database.query("SELECT * FROM data_entries_OLD");
+        while (cursor.moveToNext())
+        {
+          long actualTimestamp = cursor.getLong(cursor.getColumnIndex("actual_timestamp"));
+          long dayTimestamp = cursor.getLong(cursor.getColumnIndex("day_timestamp"));
+          String event = cursor.getString(cursor.getColumnIndex("event"));
+          float bloodGlucoseLevel = cursor.getFloat(cursor.getColumnIndex("blood_glucose_level"));
+          String insulinName = cursor.getString(cursor.getColumnIndex("insulin_name"));
+          int insulinDose = 0;
+          try
+          {
+            insulinDose = Integer.parseInt(cursor.getString(cursor.getColumnIndex("insulin_dose")));
+          }
+          catch (NumberFormatException ignored) {}
+          String additionalNotes = cursor.getString(cursor.getColumnIndex("additional_notes"));
+          database.execSQL("INSERT INTO data_entries (actual_timestamp, day_timestamp, event, blood_glucose_level, insulin_name, insulin_dose, additional_notes)" +
+              "VALUES (:actualTimestamp, :dayTimestamp, :event, :bloodGlucoseLevel, :insulinName, :insulinDose, :additionalNotes)",
+              new Object[]{ actualTimestamp, dayTimestamp, event, bloodGlucoseLevel, insulinName, insulinDose, additionalNotes });
+        }
+      }
+
+      // Add the new food table.
+      {
+        database.execSQL("CREATE TABLE foods (" +
+            "data_entry_timestamp INTEGER NOT NULL, " +
+            "name TEXT NOT NULL," +
+            "PRIMARY KEY (data_entry_timestamp, name)," +
+            "FOREIGN KEY (data_entry_timestamp) REFERENCES data_entries (actual_timestamp) ON DELETE CASCADE)");
+      }
+
+      // Move the food from the old data entries table and delete the old table.
+      {
+        Cursor cursor = database.query("SELECT actual_timestamp, food_eaten FROM data_entries_OLD");
+        while (cursor.moveToNext())
+        {
+          long timestamp = cursor.getLong(0);
+          String[] foodEaten = cursor.getString(1).split(",");
+          for (String food : foodEaten)
+          {
+            database.execSQL("INSERT INTO foods VALUES (:timestamp, :food)", new Object[] { timestamp, food });
+          }
+        }
+        database.execSQL("DROP TABLE data_entries_OLD");
+      }
     }
   };
 
