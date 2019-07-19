@@ -1,5 +1,6 @@
 package voxtric.com.diabetescontrol.settings;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -27,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,14 +36,14 @@ import java.util.Calendar;
 import java.util.List;
 
 import voxtric.com.diabetescontrol.R;
-import voxtric.com.diabetescontrol.database.DatabaseActivity;
+import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.Event;
 import voxtric.com.diabetescontrol.database.EventsDao;
 import voxtric.com.diabetescontrol.settings.fragments.EventsSettingsFragment;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 import voxtric.com.diabetescontrol.utilities.HintHideOnFocusChangeListener;
 
-public class EditEventsActivity extends DatabaseActivity
+public class EditEventsActivity extends AppCompatActivity
 {
   private static final int MAX_EVENT_COUNT = 8;
 
@@ -70,7 +72,7 @@ public class EditEventsActivity extends DatabaseActivity
       @Override
       public void run()
       {
-        final List<Event> events = m_database.eventsDao().getEvents();
+        final List<Event> events = AppDatabase.getInstance().eventsDao().getEvents();
         runOnUiThread(new Runnable()
         {
           @Override
@@ -142,9 +144,10 @@ public class EditEventsActivity extends DatabaseActivity
       @Override
       public void run()
       {
-        m_database.eventsDao().updateEvent(eventA);
-        m_database.eventsDao().updateEvent(eventB);
-        final List<Event> allEvents = m_database.eventsDao().getEvents();
+        EventsDao eventsDao = AppDatabase.getInstance().eventsDao();
+        eventsDao.updateEvent(eventA);
+        eventsDao.updateEvent(eventB);
+        final List<Event> allEvents = eventsDao.getEvents();
 
         runOnUiThread(new Runnable()
         {
@@ -232,7 +235,7 @@ public class EditEventsActivity extends DatabaseActivity
                 @Override
                 public void run()
                 {
-                  EventsDao eventsDao = m_database.eventsDao();
+                  EventsDao eventsDao = AppDatabase.getInstance().eventsDao();
                   eventsDao.updateEvent(event);
                   final List<Event> allEvents = eventsDao.getEvents();
                   runOnUiThread(new Runnable()
@@ -277,7 +280,7 @@ public class EditEventsActivity extends DatabaseActivity
             @Override
             public void run()
             {
-              EventsDao eventsDao = m_database.eventsDao();
+              EventsDao eventsDao = AppDatabase.getInstance().eventsDao();
               final boolean asyncEnableButton = eventsDao.getEvent(text.toString().trim()) == null;
               runOnUiThread(new Runnable()
               {
@@ -349,14 +352,15 @@ public class EditEventsActivity extends DatabaseActivity
               @Override
               public void run()
               {
+                EventsDao eventsDao = AppDatabase.getInstance().eventsDao();
                 if (!newEvent)
                 {
-                  m_database.eventsDao().updateEvent(event);
+                  eventsDao.updateEvent(event);
                   displayMessage(R.string.event_time_changed_message);
                 }
                 else
                 {
-                  List<Event> allEvents = m_database.eventsDao().getEventsTimeOrdered();
+                  List<Event> allEvents = eventsDao.getEventsTimeOrdered();
                   int index = 0;
                   while (index < allEvents.size() && event.timeInDay > allEvents.get(index).timeInDay)
                   {
@@ -370,14 +374,14 @@ public class EditEventsActivity extends DatabaseActivity
                   else
                   {
                     event.order = allEvents.get(index).order;
-                    m_database.eventsDao().shuffleOrders(1, event.order - 1);
+                    eventsDao.shuffleOrders(1, event.order - 1);
                   }
-                  m_database.eventsDao().updateEvent(event);
+                  eventsDao.updateEvent(event);
 
                   displayMessage(R.string.new_event_added_message);
                 }
 
-                final List<Event> allEvents = m_database.eventsDao().getEvents();
+                final List<Event> allEvents = eventsDao.getEvents();
                 runOnUiThread(new Runnable()
                 {
                   @Override
@@ -428,7 +432,7 @@ public class EditEventsActivity extends DatabaseActivity
           public void run()
           {
 
-            EventsDao eventsDao = m_database.eventsDao();
+            EventsDao eventsDao = AppDatabase.getInstance().eventsDao();
             final boolean enableButton = eventsDao.getEvent(validateCalendar.getTimeInMillis() - 999, validateCalendar.getTimeInMillis() + 999) == null;
             runOnUiThread(new Runnable()
             {
@@ -469,7 +473,7 @@ public class EditEventsActivity extends DatabaseActivity
                 @Override
                 public void run()
                 {
-                  EventsDao eventsDao = m_database.eventsDao();
+                  EventsDao eventsDao = AppDatabase.getInstance().eventsDao();
                   eventsDao.deleteEvent(event);
                   eventsDao.shuffleOrders(-1, event.order);
                   final List<Event> events = eventsDao.getEvents();
@@ -597,7 +601,7 @@ public class EditEventsActivity extends DatabaseActivity
               @Override
               public void run()
               {
-                EventsDao eventsDao = m_database.eventsDao();
+                EventsDao eventsDao = AppDatabase.getInstance().eventsDao();
                 List<Event> events = eventsDao.getEvents();
                 for (Event event : events)
                 {
@@ -634,8 +638,9 @@ public class EditEventsActivity extends DatabaseActivity
         event.name = "";
         event.timeInDay = -1L;
         event.order = m_adapter.getItemCount();
-        m_database.eventsDao().insert(event);
-        final List<Event> events = m_database.eventsDao().getEvents();
+        EventsDao eventsDao = AppDatabase.getInstance().eventsDao();
+        eventsDao.insert(event);
+        final List<Event> events = eventsDao.getEvents();
         runOnUiThread(new Runnable()
         {
           @Override
@@ -669,10 +674,10 @@ public class EditEventsActivity extends DatabaseActivity
     });
   }
 
-  public static List<Event> addNHSEvents(DatabaseActivity activity)
+  public static List<Event> addNHSEvents(Context context)
   {
-    String[] nhsEventNames = activity.getResources().getStringArray(R.array.nhs_event_names);
-    EventsDao eventsDao = activity.getDatabase().eventsDao();
+    String[] nhsEventNames = context.getResources().getStringArray(R.array.nhs_event_names);
+    EventsDao eventsDao = AppDatabase.getInstance().eventsDao();
     Calendar calendar = Calendar.getInstance();
     calendar.clear();
     calendar.set(
@@ -794,7 +799,7 @@ public class EditEventsActivity extends DatabaseActivity
           @Override
           public void run()
           {
-            EventsDao eventsDao = m_database.eventsDao();
+            EventsDao eventsDao = AppDatabase.getInstance().eventsDao();
             eventsDao.deleteEvent(m_event);
             final List<Event> events = eventsDao.getEvents();
             displayMessage(R.string.new_event_cancelled_message);

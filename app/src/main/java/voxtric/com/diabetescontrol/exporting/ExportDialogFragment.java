@@ -30,7 +30,6 @@ import java.util.Locale;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
-import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.exporting.ADSExporter;
 
 public class ExportDialogFragment extends DialogFragment
@@ -122,9 +121,9 @@ public class ExportDialogFragment extends DialogFragment
       m_progressBar.setMax(savedInstanceState.getInt("progress_bar_export_max"));
     }
 
-    if (!m_exportStarted && activity instanceof DatabaseActivity)
+    if (!m_exportStarted)
     {
-      performExport(activity, ((DatabaseActivity)activity).getDatabase());
+      performExport(activity);
     }
 
     return m_alertDialog;
@@ -156,13 +155,13 @@ public class ExportDialogFragment extends DialogFragment
     m_endMessage = endMessage;
   }
 
-  public void setTime(long startTimeStamp, long endTimeStamp)
+  void setTime(long startTimeStamp, long endTimeStamp)
   {
     m_startTimeStamp = startTimeStamp;
     m_endTimeStamp = endTimeStamp;
   }
 
-  public AlertDialog getAlertDialog()
+  AlertDialog getAlertDialog()
   {
     return m_alertDialog;
   }
@@ -196,7 +195,7 @@ public class ExportDialogFragment extends DialogFragment
     });
   }
 
-  private void performExport(final Activity activity, final AppDatabase database)
+  private void performExport(final Activity activity)
   {
     m_exportStarted = true;
     AsyncTask.execute(new Runnable()
@@ -205,7 +204,7 @@ public class ExportDialogFragment extends DialogFragment
       public void run()
       {
         long exportStart = System.currentTimeMillis();
-        final List<DataEntry> entries = database.dataEntriesDao().findAllBetween(m_startTimeStamp, m_endTimeStamp);
+        final List<DataEntry> entries = AppDatabase.getInstance().dataEntriesDao().findAllBetween(m_startTimeStamp, m_endTimeStamp);
         activity.runOnUiThread(new Runnable()
         {
           @Override
@@ -225,7 +224,7 @@ public class ExportDialogFragment extends DialogFragment
           ByteArrayOutputStream byteArrayOutputStream;
           if (m_title.equals("ADS Export"))
           {
-            ADSExporter exporter = new ADSExporter(entries, database);
+            ADSExporter exporter = new ADSExporter(entries);
             fileName = exporter.getFileName();
             byteArrayOutputStream = exporter.createPDF(activity);
           }

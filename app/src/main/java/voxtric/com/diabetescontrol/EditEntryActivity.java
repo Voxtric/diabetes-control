@@ -10,15 +10,16 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
-import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Food;
 
-public class EditEntryActivity extends DatabaseActivity
+public class EditEntryActivity extends AppCompatActivity
 {
   private DataEntry m_editedEntry = null;
   private List<Food> m_editedFoods = null;
@@ -48,8 +49,8 @@ public class EditEntryActivity extends DatabaseActivity
           @Override
           public void run()
           {
-            m_editedEntry = m_database.dataEntriesDao().getEntry(timestamp);
-            m_editedFoods = m_database.foodsDao().getFoods(timestamp);
+            m_editedEntry = AppDatabase.getInstance().dataEntriesDao().getEntry(timestamp);
+            m_editedFoods = AppDatabase.getInstance().foodsDao().getFoods(timestamp);
             m_latch.countDown();
           }
         });

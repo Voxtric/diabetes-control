@@ -1,5 +1,6 @@
 package voxtric.com.diabetescontrol.settings.fragments;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -14,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import voxtric.com.diabetescontrol.R;
-import voxtric.com.diabetescontrol.database.DatabaseActivity;
+import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.database.TargetChange;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
@@ -38,7 +39,7 @@ public class MealTargetsSettingsFragment extends Fragment
     {
       if (!hasFocus)
       {
-        final DatabaseActivity activity = (DatabaseActivity)getActivity();
+        final Activity activity = getActivity();
         if (activity != null)
         {
           boolean proceed = true;
@@ -62,7 +63,7 @@ public class MealTargetsSettingsFragment extends Fragment
                 targetChange.preMealUpper = Float.valueOf(values[1]);
                 targetChange.postMealLower = Float.valueOf(values[2]);
                 targetChange.postMealUpper = Float.valueOf(values[3]);
-                activity.getDatabase().targetChangesDao().insert(targetChange);
+                AppDatabase.getInstance().targetChangesDao().insert(targetChange);
               }
             });
           }

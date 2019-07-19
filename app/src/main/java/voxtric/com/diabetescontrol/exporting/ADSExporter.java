@@ -1,8 +1,6 @@
 package voxtric.com.diabetescontrol.exporting;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.widget.ProgressBar;
 
 import androidx.fragment.app.FragmentActivity;
@@ -37,14 +35,12 @@ public class ADSExporter extends PDFGenerator
   private static final float EXTRAS_MIN_WIDTH = 140.0f;
   private static final float DATA_GAP = FONT_SIZE_MEDIUM * 1.6f;
 
-  private final AppDatabase m_database;
   private final List<Week> m_weeks;
   private final String m_fileName;
 
-  ADSExporter(List<DataEntry> entries, AppDatabase database)
+  ADSExporter(List<DataEntry> entries)
   {
-    m_database = database;
-    m_weeks = Week.splitEntries(entries, database.eventsDao());
+    m_weeks = Week.splitEntries(entries, AppDatabase.getInstance().eventsDao());
     Date startDate = new Date(entries.get(entries.size() - 1).dayTimeStamp);
     Date endDate = new Date(entries.get(0).dayTimeStamp);
     String startDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(startDate);
@@ -131,10 +127,10 @@ public class ADSExporter extends PDFGenerator
 
     // Pre-meal and post-meal targets.
     String targetString = null;
-    TargetChange targetChange = m_database.targetChangesDao().findChangeBetween(week.weekBeginning, week.weekEnding);
+    TargetChange targetChange = AppDatabase.getInstance().targetChangesDao().findChangeBetween(week.weekBeginning, week.weekEnding);
     if (targetChange == null)
     {
-      targetChange = m_database.targetChangesDao().findFirstBefore(week.weekBeginning);
+      targetChange = AppDatabase.getInstance().targetChangesDao().findFirstBefore(week.weekBeginning);
       if (targetChange == null)
       {
         targetString = activity.getString(R.string.blood_glucose_targets_empty);
@@ -203,7 +199,8 @@ public class ADSExporter extends PDFGenerator
       int dayOfWeek = (calendar.get(Calendar.DAY_OF_WEEK) + 5) % DAYS.length;
       dayStartHeight = height - (DAY_HEADER_HEIGHT * dayOfWeek);
       float dayHeight = dayStartHeight - FONT_SIZE_SMALL - (FONT_SIZE_MEDIUM * 0.2f);
-      float eventStartX = eventStartXMap.get(entry.event);
+      Float eventStartXValue = eventStartXMap.get(entry.event);
+      float eventStartX = eventStartXValue != null ? eventStartXValue : 0.0f;
       drawTextCenterAligned(FONT, FONT_SIZE_MEDIUM, String.valueOf(entry.bloodGlucoseLevel), eventStartX + (eventWidth / 2.0f), dayHeight);
 
       dayHeight -= FONT_SIZE_SMALL + DATA_GAP;
@@ -221,7 +218,7 @@ public class ADSExporter extends PDFGenerator
       }
       lastDayOfWeek = dayOfWeek;
 
-      List<Food> foodList = m_database.foodsDao().getFoods(entry.actualTimestamp);
+      List<Food> foodList = AppDatabase.getInstance().foodsDao().getFoods(entry.actualTimestamp);
       if (foodList.size() > 0)
       {
         foodEatenStringBuilder.append(foodList.get(0).name);
@@ -255,7 +252,7 @@ public class ADSExporter extends PDFGenerator
     // Contact Details
     height -= VERTICAL_SPACE / 2.0f;
 
-    PreferencesDao preferencesDao = m_database.preferencesDao();
+    PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
     Preference preference = preferencesDao.getPreference(activity.getResources().getResourceName(R.id.edit_text_contact_name));
     String contactName = preference != null && preference.value.length() > 0 ? preference.value : "...........................................";
     drawText(FONT, FONT_SIZE_MEDIUM, activity.getString(R.string.contact_name, contactName), BORDER, height);

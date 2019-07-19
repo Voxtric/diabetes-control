@@ -56,7 +56,6 @@ import java.util.List;
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntriesDao;
 import voxtric.com.diabetescontrol.database.DataEntry;
-import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Event;
 import voxtric.com.diabetescontrol.database.EventsDao;
 import voxtric.com.diabetescontrol.database.Food;
@@ -254,7 +253,7 @@ public class NewEntryFragment extends Fragment
 
   void updateEventSpinner()
   {
-    final DatabaseActivity activity = (DatabaseActivity)getActivity();
+    final Activity activity = getActivity();
     if (activity != null)
     {
       AsyncTask.execute(new Runnable()
@@ -262,7 +261,7 @@ public class NewEntryFragment extends Fragment
         @Override
         public void run()
         {
-          final List<Event> events = activity.getDatabase().eventsDao().getEvents();
+          final List<Event> events = AppDatabase.getInstance().eventsDao().getEvents();
           if (events.isEmpty())
           {
             events.addAll(EditEventsActivity.addNHSEvents(activity));
@@ -295,7 +294,7 @@ public class NewEntryFragment extends Fragment
 
   private void pickBestEvent()
   {
-    final DatabaseActivity activity = (DatabaseActivity)getActivity();
+    final Activity activity = getActivity();
     if (activity != null)
     {
       AsyncTask.execute(new Runnable()
@@ -313,7 +312,7 @@ public class NewEntryFragment extends Fragment
               calendar.getMinimum(Calendar.SECOND));
           long timeOnlyTimeStamp = calendar.getTimeInMillis();
 
-          final List<Event> events = activity.getDatabase().eventsDao().getEventsTimeOrdered();
+          final List<Event> events = AppDatabase.getInstance().eventsDao().getEventsTimeOrdered();
           long smallestDifference = Long.MAX_VALUE;
           int closestEventIndex = -1;
 
@@ -489,7 +488,7 @@ public class NewEntryFragment extends Fragment
       @Override
       public void onClick(View view)
       {
-        final DatabaseActivity activity = (DatabaseActivity)getActivity();
+        final Activity activity = getActivity();
         if (activity != null)
         {
           final View layout = View.inflate(activity, R.layout.dialog_choose_criteria, null);
@@ -588,7 +587,7 @@ public class NewEntryFragment extends Fragment
       @Override
       public void onClick(View view)
       {
-        final DatabaseActivity activity = (DatabaseActivity)getActivity();
+        final Activity activity = getActivity();
         if (activity != null)
         {
           AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name));
@@ -671,9 +670,9 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  private Pair<Integer, List<DataEntry>> getEntries(DatabaseActivity activity, View criteriaLayout, int radioGroupButtonID, long timestamp, boolean before)
+  private Pair<Integer, List<DataEntry>> getEntries(Activity activity, View criteriaLayout, int radioGroupButtonID, long timestamp, boolean before)
   {
-    DataEntriesDao dataEntriesDao = activity.getDatabase().dataEntriesDao();
+    DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
     DataEntry entry = null;
     if (before)
     {
@@ -694,7 +693,7 @@ public class NewEntryFragment extends Fragment
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_food_eaten).getId())
       {
-        entry = findPreviousEntryWithFood(activity, timestamp, getFoodNames(activity));
+        entry = findPreviousEntryWithFood(timestamp, getFoodNames(activity));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_additional_notes).getId())
       {
@@ -721,7 +720,7 @@ public class NewEntryFragment extends Fragment
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_food_eaten).getId())
       {
-        entry = findFollowingEntryWithFood(activity, timestamp, getFoodNames(activity));
+        entry = findFollowingEntryWithFood(timestamp, getFoodNames(activity));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_additional_notes).getId())
       {
@@ -753,7 +752,7 @@ public class NewEntryFragment extends Fragment
     return new Pair<>(startIndex, entries);
   }
 
-  private void displaySimilar(final DatabaseActivity activity, final View criteriaLayout, final int radioGroupButtonID)
+  private void displaySimilar(final Activity activity, final View criteriaLayout, final int radioGroupButtonID)
   {
     AsyncTask.execute(new Runnable()
     {
@@ -819,7 +818,7 @@ public class NewEntryFragment extends Fragment
   }
 
   private void configureViewPreviousButtons(
-      final DatabaseActivity activity, final View criteriaLayout, final int radioGroupButtonID, final long timeStamp,
+      final Activity activity, final View criteriaLayout, final int radioGroupButtonID, final long timeStamp,
       final AlertDialog dialog, final View layoutView)
   {
     dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener()
@@ -1048,7 +1047,7 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  void checkFutureEntry(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
+  void checkFutureEntry(final Activity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
   {
     Calendar calendar = Calendar.getInstance();
     calendar.add(Calendar.MINUTE, 15);
@@ -1089,11 +1088,10 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  private void checkDateMismatch(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
+  private void checkDateMismatch(final Activity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
   {
-    AppDatabase database = activity.getDatabase();
-    DataEntriesDao dataEntriesDao = database.dataEntriesDao();
-    EventsDao eventsDao = database.eventsDao();
+    DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
+    EventsDao eventsDao = AppDatabase.getInstance().eventsDao();
 
     Event event = eventsDao.getEvent(entry.event);
 
@@ -1131,7 +1129,7 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  private void queryDateMismatch(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
+  private void queryDateMismatch(final Activity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
   {
     Date date = new Date(entry.dayTimeStamp);
     String dateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
@@ -1188,10 +1186,11 @@ public class NewEntryFragment extends Fragment
     dialog.show();
   }
 
-  private void checkEventOverlap(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
+  private void checkEventOverlap(final Activity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
   {
-    final DataEntry eventOverlappingEntry = activity.getDatabase().dataEntriesDao().findOverlapping(entry.dayTimeStamp, entry.event);
-    final DataEntry timeOverlappingEntry = activity.getDatabase().dataEntriesDao().getEntry(entry.actualTimestamp);
+    DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
+    final DataEntry eventOverlappingEntry = dataEntriesDao.findOverlapping(entry.dayTimeStamp, entry.event);
+    final DataEntry timeOverlappingEntry = dataEntriesDao.getEntry(entry.actualTimestamp);
     if (entryToReplace != null)
     {
       if ((eventOverlappingEntry == null || eventOverlappingEntry.actualTimestamp == entryToReplace.actualTimestamp) &&
@@ -1233,7 +1232,7 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  private void queryEventOverlap(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList, boolean eventRelated)
+  private void queryEventOverlap(final Activity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList, boolean eventRelated)
   {
     android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(activity)
         .setTitle(R.string.title_entry_collision)
@@ -1265,10 +1264,10 @@ public class NewEntryFragment extends Fragment
     dialog.show();
   }
 
-  private void addEntry(final DatabaseActivity activity, DataEntry entry, DataEntry entryToReplace, final List<Food> foodList)
+  private void addEntry(final Activity activity, DataEntry entry, DataEntry entryToReplace, final List<Food> foodList)
   {
-    DataEntriesDao dataEntriesDao = activity.getDatabase().dataEntriesDao();
-    FoodsDao foodsDao = activity.getDatabase().foodsDao();
+    DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
+    FoodsDao foodsDao = AppDatabase.getInstance().foodsDao();
     if (entryToReplace != null)
     {
       dataEntriesDao.delete(entryToReplace);
@@ -1315,10 +1314,10 @@ public class NewEntryFragment extends Fragment
     return newItem;
   }
 
-  private DataEntry findPreviousEntryWithFood(DatabaseActivity activity, long before, List<String> foodList)
+  private DataEntry findPreviousEntryWithFood(long before, List<String> foodList)
   {
-    DataEntriesDao dataEntriesDao = activity.getDatabase().dataEntriesDao();
-    FoodsDao foodsDao = activity.getDatabase().foodsDao();
+    DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
+    FoodsDao foodsDao = AppDatabase.getInstance().foodsDao();
     DataEntry entry = null;
 
     // Get the foods.
@@ -1354,10 +1353,10 @@ public class NewEntryFragment extends Fragment
     return entry;
   }
 
-  private DataEntry findFollowingEntryWithFood(DatabaseActivity activity, long after, List<String> foodList)
+  private DataEntry findFollowingEntryWithFood(long after, List<String> foodList)
   {
-    DataEntriesDao dataEntriesDao = activity.getDatabase().dataEntriesDao();
-    FoodsDao foodsDao = activity.getDatabase().foodsDao();
+    DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
+    FoodsDao foodsDao = AppDatabase.getInstance().foodsDao();
     DataEntry entry = null;
 
     // Get the foods.

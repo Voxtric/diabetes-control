@@ -1,5 +1,6 @@
 package voxtric.com.diabetescontrol;
 
+import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -9,14 +10,13 @@ import androidx.viewpager.widget.PagerAdapter;
 import java.util.List;
 
 import voxtric.com.diabetescontrol.database.DataEntry;
-import voxtric.com.diabetescontrol.database.DatabaseActivity;
 
 public class ViewPreviousPagerAdapter extends PagerAdapter
 {
-  private DatabaseActivity m_activity;
+  private Activity m_activity;
   private List<DataEntry> m_entries;
 
-  ViewPreviousPagerAdapter(DatabaseActivity activity, List<DataEntry> entries)
+  ViewPreviousPagerAdapter(Activity activity, List<DataEntry> entries)
   {
     m_activity = activity;
     m_entries = entries;

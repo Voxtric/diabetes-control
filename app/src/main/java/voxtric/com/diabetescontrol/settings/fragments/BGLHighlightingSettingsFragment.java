@@ -24,7 +24,6 @@ import java.util.Map;
 
 import voxtric.com.diabetescontrol.MainActivity;
 import voxtric.com.diabetescontrol.R;
-import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
@@ -151,7 +150,7 @@ public class BGLHighlightingSettingsFragment extends Fragment
     outState.putString(ACTION_REQUIRED_MINIMUM_PREFERENCE, m_bglRangeValues.get(ACTION_REQUIRED_MINIMUM_PREFERENCE));
   }
 
-  private void setValues(final DatabaseActivity activity, View view)
+  private void setValues(final Activity activity, View view)
   {
     final Switch highlightingEnabledSwitch = view.findViewById(R.id.highlighting_enabled);
     final EditText idealRangeLower = view.findViewById(R.id.ideal_range_lower);

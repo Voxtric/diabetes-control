@@ -1,5 +1,6 @@
 package voxtric.com.diabetescontrol.database;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
@@ -32,14 +33,14 @@ public class Preference
     return preference;
   }
 
-  public static void put(final DatabaseActivity activity, final String name, final String value, final Runnable onCompletionMainThread)
+  public static void put(final Activity activity, final String name, final String value, final Runnable onCompletionMainThread)
   {
     AsyncTask.execute(new Runnable()
     {
       @Override
       public void run()
       {
-        PreferencesDao preferencesDao = activity.getDatabase().preferencesDao();
+        PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
         Preference preference = ensurePreferenceExists(preferencesDao, name);
         preference.value = value;
         preferencesDao.update(preference);
@@ -52,14 +53,14 @@ public class Preference
     });
   }
 
-  public static void remove(final DatabaseActivity activity, final String name, final Runnable onCompletionMainThread)
+  public static void remove(final Activity activity, final String name, final Runnable onCompletionMainThread)
   {
     AsyncTask.execute(new Runnable()
     {
       @Override
       public void run()
       {
-        PreferencesDao preferencesDao = activity.getDatabase().preferencesDao();
+        PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
         Preference preference = preferencesDao.getPreference(name);
         if (preference != null)
         {
@@ -74,14 +75,14 @@ public class Preference
     });
   }
 
-  public static void get(final DatabaseActivity activity, final String name, final String defaultValue, @NonNull final ResultRunnable onCompletionMainThread)
+  public static void get(final Activity activity, final String name, final String defaultValue, @NonNull final ResultRunnable onCompletionMainThread)
   {
     AsyncTask.execute(new Runnable()
     {
       @Override
       public void run()
       {
-        PreferencesDao preferencesDao = activity.getDatabase().preferencesDao();
+        PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
         Preference preference = preferencesDao.getPreference(name);
         if (preference == null)
         {
@@ -96,7 +97,7 @@ public class Preference
     });
   }
 
-  public static void get(final DatabaseActivity activity, final String[] names, final String[] defaultValues, @NonNull final ResultRunnable onCompletionMainThread)
+  public static void get(final Activity activity, final String[] names, final String[] defaultValues, @NonNull final ResultRunnable onCompletionMainThread)
   {
     if (names.length != defaultValues.length)
     {
@@ -108,7 +109,7 @@ public class Preference
       @Override
       public void run()
       {
-        PreferencesDao preferencesDao = activity.getDatabase().preferencesDao();
+        PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
         HashMap<String, String> results = new HashMap<>();
 
         for (int i = 0; i < names.length; i++)
@@ -129,14 +130,14 @@ public class Preference
     });
   }
 
-  public static void remove(final DatabaseActivity activity, final String[] names, final Runnable onCompletionMainThread)
+  public static void remove(final Activity activity, final String[] names, final Runnable onCompletionMainThread)
   {
     AsyncTask.execute(new Runnable()
     {
       @Override
       public void run()
       {
-        PreferencesDao preferencesDao = activity.getDatabase().preferencesDao();
+        PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
         for (String name : names)
         {
           Preference preference = preferencesDao.getPreference(name);

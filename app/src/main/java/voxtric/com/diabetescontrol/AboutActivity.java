@@ -3,6 +3,7 @@ package voxtric.com.diabetescontrol;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
@@ -25,10 +26,9 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
-import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Preference;
 
-public class AboutActivity extends DatabaseActivity
+public class AboutActivity extends AppCompatActivity
 {
   private final int EXPAND_COLLAPSE_DURATION = 2;
 
@@ -49,12 +49,12 @@ public class AboutActivity extends DatabaseActivity
     }
 
     ((TextView)findViewById(R.id.app_version_text)).setText(getString(R.string.app_version_text, BuildConfig.VERSION_NAME));
-    Preference.get(this, "database_version", String.valueOf(AppDatabase.Version), new Preference.ResultRunnable()
+    Preference.get(this, "database_version", String.valueOf(AppDatabase.VERSION), new Preference.ResultRunnable()
     {
       @Override
       public void run()
       {
-        ((TextView)findViewById(R.id.database_version_text)).setText(getString(R.string.database_version_text, getResult(), AppDatabase.Version));
+        ((TextView)findViewById(R.id.database_version_text)).setText(getString(R.string.database_version_text, getResult(), AppDatabase.VERSION));
       }
     });
 

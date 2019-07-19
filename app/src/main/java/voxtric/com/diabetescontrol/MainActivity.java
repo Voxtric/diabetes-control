@@ -2,6 +2,7 @@ package voxtric.com.diabetescontrol;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,8 +25,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -41,13 +44,13 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
+import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
-import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Food;
 import voxtric.com.diabetescontrol.exporting.ExportDurationDialogFragment;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 
-public class MainActivity extends DatabaseActivity
+public class MainActivity extends AppCompatActivity
 {
   private static final int START_FRAGMENT = 0;
 
@@ -152,8 +155,8 @@ public class MainActivity extends DatabaseActivity
             String[] affixes = new String[] {"", "-shm", "-wal"};
             for (String affix : affixes)
             {
-              File databaseFilePath = new File(getDatabasePath(DATABASE_NAME).getAbsolutePath() + affix);
-              File exportFilePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), DATABASE_NAME + affix);
+              File databaseFilePath = new File(getDatabasePath(AppDatabase.NAME).getAbsolutePath() + affix);
+              File exportFilePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), AppDatabase.NAME + affix);
               Log.v("Export path", exportFilePath.getAbsolutePath());
               //noinspection ResultOfMethodCallIgnored
               exportFilePath.createNewFile();
@@ -186,8 +189,8 @@ public class MainActivity extends DatabaseActivity
             String[] affixes = new String[] {"", "-shm", "-wal"};
             for (String affix : affixes)
             {
-              File databaseFilePath = new File(getDatabasePath(DATABASE_NAME).getAbsolutePath() + affix);
-              File importFilePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), DATABASE_NAME + affix);
+              File databaseFilePath = new File(getDatabasePath(AppDatabase.NAME).getAbsolutePath() + affix);
+              File importFilePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), AppDatabase.NAME + affix);
               Log.v("Import path", importFilePath.getAbsolutePath());
 
               FileInputStream inStream = new FileInputStream(importFilePath);
@@ -198,6 +201,18 @@ public class MainActivity extends DatabaseActivity
               inStream.close();
               outStream.close();
             }
+
+            AppDatabase.initialise(this);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (fragmentManager != null)
+            {
+              List<Fragment> fragments = fragmentManager.getFragments();
+              if (fragments.size() >= 2 && fragments.get(1) instanceof EntryListFragment)
+              {
+                ((EntryListFragment) fragments.get(1)).refreshEntryList();
+              }
+            }
+
             String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
             Toast.makeText(MainActivity.this, String.format("Database files imported from %s", path), Toast.LENGTH_LONG).show();
           }
@@ -414,7 +429,7 @@ public class MainActivity extends DatabaseActivity
     m_activeMenu.show();
   }
 
-  public static View getFullView(final DatabaseActivity activity, final DataEntry entry)
+  public static View getFullView(final Activity activity, final DataEntry entry)
   {
     final View view = View.inflate(activity, R.layout.dialog_view_full_entry, null);
 
@@ -434,7 +449,7 @@ public class MainActivity extends DatabaseActivity
       @Override
       public void run()
       {
-        final List<Food> foodList = activity.getDatabase().foodsDao().getFoods(entry.actualTimestamp);
+        final List<Food> foodList = AppDatabase.getInstance().foodsDao().getFoods(entry.actualTimestamp);
         activity.runOnUiThread(new Runnable()
         {
           @Override

@@ -19,8 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.HashMap;
 import java.util.List;
 
+import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
-import voxtric.com.diabetescontrol.database.DatabaseActivity;
 import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.settings.fragments.BGLHighlightingSettingsFragment;
 
@@ -79,7 +79,7 @@ public class EntryListFragment extends Fragment
         @Override
         public void run()
         {
-          final List<DataEntry> entries = activity.getDatabase().dataEntriesDao().getPreviousEntries(Long.MAX_VALUE, LOAD_COUNT);
+          final List<DataEntry> entries = AppDatabase.getInstance().dataEntriesDao().getPreviousEntries(Long.MAX_VALUE, LOAD_COUNT);
           activity.runOnUiThread(new Runnable()
           {
             @Override
@@ -152,7 +152,7 @@ public class EntryListFragment extends Fragment
     }
   }
 
-  void viewFull(DatabaseActivity activity, View dataView)
+  void viewFull(Activity activity, View dataView)
   {
     DataEntry entry = m_adapter.getEntry(dataView);
     View view = MainActivity.getFullView(activity, entry);
@@ -172,7 +172,7 @@ public class EntryListFragment extends Fragment
     startActivityForResult(intent, REQUEST_EDIT_ENTRY);
   }
 
-  void deleteEntry(final DatabaseActivity activity, final View dataView)
+  void deleteEntry(final Activity activity, final View dataView)
   {
     final DataEntry entry = m_adapter.getEntry(dataView);
     AlertDialog dialog = new AlertDialog.Builder(activity)
@@ -189,7 +189,7 @@ public class EntryListFragment extends Fragment
               @Override
               public void run()
               {
-                activity.getDatabase().dataEntriesDao().delete(entry);
+                AppDatabase.getInstance().dataEntriesDao().delete(entry);
                 activity.runOnUiThread(new Runnable()
                 {
                   @Override
