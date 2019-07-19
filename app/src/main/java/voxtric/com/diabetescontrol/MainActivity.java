@@ -63,6 +63,8 @@ public class MainActivity extends DatabaseActivity
   private String m_exportStartMessage = null;
   private String m_exportEndMessage = null;
 
+  private PopupMenu m_activeMenu = null;
+
   private BottomNavigationView.OnNavigationItemSelectedListener m_onNavigationItemSelectedListener
       = new BottomNavigationView.OnNavigationItemSelectedListener()
   {
@@ -333,6 +335,11 @@ public class MainActivity extends DatabaseActivity
       @Override
       public void onPageSelected(int pageIndex)
       {
+        if (m_activeMenu != null)
+        {
+          m_activeMenu.dismiss();
+        }
+
         navigation.getMenu().getItem(pageIndex).setChecked(true);
         View view = findViewById(R.id.fragment_container);
         view.requestFocus();
@@ -361,9 +368,9 @@ public class MainActivity extends DatabaseActivity
       }
     }
 
-    PopupMenu menu = new PopupMenu(view.getContext(), view);
-    menu.getMenuInflater().inflate(R.menu.entry_more, menu.getMenu());
-    menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
+    m_activeMenu = new PopupMenu(view.getContext(), view);
+    m_activeMenu.getMenuInflater().inflate(R.menu.entry_more, m_activeMenu.getMenu());
+    m_activeMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
     {
       @Override
       public boolean onMenuItemClick(MenuItem item)
@@ -385,11 +392,12 @@ public class MainActivity extends DatabaseActivity
         return false;
       }
     });
-    menu.setOnDismissListener(new PopupMenu.OnDismissListener()
+    m_activeMenu.setOnDismissListener(new PopupMenu.OnDismissListener()
     {
       @Override
       public void onDismiss(PopupMenu menu)
       {
+        m_activeMenu = null;
         for (int i = 0; i < listView.getChildCount(); i++)
         {
           if (listView.getChildAt(i) != dataView)
@@ -403,7 +411,7 @@ public class MainActivity extends DatabaseActivity
         }
       }
     });
-    menu.show();
+    m_activeMenu.show();
   }
 
   public static View getFullView(final DatabaseActivity activity, final DataEntry entry)
