@@ -12,10 +12,11 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/activity_horizontal_margin"
         app:bpi_fillColor="@color/colorAccent"
-        app:bpi_pageColor="@color/colorPrimary"
+        app:bpi_pageColor="@color/colorAccent"
         app:bpi_radius="4dp"
         app:bpi_marginBetweenCircles="6dp"
-        app:bpi_onSurfaceCount="3"/>
+        app:bpi_onSurfaceCount="1"
+        app:bpi_risingCount="2"/>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager_previous_entries"

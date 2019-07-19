@@ -21,7 +21,7 @@
         android:id="@+id/text_view_blood_glucose_level"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="1.2"
         android:lines="3"
         android:padding="@dimen/text_box_padding"
         android:background="@drawable/back"
