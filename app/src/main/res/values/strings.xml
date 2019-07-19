@@ -195,6 +195,14 @@ Do you want to overwrite the existing entry?"
 Would you like to associate the entry with %2$s for exporting? (This won't affect the date and time displayed)"
     </string>
 
+    <!-- Future Entry -->
+    <string name="title_future_entry">Future Entry</string>
+    <string name="message_future_entry">
+"This entry takes place over 15 minutes in the future.
+
+Are you sure you want to add it?"
+    </string>
+
     <!-- Delete Entry -->
     <string name="title_delete_entry">Delete Entry?</string>
     <string name="message_delete_entry">Are you sure that you want to delete this entry?</string>

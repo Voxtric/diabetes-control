@@ -132,7 +132,7 @@ public class EditEntryActivity extends DatabaseActivity
             @Override
             public void run()
             {
-              newEntryFragment.checkDateMismatch(EditEntryActivity.this, entry, m_editedEntry, foodList);
+              newEntryFragment.checkFutureEntry(EditEntryActivity.this, entry, m_editedEntry, foodList);
             }
           });
         }

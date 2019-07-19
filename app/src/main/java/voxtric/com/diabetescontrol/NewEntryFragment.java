@@ -14,7 +14,6 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -589,8 +588,8 @@ public class NewEntryFragment extends Fragment
       @Override
       public void onClick(View view)
       {
-        final Activity activity = getActivity();
-        if (activity instanceof DatabaseActivity)
+        final DatabaseActivity activity = (DatabaseActivity)getActivity();
+        if (activity != null)
         {
           AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name));
           AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_additional_notes));
@@ -632,14 +631,7 @@ public class NewEntryFragment extends Fragment
           {
             final DataEntry entry = createEntry(activity);
             final List<Food> foods = createFoodList(activity, entry);
-            AsyncTask.execute(new Runnable()
-            {
-              @Override
-              public void run()
-              {
-                checkDateMismatch((DatabaseActivity)activity, entry, null, foods);
-              }
-            });
+            checkFutureEntry(activity, entry, null, foods);
           }
         }
       }
@@ -651,9 +643,9 @@ public class NewEntryFragment extends Fragment
     final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
     int defaultSelected = preferences.getInt("previous_criteria", -1);
     @IdRes int[] ids = {
+        R.id.radio_blood_glucose_level,
         R.id.radio_insulin_name,
         R.id.radio_insulin_dose,
-        R.id.radio_blood_glucose_level,
         R.id.radio_food_eaten,
         R.id.radio_additional_notes
     };
@@ -685,7 +677,12 @@ public class NewEntryFragment extends Fragment
     DataEntry entry = null;
     if (before)
     {
-      if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_name).getId())
+      if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
+      {
+        entry = dataEntriesDao.findPreviousEntryWithBloodGlucoseLevel(
+            timestamp, Float.valueOf(((EditText) activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString()));
+      }
+      else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_name).getId())
       {
         entry = dataEntriesDao.findPreviousEntryWithInsulinName(
             timestamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString() + '%');
@@ -694,11 +691,6 @@ public class NewEntryFragment extends Fragment
       {
         entry = dataEntriesDao.findPreviousEntryWithInsulinDose(
             timestamp, Integer.parseInt(((EditText) activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString() + '%'));
-      }
-      else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
-      {
-        entry = dataEntriesDao.findPreviousEntryWithBloodGlucoseLevel(
-            timestamp, Float.valueOf(((EditText) activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString()));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_food_eaten).getId())
       {
@@ -930,8 +922,6 @@ public class NewEntryFragment extends Fragment
 
     entry.bloodGlucoseLevel = Float.parseFloat(((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString());
     entry.additionalNotes = ((EditText)activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString().trim();
-
-    Log.e("Entry", String.valueOf(entry.actualTimestamp));
     return entry;
   }
 
@@ -1058,7 +1048,48 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  void checkDateMismatch(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
+  void checkFutureEntry(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
+  {
+    Calendar calendar = Calendar.getInstance();
+    calendar.add(Calendar.MINUTE, 15);
+    if (calendar.getTimeInMillis() < entry.actualTimestamp)
+    {
+      AlertDialog dialog = new AlertDialog.Builder(activity)
+          .setTitle(R.string.title_future_entry)
+          .setMessage(R.string.message_future_entry)
+          .setNegativeButton(R.string.cancel, null)
+          .setPositiveButton(R.string.add, new DialogInterface.OnClickListener()
+          {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+              AsyncTask.execute(new Runnable()
+              {
+                @Override
+                public void run()
+                {
+                  checkDateMismatch(activity, entry, entryToReplace, foodList);
+                }
+              });
+            }
+          })
+          .create();
+      dialog.show();
+    }
+    else
+    {
+      AsyncTask.execute(new Runnable()
+      {
+        @Override
+        public void run()
+        {
+          checkDateMismatch(activity, entry, entryToReplace, foodList);
+        }
+      });
+    }
+  }
+
+  private void checkDateMismatch(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
   {
     AppDatabase database = activity.getDatabase();
     DataEntriesDao dataEntriesDao = database.dataEntriesDao();

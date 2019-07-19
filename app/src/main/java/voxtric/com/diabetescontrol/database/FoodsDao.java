@@ -9,7 +9,7 @@ import java.util.List;
 @Dao
 public interface FoodsDao
 {
-  @Query("SELECT * FROM foods WHERE data_entry_timestamp IS :dataEntryTimestamp")
+  @Query("SELECT * FROM foods WHERE data_entry_timestamp IS :dataEntryTimestamp ORDER BY name ASC")
   List<Food> getFoods(long dataEntryTimestamp);
 
   @Query("SELECT * FROM foods WHERE data_entry_timestamp < :before AND name LIKE :name ORDER BY data_entry_timestamp DESC LIMIT 1")
