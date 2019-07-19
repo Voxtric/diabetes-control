@@ -152,22 +152,29 @@ public class NewEntryFragment extends Fragment
       AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_additional_notes), calendar.getTimeInMillis());
 
       LinearLayout foodEatenItemList = activity.findViewById(R.id.food_eaten_item_layout);
-      addNewListItemAutoCompleteTextView(activity, foodEatenItemList, R.string.food_item_hint, Food.TAG, null);
-    }
+      if (savedInstanceState == null)
+      {
+        updateDateTime(true);
+      }
+      else
+      {
+        m_year = savedInstanceState.getInt("year");
+        m_month = savedInstanceState.getInt("month");
+        m_day = savedInstanceState.getInt("day");
+        m_hour = savedInstanceState.getInt("hour");
+        m_minute = savedInstanceState.getInt("minute");
+        m_currentEventName = savedInstanceState.getString("current_event_name");
+        m_eventNameAutoSelected = savedInstanceState.getBoolean("event_name_auto_selected");
 
-    if (savedInstanceState == null)
-    {
-      updateDateTime(true);
-    }
-    else
-    {
-      m_year = savedInstanceState.getInt("year");
-      m_month = savedInstanceState.getInt("month");
-      m_day = savedInstanceState.getInt("day");
-      m_hour = savedInstanceState.getInt("hour");
-      m_minute = savedInstanceState.getInt("minute");
-      m_currentEventName = savedInstanceState.getString("current_event_name");
-      updateDateTime(false);
+        ArrayList<String> foodNames = savedInstanceState.getStringArrayList("food_names");
+        for (String foodName : foodNames)
+        {
+          addNewListItemAutoCompleteTextView(activity, foodEatenItemList, R.string.food_item_hint, Food.TAG, foodName);
+        }
+
+        updateDateTime(false);
+      }
+      addNewListItemAutoCompleteTextView(activity, foodEatenItemList, R.string.food_item_hint, Food.TAG, null);
     }
 
     updateEventSpinner();
@@ -183,6 +190,29 @@ public class NewEntryFragment extends Fragment
     outState.putInt("hour", m_hour);
     outState.putInt("minute", m_minute);
     outState.putString("current_event_name", m_currentEventName);
+    outState.putBoolean("event_name_auto_selected", m_eventNameAutoSelected);
+
+    Activity activity = getActivity();
+    if (activity != null)
+    {
+      outState.putStringArrayList("food_names", getFoodNames(getActivity()));
+    }
+  }
+
+  private ArrayList<String> getFoodNames(Activity activity)
+  {
+    LinearLayout foodEatenItemsLayout = activity.findViewById(R.id.food_eaten_item_layout);
+    ArrayList<String> foodNames = new ArrayList<>();
+    for (int i = 0; i < foodEatenItemsLayout.getChildCount(); i++)
+    {
+      AutoCompleteTextView foodEatenItemInput = (AutoCompleteTextView)foodEatenItemsLayout.getChildAt(i);
+      String foodName = foodEatenItemInput.getText().toString().trim();
+      if (foodName.length() > 0)
+      {
+        foodNames.add(foodName);
+      }
+    }
+    return foodNames;
   }
 
   private void updateDateTime(boolean forceNew)
@@ -478,14 +508,7 @@ public class NewEntryFragment extends Fragment
             totalActiveRadioButtons--;
           }
 
-          LinearLayout foodEatenItemsLayout = activity.findViewById(R.id.food_eaten_item_layout);
-          boolean foundText = false;
-          for (int i = 0; i < foodEatenItemsLayout.getChildCount() && !foundText; i++)
-          {
-            AutoCompleteTextView foodEatenItemInput = (AutoCompleteTextView)foodEatenItemsLayout.getChildAt(i);
-            foundText = foodEatenItemInput.getText().toString().trim().length() > 0;
-          }
-          if (!foundText)
+          if (getFoodNames(activity).size() == 0)
           {
             layout.findViewById(R.id.radio_food_eaten).setEnabled(false);
             totalActiveRadioButtons--;
@@ -643,7 +666,7 @@ public class NewEntryFragment extends Fragment
       {
         if (layout.findViewById(id).isEnabled())
         {
-          ((RadioButton) layout.findViewById(id)).setChecked(true);
+          ((RadioButton)layout.findViewById(id)).setChecked(true);
           break;
         }
       }
@@ -673,18 +696,7 @@ public class NewEntryFragment extends Fragment
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_food_eaten).getId())
       {
-        LinearLayout foodEatenItemsLayout = activity.findViewById(R.id.food_eaten_item_layout);
-        List<String> foodNames = new ArrayList<>();
-        for (int i = 0; i < foodEatenItemsLayout.getChildCount(); i++)
-        {
-          AutoCompleteTextView foodEatenItemInput = (AutoCompleteTextView)foodEatenItemsLayout.getChildAt(i);
-          String foodName = foodEatenItemInput.getText().toString().trim();
-          if (foodName.length() > 0)
-          {
-            foodNames.add('%' + foodName + '%');
-          }
-        }
-        entry = findPreviousEntryWithFood(activity, timestamp, foodNames);
+        entry = findPreviousEntryWithFood(activity, timestamp, getFoodNames(activity));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_additional_notes).getId())
       {
@@ -711,18 +723,7 @@ public class NewEntryFragment extends Fragment
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_food_eaten).getId())
       {
-        LinearLayout foodEatenItemsLayout = activity.findViewById(R.id.food_eaten_item_layout);
-        List<String> foodNames = new ArrayList<>();
-        for (int i = 0; i < foodEatenItemsLayout.getChildCount(); i++)
-        {
-          AutoCompleteTextView foodEatenItemInput = (AutoCompleteTextView)foodEatenItemsLayout.getChildAt(i);
-          String foodName = foodEatenItemInput.getText().toString().trim();
-          if (foodName.length() > 0)
-          {
-            foodNames.add('%' + foodName + '%');
-          }
-        }
-        entry = findFollowingEntryWithFood(activity, timestamp, foodNames);
+        entry = findFollowingEntryWithFood(activity, timestamp, getFoodNames(activity));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_additional_notes).getId())
       {
@@ -929,18 +930,13 @@ public class NewEntryFragment extends Fragment
   List<Food> createFoodList(Activity activity, DataEntry associatedEntry)
   {
     List<Food> foodList = new ArrayList<>();
-    LinearLayout foodItemList = activity.findViewById(R.id.food_eaten_item_layout);
-    for (int i = 0; i < foodItemList.getChildCount(); i++)
+    ArrayList<String> foodNames = getFoodNames(activity);
+    for (String foodName : foodNames)
     {
-      AutoCompleteTextView foodItemInput = (AutoCompleteTextView)foodItemList.getChildAt(i);
-      String foodName = foodItemInput.getText().toString().trim();
-      if (foodName.length() > 0)
-      {
-        Food food = new Food();
-        food.dataEntryTimestamp = associatedEntry.actualTimestamp;
-        food.name = foodName;
-        foodList.add(food);
-      }
+      Food food = new Food();
+      food.dataEntryTimestamp = associatedEntry.actualTimestamp;
+      food.name = foodName;
+      foodList.add(food);
     }
     return foodList;
   }
@@ -1287,7 +1283,7 @@ public class NewEntryFragment extends Fragment
     List<Food> foods = new ArrayList<>();
     for (String foodName : foodList)
     {
-      Food food = foodsDao.getFoodBefore(before, foodName);
+      Food food = foodsDao.getFoodBefore(before, '%' + foodName.substring(0, foodName.length() - 2) + '%');
       if (food != null)
       {
         foods.add(food);
@@ -1321,7 +1317,7 @@ public class NewEntryFragment extends Fragment
     List<Food> foods = new ArrayList<>();
     for (String foodName : foodList)
     {
-      Food food = foodsDao.getFoodAfter(after, foodName);
+      Food food = foodsDao.getFoodAfter(after, '%' + foodName.substring(0, foodName.length() - 2) + '%');
       if (food != null)
       {
         foods.add(food);
