@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
@@ -165,7 +166,7 @@ public class NewEntryFragment extends Fragment
         m_currentEventName = savedInstanceState.getString("current_event_name");
         m_eventNameAutoSelected = savedInstanceState.getBoolean("event_name_auto_selected");
 
-        ArrayList<String> foodNames = savedInstanceState.getStringArrayList("food_names");
+        String[] foodNames = savedInstanceState.getStringArray("food_names");
         if (foodNames != null)
         {
           for (String foodName : foodNames)
@@ -176,7 +177,9 @@ public class NewEntryFragment extends Fragment
 
         updateDateTime(false);
       }
-      addNewListItemAutoCompleteTextView(activity, foodEatenItemList, R.string.food_item_hint, Food.TAG, null);
+      AutoCompleteTextView emptyFoodEatenItemInput = addNewListItemAutoCompleteTextView(activity, foodEatenItemList, R.string.food_item_hint, Food.TAG, null);
+      calendar.add(Calendar.MONTH, -1);
+      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, emptyFoodEatenItemInput, calendar.getTimeInMillis());
     }
 
     updateEventSpinner();
@@ -197,14 +200,14 @@ public class NewEntryFragment extends Fragment
     Activity activity = getActivity();
     if (activity != null)
     {
-      outState.putStringArrayList("food_names", getFoodNames(getActivity()));
+      outState.putStringArray("food_names", getFoodNames(getActivity()));
     }
   }
 
-  private ArrayList<String> getFoodNames(Activity activity)
+  private String[] getFoodNames(Activity activity)
   {
     LinearLayout foodEatenItemsLayout = activity.findViewById(R.id.food_eaten_item_layout);
-    ArrayList<String> foodNames = new ArrayList<>();
+    HashSet<String> foodNames = new HashSet<>();
     for (int i = 0; i < foodEatenItemsLayout.getChildCount(); i++)
     {
       AutoCompleteTextView foodEatenItemInput = (AutoCompleteTextView)foodEatenItemsLayout.getChildAt(i);
@@ -214,7 +217,8 @@ public class NewEntryFragment extends Fragment
         foodNames.add(foodName);
       }
     }
-    return foodNames;
+    String[] foodNamesArray = new String[1];
+    return foodNames.toArray(foodNamesArray);
   }
 
   private void updateDateTime(boolean forceNew)
@@ -512,7 +516,7 @@ public class NewEntryFragment extends Fragment
             totalActiveRadioButtons--;
           }
 
-          if (getFoodNames(activity).size() == 0)
+          if (getFoodNames(activity).length == 0)
           {
             layout.findViewById(R.id.radio_food_eaten).setEnabled(false);
             totalActiveRadioButtons--;
@@ -679,17 +683,17 @@ public class NewEntryFragment extends Fragment
       if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
       {
         entry = dataEntriesDao.findPreviousEntryWithBloodGlucoseLevel(
-            timestamp, Float.valueOf(((EditText) activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString()));
+            timestamp, Float.valueOf(((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString()));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_name).getId())
       {
         entry = dataEntriesDao.findPreviousEntryWithInsulinName(
-            timestamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString() + '%');
+            timestamp, '%' + ((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString() + '%');
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_dose).getId())
       {
         entry = dataEntriesDao.findPreviousEntryWithInsulinDose(
-            timestamp, Integer.parseInt(((EditText) activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString() + '%'));
+            timestamp, Integer.parseInt(((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString()));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_food_eaten).getId())
       {
@@ -698,25 +702,25 @@ public class NewEntryFragment extends Fragment
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_additional_notes).getId())
       {
         entry = dataEntriesDao.findPreviousEntryWithAdditionalNotes(
-            timestamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString() + '%');
+            timestamp, '%' + ((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString() + '%');
       }
     }
     else
     {
-      if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_name).getId())
+      if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
+      {
+        entry = dataEntriesDao.findNextEntryWithBloodGlucoseLevel(
+            timestamp, Float.valueOf(((EditText) activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString()));
+      }
+      else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_name).getId())
       {
         entry = dataEntriesDao.findNextEntryWithInsulinName(
-            timestamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString() + '%');
+            timestamp, '%' + ((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString() + '%');
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_dose).getId())
       {
         entry = dataEntriesDao.findNextEntryWithInsulinDose(
             timestamp, Integer.parseInt(((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString()));
-      }
-      else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
-      {
-        entry = dataEntriesDao.findNextEntryWithBloodGlucoseLevel(
-            timestamp, Float.valueOf(((EditText) activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString()));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_food_eaten).getId())
       {
@@ -927,7 +931,7 @@ public class NewEntryFragment extends Fragment
   List<Food> createFoodList(Activity activity, DataEntry associatedEntry)
   {
     List<Food> foodList = new ArrayList<>();
-    ArrayList<String> foodNames = getFoodNames(activity);
+    String[] foodNames = getFoodNames(activity);
     for (String foodName : foodNames)
     {
       Food food = new Food();
@@ -1314,7 +1318,7 @@ public class NewEntryFragment extends Fragment
     return newItem;
   }
 
-  private DataEntry findPreviousEntryWithFood(long before, List<String> foodList)
+  private DataEntry findPreviousEntryWithFood(long before, String[] foodList)
   {
     DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
     FoodsDao foodsDao = AppDatabase.getInstance().foodsDao();
@@ -1353,7 +1357,7 @@ public class NewEntryFragment extends Fragment
     return entry;
   }
 
-  private DataEntry findFollowingEntryWithFood(long after, List<String> foodList)
+  private DataEntry findFollowingEntryWithFood(long after, String[] foodList)
   {
     DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
     FoodsDao foodsDao = AppDatabase.getInstance().foodsDao();
