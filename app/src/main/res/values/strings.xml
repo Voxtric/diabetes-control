@@ -72,7 +72,7 @@ If not, you can do so later from the settings menu at the top right."
     <string name="new_entry_cancelled_message">New entry cancelled</string>
     <string name="new_entry_deleted_event_message">Entry contains a deleted event</string>
 
-    <string name="more_options_content_description">More options</string>
+    <string name="more_options_content_description">More options button</string>
 
     <!-- Edit Events Activity -->
     <string name="event_name_title">Event Name</string>
@@ -100,6 +100,9 @@ If not, you can do so later from the settings menu at the top right."
     <string name="event_deleted_message">Event deleted</string>
     <string name="event_delete_final_message">Final event can not be deleted</string>
     <string name="events_reset_message">Events reset</string>
+
+    <string name="move_down_content_description">Move event down button</string>
+    <string name="move_up_content_description">Move event up button</string>
 
     <!-- About Activity -->
     <string name="icon_content_description">Diabetes Control Icon</string>

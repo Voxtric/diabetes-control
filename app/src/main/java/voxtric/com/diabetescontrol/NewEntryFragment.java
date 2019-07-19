@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -1315,6 +1316,12 @@ public class NewEntryFragment extends Fragment
       newItem.setText(text);
     }
     owningLayout.addView(newItem);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+    {
+      activity.findViewById(R.id.food_eaten_label).setLabelFor(newItem.getId());
+    }
+
     return newItem;
   }
 

@@ -459,7 +459,7 @@ public class MainActivity extends AppCompatActivity
             if (foodList.size() == 0)
             {
               foodEatenTextView.setVisibility(View.GONE);
-              view.findViewById(R.id.text_view_food_eaten_label).setVisibility(View.GONE);
+              view.findViewById(R.id.food_eaten_label).setVisibility(View.GONE);
             }
             else
             {
