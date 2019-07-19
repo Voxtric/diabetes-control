@@ -173,14 +173,19 @@ If not, you can do so later from the settings menu at the top right."
     <string name="message_missing_comparison_values">No values have been filled in for a new entry that can be compared against existing entries.</string>
     <string name="message_no_results">No previous entries could be found with any similarities.</string>
 
-    <!-- Event Collision -->
-    <string name="title_event_collision">Event Collision</string>
-    <string name="message_event_collision_replace">
+    <!-- Entry Collision -->
+    <string name="title_entry_collision">Entry Collision</string>
+    <string name="message_entry_event_collision_replace">
 "This entry has the same event on the same day as an existing entry.
 
 Do you want to overwrite the existing entry?"
     </string>
-    <string name="message_event_collision">Can not save edited entry as it would overwrite an existing entry.</string>
+    <string name="message_entry_time_collision_replace">
+"This entry has the same date and time as an existing entry.
+
+Do you want to overwrite the existing entry?"
+    </string>
+    <string name="message_entry_collision">Can not save edited entry as it would overwrite a different existing entry.</string>
 
     <!-- Event date mismatch -->
     <string name="title_event_date_mismatch">Suspected Date Mismatch</string>

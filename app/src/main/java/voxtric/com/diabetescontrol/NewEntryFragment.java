@@ -14,6 +14,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -167,9 +168,12 @@ public class NewEntryFragment extends Fragment
         m_eventNameAutoSelected = savedInstanceState.getBoolean("event_name_auto_selected");
 
         ArrayList<String> foodNames = savedInstanceState.getStringArrayList("food_names");
-        for (String foodName : foodNames)
+        if (foodNames != null)
         {
-          addNewListItemAutoCompleteTextView(activity, foodEatenItemList, R.string.food_item_hint, Food.TAG, foodName);
+          for (String foodName : foodNames)
+          {
+            addNewListItemAutoCompleteTextView(activity, foodEatenItemList, R.string.food_item_hint, Food.TAG, foodName);
+          }
         }
 
         updateDateTime(false);
@@ -235,6 +239,8 @@ public class NewEntryFragment extends Fragment
       calender.set(Calendar.DAY_OF_MONTH, m_day);
       calender.set(Calendar.HOUR_OF_DAY, m_hour);
       calender.set(Calendar.MINUTE, m_minute);
+      calender.set(Calendar.SECOND, 0);
+      calender.set(Calendar.MILLISECOND, 0);
       m_date = calender.getTime();
 
       String dateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(m_date);
@@ -924,6 +930,8 @@ public class NewEntryFragment extends Fragment
 
     entry.bloodGlucoseLevel = Float.parseFloat(((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString());
     entry.additionalNotes = ((EditText)activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString().trim();
+
+    Log.e("Entry", String.valueOf(entry.actualTimestamp));
     return entry;
   }
 
@@ -1006,6 +1014,7 @@ public class NewEntryFragment extends Fragment
   void setValues(Activity activity, DataEntry entry, List<Food> foodList)
   {
     m_currentEventName = entry.event;
+    m_eventNameAutoSelected = false;
     updateEventSpinner();
 
     Calendar calendar = Calendar.getInstance();
@@ -1150,10 +1159,12 @@ public class NewEntryFragment extends Fragment
 
   private void checkEventOverlap(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
   {
-    final DataEntry overlappingEntry = activity.getDatabase().dataEntriesDao().findOverlapping(entry.dayTimeStamp, entry.event);
+    final DataEntry eventOverlappingEntry = activity.getDatabase().dataEntriesDao().findOverlapping(entry.dayTimeStamp, entry.event);
+    final DataEntry timeOverlappingEntry = activity.getDatabase().dataEntriesDao().getEntry(entry.actualTimestamp);
     if (entryToReplace != null)
     {
-      if (overlappingEntry == null || overlappingEntry.actualTimestamp == entryToReplace.actualTimestamp)
+      if ((eventOverlappingEntry == null || eventOverlappingEntry.actualTimestamp == entryToReplace.actualTimestamp) &&
+          (timeOverlappingEntry == null || timeOverlappingEntry.actualTimestamp == entryToReplace.actualTimestamp))
       {
         addEntry(activity, entry, entryToReplace, foodList);
       }
@@ -1165,8 +1176,8 @@ public class NewEntryFragment extends Fragment
           public void run()
           {
             AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setTitle(R.string.title_event_collision)
-                .setMessage(R.string.message_event_collision)
+                .setTitle(R.string.title_entry_collision)
+                .setMessage(R.string.message_entry_collision)
                 .setPositiveButton(R.string.ok, null)
                 .create();
             dialog.show();
@@ -1174,7 +1185,7 @@ public class NewEntryFragment extends Fragment
         });
       }
     }
-    else if (overlappingEntry == null)
+    else if (eventOverlappingEntry == null && timeOverlappingEntry == null)
     {
       addEntry(activity, entry, null, foodList);
     }
@@ -1185,17 +1196,17 @@ public class NewEntryFragment extends Fragment
         @Override
         public void run()
         {
-          queryEventOverlap(activity, entry, overlappingEntry, foodList);
+          queryEventOverlap(activity, entry, eventOverlappingEntry, foodList, eventOverlappingEntry != null);
         }
       });
     }
   }
 
-  private void queryEventOverlap(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
+  private void queryEventOverlap(final DatabaseActivity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList, boolean eventRelated)
   {
     android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(activity)
-        .setTitle(R.string.title_event_collision)
-        .setMessage(R.string.message_event_collision_replace)
+        .setTitle(R.string.title_entry_collision)
+        .setMessage(eventRelated ? R.string.message_entry_event_collision_replace : R.string.message_entry_time_collision_replace)
         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
         {
           @Override
@@ -1283,7 +1294,12 @@ public class NewEntryFragment extends Fragment
     List<Food> foods = new ArrayList<>();
     for (String foodName : foodList)
     {
-      Food food = foodsDao.getFoodBefore(before, '%' + foodName.substring(0, foodName.length() - 2) + '%');
+      String foodSearch = foodName;
+      if (foodName.endsWith("s"))
+      {
+        foodSearch = foodName.substring(0, foodName.length() - 1);
+      }
+      Food food = foodsDao.getFoodBefore(before, '%' + foodSearch + '%');
       if (food != null)
       {
         foods.add(food);
@@ -1317,7 +1333,12 @@ public class NewEntryFragment extends Fragment
     List<Food> foods = new ArrayList<>();
     for (String foodName : foodList)
     {
-      Food food = foodsDao.getFoodAfter(after, '%' + foodName.substring(0, foodName.length() - 2) + '%');
+      String foodSearch = foodName;
+      if (foodName.endsWith("s"))
+      {
+        foodSearch = foodName.substring(0, foodName.length() - 1);
+      }
+      Food food = foodsDao.getFoodAfter(after, '%' + foodSearch + '%');
       if (food != null)
       {
         foods.add(food);
