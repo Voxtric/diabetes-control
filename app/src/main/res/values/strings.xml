@@ -203,7 +203,7 @@ Would you like to associate the entry with %2$s for exporting? (This won't affec
     <string name="message_future_entry">
 "This entry takes place over 15 minutes in the future.
 
-Are you sure you want to add it?"
+Are you sure you want to save it?"
     </string>
 
     <!-- Delete Entry -->

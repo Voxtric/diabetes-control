@@ -128,14 +128,7 @@ public class EditEntryActivity extends AppCompatActivity
         {
           final DataEntry entry = newEntryFragment.createEntry(EditEntryActivity.this);
           final List<Food> foodList = newEntryFragment.createFoodList(EditEntryActivity.this, entry);
-          AsyncTask.execute(new Runnable()
-          {
-            @Override
-            public void run()
-            {
-              newEntryFragment.checkFutureEntry(EditEntryActivity.this, entry, m_editedEntry, foodList);
-            }
-          });
+          newEntryFragment.checkFutureEntry(EditEntryActivity.this, entry, m_editedEntry, foodList);
         }
       }
     });

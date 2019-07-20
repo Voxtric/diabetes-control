@@ -1061,7 +1061,7 @@ public class NewEntryFragment extends Fragment
           .setTitle(R.string.title_future_entry)
           .setMessage(R.string.message_future_entry)
           .setNegativeButton(R.string.cancel, null)
-          .setPositiveButton(R.string.add, new DialogInterface.OnClickListener()
+          .setPositiveButton(R.string.save, new DialogInterface.OnClickListener()
           {
             @Override
             public void onClick(DialogInterface dialogInterface, int i)
