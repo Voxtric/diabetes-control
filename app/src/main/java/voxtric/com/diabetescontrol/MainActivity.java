@@ -437,12 +437,12 @@ public class MainActivity extends AppCompatActivity
     String dateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(date);
     String timeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
 
-    ((TextView)view.findViewById(R.id.text_view_date)).setText(dateString);
-    ((TextView)view.findViewById(R.id.text_view_time)).setText(timeString);
-    ((TextView)view.findViewById(R.id.text_view_event)).setText(entry.event);
-    ((TextView)view.findViewById(R.id.text_view_insulin_name)).setText(entry.insulinDose > 0 ? entry.insulinName : "N/A");
-    ((TextView)view.findViewById(R.id.text_view_insulin_dose)).setText(entry.insulinDose > 0 ? String.valueOf(entry.insulinDose) : "N/A");
-    ((TextView)view.findViewById(R.id.text_view_blood_glucose_level)).setText(String.valueOf(entry.bloodGlucoseLevel));
+    ((TextView)view.findViewById(R.id.date_value)).setText(dateString);
+    ((TextView)view.findViewById(R.id.time_value)).setText(timeString);
+    ((TextView)view.findViewById(R.id.event_value)).setText(entry.event);
+    ((TextView)view.findViewById(R.id.insulin_name_value)).setText(entry.insulinDose > 0 ? entry.insulinName : "N/A");
+    ((TextView)view.findViewById(R.id.insulin_dose_value)).setText(entry.insulinDose > 0 ? String.valueOf(entry.insulinDose) : "N/A");
+    ((TextView)view.findViewById(R.id.blood_glucose_level_value)).setText(String.valueOf(entry.bloodGlucoseLevel));
 
     AsyncTask.execute(new Runnable()
     {
@@ -455,10 +455,10 @@ public class MainActivity extends AppCompatActivity
           @Override
           public void run()
           {
-            TextView foodEatenTextView = view.findViewById(R.id.text_view_food_eaten);
+            TextView foodEatenValue = view.findViewById(R.id.food_eaten_value);
             if (foodList.size() == 0)
             {
-              foodEatenTextView.setVisibility(View.GONE);
+              foodEatenValue.setVisibility(View.GONE);
               view.findViewById(R.id.food_eaten_label).setVisibility(View.GONE);
             }
             else
@@ -469,24 +469,24 @@ public class MainActivity extends AppCompatActivity
                 foodText.append("\n");
                 foodText.append(foodList.get(i).name);
               }
-              foodEatenTextView.setText(foodText);
-              foodEatenTextView.setGravity(Gravity.TOP | Gravity.START);
+              foodEatenValue.setText(foodText);
+              foodEatenValue.setGravity(Gravity.TOP | Gravity.START);
             }
           }
         });
       }
     });
 
-    TextView additionalNotesTextView = view.findViewById(R.id.text_view_additional_notes);
+    TextView additionalNotesValue = view.findViewById(R.id.additional_notes_value);
     if (entry.additionalNotes.length() == 0)
     {
-      additionalNotesTextView.setVisibility(View.GONE);
-      view.findViewById(R.id.text_view_additional_notes_label).setVisibility(View.GONE);
+      view.findViewById(R.id.additional_notes_label).setVisibility(View.GONE);
+      additionalNotesValue.setVisibility(View.GONE);
     }
     else
     {
-      additionalNotesTextView.setText(entry.additionalNotes);
-      additionalNotesTextView.setGravity(Gravity.TOP | Gravity.START);
+      additionalNotesValue.setText(entry.additionalNotes);
+      additionalNotesValue.setGravity(Gravity.TOP | Gravity.START);
     }
 
     return view;

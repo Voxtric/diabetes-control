@@ -1,230 +1,229 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".NewEntryFragment">
 
-    <LinearLayout
-        android:id="@+id/grid_layout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/new_entry_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
         android:focusableInTouchMode="true"
         android:padding="@dimen/activity_horizontal_margin">
 
         <!-- Date -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/date_label"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_margin"
-            android:orientation="horizontal">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintWidth_percent=".4"
+            style="@style/BasicText"
+            android:text="@string/date_label"
+            android:focusable="true"
+            android:labelFor="@id/date_button"/>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_label_weight"
-                android:layout_marginEnd="@dimen/text_margin"
-                android:layout_marginRight="@dimen/text_margin"
-                style="@style/BasicText"
-                android:text="@string/date_label"
-                android:focusable="true"
-                android:labelFor="@id/button_date"/>
-
-            <Button
-                android:id="@+id/button_date"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_input_weight"
-                android:background="@drawable/back"
-                android:minHeight="0dp"
-                style="@style/BasicText"
-                android:textAlignment="center"/>
-        </LinearLayout>
+        <Button
+            android:id="@+id/date_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginStart="@dimen/text_margin"
+            app:layout_constraintTop_toTopOf="@id/date_label"
+            app:layout_constraintBottom_toBottomOf="@id/date_label"
+            app:layout_constraintLeft_toRightOf="@id/date_label"
+            app:layout_constraintRight_toRightOf="parent"
+            android:background="@drawable/back"
+            android:minHeight="0dp"
+            style="@style/BasicText"
+            android:textAlignment="center"/>
 
         <!-- Time -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/time_label"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_margin"
-            android:orientation="horizontal">
+            android:layout_marginTop="@dimen/text_margin"
+            app:layout_constraintTop_toBottomOf="@id/date_label"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/date_label"
+            style="@style/BasicText"
+            android:text="@string/time_label"
+            android:labelFor="@id/time_button"/>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_label_weight"
-                android:layout_marginEnd="@dimen/text_margin"
-                android:layout_marginRight="@dimen/text_margin"
-                style="@style/BasicText"
-                android:text="@string/time_label"
-                android:labelFor="@id/button_time"/>
-
-            <Button
-                android:id="@+id/button_time"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_input_weight"
-                android:background="@drawable/back"
-                android:minHeight="0dp"
-                style="@style/BasicText"
-                android:textAlignment="center"/>
-        </LinearLayout>
+        <Button
+            android:id="@+id/time_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginStart="@dimen/text_margin"
+            app:layout_constraintTop_toTopOf="@id/time_label"
+            app:layout_constraintBottom_toBottomOf="@id/time_label"
+            app:layout_constraintLeft_toRightOf="@id/time_label"
+            app:layout_constraintRight_toRightOf="parent"
+            android:background="@drawable/back"
+            android:minHeight="0dp"
+            style="@style/BasicText"
+            android:textAlignment="center"/>
 
         <!-- Event -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/event_label"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="@id/event_spinner"
+            app:layout_constraintBottom_toBottomOf="@id/event_spinner"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/time_label"
+            android:gravity="center_vertical"
+            android:text="@string/event_label"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size"
+            android:labelFor="@id/event_spinner"/>
+
+        <Spinner
+            android:id="@+id/event_spinner"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_margin"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_label_weight"
-                android:layout_marginEnd="@dimen/text_margin"
-                android:layout_marginRight="@dimen/text_margin"
-                android:gravity="center_vertical"
-                android:text="@string/event_label"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_size"
-                android:labelFor="@id/spinner_event"/>
-
-            <Spinner
-                android:id="@+id/spinner_event"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_input_weight"
-                android:background="@drawable/back"/>
-        </LinearLayout>
+            android:layout_marginTop="@dimen/text_margin"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginStart="@dimen/text_margin"
+            app:layout_constraintTop_toBottomOf="@id/time_label"
+            app:layout_constraintLeft_toRightOf="@id/event_label"
+            app:layout_constraintRight_toRightOf="parent"
+            android:background="@drawable/back" />
 
         <!-- Blood Glucose Level -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/blood_glucose_level_label"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_margin"
-            android:orientation="horizontal">
+            android:layout_marginTop="@dimen/text_margin"
+            app:layout_constraintTop_toBottomOf="@id/event_label"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/event_label"
+            style="@style/BasicText"
+            android:text="@string/blood_glucose_level_label"
+            android:labelFor="@id/blood_glucose_level_input"/>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_label_weight"
-                android:layout_marginEnd="@dimen/text_margin"
-                android:layout_marginRight="@dimen/text_margin"
-                style="@style/BasicText"
-                android:text="@string/blood_glucose_level_label"
-                android:labelFor="@id/edit_text_blood_glucose_level"/>
-
-            <EditText
-                android:id="@+id/edit_text_blood_glucose_level"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_input_weight"
-                android:background="@drawable/back"
-                android:hint="@string/blood_glucose_level_hint"
-                style="@style/BasicText"
-                android:imeOptions="actionNext"
-                android:inputType="numberDecimal"
-                android:nextFocusForward="@id/auto_complete_insulin_name"
-                android:gravity="center"/>
-        </LinearLayout>
+        <EditText
+            android:id="@+id/blood_glucose_level_input"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginStart="@dimen/text_margin"
+            app:layout_constraintTop_toTopOf="@id/blood_glucose_level_label"
+            app:layout_constraintBottom_toBottomOf="@id/blood_glucose_level_label"
+            app:layout_constraintLeft_toRightOf="@id/blood_glucose_level_label"
+            app:layout_constraintRight_toRightOf="parent"
+            android:background="@drawable/back"
+            android:hint="@string/blood_glucose_level_hint"
+            style="@style/BasicText"
+            android:imeOptions="actionNext"
+            android:inputType="numberDecimal"
+            android:nextFocusForward="@id/insulin_name_input"
+            android:gravity="center"/>
 
         <!-- Insulin Name -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/insulin_name_label"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_margin"
-            android:orientation="horizontal"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:descendantFocusability="beforeDescendants">
+            android:layout_marginTop="@dimen/text_margin"
+            app:layout_constraintTop_toBottomOf="@id/blood_glucose_level_label"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/blood_glucose_level_label"
+            style="@style/BasicText"
+            android:text="@string/insulin_name_label"
+            android:labelFor="@id/insulin_name_input"/>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_label_weight"
-                android:layout_marginEnd="@dimen/text_margin"
-                android:layout_marginRight="@dimen/text_margin"
-                style="@style/BasicText"
-                android:text="@string/insulin_name_label"
-                android:labelFor="@id/auto_complete_insulin_name"/>
-
-            <AutoCompleteTextView
-                android:id="@+id/auto_complete_insulin_name"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_input_weight"
-                android:background="@drawable/back"
-                android:hint="@string/insulin_name_hint"
-                style="@style/BasicText"
-                android:imeOptions="actionNext"
-                android:nextFocusForward="@id/edit_text_insulin_dose"
-                android:inputType="textCapWords"
-                android:gravity="center"
-                android:tag="insulin_name"/>
-        </LinearLayout>
+        <AutoCompleteTextView
+            android:id="@+id/insulin_name_input"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginStart="@dimen/text_margin"
+            app:layout_constraintTop_toTopOf="@id/insulin_name_label"
+            app:layout_constraintBottom_toBottomOf="@id/insulin_name_label"
+            app:layout_constraintLeft_toRightOf="@id/insulin_name_label"
+            app:layout_constraintRight_toRightOf="parent"
+            android:background="@drawable/back"
+            android:hint="@string/insulin_name_hint"
+            style="@style/BasicText"
+            android:imeOptions="actionNext"
+            android:nextFocusForward="@id/insulin_dose_input"
+            android:inputType="textCapWords"
+            android:gravity="center"
+            android:tag="insulin_name"/>
 
         <!-- Insulin Dose -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/insulin_dose_label"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_margin"
-            android:orientation="horizontal">
+            android:layout_marginTop="@dimen/text_margin"
+            app:layout_constraintTop_toBottomOf="@id/insulin_name_label"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/insulin_name_label"
+            style="@style/BasicText"
+            android:text="@string/insulin_dose_label"
+            android:labelFor="@id/insulin_dose_input"/>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_label_weight"
-                android:layout_marginEnd="@dimen/text_margin"
-                android:layout_marginRight="@dimen/text_margin"
-                style="@style/BasicText"
-                android:text="@string/insulin_dose_label"
-                android:labelFor="@id/edit_text_insulin_dose"/>
-
-            <EditText
-                android:id="@+id/edit_text_insulin_dose"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="@integer/new_entry_input_weight"
-                android:background="@drawable/back"
-                android:hint="@string/insulin_dose_hint"
-                style="@style/BasicText"
-                android:imeOptions="actionDone"
-                android:inputType="number"
-                android:gravity="center"/>
-        </LinearLayout>
+        <EditText
+            android:id="@+id/insulin_dose_input"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginStart="@dimen/text_margin"
+            app:layout_constraintTop_toTopOf="@id/insulin_dose_label"
+            app:layout_constraintBottom_toBottomOf="@id/insulin_dose_label"
+            app:layout_constraintLeft_toRightOf="@id/insulin_dose_label"
+            app:layout_constraintRight_toRightOf="parent"
+            android:background="@drawable/back"
+            android:hint="@string/insulin_dose_hint"
+            style="@style/BasicText"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:gravity="center"/>
 
         <!-- Food Eaten -->
         <TextView
-            android:id="@+id/text_view_food_eaten"
+            android:id="@+id/food_eaten_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            app:layout_constraintTop_toBottomOf="@id/insulin_dose_label"
             style="@style/BasicText"
             android:text="@string/food_eaten_label"
-            android:labelFor="@id/food_eaten_item_layout"/>
+            android:labelFor="@id/food_eaten_inputs_layout"/>
 
         <LinearLayout
-            android:id="@+id/food_eaten_item_layout"
+            android:id="@+id/food_eaten_inputs_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_margin"
+            app:layout_constraintTop_toBottomOf="@id/food_eaten_label"
             android:orientation="vertical">
         </LinearLayout>
 
         <!-- Additional Notes -->
         <TextView
-            android:id="@+id/text_view_additional_notes"
+            android:id="@+id/additional_notes_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            app:layout_constraintTop_toBottomOf="@id/food_eaten_inputs_layout"
             style="@style/BasicText"
             android:text="@string/additional_notes_label"
-            android:labelFor="@id/auto_complete_additional_notes"/>
+            android:labelFor="@id/additional_notes_input"/>
 
         <AutoCompleteTextView
-            android:id="@+id/auto_complete_additional_notes"
+            android:id="@+id/additional_notes_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/text_margin"
+            app:layout_constraintTop_toBottomOf="@id/additional_notes_label"
             android:paddingLeft="@dimen/text_box_padding"
             android:paddingStart="@dimen/text_box_padding"
             android:paddingRight="@dimen/text_box_padding"
@@ -238,25 +237,26 @@
             android:minLines="3"
             android:tag="additional_notes"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- Buttons -->
+        <Button
+            android:id="@+id/see_previous_button"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="@dimen/text_margin"
+            app:layout_constraintTop_toBottomOf="@id/additional_notes_input"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintWidth_percent=".5"
+            android:text="@string/see_previous_text" />
 
-            <Button
-                android:id="@+id/button_see_previous"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/see_previous_text" />
+        <Button
+            android:id="@+id/add_new_entry_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            app:layout_constraintTop_toBottomOf="@id/additional_notes_input"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_percent=".5"
+            android:text="@string/add_new_entry_text" />
 
-            <Button
-                android:id="@+id/button_add_new_entry"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/add_new_entry_text" />
-        </LinearLayout>
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

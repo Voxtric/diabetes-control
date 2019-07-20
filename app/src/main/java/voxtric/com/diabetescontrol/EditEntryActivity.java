@@ -116,7 +116,7 @@ public class EditEntryActivity extends AppCompatActivity
 
   private void modifyAddNewButton()
   {
-    Button button = findViewById(R.id.button_add_new_entry);
+    Button button = findViewById(R.id.add_new_entry_button);
     button.setText(R.string.save_changes_text);
     button.setOnClickListener(new View.OnClickListener()
     {

@@ -98,11 +98,11 @@ public class NewEntryFragment extends Fragment
   {
     NestedScrollView view = (NestedScrollView)inflater.inflate(R.layout.fragment_new_entry, container, false);
 
-    initialiseDateButton((Button)view.findViewById(R.id.button_date));
-    initialiseTimeButton((Button)view.findViewById(R.id.button_time));
-    initialiseEventSpinner((Spinner)view.findViewById(R.id.spinner_event));
-    initialiseViewPreviousButton((Button)view.findViewById(R.id.button_see_previous));
-    initialiseAddNewEntryButton((Button)view.findViewById(R.id.button_add_new_entry));
+    initialiseDateButton((Button)view.findViewById(R.id.date_button));
+    initialiseTimeButton((Button)view.findViewById(R.id.time_button));
+    initialiseEventSpinner((Spinner)view.findViewById(R.id.event_spinner));
+    initialiseViewPreviousButton((Button)view.findViewById(R.id.see_previous_button));
+    initialiseAddNewEntryButton((Button)view.findViewById(R.id.add_new_entry_button));
 
     return view;
   }
@@ -115,7 +115,7 @@ public class NewEntryFragment extends Fragment
     Activity activity = getActivity();
     if (activity != null)
     {
-      Spinner eventSpinner = activity.findViewById(R.id.spinner_event);
+      Spinner eventSpinner = activity.findViewById(R.id.event_spinner);
       m_eventSpinnerAdapter = new ArrayAdapter<String>(activity, R.layout.event_spinner_dropdown_item)
       {
         @Override
@@ -130,29 +130,29 @@ public class NewEntryFragment extends Fragment
       };
       eventSpinner.setAdapter(m_eventSpinnerAdapter);
 
-      EditText bglInput = activity.findViewById(R.id.edit_text_blood_glucose_level);
+      EditText bglInput = activity.findViewById(R.id.blood_glucose_level_input);
       CompositeOnFocusChangeListener.applyListenerToView(bglInput, new HintHideOnFocusChangeListener(bglInput, Gravity.CENTER));
 
-      AutoCompleteTextView insulinNameInput = activity.findViewById(R.id.auto_complete_insulin_name);
+      AutoCompleteTextView insulinNameInput = activity.findViewById(R.id.insulin_name_input);
       CompositeOnFocusChangeListener.applyListenerToView(insulinNameInput, new HintHideOnFocusChangeListener(insulinNameInput, Gravity.CENTER));
 
-      EditText insulinDoseInput = activity.findViewById(R.id.edit_text_insulin_dose);
+      EditText insulinDoseInput = activity.findViewById(R.id.insulin_dose_input);
       CompositeOnFocusChangeListener.applyListenerToView(insulinDoseInput, new HintHideOnFocusChangeListener(insulinDoseInput, Gravity.CENTER));
 
-      AutoCompleteTextView additionalNotesInput = activity.findViewById(R.id.auto_complete_additional_notes);
+      AutoCompleteTextView additionalNotesInput = activity.findViewById(R.id.additional_notes_input);
       CompositeOnFocusChangeListener.applyListenerToView(additionalNotesInput, new HintHideOnFocusChangeListener(additionalNotesInput, Gravity.START | Gravity.TOP));
 
-      ((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).setFilters(
+      ((EditText)activity.findViewById(R.id.blood_glucose_level_input)).setFilters(
           new InputFilter[] { new DecimalDigitsInputFilter(2, 1) });
 
       Calendar calendar = Calendar.getInstance();
       calendar.add(Calendar.DAY_OF_MONTH, -5);
-      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name), calendar.getTimeInMillis());
+      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, (AutoCompleteTextView)activity.findViewById(R.id.insulin_name_input), calendar.getTimeInMillis());
       calendar.add(Calendar.DAY_OF_MONTH, 5);
       calendar.add(Calendar.MONTH, -1);
-      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_additional_notes), calendar.getTimeInMillis());
+      AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, (AutoCompleteTextView)activity.findViewById(R.id.additional_notes_input), calendar.getTimeInMillis());
 
-      LinearLayout foodEatenItemList = activity.findViewById(R.id.food_eaten_item_layout);
+      LinearLayout foodEatenItemList = activity.findViewById(R.id.food_eaten_inputs_layout);
       if (savedInstanceState == null)
       {
         updateDateTime(true);
@@ -207,7 +207,7 @@ public class NewEntryFragment extends Fragment
 
   private String[] getFoodNames(Activity activity)
   {
-    LinearLayout foodEatenItemsLayout = activity.findViewById(R.id.food_eaten_item_layout);
+    LinearLayout foodEatenItemsLayout = activity.findViewById(R.id.food_eaten_inputs_layout);
     HashSet<String> foodNames = new HashSet<>();
     for (int i = 0; i < foodEatenItemsLayout.getChildCount(); i++)
     {
@@ -246,11 +246,11 @@ public class NewEntryFragment extends Fragment
       m_date = calender.getTime();
 
       String dateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(m_date);
-      Button dateButton = activity.findViewById(R.id.button_date);
+      Button dateButton = activity.findViewById(R.id.date_button);
       dateButton.setText(dateString);
 
       String timeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(m_date);
-      Button timeButton = activity.findViewById(R.id.button_time);
+      Button timeButton = activity.findViewById(R.id.time_button);
       timeButton.setText(timeString);
     }
   }
@@ -370,7 +370,7 @@ public class NewEntryFragment extends Fragment
     Activity activity = getActivity();
     if (activity != null)
     {
-      Spinner eventSpinner = activity.findViewById(R.id.spinner_event);
+      Spinner eventSpinner = activity.findViewById(R.id.event_spinner);
       boolean found = false;
       for (int i = 0; i < eventSpinner.getCount() && !found; i++)
       {
@@ -498,19 +498,19 @@ public class NewEntryFragment extends Fragment
           final View layout = View.inflate(activity, R.layout.dialog_choose_criteria, null);
           int totalActiveRadioButtons = 5;
 
-          if (((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name)).getText().length() == 0)
+          if (((AutoCompleteTextView)activity.findViewById(R.id.insulin_name_input)).getText().length() == 0)
           {
             layout.findViewById(R.id.radio_insulin_name).setEnabled(false);
             totalActiveRadioButtons--;
           }
 
-          if (((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().length() == 0)
+          if (((EditText)activity.findViewById(R.id.insulin_dose_input)).getText().length() == 0)
           {
             layout.findViewById(R.id.radio_insulin_dose).setEnabled(false);
             totalActiveRadioButtons--;
           }
 
-          if (((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().length() == 0)
+          if (((EditText)activity.findViewById(R.id.blood_glucose_level_input)).getText().length() == 0)
           {
             layout.findViewById(R.id.radio_blood_glucose_level).setEnabled(false);
             totalActiveRadioButtons--;
@@ -522,7 +522,7 @@ public class NewEntryFragment extends Fragment
             totalActiveRadioButtons--;
           }
 
-          if (((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_additional_notes)).getText().length() == 0)
+          if (((AutoCompleteTextView)activity.findViewById(R.id.additional_notes_input)).getText().length() == 0)
           {
             layout.findViewById(R.id.radio_additional_notes).setEnabled(false);
             totalActiveRadioButtons--;
@@ -594,9 +594,9 @@ public class NewEntryFragment extends Fragment
         final Activity activity = getActivity();
         if (activity != null)
         {
-          AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name));
-          AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, (AutoCompleteTextView)activity.findViewById(R.id.auto_complete_additional_notes));
-          LinearLayout foodEatenItemList = activity.findViewById(R.id.food_eaten_item_layout);
+          AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, (AutoCompleteTextView)activity.findViewById(R.id.insulin_name_input));
+          AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, (AutoCompleteTextView)activity.findViewById(R.id.additional_notes_input));
+          LinearLayout foodEatenItemList = activity.findViewById(R.id.food_eaten_inputs_layout);
           for (int i = 0; i < foodEatenItemList.getChildCount(); i++)
           {
             AutoCompleteTextView foodEatenItem = (AutoCompleteTextView)foodEatenItemList.getChildAt(i);
@@ -608,9 +608,9 @@ public class NewEntryFragment extends Fragment
 
           boolean proceed = true;
 
-          String bloodGlucoseLevel = ((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString();
-          String insulinName = ((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString().trim();
-          String insulinDose = ((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString();
+          String bloodGlucoseLevel = ((EditText)activity.findViewById(R.id.blood_glucose_level_input)).getText().toString();
+          String insulinName = ((EditText)activity.findViewById(R.id.insulin_name_input)).getText().toString().trim();
+          String insulinDose = ((EditText)activity.findViewById(R.id.insulin_dose_input)).getText().toString();
           if (bloodGlucoseLevel.length() == 0)
           {
             proceed = false;
@@ -683,17 +683,17 @@ public class NewEntryFragment extends Fragment
       if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
       {
         entry = dataEntriesDao.findPreviousEntryWithBloodGlucoseLevel(
-            timestamp, Float.valueOf(((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString()));
+            timestamp, Float.valueOf(((EditText)activity.findViewById(R.id.blood_glucose_level_input)).getText().toString()));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_name).getId())
       {
         entry = dataEntriesDao.findPreviousEntryWithInsulinName(
-            timestamp, '%' + ((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString() + '%');
+            timestamp, '%' + ((AutoCompleteTextView)activity.findViewById(R.id.insulin_name_input)).getText().toString() + '%');
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_dose).getId())
       {
         entry = dataEntriesDao.findPreviousEntryWithInsulinDose(
-            timestamp, Integer.parseInt(((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString()));
+            timestamp, Integer.parseInt(((EditText)activity.findViewById(R.id.insulin_dose_input)).getText().toString()));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_food_eaten).getId())
       {
@@ -702,7 +702,7 @@ public class NewEntryFragment extends Fragment
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_additional_notes).getId())
       {
         entry = dataEntriesDao.findPreviousEntryWithAdditionalNotes(
-            timestamp, '%' + ((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString() + '%');
+            timestamp, '%' + ((AutoCompleteTextView)activity.findViewById(R.id.additional_notes_input)).getText().toString() + '%');
       }
     }
     else
@@ -710,17 +710,17 @@ public class NewEntryFragment extends Fragment
       if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
       {
         entry = dataEntriesDao.findNextEntryWithBloodGlucoseLevel(
-            timestamp, Float.valueOf(((EditText) activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString()));
+            timestamp, Float.valueOf(((EditText) activity.findViewById(R.id.blood_glucose_level_input)).getText().toString()));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_name).getId())
       {
         entry = dataEntriesDao.findNextEntryWithInsulinName(
-            timestamp, '%' + ((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString() + '%');
+            timestamp, '%' + ((AutoCompleteTextView)activity.findViewById(R.id.insulin_name_input)).getText().toString() + '%');
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_dose).getId())
       {
         entry = dataEntriesDao.findNextEntryWithInsulinDose(
-            timestamp, Integer.parseInt(((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString()));
+            timestamp, Integer.parseInt(((EditText)activity.findViewById(R.id.insulin_dose_input)).getText().toString()));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_food_eaten).getId())
       {
@@ -729,7 +729,7 @@ public class NewEntryFragment extends Fragment
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_additional_notes).getId())
       {
         entry = dataEntriesDao.findNextEntryWithAdditionalNotes(
-            timestamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString() + '%');
+            timestamp, '%' + ((AutoCompleteTextView) activity.findViewById(R.id.additional_notes_input)).getText().toString() + '%');
       }
     }
 
@@ -909,13 +909,13 @@ public class NewEntryFragment extends Fragment
     DataEntry entry = new DataEntry();
     entry.actualTimestamp = m_date.getTime();
     entry.dayTimeStamp = calendar.getTimeInMillis();
-    entry.event = ((Spinner)activity.findViewById(R.id.spinner_event)).getSelectedItem().toString();
+    entry.event = ((Spinner)activity.findViewById(R.id.event_spinner)).getSelectedItem().toString();
 
-    String insulinName = ((EditText)activity.findViewById(R.id.auto_complete_insulin_name)).getText().toString().trim();
+    String insulinName = ((EditText)activity.findViewById(R.id.insulin_name_input)).getText().toString().trim();
     if (insulinName.length() > 0)
     {
       entry.insulinName = insulinName;
-      entry.insulinDose = Integer.valueOf(((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).getText().toString());
+      entry.insulinDose = Integer.valueOf(((EditText)activity.findViewById(R.id.insulin_dose_input)).getText().toString());
     }
     else
     {
@@ -923,8 +923,8 @@ public class NewEntryFragment extends Fragment
       entry.insulinDose = 0;
     }
 
-    entry.bloodGlucoseLevel = Float.parseFloat(((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).getText().toString());
-    entry.additionalNotes = ((EditText)activity.findViewById(R.id.auto_complete_additional_notes)).getText().toString().trim();
+    entry.bloodGlucoseLevel = Float.parseFloat(((EditText)activity.findViewById(R.id.blood_glucose_level_input)).getText().toString());
+    entry.additionalNotes = ((EditText)activity.findViewById(R.id.additional_notes_input)).getText().toString().trim();
     return entry;
   }
 
@@ -980,14 +980,14 @@ public class NewEntryFragment extends Fragment
     {
       updateDateTime(true);
 
-      activity.findViewById(R.id.grid_layout).requestFocus();
+      activity.findViewById(R.id.new_entry_content).requestFocus();
 
-      clearText((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level));
-      clearText((EditText)activity.findViewById(R.id.auto_complete_insulin_name));
-      clearText((EditText)activity.findViewById(R.id.edit_text_insulin_dose));
-      clearText((EditText)activity.findViewById(R.id.auto_complete_additional_notes));
+      clearText((EditText)activity.findViewById(R.id.blood_glucose_level_input));
+      clearText((EditText)activity.findViewById(R.id.insulin_name_input));
+      clearText((EditText)activity.findViewById(R.id.insulin_dose_input));
+      clearText((EditText)activity.findViewById(R.id.additional_notes_input));
 
-      LinearLayout foodItemsLayout = activity.findViewById(R.id.food_eaten_item_layout);
+      LinearLayout foodItemsLayout = activity.findViewById(R.id.food_eaten_inputs_layout);
       AutoCompleteTextView foodEatenItemInput = (AutoCompleteTextView)foodItemsLayout.getChildAt(foodItemsLayout.getChildCount() - 1);
       foodItemsLayout.removeAllViews();
       foodItemsLayout.addView(foodEatenItemInput);
@@ -1019,13 +1019,13 @@ public class NewEntryFragment extends Fragment
     m_minute = calendar.get(Calendar.MINUTE);
     updateDateTime(false);
 
-    ((EditText)activity.findViewById(R.id.edit_text_blood_glucose_level)).setText(String.valueOf(entry.bloodGlucoseLevel));
-    ((AutoCompleteTextView)activity.findViewById(R.id.auto_complete_insulin_name)).setText(entry.insulinDose > 0 ? entry.insulinName : "");
-    ((EditText)activity.findViewById(R.id.edit_text_insulin_dose)).setText(entry.insulinDose > 0 ? String.valueOf(entry.insulinDose) : "");
+    ((EditText)activity.findViewById(R.id.blood_glucose_level_input)).setText(String.valueOf(entry.bloodGlucoseLevel));
+    ((AutoCompleteTextView)activity.findViewById(R.id.insulin_name_input)).setText(entry.insulinDose > 0 ? entry.insulinName : "");
+    ((EditText)activity.findViewById(R.id.insulin_dose_input)).setText(entry.insulinDose > 0 ? String.valueOf(entry.insulinDose) : "");
 
     if (foodList.size() > 0)
     {
-      LinearLayout foodItemList = activity.findViewById(R.id.food_eaten_item_layout);
+      LinearLayout foodItemList = activity.findViewById(R.id.food_eaten_inputs_layout);
       AutoCompleteTextView lastItem = (AutoCompleteTextView)foodItemList.getChildAt(0);
       ListItemTextWatcher textWatcher = m_foodListTextWatchers.get(lastItem);
       if (textWatcher != null)
@@ -1045,7 +1045,7 @@ public class NewEntryFragment extends Fragment
 
     if (entry.additionalNotes.length() > 0)
     {
-      AutoCompleteTextView additionalNotes = activity.findViewById(R.id.auto_complete_additional_notes);
+      AutoCompleteTextView additionalNotes = activity.findViewById(R.id.additional_notes_input);
       additionalNotes.setText(entry.additionalNotes);
       additionalNotes.setGravity(Gravity.START | Gravity.TOP);
     }
