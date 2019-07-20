@@ -1097,26 +1097,39 @@ public class NewEntryFragment extends Fragment
     DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
     EventsDao eventsDao = AppDatabase.getInstance().eventsDao();
 
+    boolean queryDateMismatch = true;
     Event event = eventsDao.getEvent(entry.event);
-
-    boolean possibilityA = false;
-    DataEntry previousEntry = dataEntriesDao.findFirstBefore(entry.actualTimestamp);
-    if (previousEntry != null)
+    if (event != null)
     {
-      Event previousEvent = eventsDao.getEvent(previousEntry.event);
-      possibilityA = event.order > previousEvent.order && entry.dayTimeStamp > previousEntry.dayTimeStamp;
+      queryDateMismatch = false;
+      DataEntry previousEntry = dataEntriesDao.findFirstBefore(entry.actualTimestamp);
+      if (previousEntry != null)
+      {
+        Event previousEvent = eventsDao.getEvent(previousEntry.event);
+        if (previousEvent != null)
+        {
+          queryDateMismatch = event.order > previousEvent.order && entry.dayTimeStamp > previousEntry.dayTimeStamp;
+        }
+        else
+        {
+          queryDateMismatch = true;
+        }
+      }
+
+      if (!queryDateMismatch)
+      {
+        Event firstEvent = eventsDao.getEvents().get(0);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(entry.actualTimestamp);
+        calendar.set(
+            calendar.getMinimum(Calendar.YEAR),
+            calendar.getMinimum(Calendar.MONTH),
+            calendar.getMinimum(Calendar.DATE));
+        queryDateMismatch = event.id != firstEvent.id && firstEvent.timeInDay > calendar.getTimeInMillis();
+      }
     }
 
-    Event firstEvent = eventsDao.getEvents().get(0);
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTimeInMillis(entry.actualTimestamp);
-    calendar.set(
-        calendar.getMinimum(Calendar.YEAR),
-        calendar.getMinimum(Calendar.MONTH),
-        calendar.getMinimum(Calendar.DATE));
-    boolean possibilityB = event.id != firstEvent.id && firstEvent.timeInDay > calendar.getTimeInMillis();
-
-    if (possibilityA || possibilityB)
+    if (queryDateMismatch)
     {
       activity.runOnUiThread(new Runnable()
       {
