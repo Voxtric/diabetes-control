@@ -218,8 +218,7 @@ public class NewEntryFragment extends Fragment
         foodNames.add(foodName);
       }
     }
-    String[] foodNamesArray = new String[1];
-    return foodNames.toArray(foodNamesArray);
+    return foodNames.toArray(new String[0]);
   }
 
   private void updateDateTime(boolean forceNew)
