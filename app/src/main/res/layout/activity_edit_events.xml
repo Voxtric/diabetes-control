@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:paddingTop="@dimen/text_box_padding"
             android:paddingBottom="@dimen/text_box_padding"
             android:paddingLeft="@dimen/activity_horizontal_margin"
