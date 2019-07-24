@@ -48,7 +48,7 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
   public void onBindViewHolder(@NonNull final EditEventsRecyclerViewAdapter.ViewHolder holder, int position)
   {
     Event event = m_values.get(position);
-    holder.setItem(event);
+    holder.setItem(event, m_activity);
     m_valueMap.put(holder.itemView, position);
 
     if (event.name.length() == 0)
@@ -61,7 +61,7 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
       event.timeInDay = 0L;
       m_values.set(position, event);
       EditEventsActivity activity = (EditEventsActivity)holder.itemView.getContext();
-      activity.editEventTime(holder.itemView, true);
+      activity.editEventTime((ViewGroup)holder.itemView, true);
     }
   }
 
@@ -69,6 +69,12 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
   public int getItemCount()
   {
     return m_values.size();
+  }
+
+  public void refreshDataSet()
+  {
+    m_valueMap.clear();
+    notifyDataSetChanged();
   }
 
   Event getEvent(View view)
@@ -92,9 +98,7 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
     m_values = items;
     m_eventToHighlight = eventToHighlight;
     m_showButtonsOnHighlightedEvent = showButtonsOnHighlightedEvent;
-
-    m_valueMap.clear();
-    notifyDataSetChanged();
+    refreshDataSet();
   }
 
   void setEventToHighlight(Event event)
@@ -138,7 +142,7 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
       });
     }
 
-    void setItem(Event event)
+    void setItem(Event event, EditEventsActivity activity)
     {
       m_eventNameTextView.setText(event.name);
 
@@ -170,7 +174,12 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
       m_eventNameTextView.setBackgroundResource(drawableRes);
       m_eventTimeTextView.setBackgroundResource(drawableRes);
       m_eventMoreImageButton.setBackgroundResource(drawableRes);
+
       m_movementButtons.setVisibility(movementButtonVisibility);
+      if (movementButtonVisibility == View.VISIBLE)
+      {
+        activity.adjustVisibility((ViewGroup)m_movementButtons.getParent());
+      }
 
       m_movementButtons.getChildAt(0).setEnabled(event.order < getItemCount() - 1);
       m_movementButtons.getChildAt(1).setEnabled(event.order > 0);

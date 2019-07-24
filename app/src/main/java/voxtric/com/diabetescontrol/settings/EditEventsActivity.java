@@ -42,6 +42,7 @@ import voxtric.com.diabetescontrol.database.EventsDao;
 import voxtric.com.diabetescontrol.settings.fragments.EventsSettingsFragment;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 import voxtric.com.diabetescontrol.utilities.HintHideOnFocusChangeListener;
+import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class EditEventsActivity extends AppCompatActivity
 {
@@ -101,9 +102,12 @@ public class EditEventsActivity extends AppCompatActivity
       movementButtons.getGlobalVisibleRect(viewRect);
       if (!m_eventMoving && !viewRect.contains((int)event.getRawX(), (int)event.getRawY()))
       {
-        highlightSelected(null);
+        m_adapter.setEventToHighlight(null);
+        m_adapter.setActiveMovementButtons(null);
+        m_adapter.refreshDataSet();
+        /*highlightSelected(null);
         LinearLayout activeMovementButtons = m_adapter.getActiveMovementButtons();
-        setMoveButtonVisible(getDataView(activeMovementButtons), false);
+        setMoveButtonVisible(getDataView(activeMovementButtons), false);*/
         return true;
       }
     }
@@ -299,7 +303,7 @@ public class EditEventsActivity extends AppCompatActivity
     dialog.setOnDismissListener(onDismissListener);
   }
 
-  public void editEventTime(final View dataView, final boolean newEvent)
+  public void editEventTime(final ViewGroup dataView, final boolean newEvent)
   {
     final Event event = m_adapter.getEvent(dataView);
 
@@ -502,22 +506,50 @@ public class EditEventsActivity extends AppCompatActivity
     }
   }
 
-  private void setMoveButtonVisible(View dataView, boolean visible)
+  private void setMoveButtonVisible(final ViewGroup dataView, boolean visible)
   {
-    LinearLayout movementButtons = dataView.findViewById(R.id.movement_buttons);
+    final LinearLayout movementButtons = dataView.findViewById(R.id.movement_buttons);
     if (visible)
     {
-      movementButtons.setVisibility(View.VISIBLE);
       m_adapter.setActiveMovementButtons(movementButtons);
+      movementButtons.setVisibility(View.VISIBLE);
+      adjustVisibility(dataView);
     }
     else
     {
-      movementButtons.setVisibility(View.GONE);
       m_adapter.setActiveMovementButtons(null);
+      movementButtons.setVisibility(View.GONE);
     }
   }
 
-  private void highlightSelected(View dataView)
+  public void adjustVisibility(final ViewGroup dataView)
+  {
+    final View bottomVisible = dataView.findViewById(R.id.bottom_visible);
+    bottomVisible.setVisibility(View.VISIBLE);
+    new Handler().post(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        float dataViewVisibility = ViewUtilities.getVisibilityValue(dataView);
+        if (dataViewVisibility != 1.0f)
+        {
+          RecyclerView recyclerView = findViewById(R.id.recycler_view_event_list);
+          if (ViewUtilities.getVisibilityValue(bottomVisible) == 1.0f)
+          {
+            recyclerView.scrollBy(0, (int)(dataView.getHeight() * (-1.0f + dataViewVisibility)) - 1);
+          }
+          else
+          {
+            recyclerView.scrollBy(0, (int)(dataView.getHeight() * (1.0f - dataViewVisibility)));
+          }
+        }
+        bottomVisible.setVisibility(View.GONE);
+      }
+    });
+  }
+
+  private void highlightSelected(ViewGroup dataView)
   {
     m_adapter.setEventToHighlight(m_adapter.getEvent(dataView));
 
@@ -530,6 +562,11 @@ public class EditEventsActivity extends AppCompatActivity
       {
         layout.getChildAt(j).setBackgroundResource(drawableRes);
       }
+    }
+
+    if (dataView != null)
+    {
+      adjustVisibility(dataView);
     }
   }
 
