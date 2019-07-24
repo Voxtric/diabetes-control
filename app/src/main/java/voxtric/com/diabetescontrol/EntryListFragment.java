@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,8 +56,36 @@ public class EntryListFragment extends Fragment
     if (activity != null)
     {
       final RecyclerView recyclerView = activity.findViewById(R.id.recycler_view_entry_list);
-      recyclerView.setLayoutManager(new GridLayoutManager(activity, 1));
+      final GridLayoutManager layoutManager = new GridLayoutManager(activity, 1);
+      recyclerView.setLayoutManager(layoutManager);
       refreshEntryList();
+
+      final FloatingActionButton backToTopButton = activity.findViewById(R.id.back_to_top_button);
+      backToTopButton.setOnClickListener(new View.OnClickListener()
+      {
+        @Override
+        public void onClick(View view)
+        {
+          recyclerView.scrollToPosition(0);
+        }
+      });
+
+      recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
+      {
+        @Override
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
+        {
+          super.onScrolled(recyclerView, dx, dy);
+          if (recyclerView.canScrollVertically(-1))
+          {
+            backToTopButton.show();
+          }
+          else
+          {
+            backToTopButton.hide();
+          }
+        }
+      });
     }
   }
 
