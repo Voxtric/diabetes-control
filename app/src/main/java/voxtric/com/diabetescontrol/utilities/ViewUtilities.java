@@ -13,11 +13,11 @@ public class ViewUtilities
     {
       float visible = dataViewRect.width() * dataViewRect.height();
       float total = view.getWidth() * view.getHeight();
-      return visible / total;
+      return Math.min(1.0f, visible / total);
     }
     else
     {
-      return 0.1f;
+      return 0.0f;
     }
   }
 }

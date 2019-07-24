@@ -1,5 +1,7 @@
 package voxtric.com.diabetescontrol.settings;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Point;
@@ -16,6 +18,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -161,7 +164,7 @@ public class EditEventsActivity extends AppCompatActivity
             final long ANIMATION_DURATION = 200;
 
             View swappingView = null;
-            RecyclerView recyclerView = findViewById(R.id.recycler_view_event_list);
+            final RecyclerView recyclerView = findViewById(R.id.recycler_view_event_list);
             for (int i = 0; i < recyclerView.getChildCount(); i++)
             {
               if (recyclerView.getChildAt(i) == dataView)
@@ -188,7 +191,33 @@ public class EditEventsActivity extends AppCompatActivity
                 recyclerView.requestLayout();
                 recyclerView.invalidate();
               }
-              dataView.animate().translationYBy(swappingView.getHeight() * direction).setDuration(ANIMATION_DURATION).start();
+
+              ViewPropertyAnimator animator = dataView.animate().translationYBy(swappingView.getHeight() * direction).setDuration(ANIMATION_DURATION);
+              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+              {
+                animator.setUpdateListener(new ValueAnimator.AnimatorUpdateListener()
+                {
+                  @Override
+                  public void onAnimationUpdate(ValueAnimator valueAnimator)
+                  {
+                    float dataViewVisibility = ViewUtilities.getVisibilityValue(dataView);
+                    if (dataViewVisibility != 1.0f)
+                    {
+                      int scrollBy;
+                      if (direction == -1)
+                      {
+                        scrollBy = Math.round(dataView.getHeight() * (-1.0f + dataViewVisibility));
+                      }
+                      else
+                      {
+                        scrollBy = Math.round(dataView.getHeight() * (1.0f - dataViewVisibility));
+                      }
+                      recyclerView.scrollBy(0, scrollBy);
+                    }
+                  }
+                });
+              }
+              animator.start();
               swappingView.animate().translationYBy(dataView.getHeight() * -direction).setDuration(ANIMATION_DURATION).start();
 
               final View finalSwappingView = swappingView;
@@ -309,6 +338,7 @@ public class EditEventsActivity extends AppCompatActivity
 
     if (newEvent)
     {
+      adjustVisibility(dataView);
       highlightSelected(dataView);
     }
 
@@ -524,6 +554,8 @@ public class EditEventsActivity extends AppCompatActivity
 
   public void adjustVisibility(final ViewGroup dataView)
   {
+    final float DATA_VIEW_SCROLL_ADDITION_MULTIPLIER = 0.02f;
+
     final View bottomVisible = dataView.findViewById(R.id.bottom_visible);
     bottomVisible.setVisibility(View.VISIBLE);
     new Handler().post(new Runnable()
@@ -535,44 +567,49 @@ public class EditEventsActivity extends AppCompatActivity
         if (dataViewVisibility != 1.0f)
         {
           RecyclerView recyclerView = findViewById(R.id.recycler_view_event_list);
+          int scrollBy;
           if (ViewUtilities.getVisibilityValue(bottomVisible) == 1.0f)
           {
-            recyclerView.scrollBy(0, (int)(dataView.getHeight() * (-1.0f + dataViewVisibility)) - 1);
+            scrollBy = Math.round((dataView.getHeight() * (-1.0f + dataViewVisibility)) - (dataView.getHeight() * DATA_VIEW_SCROLL_ADDITION_MULTIPLIER));
           }
           else
           {
-            recyclerView.scrollBy(0, (int)(dataView.getHeight() * (1.0f - dataViewVisibility)));
+            scrollBy = Math.round((dataView.getHeight() * (1.0f - dataViewVisibility)) + (dataView.getHeight() * DATA_VIEW_SCROLL_ADDITION_MULTIPLIER));
           }
+          recyclerView.scrollBy(0, scrollBy);
         }
         bottomVisible.setVisibility(View.GONE);
       }
     });
   }
 
-  private void highlightSelected(ViewGroup dataView)
+  private void highlightSelected(final ViewGroup dataView)
   {
     m_adapter.setEventToHighlight(m_adapter.getEvent(dataView));
 
-    ViewGroup listView = findViewById(R.id.recycler_view_event_list);
-    for (int i = 0; i < listView.getChildCount(); i++)
+    new Handler().post(new Runnable()
     {
-      LinearLayout layout = listView.getChildAt(i).findViewById(R.id.contents);
-      @DrawableRes int drawableRes = listView.getChildAt(i) == dataView || dataView == null ? R.drawable.back : R.drawable.blank;
-      for (int j = 0; j < layout.getChildCount(); j++)
+      @Override
+      public void run()
       {
-        layout.getChildAt(j).setBackgroundResource(drawableRes);
+        ViewGroup listView = findViewById(R.id.recycler_view_event_list);
+        for (int i = 0; i < listView.getChildCount(); i++)
+        {
+          LinearLayout layout = listView.getChildAt(i).findViewById(R.id.contents);
+          @DrawableRes int drawableRes = listView.getChildAt(i) == dataView || dataView == null ? R.drawable.back : R.drawable.blank;
+          for (int j = 0; j < layout.getChildCount(); j++)
+          {
+            layout.getChildAt(j).setBackgroundResource(drawableRes);
+          }
+        }
       }
-    }
-
-    if (dataView != null)
-    {
-      adjustVisibility(dataView);
-    }
+    });
   }
 
   public void openEventMoreMenu(View view)
   {
     final ViewGroup dataView = getDataView(view);
+    adjustVisibility(dataView);
     highlightSelected(dataView);
 
     PopupMenu menu = new PopupMenu(view.getContext(), view);
