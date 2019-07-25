@@ -4,6 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
 
+    <dimen name="settings_fragment_margin">24dp</dimen>
+
     <dimen name="text_size">18sp</dimen>
     <dimen name="large_text_size">24sp</dimen>
     <dimen name="text_box_padding">6dp</dimen>

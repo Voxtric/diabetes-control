@@ -20,28 +20,28 @@
             android:id="@+id/backup_settings_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/settings_fragment_margin"
             class="voxtric.com.diabetescontrol.settings.fragments.BackupSettingsFragment"/>
 
         <fragment
             android:id="@+id/events_settings_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/settings_fragment_margin"
             class="voxtric.com.diabetescontrol.settings.fragments.EventsSettingsFragment"/>
 
         <fragment
             android:id="@+id/contact_details_settings_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/settings_fragment_margin"
             class="voxtric.com.diabetescontrol.settings.fragments.ContactDetailsSettingsFragment"/>
 
         <fragment
             android:id="@+id/bgl_highlighting_settings_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/settings_fragment_margin"
             class="voxtric.com.diabetescontrol.settings.fragments.BGLHighlightingSettingsFragment"/>
 
         <fragment

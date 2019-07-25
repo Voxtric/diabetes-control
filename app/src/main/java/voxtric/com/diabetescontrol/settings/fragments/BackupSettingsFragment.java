@@ -1,7 +1,9 @@
 package voxtric.com.diabetescontrol.settings.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,15 +15,20 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.Preference;
 
-public class BackupSettingsFragment extends Fragment
+public class BackupSettingsFragment extends GoogleDriveSignInFragment
 {
+  private boolean m_backupEnabledSwitchForced = false;
+
   public BackupSettingsFragment()
   {
     // Required empty public constructor
@@ -36,8 +43,7 @@ public class BackupSettingsFragment extends Fragment
     final Activity activity = getActivity();
     if (activity != null)
     {
-      final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
-      boolean backupEnabled = preferences.getBoolean("backup_enabled", false);
+      boolean backupEnabled = GoogleSignIn.getLastSignedInAccount(activity) != null;
 
       Switch backupEnabledSwitch = view.findViewById(R.id.backup_enabled_switch);
       backupEnabledSwitch.setChecked(backupEnabled);
@@ -48,7 +54,40 @@ public class BackupSettingsFragment extends Fragment
         public void onCheckedChanged(CompoundButton compoundButton, boolean checked)
         {
           setBackupEnabled(view, checked);
-          preferences.edit().putBoolean("backup_enabled", checked).apply();
+          if (!m_backupEnabledSwitchForced)
+          {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity)
+                .setNegativeButton(R.string.cancel, null);
+            if (checked)
+            {
+              dialogBuilder.setTitle(R.string.title_sign_in)
+                  .setMessage(R.string.message_sign_in)
+                  .setPositiveButton(R.string.sign_in, new DialogInterface.OnClickListener()
+                  {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                      // TODO: Perform immediate backup.
+                      signIn();
+                    }
+                  });
+            }
+            else
+            {
+              dialogBuilder.setTitle(R.string.title_sign_out)
+                  .setMessage(R.string.message_sign_out)
+                  .setPositiveButton(R.string.sign_out, new DialogInterface.OnClickListener()
+                      {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i)
+                        {
+                          // TODO: Delete backup files.
+                          signOut();
+                        }
+                      });
+            }
+            dialogBuilder.show();
+          }
         }
       });
 
@@ -103,9 +142,24 @@ public class BackupSettingsFragment extends Fragment
   }
 
   @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data)
+  protected void onSignInSuccess(GoogleSignInAccount googleSignInAccount)
   {
-    super.onActivityResult(requestCode, resultCode, data);
+    Toast.makeText(getContext(), getString(R.string.sign_in_success_message, googleSignInAccount.getEmail()), Toast.LENGTH_LONG).show();
+  }
+
+  @Override
+  protected void onSignInFail()
+  {
+    Activity activity = getActivity();
+    if (activity != null)
+    {
+      Toast.makeText(activity, R.string.sign_in_fail_message, Toast.LENGTH_LONG).show();
+      Switch backupEnabledSwitch = activity.findViewById(R.id.backup_enabled_switch);
+      m_backupEnabledSwitchForced = true;
+      backupEnabledSwitch.setChecked(false);
+      m_backupEnabledSwitchForced = false;
+      setBackupEnabled(backupEnabledSwitch.getRootView(), false);
+    }
   }
 
   private void setBackupEnabled(View rootView, boolean enabled)

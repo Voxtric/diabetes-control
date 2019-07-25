@@ -193,6 +193,7 @@ public class EditEventsActivity extends AppCompatActivity
               }
 
               ViewPropertyAnimator animator = dataView.animate().translationYBy(swappingView.getHeight() * direction).setDuration(ANIMATION_DURATION);
+              // TODO: Find solution for this.
               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
               {
                 animator.setUpdateListener(new ValueAnimator.AnimatorUpdateListener()

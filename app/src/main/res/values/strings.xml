@@ -129,12 +129,29 @@ If not, you can do so later from the settings menu at the top right."
     <string name="created_by_text">Created by Voxtric</string>
 
     <!-- Settings Activity -->
-    <string name="title_backup_settings">Backup</string>
+    <string name="title_backup_settings">Google Drive Backup</string>
     <string name="backup_enabled_text">Backup Enabled</string>
     <string name="automatic_backup_label">Automatically Backup</string>
     <string name="wifi_only_backup_label">WiFi Automatic Backup Only</string>
     <string name="apply_backup_text">Apply Backup</string>
     <string name="backup_now_text">Backup Now</string>
+
+    <string name="title_sign_in">Sign In?</string>
+    <string name="message_sign_in">
+"Are you sure you want to enable Google Drive backups?
+
+This will require you to sign in and will create a folder on your Google Drive containing all your data."
+    </string>
+    <string name="title_sign_out">Sign Out?</string>
+    <string name="message_sign_out">
+"Are you sure you want to sign out?
+
+This will delete the backup from your Google Drive."
+    </string>
+
+    <string name="sign_in_success_message">Signed in as %s$1</string>
+    <string name="sign_in_fail_message">Sign in failed</string>
+    <string name="sign_out_message">Signed out</string>
 
     <string name="title_events_settings">Events</string>
     <string name="edit_events_text">Edit Events</string>
@@ -241,6 +258,8 @@ Are you sure you want to save it?"
     <string name="continue_edit">Continue Edit</string>
     <string name="finish">Finish</string>
     <string name="share">Share</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_out">Sign Out</string>
 
     <!-- Export -->
     <string name="write_external_storage_permission_justification_title">Permission request</string>
