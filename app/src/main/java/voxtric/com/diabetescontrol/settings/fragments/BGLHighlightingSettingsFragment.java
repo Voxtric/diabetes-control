@@ -184,6 +184,7 @@ public class BGLHighlightingSettingsFragment extends Fragment
 
             boolean highlightingEnabled = Boolean.valueOf(m_bglRangeValues.get(HIGHLIGHTING_ENABLED_PREFERENCE));
             highlightingEnabledSwitch.setChecked(highlightingEnabled);
+            highlightingEnabledSwitch.jumpDrawablesToCurrentState();
             setBGLHighlightingEnabled(activity, highlightingEnabled);
           }
         });

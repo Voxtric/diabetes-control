@@ -45,7 +45,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     {
       boolean backupEnabled = GoogleSignIn.getLastSignedInAccount(activity) != null;
 
-      Switch backupEnabledSwitch = view.findViewById(R.id.backup_enabled_switch);
+      final Switch backupEnabledSwitch = view.findViewById(R.id.backup_enabled_switch);
       backupEnabledSwitch.setChecked(backupEnabled);
       setBackupEnabled(view, backupEnabled);
       backupEnabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
@@ -56,12 +56,22 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
           setBackupEnabled(view, checked);
           if (!m_backupEnabledSwitchForced)
           {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity)
-                .setNegativeButton(R.string.cancel, null);
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
             if (checked)
             {
               dialogBuilder.setTitle(R.string.title_sign_in)
                   .setMessage(R.string.message_sign_in)
+                  .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener()
+                  {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                      m_backupEnabledSwitchForced = true;
+                      backupEnabledSwitch.setChecked(false);
+                      m_backupEnabledSwitchForced = false;
+                      setBackupEnabled(backupEnabledSwitch.getRootView(), false);
+                    }
+                  })
                   .setPositiveButton(R.string.sign_in, new DialogInterface.OnClickListener()
                   {
                     @Override
@@ -76,6 +86,17 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
             {
               dialogBuilder.setTitle(R.string.title_sign_out)
                   .setMessage(R.string.message_sign_out)
+                  .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener()
+                  {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                      m_backupEnabledSwitchForced = true;
+                      backupEnabledSwitch.setChecked(true);
+                      m_backupEnabledSwitchForced = false;
+                      setBackupEnabled(backupEnabledSwitch.getRootView(), true);
+                    }
+                  })
                   .setPositiveButton(R.string.sign_out, new DialogInterface.OnClickListener()
                       {
                         @Override
