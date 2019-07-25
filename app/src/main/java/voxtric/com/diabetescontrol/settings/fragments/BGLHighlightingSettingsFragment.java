@@ -70,7 +70,7 @@ public class BGLHighlightingSettingsFragment extends Fragment
     final SettingsActivity activity = (SettingsActivity)getActivity();
     if (activity != null)
     {
-      final Switch highlightingEnabledSwitch = view.findViewById(R.id.highlighting_enabled);
+      final Switch highlightingEnabledSwitch = view.findViewById(R.id.highlighting_enabled_switch);
       highlightingEnabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
       {
         @Override
@@ -152,7 +152,7 @@ public class BGLHighlightingSettingsFragment extends Fragment
 
   private void setValues(final Activity activity, View view)
   {
-    final Switch highlightingEnabledSwitch = view.findViewById(R.id.highlighting_enabled);
+    final Switch highlightingEnabledSwitch = view.findViewById(R.id.highlighting_enabled_switch);
     final EditText idealRangeLower = view.findViewById(R.id.ideal_range_lower);
     final EditText idealRangeUpper = view.findViewById(R.id.ideal_range_upper);
     final EditText highRangeLower = view.findViewById(R.id.high_range_lower);

@@ -129,8 +129,21 @@ If not, you can do so later from the settings menu at the top right."
     <string name="created_by_text">Created by Voxtric</string>
 
     <!-- Settings Activity -->
+    <string name="title_backup_settings">Backup</string>
+    <string name="backup_enabled_text">Backup Enabled</string>
+    <string name="automatic_backup_label">Automatically Backup</string>
+    <string name="wifi_only_backup_label">WiFi Automatic Backup Only</string>
+    <string name="apply_backup_text">Apply Backup</string>
+    <string name="backup_now_text">Backup Now</string>
+
     <string name="title_events_settings">Events</string>
     <string name="edit_events_text">Edit Events</string>
+
+    <string name="title_contact_details_settings">Contact Details</string>
+    <string name="contact_name_label">Contact Name:</string>
+    <string name="contact_number_label">Contact Number:</string>
+    <string name="contact_name_hint">Contact Name</string>
+    <string name="contact_number_hint">Contact No.</string>
 
     <string name="title_bgl_highlighting_settings">Blood Glucose Level Highlighting</string>
     <string name="highlighting_enabled_text">Highlighting Enabled</string>
@@ -145,12 +158,6 @@ If not, you can do so later from the settings menu at the top right."
     <string name="bgl_range_value_out_of_range_message">BGL range value must be higher than the previous value and lower than the next</string>
     <string name="bgl_range_value_empty_message">BGL range value cannot be empty</string>
     <string name="bgl_range_values_reset">BGL values reset to defaults</string>
-
-    <string name="title_contact_details_settings">Contact Details</string>
-    <string name="contact_name_label">Contact Name:</string>
-    <string name="contact_number_label">Contact Number:</string>
-    <string name="contact_name_hint">Contact Name</string>
-    <string name="contact_number_hint">Contact No.</string>
 
     <string name="title_meal_targets_settings">Meal Targets</string>
     <string name="target_pre_meal_label">Pre-meal blood glucose range (mmol/L):</string>
@@ -269,6 +276,14 @@ Give write external storage permission?"
     <string name="contact_number">Contact Number: %1$s</string>
 
     <!-- Arrays -->
+    <string-array name="automatic_backup_options">
+        <item>Monthly</item>
+        <item>Weekly</item>
+        <item>Daily</item>
+        <item>After New Entry</item>
+        <item>Never</item>
+    </string-array>
+
     <string-array name="nhs_event_names">
         <item>Before Breakfast</item>
         <item>Two Hours after Breakfast</item>

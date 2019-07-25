@@ -30,7 +30,7 @@
         android:background="@drawable/back"/>
 
     <Switch
-        android:id="@+id/highlighting_enabled"
+        android:id="@+id/highlighting_enabled_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/title_bgl_highlighting_settings"
@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        app:layout_constraintTop_toBottomOf="@id/highlighting_enabled"
+        app:layout_constraintTop_toBottomOf="@id/highlighting_enabled_switch"
         app:layout_constraintLeft_toLeftOf="parent"
         style="@style/BasicText"
         android:text="@string/ideal_range_label"/>
