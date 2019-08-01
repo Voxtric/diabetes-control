@@ -79,24 +79,29 @@ public class GoogleDriveInterface
     return folder;
   }
 
+  private File getParentFolderOfFile(String filePath) throws IOException
+  {
+    String[] pathComponents = filePath.split("/");
+    File fileParent = null;
+    for (int i = 0; i < pathComponents.length - 1; i++)
+    {
+      fileParent = navigateFromParentTo(fileParent, pathComponents[i]);
+    }
+    if (fileParent == null)
+    {
+      fileParent = new File();
+      fileParent.setId("root");
+    }
+    return fileParent;
+  }
+
   public synchronized boolean uploadFile(String filePath, String fileMimeType, byte[] fileContents, MediaHttpUploaderProgressListener uploaderProgressListener)
   {
     boolean success = false;
     try
     {
-      String[] pathComponents = filePath.split("/");
-      File fileParent = null;
-      for (int i = 0; i < pathComponents.length - 1; i++)
-      {
-        fileParent = navigateFromParentTo(fileParent, pathComponents[i]);
-      }
-      if (fileParent == null)
-      {
-        fileParent = new File();
-        fileParent.setId("root");
-      }
-      String fileName = pathComponents[pathComponents.length - 1];
-      String parentFolderID = fileParent.getId();
+      String fileName = new java.io.File(filePath).getName();
+      String parentFolderID = getParentFolderOfFile(filePath).getId();
 
       File file = new File();
       file.setName(fileName);
@@ -124,6 +129,31 @@ public class GoogleDriveInterface
         fileUpdate.getMediaHttpUploader().setProgressListener(uploaderProgressListener);
         fileUpdate.execute();
         success = true;
+      }
+    }
+    catch (IOException exception)
+    {
+      Log.e("GoogleDriveInterface", exception.getMessage(), exception);
+    }
+    return success;
+  }
+
+  public synchronized boolean deleteFile(String filePath)
+  {
+    boolean success = false;
+    try
+    {
+      String fileName = new java.io.File(filePath).getName();
+      String parentFolderID = getParentFolderOfFile(filePath).getId();
+      FileList fileList = m_googleDrive.files().list()
+          .setQ(String.format("name = '%s' and '%s' in parents and trashed = false", fileName, parentFolderID))
+          .setSpaces("drive")
+          .setOrderBy("createdTime")
+          .execute();
+      List<File> existingFiles = fileList.getFiles();
+      if (existingFiles != null && !existingFiles.isEmpty())
+      {
+        m_googleDrive.files().delete(existingFiles.get(0).getId()).execute();
       }
     }
     catch (IOException exception)

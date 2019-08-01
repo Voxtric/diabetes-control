@@ -40,12 +40,19 @@ abstract class GoogleDriveSignInFragment extends Fragment
 
   void signOut()
   {
-    Context context = getContext();
-    if (context != null)
+    Activity activity = getActivity();
+    if (activity != null)
     {
-      GoogleSignInClient client = GoogleSignIn.getClient(context, GoogleSignInOptions.DEFAULT_SIGN_IN);
+      GoogleSignInClient client = GoogleSignIn.getClient(activity, GoogleSignInOptions.DEFAULT_SIGN_IN);
       client.signOut();
-      Toast.makeText(context, R.string.sign_out_message, Toast.LENGTH_LONG).show();
+      activity.runOnUiThread(new Runnable()
+      {
+        @Override
+        public void run()
+        {
+          onSignOut();
+        }
+      });
     }
   }
 
@@ -91,4 +98,5 @@ abstract class GoogleDriveSignInFragment extends Fragment
 
   protected abstract void onSignInSuccess(GoogleSignInAccount googleSignInAccount);
   protected abstract void onSignInFail();
+  protected abstract void onSignOut();
 }

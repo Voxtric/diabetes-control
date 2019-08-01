@@ -37,8 +37,7 @@ public class BackupForegroundService extends Service implements MediaHttpUploade
 {
   private static final String CHANNEL_ID = "BackupForegroundServiceChannel";
   private static final int ONGOING_NOTIFICATION_ID = 1098;
-  private static final int COMPLETED_NOTIFICATION_ID = 1099;
-  private static final int FAILED_NOTIFICATION_ID = 1100;
+  private static final int FINISHED_NOTIFICATION_ID = 1099;
   private static final int MAX_UPLOAD_PROGRESS = 100;
   private static final int ZIP_ENTRY_BUFFER_SIZE = 1024 * 1024; // 1 MiB
 
@@ -118,13 +117,13 @@ public class BackupForegroundService extends Service implements MediaHttpUploade
     catch (FileNotFoundException exception)
     {
       Log.e("BackupForegroundService", getString(R.string.backup_find_database_failed_notification_text), exception);
-      m_notificationManager.notify(FAILED_NOTIFICATION_ID, buildFailedNotification(R.string.backup_find_database_failed_notification_text));
+      m_notificationManager.notify(FINISHED_NOTIFICATION_ID, buildFailedNotification(R.string.backup_find_database_failed_notification_text));
       return null;
     }
     catch (IOException exception)
     {
       Log.e("BackupForegroundService", getString(R.string.backup_create_file_failed_notification_text), exception);
-      m_notificationManager.notify(FAILED_NOTIFICATION_ID, buildFailedNotification(R.string.backup_create_file_failed_notification_text));
+      m_notificationManager.notify(FINISHED_NOTIFICATION_ID, buildFailedNotification(R.string.backup_create_file_failed_notification_text));
       return null;
     }
     return outputStream.toByteArray();
@@ -143,16 +142,16 @@ public class BackupForegroundService extends Service implements MediaHttpUploade
           BackupForegroundService.this);
       if (uploadSuccess)
       {
-        m_notificationManager.notify(COMPLETED_NOTIFICATION_ID, buildCompletedNotification());
+        m_notificationManager.notify(FINISHED_NOTIFICATION_ID, buildCompletedNotification());
       }
       else
       {
-        m_notificationManager.notify(FAILED_NOTIFICATION_ID, buildFailedNotification(R.string.backup_upload_failed_notification_text));
+        m_notificationManager.notify(FINISHED_NOTIFICATION_ID, buildFailedNotification(R.string.backup_upload_failed_notification_text));
       }
     }
     else
     {
-      m_notificationManager.notify(FAILED_NOTIFICATION_ID, buildFailedNotification(R.string.backup_sign_in_failed_notification_text));
+      m_notificationManager.notify(FINISHED_NOTIFICATION_ID, buildFailedNotification(R.string.backup_sign_in_failed_notification_text));
     }
   }
 

@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import voxtric.com.diabetescontrol.BackupForegroundService;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.Preference;
+import voxtric.com.diabetescontrol.utilities.GoogleDriveInterface;
 
 public class BackupSettingsFragment extends GoogleDriveSignInFragment
 {
@@ -134,6 +136,12 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     }
   }
 
+  @Override
+  protected void onSignOut()
+  {
+    Toast.makeText(getActivity(), R.string.sign_out_message, Toast.LENGTH_LONG).show();
+  }
+
   private void setBackupEnabled(View rootView, boolean enabled)
   {
     rootView.findViewById(R.id.automatic_backup_label).setEnabled(enabled);
@@ -178,7 +186,6 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
                   @Override
                   public void onClick(DialogInterface dialogInterface, int i)
                   {
-                    // TODO: Perform immediate backup.
                     signIn();
                   }
                 });
@@ -203,8 +210,16 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
                   @Override
                   public void onClick(DialogInterface dialogInterface, int i)
                   {
-                    // TODO: Delete backup files.
-                    signOut();
+                    AsyncTask.execute(new Runnable()
+                    {
+                      @Override
+                      public void run()
+                      {
+                        GoogleDriveInterface googleDriveInterface = new GoogleDriveInterface(activity, GoogleSignIn.getLastSignedInAccount(activity));
+                        googleDriveInterface.deleteFile("Diabetes Control");
+                        signOut();
+                      }
+                    });
                   }
                 });
           }
