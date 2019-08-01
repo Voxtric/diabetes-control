@@ -145,40 +145,6 @@ public class MainActivity extends AppCompatActivity
         return true;
 
 
-      case R.id.action_export_database:
-        try
-        {
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-          {
-            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-
-            String[] affixes = new String[] {"", "-shm", "-wal"};
-            for (String affix : affixes)
-            {
-              File databaseFilePath = new File(getDatabasePath(AppDatabase.NAME).getAbsolutePath() + affix);
-              File exportFilePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), AppDatabase.NAME + affix);
-              Log.v("Export path", exportFilePath.getAbsolutePath());
-              //noinspection ResultOfMethodCallIgnored
-              exportFilePath.createNewFile();
-
-              FileInputStream inStream = new FileInputStream(databaseFilePath);
-              FileOutputStream outStream = new FileOutputStream(exportFilePath);
-              FileChannel inChannel = inStream.getChannel();
-              FileChannel outChannel = outStream.getChannel();
-              inChannel.transferTo(0, inChannel.size(), outChannel);
-              inStream.close();
-              outStream.close();
-            }
-            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-            Toast.makeText(MainActivity.this, String.format("Database files exported to %s", path), Toast.LENGTH_LONG).show();
-          }
-        }
-        catch (IOException exception)
-        {
-          exception.printStackTrace();
-          Toast.makeText(MainActivity.this, "Failed to export database files", Toast.LENGTH_LONG).show();
-        }
-        return true;
       case R.id.action_import_database:
         try
         {
@@ -280,7 +246,7 @@ public class MainActivity extends AppCompatActivity
         if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))
         {
           AlertDialog dialog = new AlertDialog.Builder(this)
-              .setTitle(R.string.write_external_storage_permission_justification_title)
+              .setTitle(R.string.permission_justification_title)
               .setMessage(R.string.write_external_storage_permission_justification_message)
               .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
               {

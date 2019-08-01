@@ -38,10 +38,6 @@
 
             <menu>
                 <item
-                    android:id="@+id/action_export_database"
-                    android:title="Export Database"/>
-
-                <item
                     android:id="@+id/action_import_database"
                     android:title="Import Database"/>
             </menu>

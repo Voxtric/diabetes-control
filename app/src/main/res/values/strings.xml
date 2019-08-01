@@ -8,6 +8,8 @@
     <string name="title_delete">Delete</string>
     <string name="title_cancel">Cancel</string>
 
+    <string name="permission_justification_title">Permission request</string>
+
     <!-- First Time Setup -->
     <string name="first_launch_setup_title">First Launch Setup</string>
     <string name="first_launch_setup_message_1">
@@ -142,6 +144,7 @@ If not, you can do so later from the settings menu at the top right."
 
 This will require you to sign in and will create a folder on your Google Drive containing all your data."
     </string>
+
     <string name="title_sign_out">Sign Out?</string>
     <string name="message_sign_out">
 "Are you sure you want to sign out?
@@ -149,9 +152,26 @@ This will require you to sign in and will create a folder on your Google Drive c
 This will delete the backup from your Google Drive."
     </string>
 
+    <string name="foreground_service_permission_justification_message">
+"In order to backup your data, permission to create a foreground service must be given.
+
+Give foreground service permission?"
+    </string>
+    <string name="foreground_service_permission_needed_message">Cannot backup until foreground service permissions are granted.</string>
+
     <string name="sign_in_success_message">Signed in as %1$s</string>
     <string name="sign_in_fail_message">Sign in failed</string>
     <string name="sign_out_message">Signed out</string>
+
+    <string name="backup_started_message">Backup started</string>
+    <string name="backing_up_notification_title">Backing Up</string>
+    <string name="backup_complete_notification_title">Backup Complete</string>
+    <string name="backup_complete_notification_text">Backup to Google Drive successful.</string>
+    <string name="backup_failed_notification_title">Backup Failed</string>
+    <string name="backup_find_database_failed_notification_text">Could not find data for backup.</string>
+    <string name="backup_create_file_failed_notification_text">Could not create backup file.</string>
+    <string name="backup_upload_failed_notification_text">Google Drive backup upload interrupted.</string>
+    <string name="backup_sign_in_failed_notification_text">Google Drive sign in required.</string>
 
     <string name="title_events_settings">Events</string>
     <string name="edit_events_text">Edit Events</string>
@@ -262,7 +282,6 @@ Are you sure you want to save it?"
     <string name="sign_out">Sign Out</string>
 
     <!-- Export -->
-    <string name="write_external_storage_permission_justification_title">Permission request</string>
     <string name="write_external_storage_permission_justification_message">
 "In order to export your data, permission to write to the external storage of the device must be given.
 
