@@ -134,7 +134,7 @@ If not, you can do so later from the settings menu at the top right."
     <string name="title_backup_settings">Google Drive Backup</string>
     <string name="backup_enabled_text">Backup Enabled</string>
     <string name="automatic_backup_label">Automatically Backup</string>
-    <string name="wifi_only_backup_label">WiFi Automatic Backup Only</string>
+    <string name="wifi_only_backup_label">Automatic Backup Over WiFi Only</string>
     <string name="apply_backup_text">Apply Backup</string>
     <string name="backup_now_text">Backup Now</string>
 

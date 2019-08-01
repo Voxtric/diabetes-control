@@ -42,13 +42,20 @@ public class BackupForegroundService extends Service implements MediaHttpUploade
   private static final int MAX_UPLOAD_PROGRESS = 100;
   private static final int ZIP_ENTRY_BUFFER_SIZE = 1024 * 1024; // 1 MiB
 
-  NotificationManager m_notificationManager = null;
+  private static boolean s_isUploading = false;
+  public static boolean isUploading()
+  {
+    return s_isUploading;
+  }
+
+  private NotificationManager m_notificationManager = null;
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId)
   {
-    if (m_notificationManager == null)
+    if (m_notificationManager == null && !isUploading())
     {
+      s_isUploading = true;
       m_notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
       createNotificationChannel();
       startForeground(ONGOING_NOTIFICATION_ID, buildOngoingNotification(0));
@@ -66,6 +73,7 @@ public class BackupForegroundService extends Service implements MediaHttpUploade
 
           stopForeground(true);
           stopSelf();
+          s_isUploading = false;
         }
       });
       thread.setDaemon(true);
@@ -155,6 +163,7 @@ public class BackupForegroundService extends Service implements MediaHttpUploade
     return new NotificationCompat.Builder(this, CHANNEL_ID)
         .setSmallIcon(R.drawable.back_to_top)
         .setContentIntent(pendingIntent)
+        .setPriority(NotificationCompat.PRIORITY_LOW)
         .setContentTitle(getString(R.string.backing_up_notification_title))
         .setProgress(MAX_UPLOAD_PROGRESS, currentProgress, currentProgress == 0)
         .build();
@@ -167,9 +176,10 @@ public class BackupForegroundService extends Service implements MediaHttpUploade
     return new NotificationCompat.Builder(this, CHANNEL_ID)
         .setSmallIcon(R.drawable.done)
         .setContentIntent(pendingIntent)
+        .setAutoCancel(true)
+        .setPriority(NotificationCompat.PRIORITY_LOW)
         .setContentTitle(getString(R.string.backup_complete_notification_title))
         .setContentText(getString(R.string.backup_complete_notification_text))
-        .setAutoCancel(true)
         .build();
   }
 
@@ -180,9 +190,10 @@ public class BackupForegroundService extends Service implements MediaHttpUploade
     return new NotificationCompat.Builder(this, CHANNEL_ID)
         .setSmallIcon(R.drawable.error)
         .setContentIntent(pendingIntent)
+        .setAutoCancel(true)
+        .setPriority(NotificationCompat.PRIORITY_LOW)
         .setContentTitle(getString(R.string.backup_failed_notification_title))
         .setContentText(getString(failureMessageId))
-        .setAutoCancel(true)
         .build();
   }
 
@@ -193,7 +204,7 @@ public class BackupForegroundService extends Service implements MediaHttpUploade
       NotificationChannel serviceChannel = new NotificationChannel(
           CHANNEL_ID,
           "Backup Foreground Service Channel",
-          NotificationManager.IMPORTANCE_DEFAULT
+          NotificationManager.IMPORTANCE_LOW
       );
       NotificationManager manager = getSystemService(NotificationManager.class);
       if (manager != null)

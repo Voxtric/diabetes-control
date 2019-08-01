@@ -7,10 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
@@ -73,8 +75,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
         @Override
         public void onClick(View view)
         {
-          Intent intent = new Intent(activity, BackupForegroundService.class);
-          activity.startService(intent);
+          startBackup(activity);
         }
       });
     }
@@ -92,8 +93,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
       {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
         {
-          Intent intent = new Intent(activity, BackupForegroundService.class);
-          activity.startService(intent);
+          startBackup(activity);
         }
         else
         {
@@ -115,8 +115,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     final Activity activity = getActivity();
     if (activity != null && hasForegroundServicePermission(activity))
     {
-      Intent intent = new Intent(activity, BackupForegroundService.class);
-      activity.startService(intent);
+      startBackup(activity);
     }
   }
 
@@ -142,7 +141,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     rootView.findViewById(R.id.wifi_only_backup_label).setEnabled(enabled);
     rootView.findViewById(R.id.wifi_only_backup_check).setEnabled(enabled);
     rootView.findViewById(R.id.apply_backup_button).setEnabled(enabled);
-    rootView.findViewById(R.id.backup_now_button).setEnabled(enabled);
+    rootView.findViewById(R.id.backup_now_button).setEnabled(enabled && !BackupForegroundService.isUploading());
   }
 
   private void initialiseBackupEnabledSwitch(final Activity activity, final View view, boolean backupEnabled)
@@ -288,5 +287,33 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
       }
     }
     return hasPermission;
+  }
+
+  private void startBackup(final Activity activity)
+  {
+    Intent intent = new Intent(activity, BackupForegroundService.class);
+    activity.startService(intent);
+    Toast.makeText(activity, R.string.backup_started_message, Toast.LENGTH_LONG).show();
+
+    final Button backupNowButton = activity.findViewById(R.id.backup_now_button);
+    backupNowButton.setEnabled(false);
+    new CountDownTimer(1000, 1)
+    {
+      @Override
+      public void onTick(long l) {}
+
+      @Override
+      public void onFinish()
+      {
+        if (BackupForegroundService.isUploading())
+        {
+          start();
+        }
+        else
+        {
+          backupNowButton.setEnabled(GoogleSignIn.getLastSignedInAccount(activity) != null);
+        }
+      }
+    }.start();
   }
 }
