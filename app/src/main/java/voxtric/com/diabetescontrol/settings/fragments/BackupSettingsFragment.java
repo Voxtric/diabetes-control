@@ -27,6 +27,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import voxtric.com.diabetescontrol.BackupForegroundService;
 import voxtric.com.diabetescontrol.R;
+import voxtric.com.diabetescontrol.RecoveryForegroundService;
 import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.utilities.GoogleDriveInterface;
 
@@ -78,6 +79,15 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
         public void onClick(View view)
         {
           startBackup(activity);
+        }
+      });
+      view.findViewById(R.id.apply_backup_button).setOnClickListener(new View.OnClickListener()
+      {
+        @Override
+        public void onClick(View view)
+        {
+          Intent intent = new Intent(activity, RecoveryForegroundService.class);
+          activity.startService(intent);
         }
       });
     }

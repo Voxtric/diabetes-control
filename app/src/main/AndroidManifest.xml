@@ -28,6 +28,7 @@
         </provider>
 
         <service android:name=".BackupForegroundService"/>
+        <service android:name=".RecoveryForegroundService"/>
 
         <activity
             android:name=".MainActivity"

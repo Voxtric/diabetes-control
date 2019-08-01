@@ -165,13 +165,22 @@ Give foreground service permission?"
 
     <string name="backup_started_message">Backup started</string>
     <string name="backing_up_notification_title">Backing Up</string>
-    <string name="backup_complete_notification_title">Backup Complete</string>
-    <string name="backup_complete_notification_text">Backup to Google Drive successful.</string>
-    <string name="backup_failed_notification_title">Backup Failed</string>
-    <string name="backup_find_database_failed_notification_text">Could not find data for backup.</string>
-    <string name="backup_create_file_failed_notification_text">Could not create backup file.</string>
-    <string name="backup_upload_failed_notification_text">Google Drive backup upload interrupted.</string>
-    <string name="backup_sign_in_failed_notification_text">Google Drive sign in required.</string>
+    <string name="backup_success_notification_title">Backup Complete</string>
+    <string name="backup_success_notification_text">Backup to Google Drive successful.</string>
+    <string name="backup_fail_notification_title">Backup Failed</string>
+    <string name="backup_find_database_fail_notification_text">Could not find data for backup.</string>
+    <string name="backup_create_file_fail_notification_text">Could not create backup file.</string>
+    <string name="backup_upload_fail_notification_text">Google Drive backup upload interrupted.</string>
+
+    <string name="recovery_started_message">Recovery started</string>
+    <string name="recovering_notification_title">Recovering Backup</string>
+    <string name="recovery_success_notification_title">Recovery Complete</string>
+    <string name="recovery_success_notification_text">Recovery from Google Drive successful.</string>
+    <string name="recovery_fail_notification_title">Recovery Failed</string>
+    <string name="recovery_upload_fail_notification_text">Google Drive backup download interrupted.</string>
+    <string name="recovery_read_file_fail_notification_text">Could not read backup file.</string>
+
+    <string name="backup_recovery_sign_in_fail_notification_text">Google Drive sign in required.</string>
 
     <string name="title_events_settings">Events</string>
     <string name="edit_events_text">Edit Events</string>
