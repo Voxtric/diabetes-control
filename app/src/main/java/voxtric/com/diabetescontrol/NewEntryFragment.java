@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -1310,6 +1309,7 @@ public class NewEntryFragment extends Fragment
     AutoCompleteTextView newItem = new AutoCompleteTextView(activity);
     newItem.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     newItem.setHint(activity.getString(hintResourceID, owningLayout.getChildCount() + 1));
+    newItem.setHintTextColor(((EditText)activity.findViewById(R.id.blood_glucose_level_input)).getHintTextColors()); // Stupid but necessary.
     newItem.setBackgroundResource(R.drawable.back);
     newItem.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
     newItem.setImeOptions(EditorInfo.IME_ACTION_NEXT);
@@ -1329,13 +1329,10 @@ public class NewEntryFragment extends Fragment
     }
     owningLayout.addView(newItem);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+    TextView foodEatenLabel = activity.findViewById(R.id.food_eaten_label);
+    if (foodEatenLabel != null)
     {
-      TextView foodEatenLabel = activity.findViewById(R.id.food_eaten_label);
-      if (foodEatenLabel != null)
-      {
-        foodEatenLabel.setLabelFor(newItem.getId());
-      }
+      foodEatenLabel.setLabelFor(newItem.getId());
     }
 
     return newItem;

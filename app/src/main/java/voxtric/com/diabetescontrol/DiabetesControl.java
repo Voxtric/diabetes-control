@@ -1,10 +1,10 @@
 package voxtric.com.diabetescontrol;
 
-import android.app.Application;
+import androidx.multidex.MultiDexApplication;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
 
-public class DiabetesControl extends Application
+public class DiabetesControl extends MultiDexApplication
 {
   @Override
   public void onCreate()

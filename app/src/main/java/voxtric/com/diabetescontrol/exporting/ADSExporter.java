@@ -240,13 +240,17 @@ public class ADSExporter extends PDFGenerator
 
     // Insulin used
     height -= VERTICAL_SPACE;
-    StringBuilder insulinUsedStringBuilder = new StringBuilder(" ");
-    for (String insulinName : week.insulinNames)
+    String insulinUsedString = "";
+    if (!week.insulinNames.isEmpty())
     {
-      insulinUsedStringBuilder.append(insulinName);
-      insulinUsedStringBuilder.append(", ");
+      StringBuilder insulinUsedStringBuilder = new StringBuilder();
+      for (String insulinName : week.insulinNames)
+      {
+        insulinUsedStringBuilder.append(insulinName);
+        insulinUsedStringBuilder.append(", ");
+      }
+      insulinUsedString = insulinUsedStringBuilder.substring(0, insulinUsedStringBuilder.length() - 2);
     }
-    String insulinUsedString = insulinUsedStringBuilder.substring(0, insulinUsedStringBuilder.length() - 2);
     height = drawText(FONT, FONT_SIZE_MEDIUM, activity.getString(R.string.insulin_used, insulinUsedString), BORDER, height);
 
     // Contact Details
