@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -147,7 +148,9 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   protected Notification buildOngoingNotification(int progress)
   {
     Intent notificationIntent = new Intent(this, MainActivity.class);
+    notificationIntent.setAction(MainActivity.ACTION_MOVE_TO_LIST);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
     return new NotificationCompat.Builder(this, ONGOING_CHANNEL_ID)
         .setSmallIcon(R.drawable.download)
         .setContentIntent(pendingIntent)
@@ -161,7 +164,9 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   protected Notification buildOnSuccessNotification()
   {
     Intent notificationIntent = new Intent(this, MainActivity.class);
+    notificationIntent.setAction(MainActivity.ACTION_MOVE_TO_LIST);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
     return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
         .setSmallIcon(R.drawable.done)
         .setContentIntent(pendingIntent)
@@ -176,7 +181,10 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   protected Notification buildOnFailNotification(int failureMessageId)
   {
     Intent notificationIntent = new Intent(this, SettingsActivity.class);
-    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+    stackBuilder.addNextIntentWithParentStack(notificationIntent);
+    PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
     return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
         .setSmallIcon(R.drawable.error)
         .setContentIntent(pendingIntent)

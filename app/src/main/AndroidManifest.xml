@@ -48,20 +48,24 @@
 
         <activity
             android:name=".settings.EditEventsActivity"
-            android:label="@string/edit_events_name" />
+            android:label="@string/edit_events_name"
+            android:parentActivityName=".settings.SettingsActivity"/>
 
         <activity
             android:name=".EditEntryActivity"
             android:label="@string/edit_entry_name"
+            android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
             android:name=".AboutActivity"
-            android:label="@string/title_about" />
+            android:label="@string/title_about"
+            android:parentActivityName=".MainActivity"/>
 
         <activity
             android:name=".settings.SettingsActivity"
-            android:label="@string/title_settings"/>
+            android:label="@string/title_settings"
+            android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>

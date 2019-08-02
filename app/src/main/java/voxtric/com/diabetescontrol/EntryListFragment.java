@@ -101,7 +101,7 @@ public class EntryListFragment extends Fragment
   void refreshEntryList()
   {
     final MainActivity activity = (MainActivity)getActivity();
-    if (activity != null)
+    if (activity != null && !RecoveryForegroundService.isDownloading())
     {
       final RecyclerView recyclerView = activity.findViewById(R.id.recycler_view_entry_list);
       AsyncTask.execute(new Runnable()

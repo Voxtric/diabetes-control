@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -66,6 +67,7 @@ public abstract class AwaitDatabaseUpdateActivity extends AppCompatActivity
     {
       cancelWaitDialog();
       recreate();
+      Toast.makeText(AwaitDatabaseUpdateActivity.this, R.string.recovery_finished_message, Toast.LENGTH_LONG).show();
     }
   }
 }

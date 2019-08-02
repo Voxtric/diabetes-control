@@ -402,6 +402,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     {
       LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
       m_backupCompleteBroadcastReceiver = null;
+
       Activity activity = getActivity();
       if (activity != null)
       {
@@ -410,6 +411,8 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
         backupNowButton.setEnabled(backupButtonsEnabled);
         Button applyBackupButton = activity.findViewById(R.id.apply_backup_button);
         applyBackupButton.setEnabled(backupButtonsEnabled);
+
+        Toast.makeText(activity, R.string.backup_finished_message, Toast.LENGTH_LONG).show();
       }
     }
   }

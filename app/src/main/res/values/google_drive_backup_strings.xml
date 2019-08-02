@@ -84,7 +84,9 @@ This may take some time, so feel free to close the app and you will be notified 
     <string name="sign_out_message">Signed out</string>
 
     <string name="backup_started_message">Backup started</string>
+    <string name="backup_finished_message">Backup finished</string>
     <string name="recovery_started_message">Recovery started</string>
+    <string name="recovery_finished_message">Recovery finished</string>
 
 
 

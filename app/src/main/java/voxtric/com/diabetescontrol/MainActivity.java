@@ -41,6 +41,7 @@ import voxtric.com.diabetescontrol.settings.SettingsActivity;
 
 public class MainActivity extends AwaitDatabaseUpdateActivity
 {
+  public static final String ACTION_MOVE_TO_LIST = "voxtric.com.diabetescontrol.MainActivity.ACTION_MOVE_TO_LIST";
   private static final int START_FRAGMENT = 0;
 
   private static final int REQUEST_EDIT_SETTINGS = 100;
@@ -97,6 +98,14 @@ public class MainActivity extends AwaitDatabaseUpdateActivity
       navigation.getMenu().getItem(START_FRAGMENT).setChecked(true);
       m_viewPager.setCurrentItem(START_FRAGMENT);
     }
+
+    actOnIntent(getIntent());
+  }
+
+  @Override
+  public void onNewIntent(Intent intent)
+  {
+    actOnIntent(intent);
   }
 
   @Override
@@ -144,7 +153,6 @@ public class MainActivity extends AwaitDatabaseUpdateActivity
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data)
   {
-    super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == REQUEST_EDIT_SETTINGS)
     {
       if ((resultCode & RESULT_UPDATE_EVENT_SPINNER) == RESULT_UPDATE_EVENT_SPINNER)
@@ -155,6 +163,10 @@ public class MainActivity extends AwaitDatabaseUpdateActivity
       {
         ((EntryListFragment)getSupportFragmentManager().getFragments().get(1)).refreshEntryList();
       }
+    }
+    else
+    {
+      super.onActivityResult(requestCode, resultCode, data);
     }
   }
 
@@ -175,6 +187,21 @@ public class MainActivity extends AwaitDatabaseUpdateActivity
     else
     {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+  }
+
+  private void actOnIntent(Intent intent)
+  {
+    String action = intent.getAction();
+    if (action != null)
+    {
+      if (action.equals(ACTION_MOVE_TO_LIST))
+      {
+        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation.getMenu().getItem(1).setChecked(true);
+        m_viewPager.setCurrentItem(1);
+      }
+      getIntent().setAction(null);
     }
   }
 
