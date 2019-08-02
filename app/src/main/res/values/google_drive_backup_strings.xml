@@ -30,6 +30,16 @@ Would you like to recover your backup, or overwrite it?"
 
 
 
+    <!-- Backup Recovery Dialog -->
+    <string name="title_backup_recovery">Recover Backup</string>
+        <string name="message_backup_recovery">
+"Are you sure you want to recover your backup?
+
+This will overwrite your local data with the data stored on your Google Drive."
+        </string>
+
+
+
     <!-- Dialog Options -->
     <string name="sign_in">Sign In</string>
     <string name="sign_out">Sign Out</string>

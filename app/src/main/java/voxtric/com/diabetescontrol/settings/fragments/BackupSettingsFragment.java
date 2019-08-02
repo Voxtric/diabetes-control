@@ -83,7 +83,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
         @Override
         public void onClick(View view)
         {
-          startRecovery(activity);
+          startRecovery(activity, true);
         }
       });
     }
@@ -282,7 +282,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
                       @Override
                       public void onClick(DialogInterface dialogInterface, int i)
                       {
-                        startRecovery(activity);
+                        startRecovery(activity, false);
                       }
                     })
                     .create();
@@ -325,9 +325,30 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     }.start();
   }
 
-  private void startRecovery(final Activity activity)
+  private void startRecovery(final Activity activity, boolean confirmWithUser)
   {
-    Intent intent = new Intent(activity, RecoveryForegroundService.class);
-    activity.startService(intent);
+    if (confirmWithUser)
+    {
+      AlertDialog dialog = new AlertDialog.Builder(activity)
+          .setTitle(R.string.title_backup_recovery)
+          .setMessage(R.string.message_backup_recovery)
+          .setNegativeButton(R.string.cancel, null)
+          .setPositiveButton(R.string.recover, new DialogInterface.OnClickListener()
+          {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+              Intent intent = new Intent(activity, RecoveryForegroundService.class);
+              activity.startService(intent);
+            }
+          })
+          .create();
+      dialog.show();
+    }
+    else
+    {
+      Intent intent = new Intent(activity, RecoveryForegroundService.class);
+      activity.startService(intent);
+    }
   }
 }
