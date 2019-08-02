@@ -113,5 +113,6 @@
         android:text="@string/backup_now_text"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/notify_on_backup_finished_label"
-        app:layout_constraintWidth_percent=".5" />
+        app:layout_constraintWidth_percent=".5"
+        android:focusable="true"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

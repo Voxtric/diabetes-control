@@ -98,15 +98,8 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
         @Override
         public void onClick(View view)
         {
-          // Delay to ensure last edited setting is included.
-          view.postDelayed(new Runnable()
-          {
-            @Override
-            public void run()
-            {
-              startBackup(activity);
-            }
-          }, 10);
+          view.requestFocus();
+          startBackup(activity);
         }
       });
       view.findViewById(R.id.apply_backup_button).setOnClickListener(new View.OnClickListener()
