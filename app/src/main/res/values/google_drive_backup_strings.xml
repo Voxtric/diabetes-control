@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="title_backup_settings">Google Drive Backup</string>
+
+
+
     <!-- Sign In Dialog -->
     <string name="title_sign_in">Sign In?</string>
         <string name="message_sign_in">
@@ -41,14 +45,23 @@ This will overwrite your local data with the data stored on your Google Drive."
 
 
     <!-- Dialog Options -->
-    <string name="sign_in">Sign In</string>
-    <string name="sign_out">Sign Out</string>
-    <string name="recover">Recover</string>
-    <string name="overwrite">Overwrite</string>
+    <string name="sign_in_dialog_option">Sign In</string>
+    <string name="sign_out_dialog_option">Sign Out</string>
+    <string name="recover_dialog_option">Recover</string>
 
 
 
     <!-- Buttons -->
+    <string name="backup_enabled_text">Backup Enabled</string>
+    <string name="automatic_backup_label">Automatically Backup</string>
+        <string-array name="automatic_backup_options">
+            <item>Monthly</item>
+            <item>Weekly</item>
+            <item>Daily</item>
+            <item>After New Entry</item>
+            <item>Never</item>
+        </string-array>
+    <string name="wifi_only_backup_label">Automatic Backup Over WiFi Only</string>
     <string name="apply_backup_text">Apply Backup</string>
     <string name="backup_now_text">Backup Now</string>
 

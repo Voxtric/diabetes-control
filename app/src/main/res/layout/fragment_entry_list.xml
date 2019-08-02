@@ -24,7 +24,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:textColor="@android:color/white"
-            android:text="@string/date_time_hint"/>
+            android:text="@string/date_time_column_title"/>
 
         <TextView
             android:id="@+id/text_view_blood_glucose_level"
@@ -33,7 +33,7 @@
             android:layout_weight="1.2"
             android:gravity="center"
             android:textColor="@android:color/white"
-            android:text="@string/blood_glucose_level_hint_newline"/>
+            android:text="@string/blood_glucose_level_column_title"/>
 
         <TextView
             android:id="@+id/text_view_insulin_dose"
@@ -42,7 +42,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textColor="@android:color/white"
-            android:text="@string/insulin_dose_hint"/>
+            android:text="@string/insulin_dose_column_title"/>
 
         <TextView
             android:id="@+id/text_view_event"
@@ -51,7 +51,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:textColor="@android:color/white"
-            android:text="@string/event_hint"/>
+            android:text="@string/event_column_title"/>
 
         <LinearLayout
             android:layout_width="24dp"

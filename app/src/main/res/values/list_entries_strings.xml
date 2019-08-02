@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Column Titles -->
+    <string name="date_time_column_title">Date &amp; Time</string>
+
+    <string name="blood_glucose_level_column_title">BGL (mmol/L)</string>
+    <string name="blood_glucose_level_column_title_newline">BGL\n(mmol/L)</string>
+
+    <string name="insulin_name_column_title">Insulin Name</string>
+
+    <string name="insulin_dose_column_title">Insulin Dose</string>
+
+    <string name="event_column_title">Event</string>
+
+
+
+    <!-- Messages -->
+    <string name="no_data_notice">No data to display</string>
+</resources>

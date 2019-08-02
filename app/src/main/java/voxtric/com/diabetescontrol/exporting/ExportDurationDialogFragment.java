@@ -91,10 +91,10 @@ public class ExportDurationDialogFragment extends DialogFragment
     m_endDateButton.setEnabled(enableWithinTimePeriod);
 
     m_alertDialog = new AlertDialog.Builder(activity)
-        .setTitle("Export data")
+        .setTitle(R.string.title_export_data)
         .setView(view)
-        .setNegativeButton(R.string.cancel, null)
-        .setPositiveButton(R.string.next, new DialogInterface.OnClickListener()
+        .setNegativeButton(R.string.cancel_dialog_option, null)
+        .setPositiveButton(R.string.export_dialog_option, new DialogInterface.OnClickListener()
         {
           @Override
           public void onClick(DialogInterface dialog, int which)
@@ -179,7 +179,7 @@ public class ExportDurationDialogFragment extends DialogFragment
         final DatePicker datePicker = new DatePicker(getActivity());
         AlertDialog dialog = new AlertDialog.Builder(getActivity())
             .setView(datePicker)
-            .setPositiveButton(R.string.done, new DialogInterface.OnClickListener()
+            .setPositiveButton(R.string.done_dialog_option, new DialogInterface.OnClickListener()
             {
               @Override
               public void onClick(DialogInterface dialog, int which)

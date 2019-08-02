@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Backup Settings found in 'google_drive_backup_strings'. All other settings string below. -->
+
+
+
+    <!-- Events Settings -->
+    <string name="title_events_settings">Events</string>
+
+    <string name="edit_events_text">Edit Events</string>
+
+
+
+    <!-- Contact Details Settings -->
+    <string name="title_contact_details_settings">Contact Details</string>
+
+    <string name="contact_name_label">Contact Name:</string>
+        <string name="contact_name_hint">Contact Name</string>
+    <string name="contact_number_label">Contact Number:</string>
+        <string name="contact_number_hint">Contact No.</string>
+
+
+
+    <!-- Blood Glucose Level Highlighting Settings -->
+    <string name="title_bgl_highlighting_settings">Blood Glucose Level Highlighting</string>
+
+    <string name="highlighting_enabled_text">Highlighting Enabled</string>
+
+    <string name="bgl_range_indicator">-</string>
+    <string name="ideal_range_label">Ideal Range (BGL):</string>
+        <string name="ideal_range_lower_hint">Ideal Lower</string>
+        <string name="ideal_range_upper_hint">Ideal Upper</string>
+    <string name="high_range_label">High Range (BGL):</string>
+        <string name="high_range_lower_hint">High Lower</string>
+        <string name="high_range_upper_hint">High Upper</string>
+
+    <string name="reset_bgl_values_hint">Reset BGL Values</string>
+
+    <string name="bgl_range_value_out_of_range_message">BGL range value must be higher than the previous value and lower than the next</string>
+    <string name="bgl_range_value_empty_message">BGL range value cannot be empty</string>
+    <string name="bgl_range_values_reset">BGL values reset to defaults</string>
+
+
+
+    <!-- Meal Targets Settings -->
+    <string name="title_meal_targets_settings">Meal Targets</string>
+
+    <string name="meal_target_range_indicator">-</string>
+    <string name="target_pre_meal_label">Pre-meal blood glucose range (mmol/L):</string>
+        <string name="target_pre_meal_lower_hint">Pre-meal Lower</string>
+        <string name="target_pre_meal_upper_hint">Pre-meal Upper</string>
+    <string name="target_post_meal_label">Post-meal blood glucose range (mmol/L):</string>
+        <string name="target_post_meal_lower_hint">Post-meal Lower</string>
+        <string name="target_post_meal_upper_hint">Post-meal Upper</string>
+
+    <string name="target_set_from_bgl_highlighting_hint">Set From BGL Highlighting Values</string>
+</resources>

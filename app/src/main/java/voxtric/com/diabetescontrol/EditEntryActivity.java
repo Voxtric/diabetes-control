@@ -101,8 +101,8 @@ public class EditEntryActivity extends AppCompatActivity
     AlertDialog dialog = new AlertDialog.Builder(this)
         .setTitle(R.string.title_cancel_entry_edit)
         .setMessage(R.string.message_cancel_entry_edit)
-        .setNegativeButton(R.string.continue_edit, null)
-        .setPositiveButton(R.string.cancel_edit, new DialogInterface.OnClickListener()
+        .setNegativeButton(R.string.continue_edit_dialog_option, null)
+        .setPositiveButton(R.string.cancel_edit_dialog_option, new DialogInterface.OnClickListener()
         {
           @Override
           public void onClick(DialogInterface dialog, int which)

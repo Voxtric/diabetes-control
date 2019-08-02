@@ -400,7 +400,7 @@ public class NewEntryFragment extends Fragment
         final DatePicker datePicker = new DatePicker(getActivity());
         AlertDialog dialog = new AlertDialog.Builder(getActivity())
             .setView(datePicker)
-            .setPositiveButton(R.string.done, new DialogInterface.OnClickListener()
+            .setPositiveButton(R.string.done_dialog_option, new DialogInterface.OnClickListener()
             {
               @Override
               public void onClick(DialogInterface dialog, int which)
@@ -429,7 +429,7 @@ public class NewEntryFragment extends Fragment
         final TimePicker timePicker = new TimePicker(getActivity());
         AlertDialog dialog = new AlertDialog.Builder(getActivity())
             .setView(timePicker)
-            .setPositiveButton(R.string.done, new DialogInterface.OnClickListener()
+            .setPositiveButton(R.string.done_dialog_option, new DialogInterface.OnClickListener()
             {
               @Override
               public void onClick(DialogInterface dialog, int which)
@@ -533,7 +533,7 @@ public class NewEntryFragment extends Fragment
             AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setTitle(R.string.title_missing_comparison_values)
                 .setMessage(R.string.message_missing_comparison_values)
-                .setPositiveButton(R.string.ok, null)
+                .setPositiveButton(R.string.ok_dialog_option, null)
                 .create();
             dialog.show();
           }
@@ -542,8 +542,8 @@ public class NewEntryFragment extends Fragment
             AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setTitle(R.string.title_see_previous_criteria)
                 .setView(layout)
-                .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.done, new DialogInterface.OnClickListener()
+                .setNegativeButton(R.string.cancel_dialog_option, null)
+                .setPositiveButton(R.string.done_dialog_option, new DialogInterface.OnClickListener()
                 {
                   @Override
                   public void onClick(DialogInterface dialog, int which)
@@ -782,7 +782,7 @@ public class NewEntryFragment extends Fragment
               AlertDialog dialog = new AlertDialog.Builder(activity)
                   .setTitle(R.string.title_no_results)
                   .setMessage(R.string.message_no_results)
-                  .setPositiveButton(R.string.ok, null)
+                  .setPositiveButton(R.string.ok_dialog_option, null)
                   .create();
               dialog.show();
             }
@@ -798,9 +798,9 @@ public class NewEntryFragment extends Fragment
 
               AlertDialog dialog = new AlertDialog.Builder(activity)
                   .setView(view)
-                  .setNeutralButton(R.string.done, null)
-                  .setNegativeButton(R.string.previous, null)
-                  .setPositiveButton(R.string.next, null)
+                  .setNeutralButton(R.string.done_dialog_option, null)
+                  .setNegativeButton(R.string.previous_dialog_option, null)
+                  .setPositiveButton(R.string.next_dialog_option, null)
                   .create();
               dialog.show();
 
@@ -1059,8 +1059,8 @@ public class NewEntryFragment extends Fragment
       AlertDialog dialog = new AlertDialog.Builder(activity)
           .setTitle(R.string.title_future_entry)
           .setMessage(R.string.message_future_entry)
-          .setNegativeButton(R.string.cancel, null)
-          .setPositiveButton(R.string.save, new DialogInterface.OnClickListener()
+          .setNegativeButton(R.string.cancel_dialog_option, null)
+          .setPositiveButton(R.string.save_dialog_option, new DialogInterface.OnClickListener()
           {
             @Override
             public void onClick(DialogInterface dialogInterface, int i)
@@ -1159,7 +1159,7 @@ public class NewEntryFragment extends Fragment
     android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(activity)
         .setTitle(R.string.title_event_date_mismatch)
         .setMessage(activity.getString(R.string.message_event_date_mismatch, dateString, previousDateString))
-        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+        .setPositiveButton(R.string.yes_dialog_option, new DialogInterface.OnClickListener()
         {
           @Override
           public void onClick(DialogInterface dialogInterface, int i)
@@ -1175,7 +1175,7 @@ public class NewEntryFragment extends Fragment
             });
           }
         })
-        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
+        .setNegativeButton(R.string.no_dialog_option, new DialogInterface.OnClickListener()
         {
           @Override
           public void onClick(DialogInterface dialogInterface, int i)
@@ -1190,7 +1190,7 @@ public class NewEntryFragment extends Fragment
             });
           }
         })
-        .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener()
+        .setNeutralButton(R.string.cancel_dialog_option, new DialogInterface.OnClickListener()
         {
           @Override
           public void onClick(DialogInterface dialogInterface, int i)
@@ -1224,7 +1224,7 @@ public class NewEntryFragment extends Fragment
             AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setTitle(R.string.title_entry_collision)
                 .setMessage(R.string.message_entry_collision)
-                .setPositiveButton(R.string.ok, null)
+                .setPositiveButton(R.string.ok_dialog_option, null)
                 .create();
             dialog.show();
           }
@@ -1253,7 +1253,7 @@ public class NewEntryFragment extends Fragment
     android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(activity)
         .setTitle(R.string.title_entry_collision)
         .setMessage(eventRelated ? R.string.message_entry_event_collision_replace : R.string.message_entry_time_collision_replace)
-        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
+        .setNegativeButton(R.string.cancel_dialog_option, new DialogInterface.OnClickListener()
         {
           @Override
           public void onClick(DialogInterface dialog, int which)
@@ -1261,7 +1261,7 @@ public class NewEntryFragment extends Fragment
             Toast.makeText(activity, R.string.new_entry_cancelled_message, Toast.LENGTH_LONG).show();
           }
         })
-        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+        .setPositiveButton(R.string.overwrite_dialog_option, new DialogInterface.OnClickListener()
         {
           @Override
           public void onClick(DialogInterface dialog, int which)

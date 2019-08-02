@@ -1,306 +1,44 @@
 <resources>
     <string name="app_name">Diabetes Control</string>
-    <string name="edit_events_name">Edit Events (%1$d/%2$d)</string>
-    <string name="edit_entry_name">Edit Entry</string>
 
+    <!-- Toasts -->
     <string name="not_implemented_message">Feature under construction</string>
 
-    <string name="title_delete">Delete</string>
-    <string name="title_cancel">Cancel</string>
 
-    <string name="permission_justification_title">Permission request</string>
 
-    <!-- First Time Setup -->
-    <string name="first_launch_setup_title">First Launch Setup</string>
-    <string name="first_launch_setup_message_1">
-"As this is the first time you have launched this app, would you like to configure your events?
-
-If not, you can do so later from the settings menu at the top right."
-    </string>
-    <string name="first_launch_setup_message_2">
-"For a complete export in the future, your contact details and blood glucose level targets are requested. Would you like to input this now?
-
-If not, you can do so later from the settings menu at the top right."
-    </string>
-
-    <!-- Main Activity -->
-    <string name="title_export">Export</string>
-    <string name="title_export_nhs">NHS Format (.pdf)</string>
-    <string name="title_export_ads">ADS Format (.pdf)</string>
-    <string name="title_export_excel">Excel Format (.xlsx)</string>
-    <string name="title_about">About</string>
-    <string name="title_settings">Settings</string>
-
-    <string name="title_edit_contact_details">Edit Contact Details</string>
-    <string name="title_edit_targets">Edit Targets</string>
-    <string name="title_toggle_highlight">Highlight Entries</string>
-
+    <!-- Menus -->
     <string name="title_add_new">Add New</string>
     <string name="title_view_all">View All</string>
     <string name="title_graph">Graph View</string>
-    <string name="title_view_full">View Full</string>
 
-    <string name="date_label">Date:</string>
-    <string name="time_label">Time:</string>
-    <string name="event_label">Event:</string>
-    <string name="insulin_name_label">Insulin Name:</string>
-    <string name="insulin_dose_label">Insulin Dose:</string>
-    <string name="blood_glucose_level_label">Blood Glucose Level:</string>
-    <string name="food_eaten_label">Food Eaten:</string>
-    <string name="additional_notes_label">Additional Notes:</string>
+    <string name="title_export">Export</string>
+        <string name="title_export_nhs">NHS Format (.pdf)</string>
+        <string name="title_export_ads">ADS Format (.pdf)</string>
+        <string name="title_export_csv">CSV Format (.csv)</string>
+        <string name="title_export_excel">Excel Format (.xlsx)</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_about">About</string>
 
-    <string name="date_time_hint">Date &amp; Time</string>
-    <string name="event_hint">Event</string>
-    <string name="insulin_name_hint">Insulin Name</string>
-    <string name="insulin_dose_hint">Insulin Dose</string>
-    <string name="blood_glucose_level_hint">BGL (mmol/L)</string>
-    <string name="blood_glucose_level_hint_newline">BGL\n(mmol/L)</string>
-    <string name="blood_glucose_level_text">Blood Glucose Level</string>
-    <string name="food_eaten_hint">Food Eaten</string>
-    <string name="additional_notes_hint">Addition Notes</string>
 
-    <string name="food_item_hint">Food Item %1$d</string>
 
-    <string name="see_previous_text">See Previous</string>
-    <string name="add_new_entry_text">Add New Entry</string>
-    <string name="save_changes_text">Save Changes</string>
+    <!-- Permissions -->
+    <string name="permission_justification_title">Permission request</string>
 
-    <string name="no_data_notice">No data to display</string>
 
-    <string name="new_entry_insulin_name_empty_message">Insulin name missing</string>
-    <string name="new_entry_insulin_dose_empty_message">Insulin dose missing</string>
-    <string name="new_entry_bgl_empty_message">Blood glucose level missing</string>
-    <string name="new_entry_added_message">New entry logged</string>
-    <string name="new_entry_cancelled_message">New entry cancelled</string>
-    <string name="new_entry_deleted_event_message">Entry contains a deleted event</string>
-
-    <string name="more_options_content_description">More options button</string>
-
-    <!-- Edit Events Activity -->
-    <string name="event_name_title">Event Name</string>
-    <string name="event_time_title">Event Time</string>
-
-    <string name="title_move">Move</string>
-    <string name="action_move_up">Move Up</string>
-    <string name="action_move_down">Move Down</string>
-
-    <string name="title_edit">Edit</string>
-    <string name="title_edit_name">Edit Name</string>
-    <string name="title_edit_time">Edit Time</string>
-    <string name="title_edit_event_name">Edit Event Name</string>
-
-    <string name="event_name_label">Event Name:</string>
-    <string name="event_name_hint">Event Name</string>
-
-    <string name="reset_events_text">Reset Events</string>
-    <string name="add_new_event_text">Add New Event</string>
-
-    <string name="new_event_added_message">New event added</string>
-    <string name="new_event_cancelled_message">New event cancelled</string>
-    <string name="event_name_changed_message">Event name changed</string>
-    <string name="event_time_changed_message">Event time changed</string>
-    <string name="event_deleted_message">Event deleted</string>
-    <string name="event_delete_final_message">Final event can not be deleted</string>
-    <string name="events_reset_message">Events reset</string>
-
-    <string name="move_down_content_description">Move event down button</string>
-    <string name="move_up_content_description">Move event up button</string>
-
-    <!-- About Activity -->
-    <string name="icon_content_description">Diabetes Control Icon</string>
-    <string name="voxtric_icon_content_description">Voxtric Icon</string>
-
-    <string name="app_version_text">App Version: %1$s</string>
-    <string name="database_version_text">Database Version: %1$s-%2$d</string>
-    <string name="disclaimer_label">Disclaimer</string>
-    <string name="privacy_policy_label">Privacy Policy</string>
-    <string name="open_source_information_label">Open Source Information</string>
-
-    <string name="donation_links_label">Donation Links</string>
-    <string-array name="donation_button_hints">
-        <item>Diabetes UK</item>
-        <item>American Diabetes Association</item>
-        <item>Diabetes Australia</item>
-    </string-array>
-    <string-array name="donation_button_links">
-        <item>https://donate.diabetes.org.uk/donate/</item>
-        <item>https://donations.diabetes.org/site/Donation2?idb=826845666&amp;df_id=19705</item>
-        <item>https://www.diabetesaustralia.com.au/donation</item>
-    </string-array>
-
-    <string name="created_by_text">Created by Voxtric</string>
-
-    <!-- Settings Activity -->
-    <string name="title_backup_settings">Google Drive Backup</string>
-    <string name="backup_enabled_text">Backup Enabled</string>
-    <string name="automatic_backup_label">Automatically Backup</string>
-    <string name="wifi_only_backup_label">Automatic Backup Over WiFi Only</string>
-
-    <string name="title_events_settings">Events</string>
-    <string name="edit_events_text">Edit Events</string>
-
-    <string name="title_contact_details_settings">Contact Details</string>
-    <string name="contact_name_label">Contact Name:</string>
-    <string name="contact_number_label">Contact Number:</string>
-    <string name="contact_name_hint">Contact Name</string>
-    <string name="contact_number_hint">Contact No.</string>
-
-    <string name="title_bgl_highlighting_settings">Blood Glucose Level Highlighting</string>
-    <string name="highlighting_enabled_text">Highlighting Enabled</string>
-    <string name="ideal_range_label">Ideal Range (BGL):</string>
-    <string name="high_range_label">High Range (BGL):</string>
-    <string name="ideal_range_lower_hint">Ideal Lower</string>
-    <string name="ideal_range_upper_hint">Ideal Upper</string>
-    <string name="high_range_lower_hint">High Lower</string>
-    <string name="high_range_upper_hint">High Upper</string>
-    <string name="reset_bgl_values_hint">Reset BGL Values</string>
-
-    <string name="bgl_range_value_out_of_range_message">BGL range value must be higher than the previous value and lower than the next</string>
-    <string name="bgl_range_value_empty_message">BGL range value cannot be empty</string>
-    <string name="bgl_range_values_reset">BGL values reset to defaults</string>
-
-    <string name="title_meal_targets_settings">Meal Targets</string>
-    <string name="target_pre_meal_label">Pre-meal blood glucose range (mmol/L):</string>
-    <string name="target_post_meal_label">Post-meal blood glucose range (mmol/L):</string>
-    <string name="target_pre_meal_lower_hint">Pre-meal Lower</string>
-    <string name="target_pre_meal_upper_hint">Pre-meal Upper</string>
-    <string name="target_post_meal_lower_hint">Post-meal Lower</string>
-    <string name="target_post_meal_upper_hint">Post-meal Upper</string>
-    <string name="target_range_indicator">-</string>
-    <string name="target_set_from_bgl_highlighting_hint">Set From BGL Highlighting Values</string>
-
-    <!-- Edit Entry Activity -->
-    <string name="title_cancel_entry_edit">Cancel Entry Edit?</string>
-    <string name="message_cancel_entry_edit">Any changes made to this entry will be lost. Are you sure you want to cancel the edit?</string>
-
-    <string name="changes_saved_message">Changes saved</string>
-
-    <!-- View Previous Dialog -->
-    <string name="title_missing_comparison_values">Missing Comparison Values</string>
-    <string name="title_see_previous_criteria">See previous with similar…</string>
-    <string name="title_no_results">No results found</string>
-
-    <string name="message_missing_comparison_values">No values have been filled in for a new entry that can be compared against existing entries.</string>
-    <string name="message_no_results">No previous entries could be found with any similarities.</string>
-
-    <!-- Entry Collision -->
-    <string name="title_entry_collision">Entry Collision</string>
-    <string name="message_entry_event_collision_replace">
-"This entry has the same event on the same day as an existing entry.
-
-Do you want to overwrite the existing entry?"
-    </string>
-    <string name="message_entry_time_collision_replace">
-"This entry has the same date and time as an existing entry.
-
-Do you want to overwrite the existing entry?"
-    </string>
-    <string name="message_entry_collision">Can not save edited entry as it would overwrite a different existing entry.</string>
-
-    <!-- Event date mismatch -->
-    <string name="title_event_date_mismatch">Suspected Date Mismatch</string>
-    <string name="message_event_date_mismatch">
-"The new entry occurs on %1$s but seems to be a continuation of %2$s.
-
-Would you like to associate the entry with %2$s for exporting? (This won't affect the date and time displayed)"
-    </string>
-
-    <!-- Future Entry -->
-    <string name="title_future_entry">Future Entry</string>
-    <string name="message_future_entry">
-"This entry takes place over 15 minutes in the future.
-
-Are you sure you want to save it?"
-    </string>
-
-    <!-- Delete Entry -->
-    <string name="title_delete_entry">Delete Entry?</string>
-    <string name="message_delete_entry">Are you sure that you want to delete this entry?</string>
-
-    <!-- Delete Event -->
-    <string name="title_delete_event">Delete Event?</string>
-    <string name="message_delete_event">Are you sure you want to delete event: \"%1$s\"?</string>
-
-    <!-- Reset Events -->
-    <string name="title_reset_events">Reset Events?</string>
-    <string name="message_reset_events">Are you sure you want to reset your events?\n\nThis will replace all current events and times with the default NHS standard events and times.</string>
 
     <!-- Dialog Options -->
-    <string name="done">Done</string>
-    <string name="cancel">Cancel</string>
-    <string name="reset">Reset</string>
-    <string name="ok">OK</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-    <string name="add">Add</string>
-    <string name="delete">Delete</string>
-    <string name="save">Save</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="cancel_edit">Cancel Edit</string>
-    <string name="continue_edit">Continue Edit</string>
-    <string name="finish">Finish</string>
-    <string name="share">Share</string>
+    <string name="done_dialog_option">Done</string>
+    <string name="ok_dialog_option">OK</string>
+    <string name="delete_dialog_option">Delete</string>
+    <string name="overwrite_dialog_option">Overwrite</string>
+    <string name="cancel_dialog_option">Cancel</string>
+    <string name="yes_dialog_option">Yes</string>
+    <string name="no_dialog_option">No</string>
+    <string name="allow_dialog_option">Allow</string>
+    <string name="deny_dialog_option">Deny</string>
 
-    <!-- Export -->
-    <string name="write_external_storage_export_permission_justification_message">
-"In order to export your data, permission to write to the external storage of the device must be given.
 
-Give write external storage permission?"
-    </string>
-    <string name="write_external_storage_export_permission_needed_message">Cannot export until write permissions are granted.</string>
 
-    <string name="export_duration_all_recorded">All recorded</string>
-    <string name="export_duration_since_last">Since last recorded</string>
-    <string name="export_duration_within_period">Within date period</string>
-    <string name="date_period_start_label">Start Date:</string>
-    <string name="date_period_end_label">End Date:</string>
-    <string name="date_period_start_content_description">Start Date</string>
-    <string name="date_period_end_content_description">End Date</string>
 
-    <string name="ads_export_title">ADS Export</string>
-    <string name="ads_export_start_message">Generating PDF…</string>
-    <string name="ads_export_end_message">PDF generated!</string>
 
-    <string name="week_commencing">Week Commencing: %1$s</string>
-    <string name="blood_glucose_targets">Blood Glucose Targets (mmol/L): Pre-meal %1$.1f - %2$.1f, Post-meal %3$.1f - %4$.1f</string>
-    <string name="blood_glucose_targets_empty">Blood Glucose Targets (mmol/L): Pre-meal ........., Post-meal .........</string>
-    <string name="reading">Reading</string>
-    <string name="time">Time</string>
-    <string name="dose">Dose</string>
-    <string name="food_eaten_title">Food Eaten /</string>
-    <string name="additional_notes_title">Additional Notes</string>
-    <string name="insulin_used">Insulin Used: %1$s</string>
-    <string name="contact_name">Contact Name: %1$s</string>
-    <string name="contact_number">Contact Number: %1$s</string>
-
-    <!-- Arrays -->
-    <string-array name="automatic_backup_options">
-        <item>Monthly</item>
-        <item>Weekly</item>
-        <item>Daily</item>
-        <item>After New Entry</item>
-        <item>Never</item>
-    </string-array>
-
-    <string-array name="nhs_event_names">
-        <item>Before Breakfast</item>
-        <item>Two Hours after Breakfast</item>
-        <item>Before Midday Meal</item>
-        <item>Two Hours after Midday Meal</item>
-        <item>Before Evening Meal</item>
-        <item>Two Hours after Evening Meal</item>
-        <item>Before Bed</item>
-        <item>During Night</item>
-    </string-array>
-
-    <string-array name="days">
-        <item>Monday</item>
-        <item>Tuesday</item>
-        <item>Wednesday</item>
-        <item>Thursday</item>
-        <item>Friday</item>
-        <item>Saturday</item>
-        <item>Sunday</item>
-    </string-array>
 </resources>

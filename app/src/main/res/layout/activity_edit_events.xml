@@ -24,7 +24,7 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:textColor="@android:color/white"
-            android:text="@string/event_name_title"/>
+            android:text="@string/event_name_column_title"/>
 
         <TextView
             android:layout_width="0dp"
@@ -36,7 +36,7 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:gravity="center"
             android:textColor="@android:color/white"
-            android:text="@string/event_time_title"/>
+            android:text="@string/event_time_column_title"/>
 
         <LinearLayout
             android:layout_width="24dp"

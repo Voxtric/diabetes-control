@@ -64,7 +64,7 @@
         app:layout_constraintLeft_toRightOf="@id/edit_text_target_pre_meal_lower"
         app:layout_constraintRight_toLeftOf="@id/edit_text_target_pre_meal_upper"
         style="@style/BasicText"
-        android:text="@string/target_range_indicator"/>
+        android:text="@string/meal_target_range_indicator"/>
 
     <EditText
         android:id="@+id/edit_text_target_pre_meal_upper"
@@ -117,7 +117,7 @@
         app:layout_constraintLeft_toRightOf="@id/edit_text_target_post_meal_lower"
         app:layout_constraintRight_toLeftOf="@id/edit_text_target_post_meal_upper"
         style="@style/BasicText"
-        android:text="@string/target_range_indicator"/>
+        android:text="@string/meal_target_range_indicator"/>
 
     <EditText
         android:id="@+id/edit_text_target_post_meal_upper"

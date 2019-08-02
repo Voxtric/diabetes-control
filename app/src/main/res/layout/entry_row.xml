@@ -57,5 +57,5 @@
         android:background="@drawable/back"
         android:src="@drawable/more_vertical"
         android:onClick="openEntryMoreMenu"
-        android:contentDescription="@string/more_options_content_description" />
+        android:contentDescription="@string/edit_entry_more_content_description" />
 </LinearLayout>

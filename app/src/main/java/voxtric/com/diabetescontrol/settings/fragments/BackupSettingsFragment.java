@@ -151,7 +151,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
           {
             dialogBuilder.setTitle(R.string.title_sign_in)
                 .setMessage(R.string.message_sign_in)
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener()
+                .setNegativeButton(R.string.cancel_dialog_option, new DialogInterface.OnClickListener()
                 {
                   @Override
                   public void onClick(DialogInterface dialogInterface, int i)
@@ -162,7 +162,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
                     setBackupEnabled(backupEnabledSwitch.getRootView(), false);
                   }
                 })
-                .setPositiveButton(R.string.sign_in, new DialogInterface.OnClickListener()
+                .setPositiveButton(R.string.sign_in_dialog_option, new DialogInterface.OnClickListener()
                 {
                   @Override
                   public void onClick(DialogInterface dialogInterface, int i)
@@ -175,7 +175,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
           {
             dialogBuilder.setTitle(R.string.title_sign_out)
                 .setMessage(R.string.message_sign_out)
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener()
+                .setNegativeButton(R.string.cancel_dialog_option, new DialogInterface.OnClickListener()
                 {
                   @Override
                   public void onClick(DialogInterface dialogInterface, int i)
@@ -186,7 +186,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
                     setBackupEnabled(backupEnabledSwitch.getRootView(), true);
                   }
                 })
-                .setPositiveButton(R.string.sign_out, new DialogInterface.OnClickListener()
+                .setPositiveButton(R.string.sign_out_dialog_option, new DialogInterface.OnClickListener()
                 {
                   @Override
                   public void onClick(DialogInterface dialogInterface, int i)
@@ -269,7 +269,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
                 AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setTitle(R.string.title_auto_backup_safe)
                     .setMessage(R.string.message_auto_backup_safe)
-                    .setNegativeButton(R.string.overwrite, new DialogInterface.OnClickListener()
+                    .setNegativeButton(R.string.overwrite_dialog_option, new DialogInterface.OnClickListener()
                     {
                       @Override
                       public void onClick(DialogInterface dialogInterface, int i)
@@ -277,7 +277,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
                         startBackup(activity);
                       }
                     })
-                    .setPositiveButton(R.string.recover, new DialogInterface.OnClickListener()
+                    .setPositiveButton(R.string.recover_dialog_option, new DialogInterface.OnClickListener()
                     {
                       @Override
                       public void onClick(DialogInterface dialogInterface, int i)
@@ -332,8 +332,8 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
       AlertDialog dialog = new AlertDialog.Builder(activity)
           .setTitle(R.string.title_backup_recovery)
           .setMessage(R.string.message_backup_recovery)
-          .setNegativeButton(R.string.cancel, null)
-          .setPositiveButton(R.string.recover, new DialogInterface.OnClickListener()
+          .setNegativeButton(R.string.cancel_dialog_option, null)
+          .setPositiveButton(R.string.recover_dialog_option, new DialogInterface.OnClickListener()
           {
             @Override
             public void onClick(DialogInterface dialogInterface, int i)

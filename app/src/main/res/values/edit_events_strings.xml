@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edit_events_name">Edit Events (%1$d/%2$d)</string>
+
+
+
+    <!-- Edit Event Name Dialog -->
+    <string name="title_edit_event_name">Edit Event Name</string>
+        <string name="event_name_label">Event Name:</string>
+            <string name="event_name_hint">Event Name</string>
+
+
+
+    <!-- Delete Event -->
+    <string name="title_delete_event">Delete Event?</string>
+        <string name="message_delete_event">Are you sure you want to delete event: \"%1$s\"?</string>
+
+
+
+    <!-- Reset Events -->
+    <string name="title_reset_events">Reset Events?</string>
+        <string name="message_reset_events">
+"Are you sure you want to reset your events?
+
+This will replace all current events and times with the default NHS standard events and times."
+        </string>
+
+
+
+    <!-- Dialog Options -->
+    <string name="reset_dialog_option">Reset</string>
+
+
+
+    <!-- Column Titles -->
+    <string name="event_name_column_title">Event Name</string>
+    <string name="event_time_column_title">Event Time</string>
+
+
+
+    <!-- Buttons -->
+    <string name="reset_events_text">Reset Events</string>
+    <string name="add_new_event_text">Add New Event</string>
+
+
+
+    <!-- Menus -->
+    <string name="title_more_move_event">Move</string>
+    <string name="title_more_edit_event">Edit</string>
+        <string name="title_more_edit_event_name">Edit Name</string>
+        <string name="title_more_edit_event_time">Edit Time</string>
+    <string name="title_more_delete_event">Delete</string>
+    <string name="title_more_cancel_event">Cancel</string>
+
+
+
+    <!-- Toasts -->
+    <string name="new_event_added_message">New event added</string>
+    <string name="new_event_cancelled_message">New event cancelled</string>
+    <string name="event_name_changed_message">Event name changed</string>
+    <string name="event_time_changed_message">Event time changed</string>
+    <string name="event_deleted_message">Event deleted</string>
+    <string name="event_delete_final_message">Final event can not be deleted</string>
+    <string name="events_reset_message">Events reset</string>
+
+
+
+    <!-- Content Descriptions -->
+    <string name="edit_event_more_content_description">Edit event more options button</string>
+
+    <string name="move_down_content_description">Move event down button</string>
+    <string name="move_up_content_description">Move event up button</string>
+
+
+
+    <!-- NHS Default Events -->
+    <string-array name="nhs_event_names">
+        <item>Before Breakfast</item>
+        <item>Two Hours after Breakfast</item>
+        <item>Before Midday Meal</item>
+        <item>Two Hours after Midday Meal</item>
+        <item>Before Evening Meal</item>
+        <item>Two Hours after Evening Meal</item>
+        <item>Before Bed</item>
+        <item>During Night</item>
+    </string-array>
+</resources>

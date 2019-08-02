@@ -1,22 +1,17 @@
 package voxtric.com.diabetescontrol;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
@@ -29,19 +24,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tom_roush.pdfbox.util.PDFBoxResourceLoader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -132,6 +120,9 @@ public class MainActivity extends AppCompatActivity
       case R.id.navigation_export_ads:
         export(getString(R.string.ads_export_title), getString(R.string.ads_export_start_message), getString(R.string.ads_export_end_message));
         return true;
+      case R.id.navigation_export_csv:
+        Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
+        return true;
       case R.id.navigation_export_xlsx:
         Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
         return true;
@@ -144,52 +135,6 @@ public class MainActivity extends AppCompatActivity
       case R.id.navigation_settings:
         intent = new Intent(this, SettingsActivity.class);
         startActivityForResult(intent, REQUEST_EDIT_SETTINGS);
-        return true;
-
-
-      case R.id.action_import_database:
-        try
-        {
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-          {
-            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-
-            String[] affixes = new String[] {"", "-shm", "-wal"};
-            for (String affix : affixes)
-            {
-              File databaseFilePath = new File(getDatabasePath(AppDatabase.NAME).getAbsolutePath() + affix);
-              File importFilePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(), AppDatabase.NAME + affix);
-              Log.v("Import path", importFilePath.getAbsolutePath());
-
-              FileInputStream inStream = new FileInputStream(importFilePath);
-              FileOutputStream outStream = new FileOutputStream(databaseFilePath);
-              FileChannel inChannel = inStream.getChannel();
-              FileChannel outChannel = outStream.getChannel();
-              inChannel.transferTo(0, inChannel.size(), outChannel);
-              inStream.close();
-              outStream.close();
-            }
-
-            AppDatabase.initialise(this);
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            if (fragmentManager != null)
-            {
-              List<Fragment> fragments = fragmentManager.getFragments();
-              if (fragments.size() >= 2 && fragments.get(1) instanceof EntryListFragment)
-              {
-                ((EntryListFragment) fragments.get(1)).refreshEntryList();
-              }
-            }
-
-            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-            Toast.makeText(MainActivity.this, String.format("Database files imported from %s", path), Toast.LENGTH_LONG).show();
-          }
-        }
-        catch (IOException exception)
-        {
-          exception.printStackTrace();
-          Toast.makeText(MainActivity.this, "Failed to import database files", Toast.LENGTH_LONG).show();
-        }
         return true;
 
       default:
@@ -250,7 +195,7 @@ public class MainActivity extends AppCompatActivity
           AlertDialog dialog = new AlertDialog.Builder(this)
               .setTitle(R.string.permission_justification_title)
               .setMessage(R.string.write_external_storage_export_permission_justification_message)
-              .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
+              .setNegativeButton(R.string.deny_dialog_option, new DialogInterface.OnClickListener()
               {
                 @Override
                 public void onClick(DialogInterface dialog, int which)
@@ -258,9 +203,8 @@ public class MainActivity extends AppCompatActivity
                   Toast.makeText(MainActivity.this, R.string.write_external_storage_export_permission_needed_message, Toast.LENGTH_LONG).show();
                 }
               })
-              .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+              .setPositiveButton(R.string.allow_dialog_option, new DialogInterface.OnClickListener()
               {
-                @SuppressLint("NewApi")
                 @Override
                 public void onClick(DialogInterface dialog, int which)
                 {

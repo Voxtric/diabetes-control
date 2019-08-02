@@ -189,7 +189,7 @@ public class EntryListFragment extends Fragment
 
     AlertDialog dialog = new AlertDialog.Builder(activity)
         .setView(view)
-        .setPositiveButton(R.string.done, null)
+        .setPositiveButton(R.string.done_dialog_option, null)
         .create();
     dialog.show();
   }
@@ -208,8 +208,8 @@ public class EntryListFragment extends Fragment
     AlertDialog dialog = new AlertDialog.Builder(activity)
         .setTitle(R.string.title_delete_entry)
         .setMessage(R.string.message_delete_entry)
-        .setNegativeButton(R.string.cancel, null)
-        .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener()
+        .setNegativeButton(R.string.cancel_dialog_option, null)
+        .setPositiveButton(R.string.delete_dialog_option, new DialogInterface.OnClickListener()
         {
           @Override
           public void onClick(DialogInterface dialog, int which)

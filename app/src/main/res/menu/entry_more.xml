@@ -4,17 +4,17 @@
 
     <item
         android:id="@+id/navigation_view_full"
-        android:title="@string/title_view_full" />
+        android:title="@string/title_more_view_full_entry" />
 
     <item
         android:id="@+id/navigation_edit"
-        android:title="@string/title_edit" />
+        android:title="@string/title_more_edit_entry" />
 
     <item
         android:id="@+id/navigation_delete"
-        android:title="@string/title_delete" />
+        android:title="@string/title_more_delete_entry" />
 
     <item
         android:id="@+id/navigation_cancel"
-        android:title="@string/title_cancel" />
+        android:title="@string/title_more_cancel_entry" />
 </menu>

@@ -16,6 +16,10 @@
                     android:title="@string/title_export_ads"/>
 
                 <item
+                    android:id="@+id/navigation_export_csv"
+                    android:title="@string/title_export_csv"/>
+
+                <item
                     android:id="@+id/navigation_export_xlsx"
                     android:title="@string/title_export_excel"/>
             </menu>
@@ -23,24 +27,11 @@
     </group>
 
     <group android:id="@+id/group_main">
+        <item android:id="@+id/navigation_settings"
+            android:title="@string/title_settings"/>
+
         <item
             android:id="@+id/navigation_about"
             android:title="@string/title_about"/>
-
-        <item android:id="@+id/navigation_settings"
-            android:title="@string/title_settings"/>
-    </group>
-
-    <group android:id="@+id/group_debug">
-        <item
-            android:id="@+id/navigation_debug"
-            android:title="Debug">
-
-            <menu>
-                <item
-                    android:id="@+id/action_import_database"
-                    android:title="Import Database"/>
-            </menu>
-        </item>
     </group>
 </menu>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Information Text -->
+    <string name="app_version_text">App Version: %1$s</string>
+    <string name="database_version_text">Database Version: %1$s-%2$d</string>
+    <string name="created_by_text">Created by Voxtric</string>
+
+
+
+    <!-- Expandable Information -->
+    <string name="disclaimer_label">Disclaimer</string>
+
+    <string name="privacy_policy_label">Privacy Policy</string>
+
+    <string name="open_source_information_label">Open Source Information</string>
+
+    <string name="donation_links_label">Donation Links</string>
+        <string-array name="donation_button_hints">
+            <item>Diabetes UK</item>
+            <item>American Diabetes Association</item>
+            <item>Diabetes Australia</item>
+        </string-array>
+        <string-array name="donation_button_links">
+            <item>https://donate.diabetes.org.uk/donate/</item>
+            <item>https://donations.diabetes.org/site/Donation2?idb=826845666&amp;df_id=19705</item>
+            <item>https://www.diabetesaustralia.com.au/donation</item>
+        </string-array>
+
+
+
+    <!-- Content Descriptions -->
+    <string name="icon_content_description">Diabetes Control Icon</string>
+    <string name="voxtric_icon_content_description">Voxtric Icon</string>
+</resources>

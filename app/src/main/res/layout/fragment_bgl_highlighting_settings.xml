@@ -77,7 +77,7 @@
         app:layout_constraintLeft_toRightOf="@id/ideal_range_lower"
         app:layout_constraintRight_toLeftOf="@id/ideal_range_upper"
         style="@style/BasicText"
-        android:text="@string/target_range_indicator"/>
+        android:text="@string/bgl_range_indicator"/>
 
     <EditText
         android:id="@+id/ideal_range_upper"
@@ -131,7 +131,7 @@
         app:layout_constraintLeft_toRightOf="@id/high_range_lower"
         app:layout_constraintRight_toLeftOf="@id/high_range_upper"
         style="@style/BasicText"
-        android:text="@string/target_range_indicator"/>
+        android:text="@string/bgl_range_indicator"/>
 
     <EditText
         android:id="@+id/high_range_upper"

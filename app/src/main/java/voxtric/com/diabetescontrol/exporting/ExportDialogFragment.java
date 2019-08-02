@@ -30,11 +30,10 @@ import java.util.Locale;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
-import voxtric.com.diabetescontrol.exporting.ADSExporter;
 
 public class ExportDialogFragment extends DialogFragment
 {
-  public static final String TAG = "ExportDialogFragment";
+  static final String TAG = "ExportDialogFragment";
 
   private AlertDialog m_alertDialog = null;
   private ProgressBar m_progressBar = null;
@@ -270,7 +269,7 @@ public class ExportDialogFragment extends DialogFragment
               AlertDialog alertDialog = new AlertDialog.Builder(activity)
                   .setTitle("Export Failed")
                   .setMessage("Exporting of your data failed.\n\nPlease ensure there is plenty of space on your device, and try again.")
-                  .setPositiveButton(R.string.ok, null)
+                  .setPositiveButton(R.string.ok_dialog_option, null)
                   .create();
               alertDialog.show();
             }

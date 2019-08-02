@@ -15,29 +15,29 @@
         android:id="@+id/radio_blood_glucose_level"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/blood_glucose_level_text"/>
+        android:text="@string/blood_glucose_level_option"/>
 
     <RadioButton
         android:id="@+id/radio_insulin_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/insulin_name_hint"/>
+        android:text="@string/insulin_name_option"/>
 
     <RadioButton
         android:id="@+id/radio_insulin_dose"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/insulin_dose_hint"/>
+        android:text="@string/insulin_dose_option"/>
 
     <RadioButton
         android:id="@+id/radio_food_eaten"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/food_eaten_hint"/>
+        android:text="@string/food_eaten_option"/>
 
     <RadioButton
         android:id="@+id/radio_additional_notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/additional_notes_hint"/>
+        android:text="@string/additional_notes_option"/>
 </RadioGroup>

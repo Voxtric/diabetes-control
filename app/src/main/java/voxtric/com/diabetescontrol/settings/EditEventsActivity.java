@@ -1,6 +1,5 @@
 package voxtric.com.diabetescontrol.settings;
 
-import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -252,8 +251,8 @@ public class EditEventsActivity extends AppCompatActivity
     final AlertDialog dialog = new AlertDialog.Builder(this)
         .setTitle(R.string.title_edit_event_name)
         .setView(view)
-        .setNegativeButton(R.string.cancel, null)
-        .setPositiveButton(R.string.save, new DialogInterface.OnClickListener()
+        .setNegativeButton(R.string.cancel_dialog_option, null)
+        .setPositiveButton(R.string.done_dialog_option, new DialogInterface.OnClickListener()
         {
           @Override
           public void onClick(DialogInterface dialog, int which)
@@ -365,8 +364,8 @@ public class EditEventsActivity extends AppCompatActivity
     final DialogInterfaceOnDismissListener onDismissListener = new DialogInterfaceOnDismissListener(event, newEvent);
     final AlertDialog dialog = new AlertDialog.Builder(this)
         .setView(timePicker)
-        .setNegativeButton(R.string.cancel, null)
-        .setPositiveButton(R.string.save, new DialogInterface.OnClickListener()
+        .setNegativeButton(R.string.cancel_dialog_option, null)
+        .setPositiveButton(R.string.done_dialog_option, new DialogInterface.OnClickListener()
         {
           @Override
           public void onClick(DialogInterface dialog, int which)
@@ -496,8 +495,8 @@ public class EditEventsActivity extends AppCompatActivity
       AlertDialog dialog = new AlertDialog.Builder(this)
           .setTitle(R.string.title_delete_event)
           .setMessage(getString(R.string.message_delete_event, event.name))
-          .setNegativeButton(R.string.cancel, null)
-          .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener()
+          .setNegativeButton(R.string.cancel_dialog_option, null)
+          .setPositiveButton(R.string.delete_dialog_option, new DialogInterface.OnClickListener()
           {
             @Override
             public void onClick(DialogInterface dialog, int which)
@@ -664,8 +663,8 @@ public class EditEventsActivity extends AppCompatActivity
     AlertDialog dialog = new AlertDialog.Builder(this)
         .setTitle(R.string.title_reset_events)
         .setMessage(R.string.message_reset_events)
-        .setNegativeButton(R.string.cancel, null)
-        .setPositiveButton(R.string.reset, new DialogInterface.OnClickListener()
+        .setNegativeButton(R.string.cancel_dialog_option, null)
+        .setPositiveButton(R.string.reset_dialog_option, new DialogInterface.OnClickListener()
         {
           @Override
           public void onClick(DialogInterface dialogInterface, int i)
