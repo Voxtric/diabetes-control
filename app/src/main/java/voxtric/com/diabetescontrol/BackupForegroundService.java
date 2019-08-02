@@ -25,6 +25,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
+import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 import voxtric.com.diabetescontrol.utilities.ForegroundService;
 import voxtric.com.diabetescontrol.utilities.GoogleDriveInterface;
@@ -50,6 +51,8 @@ public class BackupForegroundService extends ForegroundService implements MediaH
     return s_isUploading;
   }
 
+  private boolean m_notifyOnFinished = true;
+
   @Override
   public int onStartCommand(Intent intent, int flags, int startId)
   {
@@ -67,6 +70,13 @@ public class BackupForegroundService extends ForegroundService implements MediaH
         @Override
         public void run()
         {
+          m_notifyOnFinished = true;
+          Preference preference = AppDatabase.getInstance().preferencesDao().getPreference("backup_complete_notify");
+          if (preference != null)
+          {
+            m_notifyOnFinished = Boolean.valueOf(preference.value);
+          }
+
           byte[] zipBytes = createZipBackup();
           if (zipBytes != null)
           {
@@ -92,6 +102,15 @@ public class BackupForegroundService extends ForegroundService implements MediaH
   public IBinder onBind(Intent intent)
   {
     return null;
+  }
+
+  @Override
+  protected void pushNotification(int notificationId, Notification notification)
+  {
+    if (m_notifyOnFinished || notificationId == ONGOING_NOTIFICATION_ID)
+    {
+      super.pushNotification(notificationId, notification);
+    }
   }
 
   private byte[] createZipBackup()

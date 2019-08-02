@@ -75,6 +75,24 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
         }
       });
 
+      final CheckBox notifyBackupCompletionCheck = view.findViewById(R.id.notify_on_backup_finished_check);
+      Preference.get(activity, "backup_complete_notify", String.valueOf(true), new Preference.ResultRunnable()
+      {
+        @Override
+        public void run()
+        {
+          notifyBackupCompletionCheck.setChecked(Boolean.valueOf(getResult()));
+        }
+      });
+      notifyBackupCompletionCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+      {
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean checked)
+        {
+          Preference.put(activity, "backup_complete_notify", String.valueOf(checked), null);
+        }
+      });
+
       view.findViewById(R.id.backup_now_button).setOnClickListener(new View.OnClickListener()
       {
         @Override
@@ -172,8 +190,10 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     rootView.findViewById(R.id.automatic_backup_spinner).setEnabled(enabled);
     rootView.findViewById(R.id.wifi_only_backup_label).setEnabled(enabled);
     rootView.findViewById(R.id.wifi_only_backup_check).setEnabled(enabled);
-    rootView.findViewById(R.id.apply_backup_button).setEnabled(enabled);
-    rootView.findViewById(R.id.backup_now_button).setEnabled(enabled && !BackupForegroundService.isUploading());
+    rootView.findViewById(R.id.notify_on_backup_finished_label).setEnabled(enabled);
+    rootView.findViewById(R.id.notify_on_backup_finished_check).setEnabled(enabled);
+    rootView.findViewById(R.id.apply_backup_button).setEnabled(enabled && !BackupForegroundService.isUploading() && !RecoveryForegroundService.isDownloading());
+    rootView.findViewById(R.id.backup_now_button).setEnabled(enabled && !BackupForegroundService.isUploading() && !RecoveryForegroundService.isDownloading());
   }
 
   private void initialiseBackupEnabledSwitch(final Activity activity, final View view, boolean backupEnabled)

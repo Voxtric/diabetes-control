@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".settings.fragments.BackupSettingsFragment">
 
@@ -11,91 +11,107 @@
         android:id="@+id/title_backup_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="@string/title_backup_settings"
         android:textColor="@color/colorAccent"
         android:textSize="@dimen/text_size"
-        android:text="@string/title_backup_settings"/>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_marginLeft="@dimen/text_box_padding"
         android:layout_marginStart="@dimen/text_box_padding"
-        app:layout_constraintTop_toTopOf="@id/title_backup_settings"
+        android:background="@drawable/back"
         app:layout_constraintBottom_toBottomOf="@id/title_backup_settings"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@id/title_backup_settings"
-        android:background="@drawable/back"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/title_backup_settings" />
 
     <Switch
         android:id="@+id/backup_enabled_switch"
+        style="@style/BasicText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/title_backup_settings"
-        app:layout_constraintLeft_toLeftOf="parent"
-        style="@style/BasicText"
         android:switchPadding="@dimen/text_box_padding"
-        android:text="@string/backup_enabled_text"/>
+        android:text="@string/backup_enabled_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_backup_settings" />
 
     <TextView
         android:id="@+id/automatic_backup_label"
+        style="@style/BasicText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        app:layout_constraintTop_toBottomOf="@id/backup_enabled_switch"
+        android:text="@string/automatic_backup_label"
         app:layout_constraintLeft_toLeftOf="parent"
-        style="@style/BasicText"
-        android:text="@string/automatic_backup_label"/>
+        app:layout_constraintTop_toBottomOf="@id/backup_enabled_switch" />
 
     <Spinner
         android:id="@+id/automatic_backup_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginLeft="@dimen/text_box_padding"
         android:layout_marginStart="@dimen/text_box_padding"
-        app:layout_constraintTop_toBottomOf="@id/backup_enabled_switch"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:entries="@array/automatic_backup_options"
         app:layout_constraintLeft_toRightOf="@id/automatic_backup_label"
-        android:entries="@array/automatic_backup_options"/>
+        app:layout_constraintTop_toBottomOf="@id/backup_enabled_switch" />
 
     <TextView
         android:id="@+id/wifi_only_backup_label"
+        style="@style/BasicText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        app:layout_constraintTop_toBottomOf="@id/automatic_backup_label"
+        android:text="@string/wifi_only_backup_label"
         app:layout_constraintLeft_toLeftOf="parent"
-        style="@style/BasicText"
-        android:text="@string/wifi_only_backup_label"/>
+        app:layout_constraintTop_toBottomOf="@id/automatic_backup_label" />
 
     <CheckBox
         android:id="@+id/wifi_only_backup_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/text_box_padding"
         android:layout_marginStart="@dimen/text_box_padding"
-        app:layout_constraintTop_toTopOf="@id/wifi_only_backup_label"
         app:layout_constraintBottom_toBottomOf="@id/wifi_only_backup_label"
-        app:layout_constraintLeft_toRightOf="@id/wifi_only_backup_label"/>
+        app:layout_constraintLeft_toRightOf="@id/wifi_only_backup_label"
+        app:layout_constraintTop_toTopOf="@id/wifi_only_backup_label" />
+
+    <TextView
+        android:id="@+id/notify_on_backup_finished_label"
+        style="@style/BasicText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="@string/notify_on_backup_finished_label"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/wifi_only_backup_label" />
+
+    <CheckBox
+        android:id="@+id/notify_on_backup_finished_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/text_box_padding"
+        app:layout_constraintBottom_toBottomOf="@id/notify_on_backup_finished_label"
+        app:layout_constraintLeft_toRightOf="@id/notify_on_backup_finished_label"
+        app:layout_constraintTop_toTopOf="@id/notify_on_backup_finished_label" />
 
     <Button
         android:id="@+id/apply_backup_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        app:layout_constraintTop_toBottomOf="@id/wifi_only_backup_label"
+        android:text="@string/apply_backup_text"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintWidth_percent=".5"
-        android:text="@string/apply_backup_text"/>
+        app:layout_constraintTop_toBottomOf="@id/notify_on_backup_finished_label"
+        app:layout_constraintWidth_percent=".5" />
 
     <Button
         android:id="@+id/backup_now_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        app:layout_constraintTop_toBottomOf="@id/wifi_only_backup_label"
+        android:text="@string/backup_now_text"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintWidth_percent=".5"
-        android:text="@string/backup_now_text"/>
+        app:layout_constraintTop_toBottomOf="@id/notify_on_backup_finished_label"
+        app:layout_constraintWidth_percent=".5" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -190,11 +190,11 @@ public class GoogleDriveInterface
     try
     {
       String fileName = new java.io.File(filePath).getName();
-      String parentFolderID = getParentFolderOfFile(filePath, false).getId();
-      if (parentFolderID != null)
+      File parentFolder = getParentFolderOfFile(filePath, false);
+      if (parentFolder != null)
       {
         FileList fileList = m_googleDrive.files().list()
-            .setQ(String.format("name = '%s' and '%s' in parents and trashed = false", fileName, parentFolderID))
+            .setQ(String.format("name = '%s' and '%s' in parents and trashed = false", fileName, parentFolder.getId()))
             .setSpaces("drive")
             .setFields("files(id)")
             .setOrderBy("createdTime")
@@ -220,11 +220,11 @@ public class GoogleDriveInterface
     try
     {
       String fileName = new java.io.File(filePath).getName();
-      String parentFolderID = getParentFolderOfFile(filePath, false).getId();
-      if (parentFolderID != null)
+      File parentFolder = getParentFolderOfFile(filePath, false);
+      if (parentFolder != null)
       {
         FileList fileList = m_googleDrive.files().list()
-            .setQ(String.format("name = '%s' and '%s' in parents and trashed = false", fileName, parentFolderID))
+            .setQ(String.format("name = '%s' and '%s' in parents and trashed = false", fileName, parentFolder.getId()))
             .setSpaces("drive")
             .setFields("files(id)")
             .setOrderBy("createdTime")
