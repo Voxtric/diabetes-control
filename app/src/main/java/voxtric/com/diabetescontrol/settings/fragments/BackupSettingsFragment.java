@@ -25,6 +25,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.api.services.drive.model.File;
 
 import voxtric.com.diabetescontrol.AwaitDatabaseUpdateActivity;
 import voxtric.com.diabetescontrol.BackupForegroundService;
@@ -76,7 +77,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
       });
 
       final CheckBox notifyBackupCompletionCheck = view.findViewById(R.id.notify_on_backup_finished_check);
-      Preference.get(activity, "backup_complete_notify", String.valueOf(true), new Preference.ResultRunnable()
+      Preference.get(activity, "backup_complete_notify", String.valueOf(false), new Preference.ResultRunnable()
       {
         @Override
         public void run()
@@ -309,19 +310,16 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
         if (account != null)
         {
           GoogleDriveInterface googleDriveInterface = new GoogleDriveInterface(activity, account);
-          final boolean backupFileExists = googleDriveInterface.getFileMetadata(
-              String.format("%s/%s", getString(R.string.app_name), AppDatabase.NAME.replace(".db", ".zip"))) != null;
+          final GoogleDriveInterface.Result<File> result = googleDriveInterface.getFileMetadata(
+              String.format("%s/%s", getString(R.string.app_name), AppDatabase.NAME.replace(".db", ".zip")));
           activity.runOnUiThread(new Runnable()
           {
             @Override
             public void run()
             {
-              if (!backupFileExists)
+              switch (result.result)
               {
-                startBackup(activity);
-              }
-              else
-              {
+              case GoogleDriveInterface.RESULT_SUCCESS:
                 AlertDialog dialog = new AlertDialog.Builder(activity)
                     .setTitle(R.string.title_auto_backup_safe)
                     .setMessage(R.string.message_auto_backup_safe)
@@ -345,6 +343,11 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
                 dialog.show();
+                break;
+              case GoogleDriveInterface.RESULT_PARENT_FOLDER_MISSING:
+              case GoogleDriveInterface.RESULT_FILE_MISSING:
+                startBackup(activity);
+                break;
               }
             }
           });

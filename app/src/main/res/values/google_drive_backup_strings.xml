@@ -91,7 +91,9 @@ This may take some time, so feel free to close the app and you will be notified 
 
 
     <!-- Notifications -->
-    <string name="backup_recovery_sign_in_fail_notification_text">Google Drive sign in required.</string>
+    <string name="backup_recovery_sign_in_fail_notification_text">Google Drive re-sign in required.</string>
+    <string name="backup_recovery_no_connection_text">Google Drive connection not established.</string>
+    <string name="backup_recovery_request_timeout_text">Google Drive connection timed out.</string>
 
     <string name="backing_up_notification_title">Backing Up</string>
     <string name="backup_success_notification_title">Backup Complete</string>
@@ -100,13 +102,16 @@ This may take some time, so feel free to close the app and you will be notified 
     <string name="backup_fail_notification_title">Backup Failed</string>
     <string name="backup_find_database_fail_notification_text">Could not find data for backup.</string>
     <string name="backup_create_file_fail_notification_text">Could not create backup file.</string>
-    <string name="backup_upload_fail_notification_text">Google Drive backup upload interrupted.</string>
+    <string name="backup_upload_interrupted_notification_text">Google Drive backup upload interrupted.</string>
+    <string name="backup_upload_fail_notification_text">Unknown upload failure.</string>
 
     <string name="recovering_notification_title">Recovering Backup</string>
     <string name="recovery_success_notification_title">Recovery Complete</string>
     <string name="recovery_success_notification_text">Recovery from Google Drive successful.</string>
 
     <string name="recovery_fail_notification_title">Recovery Failed</string>
-    <string name="recovery_upload_fail_notification_text">Google Drive backup download interrupted.</string>
+    <string name="recovery_missing_backup_text">Backup file missing from Google Drive.</string>
+    <string name="recovery_download_interrupted_notification_text">Google Drive backup download interrupted.</string>
+    <string name="recovery_download_fail_notification_text">Unknown download failure.</string>
     <string name="recovery_read_file_fail_notification_text">Could not read backup file.</string>
 </resources>

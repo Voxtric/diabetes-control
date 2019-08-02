@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -18,11 +17,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.api.services.drive.DriveScopes;
 
-import voxtric.com.diabetescontrol.R;
-
 abstract class GoogleDriveSignInFragment extends Fragment
 {
-  static final int REQUEST_CODE_SIGN_IN = 309;
+  private static final String TAG = "GoogleDriveSignInFragme";
+
+  private static final int REQUEST_CODE_SIGN_IN = 309;
 
   void signIn()
   {
@@ -90,7 +89,7 @@ abstract class GoogleDriveSignInFragment extends Fragment
           @Override
           public void onFailure(@NonNull Exception exception)
           {
-            Log.e("GoogleDriveSignIn", exception.getMessage(), exception);
+            Log.e(TAG, exception.getMessage(), exception);
             onSignInFail();
           }
         });

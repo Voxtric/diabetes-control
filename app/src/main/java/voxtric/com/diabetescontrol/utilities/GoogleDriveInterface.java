@@ -6,9 +6,11 @@ import android.util.Log;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.googleapis.media.MediaHttpDownloaderProgressListener;
 import com.google.api.client.googleapis.media.MediaHttpUploaderProgressListener;
 import com.google.api.client.http.ByteArrayContent;
+import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
@@ -17,13 +19,28 @@ import com.google.api.services.drive.model.FileList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
+
+import javax.net.ssl.SSLException;
 
 import voxtric.com.diabetescontrol.R;
 
 public class GoogleDriveInterface
 {
+  private static final String TAG = "GoogleDriveInterface";
+
+  public static final int RESULT_SUCCESS = 0;
+  public static final int RESULT_PARENT_FOLDER_MISSING = 1;
+  public static final int RESULT_FILE_MISSING = 2;
+  public static final int RESULT_AUTHENTICATION_ERROR = -1;
+  public static final int RESULT_CONNECTION_ERROR = -2;
+  public static final int RESULT_TIMEOUT_ERROR = -3;
+  public static final int RESULT_INTERRUPT_ERROR = -4;
+  public static final int RESULT_IO_ERROR = -5;
+
   private Drive m_googleDrive;
 
   public GoogleDriveInterface(Context context, GoogleSignInAccount account)
@@ -107,9 +124,9 @@ public class GoogleDriveInterface
     return fileParent;
   }
 
-  public synchronized boolean uploadFile(String filePath, String fileMimeType, byte[] fileContents, MediaHttpUploaderProgressListener uploaderProgressListener)
+  public synchronized int uploadFile(String filePath, String fileMimeType, byte[] fileContents, MediaHttpUploaderProgressListener uploaderProgressListener)
   {
-    boolean success = false;
+    int result;
     try
     {
       String fileName = new java.io.File(filePath).getName();
@@ -133,7 +150,7 @@ public class GoogleDriveInterface
         Drive.Files.Create fileCreate = m_googleDrive.files().create(file, contentStream);
         fileCreate.getMediaHttpUploader().setProgressListener(uploaderProgressListener);
         fileCreate.execute();
-        success = true;
+        result = RESULT_SUCCESS;
       }
       else
       {
@@ -141,27 +158,49 @@ public class GoogleDriveInterface
         Drive.Files.Update fileUpdate = m_googleDrive.files().update(fileToUpdateID, file, contentStream);
         fileUpdate.getMediaHttpUploader().setProgressListener(uploaderProgressListener);
         fileUpdate.execute();
-        success = true;
+        result = RESULT_SUCCESS;
       }
+    }
+    catch (UserRecoverableAuthIOException exception)
+    {
+      Log.e(TAG, "File Upload User Recoverable Auth IO Exception", exception);
+      result = RESULT_AUTHENTICATION_ERROR;
+    }
+    catch (SocketTimeoutException exception)
+    {
+      Log.e(TAG, "File Upload Socket Timeout Exception", exception);
+      result = RESULT_TIMEOUT_ERROR;
+    }
+    catch (UnknownHostException exception)
+    {
+      Log.e(TAG, "File Upload Unknown Host Exception", exception);
+      result = RESULT_CONNECTION_ERROR;
+    }
+    catch (SSLException exception)
+    {
+      Log.e(TAG, "File Upload SSL Exception", exception);
+      result = RESULT_INTERRUPT_ERROR;
     }
     catch (IOException exception)
     {
-      Log.e("GoogleDriveInterface", exception.getMessage(), exception);
+      Log.e(TAG, "File Upload IO Exception", exception);
+      result = RESULT_IO_ERROR;
     }
-    return success;
+    return result;
   }
 
-  public synchronized byte[] downloadFile(String filePath, MediaHttpDownloaderProgressListener downloaderProgressListener)
+  public synchronized Result<byte[]> downloadFile(String filePath, MediaHttpDownloaderProgressListener downloaderProgressListener)
   {
     byte[] data = null;
+    int result;
     try
     {
       String fileName = new java.io.File(filePath).getName();
-      String parentFolderID = getParentFolderOfFile(filePath, false).getId();
-      if (parentFolderID != null)
+      File parentFolder = getParentFolderOfFile(filePath, false);
+      if (parentFolder != null)
       {
         FileList fileList = m_googleDrive.files().list()
-            .setQ(String.format("name = '%s' and '%s' in parents and trashed = false", fileName, parentFolderID))
+            .setQ(String.format("name = '%s' and '%s' in parents and trashed = false", fileName, parentFolder.getId()))
             .setSpaces("drive")
             .setFields("files(id)")
             .setOrderBy("createdTime")
@@ -174,19 +213,49 @@ public class GoogleDriveInterface
           fileGet.getMediaHttpDownloader().setProgressListener(downloaderProgressListener);
           fileGet.executeMediaAndDownloadTo(outputStream);
           data = outputStream.toByteArray();
+          result = RESULT_SUCCESS;
+        }
+        else
+        {
+          result = RESULT_FILE_MISSING;
         }
       }
+      else
+      {
+        result = RESULT_PARENT_FOLDER_MISSING;
+      }
+    }
+    catch (UserRecoverableAuthIOException exception)
+    {
+      Log.e(TAG, "File Download User Recoverable Auth IO Exception", exception);
+      result = RESULT_AUTHENTICATION_ERROR;
+    }
+    catch (SocketTimeoutException exception)
+    {
+      Log.e(TAG, "File Download Socket Timeout Exception", exception);
+      result = RESULT_TIMEOUT_ERROR;
+    }
+    catch (UnknownHostException exception)
+    {
+      Log.e(TAG, "File Download Unknown Host Exception", exception);
+      result = RESULT_CONNECTION_ERROR;
+    }
+    catch (SSLException exception)
+    {
+      Log.e(TAG, "File Download SSL Exception", exception);
+      result = RESULT_INTERRUPT_ERROR;
     }
     catch (IOException exception)
     {
-      Log.e("GoogleDriveInterface", exception.getMessage(), exception);
+      Log.e(TAG, "File Download IO Exception", exception);
+      result = RESULT_IO_ERROR;
     }
-    return data;
+    return new Result<>(result, data);
   }
 
-  public synchronized boolean deleteFile(String filePath)
+  public synchronized int deleteFile(String filePath)
   {
-    boolean success = false;
+    int result;
     try
     {
       String fileName = new java.io.File(filePath).getName();
@@ -203,20 +272,50 @@ public class GoogleDriveInterface
         if (existingFiles != null && !existingFiles.isEmpty())
         {
           m_googleDrive.files().delete(existingFiles.get(0).getId()).execute();
-          success = true;
+          result = RESULT_SUCCESS;
+        }
+        else
+        {
+          result = RESULT_FILE_MISSING;
         }
       }
+      else
+      {
+        result = RESULT_PARENT_FOLDER_MISSING;
+      }
+    }
+    catch (UserRecoverableAuthIOException exception)
+    {
+      Log.e(TAG, "File Deletion User Recoverable Auth IO Exception", exception);
+      result = RESULT_AUTHENTICATION_ERROR;
+    }
+    catch (SocketTimeoutException exception)
+    {
+      Log.e(TAG, "File Deletion Socket Timeout Exception", exception);
+      result = RESULT_TIMEOUT_ERROR;
+    }
+    catch (UnknownHostException exception)
+    {
+      Log.e(TAG, "File Deletion Unknown Host Exception", exception);
+      result = RESULT_CONNECTION_ERROR;
+    }
+    catch (SSLException exception)
+    {
+      Log.e(TAG, "File Deletion SSL Exception", exception);
+      result = RESULT_INTERRUPT_ERROR;
     }
     catch (IOException exception)
     {
-      Log.e("GoogleDriveInterface", exception.getMessage(), exception);
+      Log.e(TAG, "File Deletion IO Exception", exception);
+      result = RESULT_IO_ERROR;
     }
-    return success;
+    return result;
   }
 
-  public synchronized File getFileMetadata(String filePath)
+  public synchronized Result<File> getFileMetadata(String filePath)
   {
     File file = null;
+    int result;
     try
     {
       String fileName = new java.io.File(filePath).getName();
@@ -233,13 +332,55 @@ public class GoogleDriveInterface
         if (existingFiles != null && !existingFiles.isEmpty())
         {
           file = existingFiles.get(0);
+          result = RESULT_SUCCESS;
+        }
+        else
+        {
+          result = RESULT_FILE_MISSING;
         }
       }
+      else
+      {
+        result = RESULT_PARENT_FOLDER_MISSING;
+      }
+    }
+    catch (UserRecoverableAuthIOException exception)
+    {
+      Log.e(TAG, "File Metadata Retrieval User Recoverable Auth IO Exception", exception);
+      result = RESULT_AUTHENTICATION_ERROR;
+    }
+    catch (SocketTimeoutException exception)
+    {
+      Log.e(TAG, "File Metadata Retrieval Socket Timeout Exception", exception);
+      result = RESULT_TIMEOUT_ERROR;
+    }
+    catch (UnknownHostException exception)
+    {
+      Log.e(TAG, "File Metadata Retrieval Unknown Host Exception", exception);
+      result = RESULT_CONNECTION_ERROR;
+    }
+    catch (SSLException exception)
+    {
+      Log.e(TAG, "File Metadata Retrieval SSL Exception", exception);
+      result = RESULT_INTERRUPT_ERROR;
     }
     catch (IOException exception)
     {
-      Log.e("GoogleDriveInterface", exception.getMessage(), exception);
+      Log.e(TAG, "File Metadata Retrieval IO Exception", exception);
+      result = RESULT_IO_ERROR;
     }
-    return file;
+    return new Result<>(result, file);
+  }
+
+  public static class Result<T>
+  {
+    public final int result;
+    public final T returned;
+
+    private Result(int result, T returned)
+    {
+      this.result = result;
+      this.returned = returned;
+    }
   }
 }

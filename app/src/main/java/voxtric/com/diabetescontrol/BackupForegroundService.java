@@ -33,6 +33,8 @@ import voxtric.com.diabetescontrol.utilities.GoogleDriveInterface;
 
 public class BackupForegroundService extends ForegroundService implements MediaHttpUploaderProgressListener
 {
+  private static final String TAG = "BackupForegroundService";
+
   public static final String ACTION_COMPLETE = "voxtric.com.diabetescontrol.RecoveryForegroundService.ACTION_COMPLETE";
 
   private static final String ONGOING_CHANNEL_ID = "OngoingBackupForegroundServiceChannel";
@@ -52,8 +54,6 @@ public class BackupForegroundService extends ForegroundService implements MediaH
     return s_isUploading;
   }
 
-  private boolean m_notifyOnFinished = true;
-
   @Override
   public int onStartCommand(Intent intent, int flags, int startId)
   {
@@ -71,12 +71,6 @@ public class BackupForegroundService extends ForegroundService implements MediaH
         @Override
         public void run()
         {
-          m_notifyOnFinished = true;
-          Preference preference = AppDatabase.getInstance().preferencesDao().getPreference("backup_complete_notify");
-          if (preference != null)
-          {
-            m_notifyOnFinished = Boolean.valueOf(preference.value);
-          }
 
           byte[] zipBytes = createZipBackup();
           if (zipBytes != null)
@@ -103,15 +97,6 @@ public class BackupForegroundService extends ForegroundService implements MediaH
   public IBinder onBind(Intent intent)
   {
     return null;
-  }
-
-  @Override
-  protected void pushNotification(int notificationId, Notification notification)
-  {
-    if (m_notifyOnFinished || notificationId == ONGOING_NOTIFICATION_ID)
-    {
-      super.pushNotification(notificationId, notification);
-    }
   }
 
   private byte[] createZipBackup()
@@ -142,45 +127,69 @@ public class BackupForegroundService extends ForegroundService implements MediaH
     }
     catch (FileNotFoundException exception)
     {
-      Log.e("BackupForegroundService", getString(R.string.backup_find_database_fail_notification_text), exception);
+      Log.e(TAG, getString(R.string.backup_find_database_fail_notification_text), exception);
       pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_find_database_fail_notification_text));
       return null;
     }
     catch (IOException exception)
     {
-      Log.e("BackupForegroundService", getString(R.string.backup_create_file_fail_notification_text), exception);
+      Log.e(TAG, getString(R.string.backup_create_file_fail_notification_text), exception);
       pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_create_file_fail_notification_text));
       return null;
     }
     return outputStream.toByteArray();
   }
 
-  private boolean uploadZipBackup(byte[] zipBytes)
+  private void uploadZipBackup(byte[] zipBytes)
   {
-    boolean success = false;
     GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(BackupForegroundService.this);
     if (account != null)
     {
       GoogleDriveInterface googleDriveInterface = new GoogleDriveInterface(BackupForegroundService.this, account);
-      success = googleDriveInterface.uploadFile(
+      int result = googleDriveInterface.uploadFile(
           String.format("%s/%s", getString(R.string.app_name), AppDatabase.NAME.replace(".db", ".zip")),
           "application/zip",
           zipBytes,
           this);
-      if (success)
+
+      boolean notifyOnFinished = true;
+      Preference preference = AppDatabase.getInstance().preferencesDao().getPreference("backup_complete_notify");
+      if (preference != null)
       {
-        pushNotification(FINISHED_NOTIFICATION_ID, buildOnSuccessNotification());
+        notifyOnFinished = Boolean.valueOf(preference.value);
       }
-      else
+
+      switch (result)
       {
+      case GoogleDriveInterface.RESULT_SUCCESS:
+        if (notifyOnFinished)
+        {
+          pushNotification(FINISHED_NOTIFICATION_ID, buildOnSuccessNotification());
+        }
+        break;
+      case GoogleDriveInterface.RESULT_AUTHENTICATION_ERROR:
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_recovery_sign_in_fail_notification_text));
+        break;
+      case GoogleDriveInterface.RESULT_CONNECTION_ERROR:
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_recovery_no_connection_text));
+        break;
+      case GoogleDriveInterface.RESULT_TIMEOUT_ERROR:
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_recovery_request_timeout_text));
+        break;
+      case GoogleDriveInterface.RESULT_INTERRUPT_ERROR:
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_upload_interrupted_notification_text));
+        break;
+      case GoogleDriveInterface.RESULT_IO_ERROR:
         pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_upload_fail_notification_text));
+        break;
+      default:
+        throw new RuntimeException("Unknown Google Drive Interface upload result.");
       }
     }
     else
     {
       pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_recovery_sign_in_fail_notification_text));
     }
-    return success;
   }
 
   @Override

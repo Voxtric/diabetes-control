@@ -29,6 +29,8 @@ import voxtric.com.diabetescontrol.utilities.GoogleDriveInterface;
 
 public class RecoveryForegroundService extends ForegroundService implements MediaHttpDownloaderProgressListener
 {
+  private static final String TAG = "RecoveryForegroundServi";
+
   public static final String ACTION_COMPLETE = "voxtric.com.diabetescontrol.RecoveryForegroundService.ACTION_COMPLETE";
 
   private static final String ONGOING_CHANNEL_ID = "OngoingRecoveryForegroundServiceChannel";
@@ -97,12 +99,35 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
     if (account != null)
     {
       GoogleDriveInterface googleDriveInterface = new GoogleDriveInterface(RecoveryForegroundService.this, account);
-      zipBytes = googleDriveInterface.downloadFile(
+      GoogleDriveInterface.Result<byte[]> result = googleDriveInterface.downloadFile(
           String.format("%s/%s", getString(R.string.app_name), AppDatabase.NAME.replace(".db", ".zip")),
           this);
-      if (zipBytes == null)
+      switch (result.result)
       {
-        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_upload_fail_notification_text));
+      case GoogleDriveInterface.RESULT_SUCCESS:
+        zipBytes = result.returned;
+        break;
+      case GoogleDriveInterface.RESULT_PARENT_FOLDER_MISSING:
+      case GoogleDriveInterface.RESULT_FILE_MISSING:
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_missing_backup_text));
+        break;
+      case GoogleDriveInterface.RESULT_AUTHENTICATION_ERROR:
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_recovery_sign_in_fail_notification_text));
+        break;
+      case GoogleDriveInterface.RESULT_CONNECTION_ERROR:
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_recovery_no_connection_text));
+        break;
+      case GoogleDriveInterface.RESULT_TIMEOUT_ERROR:
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_recovery_request_timeout_text));
+        break;
+      case GoogleDriveInterface.RESULT_INTERRUPT_ERROR:
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_download_interrupted_notification_text));
+        break;
+      case GoogleDriveInterface.RESULT_IO_ERROR:
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_download_fail_notification_text));
+        break;
+      default:
+        throw new RuntimeException("Unknown Google Drive Interface download result.");
       }
     }
     else
@@ -112,9 +137,8 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
     return zipBytes;
   }
 
-  private boolean unpackZipBackup(byte[] zipBytes)
+  private void unpackZipBackup(byte[] zipBytes)
   {
-    boolean success = false;
     ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(zipBytes));
     try
     {
@@ -133,15 +157,13 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
         outputStream.close();
       }
       AppDatabase.initialise(this);
-      success = true;
       pushNotification(FINISHED_NOTIFICATION_ID, buildOnSuccessNotification());
     }
     catch (IOException exception)
     {
-      Log.e("RecoveryForegroundServi", getString(R.string.recovery_read_file_fail_notification_text), exception);
+      Log.e(TAG, getString(R.string.recovery_read_file_fail_notification_text), exception);
       pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_read_file_fail_notification_text));
     }
-    return success;
   }
 
   @Override
