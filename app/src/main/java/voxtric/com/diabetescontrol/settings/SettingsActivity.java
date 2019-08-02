@@ -2,7 +2,6 @@ package voxtric.com.diabetescontrol.settings;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,11 +10,12 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import voxtric.com.diabetescontrol.AwaitDatabaseUpdateActivity;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 
-public class SettingsActivity extends AppCompatActivity
+public class SettingsActivity extends AwaitDatabaseUpdateActivity
 {
   private int m_result = 0;
 

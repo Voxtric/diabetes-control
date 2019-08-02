@@ -30,13 +30,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Calendar;
 import java.util.List;
 
+import voxtric.com.diabetescontrol.AwaitDatabaseUpdateActivity;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.Event;
@@ -46,7 +46,7 @@ import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 import voxtric.com.diabetescontrol.utilities.HintHideOnFocusChangeListener;
 import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
-public class EditEventsActivity extends AppCompatActivity
+public class EditEventsActivity extends AwaitDatabaseUpdateActivity
 {
   private static final int MAX_EVENT_COUNT = 8;
 

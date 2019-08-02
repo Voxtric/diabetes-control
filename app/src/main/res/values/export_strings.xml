@@ -46,23 +46,27 @@ Allow this app to access external storage?"
 
 
 
+    <!-- General -->
+    <string name="ads_export_start_message">Generating PDF…</string>
+    <string name="ads_export_end_message">PDF generated!</string>
+
+
+
     <!-- ADS Export -->
     <string name="ads_export_title">ADS Export</string>
-    <string name="ads_export_start_message">Generating ADS PDF…</string>
-    <string name="ads_export_end_message">ADS PDF generated!</string>
 
-    <string name="week_commencing">Week Commencing: %1$s</string>
-    <string name="blood_glucose_targets">Blood Glucose Targets (mmol/L): Pre-meal %1$.1f - %2$.1f, Post-meal %3$.1f - %4$.1f</string>
-    <string name="blood_glucose_targets_empty">Blood Glucose Targets (mmol/L): Pre-meal ........., Post-meal .........</string>
+        <string name="week_commencing">Week Commencing: %1$s</string>
+        <string name="blood_glucose_targets">Blood Glucose Targets (mmol/L): Pre-meal %1$.1f - %2$.1f, Post-meal %3$.1f - %4$.1f</string>
+        <string name="blood_glucose_targets_empty">Blood Glucose Targets (mmol/L): Pre-meal ........., Post-meal .........</string>
 
-    <string name="reading">Reading</string>
-    <string name="time">Time</string>
-    <string name="dose">Dose</string>
+        <string name="reading">Reading</string>
+        <string name="time">Time</string>
+        <string name="dose">Dose</string>
 
-    <string name="food_eaten_title">Food Eaten /</string>
-    <string name="additional_notes_title">Additional Notes</string>
-    <string name="insulin_used">Insulin Used: %1$s</string>
+        <string name="food_eaten_title">Food Eaten /</string>
+        <string name="additional_notes_title">Additional Notes</string>
+        <string name="insulin_used">Insulin Used: %1$s</string>
 
-    <string name="contact_name">Contact Name: %1$s</string>
-    <string name="contact_number">Contact Number: %1$s</string>
+        <string name="contact_name">Contact Name: %1$s</string>
+        <string name="contact_number">Contact Number: %1$s</string>
 </resources>

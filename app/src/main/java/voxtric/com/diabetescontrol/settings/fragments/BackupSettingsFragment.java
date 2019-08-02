@@ -2,11 +2,13 @@ package voxtric.com.diabetescontrol.settings.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +21,12 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
+import voxtric.com.diabetescontrol.AwaitDatabaseUpdateActivity;
 import voxtric.com.diabetescontrol.BackupForegroundService;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.RecoveryForegroundService;
@@ -33,6 +37,7 @@ import voxtric.com.diabetescontrol.utilities.GoogleDriveInterface;
 public class BackupSettingsFragment extends GoogleDriveSignInFragment
 {
   private boolean m_backupEnabledSwitchForced = false;
+  private BackupCompleteBroadcastReceiver m_backupCompleteBroadcastReceiver = null;
 
   public BackupSettingsFragment()
   {
@@ -75,7 +80,15 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
         @Override
         public void onClick(View view)
         {
-          startBackup(activity);
+          // Delay to ensure last edited setting is included.
+          view.postDelayed(new Runnable()
+          {
+            @Override
+            public void run()
+            {
+              startBackup(activity);
+            }
+          }, 10);
         }
       });
       view.findViewById(R.id.apply_backup_button).setOnClickListener(new View.OnClickListener()
@@ -89,6 +102,36 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     }
 
     return view;
+  }
+
+  @Override
+  public void onResume()
+  {
+    super.onResume();
+    if (m_backupCompleteBroadcastReceiver != null)
+    {
+      Context context = getContext();
+      if (context != null)
+      {
+        LocalBroadcastManager.getInstance(context).registerReceiver(
+            m_backupCompleteBroadcastReceiver,
+            new IntentFilter(BackupForegroundService.ACTION_COMPLETE));
+      }
+    }
+  }
+
+  @Override
+  public void onPause()
+  {
+    if (m_backupCompleteBroadcastReceiver != null)
+    {
+      Context context = getContext();
+      if (context != null)
+      {
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(m_backupCompleteBroadcastReceiver);
+      }
+    }
+    super.onPause();
   }
 
   @Override
@@ -303,26 +346,13 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     activity.startService(intent);
     Toast.makeText(activity, R.string.backup_started_message, Toast.LENGTH_LONG).show();
 
-    final Button backupNowButton = activity.findViewById(R.id.backup_now_button);
+    Button backupNowButton = activity.findViewById(R.id.backup_now_button);
     backupNowButton.setEnabled(false);
-    new CountDownTimer(1000, 1)
-    {
-      @Override
-      public void onTick(long l) {}
+    Button applyBackupButton = activity.findViewById(R.id.apply_backup_button);
+    applyBackupButton.setEnabled(false);
 
-      @Override
-      public void onFinish()
-      {
-        if (BackupForegroundService.isUploading())
-        {
-          start();
-        }
-        else
-        {
-          backupNowButton.setEnabled(GoogleSignIn.getLastSignedInAccount(activity) != null);
-        }
-      }
-    }.start();
+    m_backupCompleteBroadcastReceiver = new BackupCompleteBroadcastReceiver();
+    LocalBroadcastManager.getInstance(activity).registerReceiver(m_backupCompleteBroadcastReceiver, new IntentFilter(BackupForegroundService.ACTION_COMPLETE));
   }
 
   private void startRecovery(final Activity activity, boolean confirmWithUser)
@@ -338,8 +368,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
             @Override
             public void onClick(DialogInterface dialogInterface, int i)
             {
-              Intent intent = new Intent(activity, RecoveryForegroundService.class);
-              activity.startService(intent);
+              startRecovery(activity, false);
             }
           })
           .create();
@@ -349,6 +378,26 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     {
       Intent intent = new Intent(activity, RecoveryForegroundService.class);
       activity.startService(intent);
+      ((AwaitDatabaseUpdateActivity)activity).launchWaitDialog();
+    }
+  }
+
+  public class BackupCompleteBroadcastReceiver extends BroadcastReceiver
+  {
+    @Override
+    public void onReceive(Context context, Intent intent)
+    {
+      LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
+      m_backupCompleteBroadcastReceiver = null;
+      Activity activity = getActivity();
+      if (activity != null)
+      {
+        boolean backupButtonsEnabled = GoogleSignIn.getLastSignedInAccount(context) != null;
+        Button backupNowButton = activity.findViewById(R.id.backup_now_button);
+        backupNowButton.setEnabled(backupButtonsEnabled);
+        Button applyBackupButton = activity.findViewById(R.id.apply_backup_button);
+        applyBackupButton.setEnabled(backupButtonsEnabled);
+      }
     }
   }
 }

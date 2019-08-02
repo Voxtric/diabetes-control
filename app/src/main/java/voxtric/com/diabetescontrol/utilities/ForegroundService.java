@@ -33,11 +33,14 @@ public abstract class ForegroundService extends Service
     m_notificationManager.notify(notificationId, notification);
   }
 
-  protected void createNotificationChannel(String channelId, String channelName)
+  protected void createNotificationChannel(String channelId, String channelName, boolean ongoingNotification)
   {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
     {
-      NotificationChannel serviceChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW);
+      NotificationChannel serviceChannel = new NotificationChannel(
+          channelId,
+          channelName,
+          ongoingNotification ? NotificationManager.IMPORTANCE_LOW : NotificationManager.IMPORTANCE_DEFAULT);
       m_notificationManager.createNotificationChannel(serviceChannel);
     }
   }

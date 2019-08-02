@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -40,7 +39,7 @@ import voxtric.com.diabetescontrol.database.Food;
 import voxtric.com.diabetescontrol.exporting.ExportDurationDialogFragment;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AwaitDatabaseUpdateActivity
 {
   private static final int START_FRAGMENT = 0;
 

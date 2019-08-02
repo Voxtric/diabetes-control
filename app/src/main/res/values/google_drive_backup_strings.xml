@@ -44,6 +44,16 @@ This will overwrite your local data with the data stored on your Google Drive."
 
 
 
+    <!-- Recovery Wait Dialog -->
+    <string name="title_recovery_wait">Recovery In Progress</string>
+        <string name="message_recovery_wait">
+"Your data is being recovered from the Google Drive.
+
+This may take some time, so feel free to close the app and you will be notified once the recovery is complete."
+        </string>
+
+
+
     <!-- Dialog Options -->
     <string name="sign_in_dialog_option">Sign In</string>
     <string name="sign_out_dialog_option">Sign Out</string>

@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -27,9 +28,14 @@ import voxtric.com.diabetescontrol.utilities.GoogleDriveInterface;
 
 public class RecoveryForegroundService extends ForegroundService implements MediaHttpDownloaderProgressListener
 {
-  private static final String CHANNEL_ID = "RecoveryForegroundServiceChannel";
-  private static final String CHANNEL_NAME = "Recovery Foreground Service";
+  public static final String ACTION_COMPLETE = "voxtric.com.diabetescontrol.RecoveryForegroundService.ACTION_COMPLETE";
+
+  private static final String ONGOING_CHANNEL_ID = "OngoingRecoveryForegroundServiceChannel";
+  private static final String ONGOING_CHANNEL_NAME = "Ongoing Recovery Foreground Service";
   private static final int ONGOING_NOTIFICATION_ID = 1093;
+
+  private static final String FINISHED_CHANNEL_ID = "FinishedRecoveryForegroundServiceChannel";
+  private static final String FINISHED_CHANNEL_NAME = "Finished Recovery Foreground Service";
   private static final int FINISHED_NOTIFICATION_ID = 1094;
   private static final int MAX_DOWNLOAD_PROGRESS = 100;
 
@@ -47,7 +53,8 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
     if (!isDownloading())
     {
       s_isDownloading = true;
-      createNotificationChannel(CHANNEL_ID, CHANNEL_NAME);
+      createNotificationChannel(ONGOING_CHANNEL_ID, ONGOING_CHANNEL_NAME, true);
+      createNotificationChannel(FINISHED_CHANNEL_ID, FINISHED_CHANNEL_NAME, false);
       startForeground(ONGOING_NOTIFICATION_ID, buildOngoingNotification(0));
 
       Thread thread = new Thread(new Runnable()
@@ -64,6 +71,9 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
           stopForeground(true);
           stopSelf();
           s_isDownloading = false;
+
+          Intent recoveryCompleteBroadcast = new Intent(ACTION_COMPLETE);
+          LocalBroadcastManager.getInstance(RecoveryForegroundService.this).sendBroadcast(recoveryCompleteBroadcast);
         }
       });
       thread.setDaemon(true);
@@ -138,7 +148,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   {
     Intent notificationIntent = new Intent(this, MainActivity.class);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-    return new NotificationCompat.Builder(this, CHANNEL_ID)
+    return new NotificationCompat.Builder(this, ONGOING_CHANNEL_ID)
         .setSmallIcon(R.drawable.download)
         .setContentIntent(pendingIntent)
         .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -152,7 +162,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   {
     Intent notificationIntent = new Intent(this, MainActivity.class);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-    return new NotificationCompat.Builder(this, CHANNEL_ID)
+    return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
         .setSmallIcon(R.drawable.done)
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
@@ -167,7 +177,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   {
     Intent notificationIntent = new Intent(this, SettingsActivity.class);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-    return new NotificationCompat.Builder(this, CHANNEL_ID)
+    return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
         .setSmallIcon(R.drawable.error)
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)

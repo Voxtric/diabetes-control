@@ -10,7 +10,6 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -19,7 +18,7 @@ import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.Food;
 
-public class EditEntryActivity extends AppCompatActivity
+public class EditEntryActivity extends AwaitDatabaseUpdateActivity
 {
   private DataEntry m_editedEntry = null;
   private List<Food> m_editedFoods = null;

@@ -3,7 +3,6 @@ package voxtric.com.diabetescontrol;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
@@ -28,7 +27,7 @@ import java.util.HashMap;
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.Preference;
 
-public class AboutActivity extends AppCompatActivity
+public class AboutActivity extends AwaitDatabaseUpdateActivity
 {
   private final int EXPAND_COLLAPSE_DURATION = 2;
 

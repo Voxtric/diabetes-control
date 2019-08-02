@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -30,10 +31,16 @@ import voxtric.com.diabetescontrol.utilities.GoogleDriveInterface;
 
 public class BackupForegroundService extends ForegroundService implements MediaHttpUploaderProgressListener
 {
-  private static final String CHANNEL_ID = "BackupForegroundServiceChannel";
-  private static final String CHANNEL_NAME = "Backup Foreground Service";
+  public static final String ACTION_COMPLETE = "voxtric.com.diabetescontrol.RecoveryForegroundService.ACTION_COMPLETE";
+
+  private static final String ONGOING_CHANNEL_ID = "OngoingBackupForegroundServiceChannel";
+  private static final String ONGOING_CHANNEL_NAME = "Ongoing Backup Foreground Service";
   private static final int ONGOING_NOTIFICATION_ID = 1091;
+
+  private static final String FINISHED_CHANNEL_ID = "FinishedBackupForegroundServiceChannel";
+  private static final String FINISHED_CHANNEL_NAME = "Finished Backup Foreground Service";
   private static final int FINISHED_NOTIFICATION_ID = 1092;
+
   private static final int MAX_UPLOAD_PROGRESS = 100;
   private static final int ZIP_ENTRY_BUFFER_SIZE = 1024 * 1024; // 1 MiB
 
@@ -51,7 +58,8 @@ public class BackupForegroundService extends ForegroundService implements MediaH
     if (!isUploading())
     {
       s_isUploading = true;
-      createNotificationChannel(CHANNEL_ID, CHANNEL_NAME);
+      createNotificationChannel(ONGOING_CHANNEL_ID, ONGOING_CHANNEL_NAME, true);
+      createNotificationChannel(FINISHED_CHANNEL_ID, FINISHED_CHANNEL_NAME, false);
       startForeground(ONGOING_NOTIFICATION_ID, buildOngoingNotification(0));
 
       Thread thread = new Thread(new Runnable()
@@ -68,6 +76,9 @@ public class BackupForegroundService extends ForegroundService implements MediaH
           stopForeground(true);
           stopSelf();
           s_isUploading = false;
+
+          Intent backupCompleteIntent = new Intent(ACTION_COMPLETE);
+          LocalBroadcastManager.getInstance(BackupForegroundService.this).sendBroadcast(backupCompleteIntent);
         }
       });
       thread.setDaemon(true);
@@ -157,7 +168,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
   {
     Intent notificationIntent = new Intent(this, SettingsActivity.class);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-    return new NotificationCompat.Builder(this, CHANNEL_ID)
+    return new NotificationCompat.Builder(this, ONGOING_CHANNEL_ID)
         .setSmallIcon(R.drawable.upload)
         .setContentIntent(pendingIntent)
         .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -171,11 +182,11 @@ public class BackupForegroundService extends ForegroundService implements MediaH
   {
     Intent notificationIntent = new Intent(this, MainActivity.class);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-    return new NotificationCompat.Builder(this, CHANNEL_ID)
+    return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
         .setSmallIcon(R.drawable.done)
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
-        .setPriority(NotificationCompat.PRIORITY_LOW)
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .setContentTitle(getString(R.string.backup_success_notification_title))
         .setContentText(getString(R.string.backup_success_notification_text))
         .build();
@@ -186,11 +197,11 @@ public class BackupForegroundService extends ForegroundService implements MediaH
   {
     Intent notificationIntent = new Intent(this, SettingsActivity.class);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-    return new NotificationCompat.Builder(this, CHANNEL_ID)
+    return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
         .setSmallIcon(R.drawable.error)
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
-        .setPriority(NotificationCompat.PRIORITY_LOW)
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .setContentTitle(getString(R.string.backup_fail_notification_title))
         .setContentText(getString(failureMessageId))
         .build();
