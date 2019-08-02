@@ -101,8 +101,9 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
     return zipBytes;
   }
 
-  private void unpackZipBackup(byte[] zipBytes)
+  private boolean unpackZipBackup(byte[] zipBytes)
   {
+    boolean success = false;
     ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(zipBytes));
     try
     {
@@ -121,6 +122,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
         outputStream.close();
       }
       AppDatabase.initialise(this);
+      success = true;
       pushNotification(FINISHED_NOTIFICATION_ID, buildOnSuccessNotification());
     }
     catch (IOException exception)
@@ -128,6 +130,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
       Log.e("RecoveryForegroundServi", getString(R.string.recovery_read_file_fail_notification_text), exception);
       pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_read_file_fail_notification_text));
     }
+    return success;
   }
 
   @Override
@@ -140,7 +143,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
         .setContentIntent(pendingIntent)
         .setPriority(NotificationCompat.PRIORITY_LOW)
         .setContentTitle(getString(R.string.recovering_notification_title))
-        .setProgress(MAX_DOWNLOAD_PROGRESS, progress, progress == MAX_DOWNLOAD_PROGRESS)
+        .setProgress(MAX_DOWNLOAD_PROGRESS, progress, progress == 0|| progress == MAX_DOWNLOAD_PROGRESS)
         .build();
   }
 

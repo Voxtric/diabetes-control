@@ -1,11 +1,9 @@
 package voxtric.com.diabetescontrol.settings.fragments;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -28,14 +26,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import voxtric.com.diabetescontrol.BackupForegroundService;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.RecoveryForegroundService;
+import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.utilities.GoogleDriveInterface;
 
 public class BackupSettingsFragment extends GoogleDriveSignInFragment
 {
   private boolean m_backupEnabledSwitchForced = false;
-
-  private static final int REQUEST_PERMISSION_FOREGROUND_SERVICE = 114;
 
   public BackupSettingsFragment()
   {
@@ -86,8 +83,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
         @Override
         public void onClick(View view)
         {
-          Intent intent = new Intent(activity, RecoveryForegroundService.class);
-          activity.startService(intent);
+          startRecovery(activity);
         }
       });
     }
@@ -96,38 +92,13 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
   }
 
   @Override
-  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-  {
-    if (requestCode == REQUEST_PERMISSION_FOREGROUND_SERVICE)
-    {
-      Activity activity = getActivity();
-      if (activity != null)
-      {
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-        {
-          startBackup(activity);
-        }
-        else
-        {
-          Toast.makeText(activity, R.string.foreground_service_permission_needed_message, Toast.LENGTH_LONG).show();
-          signOut();
-        }
-      }
-    }
-    else
-    {
-      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-  }
-
-  @Override
   protected void onSignInSuccess(GoogleSignInAccount googleSignInAccount)
   {
     Toast.makeText(getContext(), getString(R.string.sign_in_success_message, googleSignInAccount.getEmail()), Toast.LENGTH_LONG).show();
     final Activity activity = getActivity();
-    if (activity != null && hasForegroundServicePermission(activity))
+    if (activity != null)
     {
-      startBackup(activity);
+      checkAutoBackupSafe(activity);
     }
   }
 
@@ -271,47 +242,59 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     });
   }
 
-  private boolean hasForegroundServicePermission(final Activity activity)
+  private void checkAutoBackupSafe(final Activity activity)
   {
-    boolean hasPermission = true;
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P)
+    AsyncTask.execute(new Runnable()
     {
-      int hasForegroundServicePermission = activity.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE);
-      if (hasForegroundServicePermission != PackageManager.PERMISSION_GRANTED)
+      @Override
+      public void run()
       {
-        hasPermission = false;
-        if (shouldShowRequestPermissionRationale(Manifest.permission.FOREGROUND_SERVICE))
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(activity);
+        if (account != null)
         {
-          androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(activity)
-              .setTitle(R.string.permission_justification_title)
-              .setMessage(R.string.foreground_service_permission_justification_message)
-              .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
+          GoogleDriveInterface googleDriveInterface = new GoogleDriveInterface(activity, account);
+          final boolean backupFileExists = googleDriveInterface.getFileMetadata(
+              String.format("%s/%s", getString(R.string.app_name), AppDatabase.NAME.replace(".db", ".zip"))) != null;
+          activity.runOnUiThread(new Runnable()
+          {
+            @Override
+            public void run()
+            {
+              if (!backupFileExists)
               {
-                @Override
-                public void onClick(DialogInterface dialog, int which)
-                {
-                  Toast.makeText(activity, R.string.foreground_service_permission_needed_message, Toast.LENGTH_LONG).show();
-                  signOut();
-                }
-              })
-              .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+                startBackup(activity);
+              }
+              else
               {
-                @Override
-                public void onClick(DialogInterface dialog, int which)
-                {
-                  requestPermissions(new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE }, REQUEST_PERMISSION_FOREGROUND_SERVICE);
-                }
-              })
-              .create();
-          dialog.show();
-        }
-        else
-        {
-          requestPermissions(new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE }, REQUEST_PERMISSION_FOREGROUND_SERVICE);
+                AlertDialog dialog = new AlertDialog.Builder(activity)
+                    .setTitle(R.string.title_auto_backup_safe)
+                    .setMessage(R.string.message_auto_backup_safe)
+                    .setNegativeButton(R.string.overwrite, new DialogInterface.OnClickListener()
+                    {
+                      @Override
+                      public void onClick(DialogInterface dialogInterface, int i)
+                      {
+                        startBackup(activity);
+                      }
+                    })
+                    .setPositiveButton(R.string.recover, new DialogInterface.OnClickListener()
+                    {
+                      @Override
+                      public void onClick(DialogInterface dialogInterface, int i)
+                      {
+                        startRecovery(activity);
+                      }
+                    })
+                    .create();
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
+              }
+            }
+          });
         }
       }
-    }
-    return hasPermission;
+    });
   }
 
   private void startBackup(final Activity activity)
@@ -340,5 +323,11 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
         }
       }
     }.start();
+  }
+
+  private void startRecovery(final Activity activity)
+  {
+    Intent intent = new Intent(activity, RecoveryForegroundService.class);
+    activity.startService(intent);
   }
 }

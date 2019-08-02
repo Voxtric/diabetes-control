@@ -123,6 +123,7 @@ public class GoogleDriveInterface
       FileList fileList = m_googleDrive.files().list()
           .setQ(String.format("name = '%s' and '%s' in parents and trashed = false", fileName, parentFolderID))
           .setSpaces("drive")
+          .setFields("files(id)")
           .setOrderBy("createdTime")
           .execute();
       List<File> existingFiles = fileList.getFiles();
@@ -162,6 +163,7 @@ public class GoogleDriveInterface
         FileList fileList = m_googleDrive.files().list()
             .setQ(String.format("name = '%s' and '%s' in parents and trashed = false", fileName, parentFolderID))
             .setSpaces("drive")
+            .setFields("files(id)")
             .setOrderBy("createdTime")
             .execute();
         List<File> existingFiles = fileList.getFiles();
@@ -194,6 +196,7 @@ public class GoogleDriveInterface
         FileList fileList = m_googleDrive.files().list()
             .setQ(String.format("name = '%s' and '%s' in parents and trashed = false", fileName, parentFolderID))
             .setSpaces("drive")
+            .setFields("files(id)")
             .setOrderBy("createdTime")
             .execute();
         List<File> existingFiles = fileList.getFiles();
@@ -209,5 +212,34 @@ public class GoogleDriveInterface
       Log.e("GoogleDriveInterface", exception.getMessage(), exception);
     }
     return success;
+  }
+
+  public synchronized File getFileMetadata(String filePath)
+  {
+    File file = null;
+    try
+    {
+      String fileName = new java.io.File(filePath).getName();
+      String parentFolderID = getParentFolderOfFile(filePath, false).getId();
+      if (parentFolderID != null)
+      {
+        FileList fileList = m_googleDrive.files().list()
+            .setQ(String.format("name = '%s' and '%s' in parents and trashed = false", fileName, parentFolderID))
+            .setSpaces("drive")
+            .setFields("files(id)")
+            .setOrderBy("createdTime")
+            .execute();
+        List<File> existingFiles = fileList.getFiles();
+        if (existingFiles != null && !existingFiles.isEmpty())
+        {
+          file = existingFiles.get(0);
+        }
+      }
+    }
+    catch (IOException exception)
+    {
+      Log.e("GoogleDriveInterface", exception.getMessage(), exception);
+    }
+    return file;
   }
 }

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sign In Dialog -->
+    <string name="title_sign_in">Sign In?</string>
+        <string name="message_sign_in">
+"Are you sure you want to enable Google Drive backups?
+
+This will require you to sign in and will create a folder on your Google Drive containing all your data."
+        </string>
+
+
+
+    <!-- Sign Out Dialog -->
+    <string name="title_sign_out">Sign Out?</string>
+    <string name="message_sign_out">
+"Are you sure you want to sign out?
+
+This will delete the backup from your Google Drive."
+        </string>
+
+
+
+    <!-- Check AutoBackup Safe Dialog -->
+    <string name="title_auto_backup_safe">Backup Already Exists</string>
+        <string name="message_auto_backup_safe">
+"A backup file already exists on your Google Drive.
+
+Would you like to recover your backup, or overwrite it?"
+        </string>
+
+
+
+    <!-- Dialog Options -->
+    <string name="sign_in">Sign In</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="recover">Recover</string>
+    <string name="overwrite">Overwrite</string>
+
+
+
+    <!-- Buttons -->
+    <string name="apply_backup_text">Apply Backup</string>
+    <string name="backup_now_text">Backup Now</string>
+
+
+
+    <!-- Toasts -->
+    <string name="sign_in_success_message">Signed in as %1$s</string>
+    <string name="sign_in_fail_message">Sign in failed</string>
+    <string name="sign_out_message">Signed out</string>
+
+    <string name="backup_started_message">Backup started</string>
+    <string name="recovery_started_message">Recovery started</string>
+
+
+
+    <!-- Notifications -->
+    <string name="backup_recovery_sign_in_fail_notification_text">Google Drive sign in required.</string>
+
+    <string name="backing_up_notification_title">Backing Up</string>
+    <string name="backup_success_notification_title">Backup Complete</string>
+    <string name="backup_success_notification_text">Backup to Google Drive successful.</string>
+
+    <string name="backup_fail_notification_title">Backup Failed</string>
+    <string name="backup_find_database_fail_notification_text">Could not find data for backup.</string>
+    <string name="backup_create_file_fail_notification_text">Could not create backup file.</string>
+    <string name="backup_upload_fail_notification_text">Google Drive backup upload interrupted.</string>
+
+    <string name="recovering_notification_title">Recovering Backup</string>
+    <string name="recovery_success_notification_title">Recovery Complete</string>
+    <string name="recovery_success_notification_text">Recovery from Google Drive successful.</string>
+
+    <string name="recovery_fail_notification_title">Recovery Failed</string>
+    <string name="recovery_upload_fail_notification_text">Google Drive backup download interrupted.</string>
+    <string name="recovery_read_file_fail_notification_text">Could not read backup file.</string>
+</resources>

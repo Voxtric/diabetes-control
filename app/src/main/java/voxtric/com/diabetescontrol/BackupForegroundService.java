@@ -124,18 +124,19 @@ public class BackupForegroundService extends ForegroundService implements MediaH
     return outputStream.toByteArray();
   }
 
-  private void uploadZipBackup(byte[] zipBytes)
+  private boolean uploadZipBackup(byte[] zipBytes)
   {
+    boolean success = false;
     GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(BackupForegroundService.this);
     if (account != null)
     {
       GoogleDriveInterface googleDriveInterface = new GoogleDriveInterface(BackupForegroundService.this, account);
-      boolean uploadSuccess = googleDriveInterface.uploadFile(
+      success = googleDriveInterface.uploadFile(
           String.format("%s/%s", getString(R.string.app_name), AppDatabase.NAME.replace(".db", ".zip")),
           "application/zip",
           zipBytes,
           this);
-      if (uploadSuccess)
+      if (success)
       {
         pushNotification(FINISHED_NOTIFICATION_ID, buildOnSuccessNotification());
       }
@@ -148,6 +149,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
     {
       pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_recovery_sign_in_fail_notification_text));
     }
+    return success;
   }
 
   @Override

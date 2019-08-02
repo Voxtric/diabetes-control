@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity
       }
       else
       {
-        Toast.makeText(this, R.string.write_external_storage_permission_needed_message, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.write_external_storage_export_permission_needed_message, Toast.LENGTH_LONG).show();
       }
     }
     else
@@ -249,13 +249,13 @@ public class MainActivity extends AppCompatActivity
         {
           AlertDialog dialog = new AlertDialog.Builder(this)
               .setTitle(R.string.permission_justification_title)
-              .setMessage(R.string.write_external_storage_permission_justification_message)
+              .setMessage(R.string.write_external_storage_export_permission_justification_message)
               .setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
               {
                 @Override
                 public void onClick(DialogInterface dialog, int which)
                 {
-                  Toast.makeText(MainActivity.this, R.string.write_external_storage_permission_needed_message, Toast.LENGTH_LONG).show();
+                  Toast.makeText(MainActivity.this, R.string.write_external_storage_export_permission_needed_message, Toast.LENGTH_LONG).show();
                 }
               })
               .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
