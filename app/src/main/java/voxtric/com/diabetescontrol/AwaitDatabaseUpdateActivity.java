@@ -65,6 +65,7 @@ public abstract class AwaitDatabaseUpdateActivity extends AppCompatActivity
     public void onReceive(Context context, Intent intent)
     {
       cancelWaitDialog();
+      recreate();
     }
   }
 }
