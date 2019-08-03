@@ -414,7 +414,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
         Button applyBackupButton = activity.findViewById(R.id.apply_backup_button);
         applyBackupButton.setEnabled(backupButtonsEnabled);
 
-        Toast.makeText(activity, R.string.backup_finished_message, Toast.LENGTH_LONG).show();
+        Toast.makeText(activity, R.string.backup_succeeded_message, Toast.LENGTH_LONG).show();
       }
     }
   }

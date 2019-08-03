@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.StringRes;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -53,6 +54,9 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
     return s_progress;
   }
 
+  @StringRes
+  private int m_failureMessageId = -1;
+
   @Override
   public int onStartCommand(Intent intent, int flags, int startId)
   {
@@ -70,18 +74,29 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
         @Override
         public void run()
         {
+          boolean success = false;
           byte[] zipBytes = downloadZipBackup();
           if (zipBytes != null)
           {
-            unpackZipBackup(zipBytes);
+            success = unpackZipBackup(zipBytes);
           }
 
           s_progress = -1;
           stopForeground(true);
           stopSelf();
 
-          Intent recoveryCompleteBroadcast = new Intent(ACTION_FINISHED);
-          LocalBroadcastManager.getInstance(RecoveryForegroundService.this).sendBroadcast(recoveryCompleteBroadcast);
+          Intent recoveryFinishedBroadcast = new Intent(ACTION_FINISHED);
+          if (success)
+          {
+            recoveryFinishedBroadcast.putExtra("message_title_id", R.string.recovery_success_notification_title);
+            recoveryFinishedBroadcast.putExtra("message_text_id", R.string.recovery_success_notification_text);
+          }
+          else
+          {
+            recoveryFinishedBroadcast.putExtra("message_title_id", R.string.recovery_fail_notification_title);
+            recoveryFinishedBroadcast.putExtra("message_text_id", m_failureMessageId);
+          }
+          LocalBroadcastManager.getInstance(RecoveryForegroundService.this).sendBroadcast(recoveryFinishedBroadcast);
         }
       });
       thread.setDaemon(true);
@@ -142,8 +157,9 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
     return zipBytes;
   }
 
-  private void unpackZipBackup(byte[] zipBytes)
+  private boolean unpackZipBackup(byte[] zipBytes)
   {
+    boolean success = false;
     ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(zipBytes));
     try
     {
@@ -162,6 +178,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
         outputStream.close();
       }
       AppDatabase.initialise(this);
+      success = true;
       pushNotification(FINISHED_NOTIFICATION_ID, buildOnSuccessNotification());
     }
     catch (IOException exception)
@@ -169,6 +186,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
       Log.e(TAG, getString(R.string.recovery_read_file_fail_notification_text), exception);
       pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_read_file_fail_notification_text));
     }
+    return success;
   }
 
   @Override
@@ -209,6 +227,8 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   @Override
   protected Notification buildOnFailNotification(int failureMessageId)
   {
+    m_failureMessageId = failureMessageId;
+
     Intent notificationIntent = new Intent(this, SettingsActivity.class);
     notificationIntent.setAction(ACTION_FINISHED);
     notificationIntent.putExtra("message_title_id", R.string.recovery_fail_notification_title);

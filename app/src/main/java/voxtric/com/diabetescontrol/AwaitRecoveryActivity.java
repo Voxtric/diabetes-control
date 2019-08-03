@@ -4,19 +4,40 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public abstract class AwaitRecoveryActivity extends AppCompatActivity
 {
   private AlertDialog m_recoveryWaitDialog = null;
   private RecoveryOngoingBroadcastReceiver m_recoveryOngoingBroadcastReceiver = new RecoveryOngoingBroadcastReceiver();
   private RecoveryCompleteBroadcastReceiver m_recoveryCompleteBroadcastReceiver = new RecoveryCompleteBroadcastReceiver();
+
+  @Override
+  protected void onStart()
+  {
+    super.onStart();
+
+    SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+    @StringRes int messageTitleId = preferences.getInt("recovery_message_title_id", -1);
+    @StringRes int messageTextId = preferences.getInt("recovery_message_text_id", -1);
+    if (messageTitleId != -1 && messageTextId != -1)
+    {
+      ViewUtilities.launchMessageDialog(AwaitRecoveryActivity.this, messageTitleId, messageTextId);
+    }
+    SharedPreferences.Editor preferencesEditor = preferences.edit();
+    preferencesEditor.putInt("recovery_message_title_id", -1);
+    preferencesEditor.putInt("recovery_message_text_id", -1);
+    preferencesEditor.apply();
+  }
 
   @Override
   protected void onResume()
@@ -104,8 +125,21 @@ public abstract class AwaitRecoveryActivity extends AppCompatActivity
     public void onReceive(Context context, Intent intent)
     {
       cancelRecoveryWaitDialog();
-      recreate();
-      Toast.makeText(AwaitRecoveryActivity.this, R.string.recovery_finished_message, Toast.LENGTH_LONG).show();
+      @StringRes int messageTitleId = intent.getIntExtra("message_title_id", R.string.title_undefined);
+      @StringRes int messageTextId = intent.getIntExtra("message_text_id", R.string.message_undefined);
+      if (messageTitleId == R.string.recovery_success_notification_title)
+      {
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor preferencesEditor = preferences.edit();
+        preferencesEditor.putInt("recovery_message_title_id", messageTitleId);
+        preferencesEditor.putInt("recovery_message_text_id", messageTextId);
+        preferencesEditor.apply();
+        recreate();
+      }
+      else
+      {
+        ViewUtilities.launchMessageDialog(AwaitRecoveryActivity.this, messageTitleId, messageTextId);
+      }
     }
   }
 }
