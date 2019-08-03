@@ -1,5 +1,6 @@
 package voxtric.com.diabetescontrol;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -121,6 +122,7 @@ public abstract class AwaitRecoveryActivity extends AppCompatActivity
 
   private class RecoveryCompleteBroadcastReceiver extends BroadcastReceiver
   {
+    @SuppressLint("ApplySharedPref")
     @Override
     public void onReceive(Context context, Intent intent)
     {
@@ -133,7 +135,7 @@ public abstract class AwaitRecoveryActivity extends AppCompatActivity
         SharedPreferences.Editor preferencesEditor = preferences.edit();
         preferencesEditor.putInt("recovery_message_title_id", messageTitleId);
         preferencesEditor.putInt("recovery_message_text_id", messageTextId);
-        preferencesEditor.apply();
+        preferencesEditor.commit();
         recreate();
       }
       else

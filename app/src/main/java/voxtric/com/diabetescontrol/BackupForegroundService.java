@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.StringRes;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -59,6 +60,9 @@ public class BackupForegroundService extends ForegroundService implements MediaH
     return s_progress;
   }
 
+  @StringRes
+  private int m_failureMessageId = -1;
+
   @Override
   public int onStartCommand(Intent intent, int flags, int startId)
   {
@@ -76,19 +80,29 @@ public class BackupForegroundService extends ForegroundService implements MediaH
         @Override
         public void run()
         {
-
+          boolean success = false;
           byte[] zipBytes = createZipBackup();
           if (zipBytes != null)
           {
-            uploadZipBackup(zipBytes);
+            success = uploadZipBackup(zipBytes);
           }
 
           s_progress = -1;
           stopForeground(true);
           stopSelf();
 
-          Intent backupCompleteIntent = new Intent(ACTION_FINISHED);
-          LocalBroadcastManager.getInstance(BackupForegroundService.this).sendBroadcast(backupCompleteIntent);
+          Intent backupFinishedIntent = new Intent(ACTION_FINISHED);
+          if (success)
+          {
+            backupFinishedIntent.putExtra("message_title_id", R.string.backup_success_notification_title);
+            backupFinishedIntent.putExtra("message_text_id", R.string.backup_success_notification_text);
+          }
+          else
+          {
+            backupFinishedIntent.putExtra("message_title_id", R.string.backup_fail_notification_title);
+            backupFinishedIntent.putExtra("message_text_id", m_failureMessageId);
+          }
+          LocalBroadcastManager.getInstance(BackupForegroundService.this).sendBroadcast(backupFinishedIntent);
         }
       });
       thread.setDaemon(true);
@@ -145,8 +159,9 @@ public class BackupForegroundService extends ForegroundService implements MediaH
     return outputStream.toByteArray();
   }
 
-  private void uploadZipBackup(byte[] zipBytes)
+  private boolean uploadZipBackup(byte[] zipBytes)
   {
+    boolean success = false;
     GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(BackupForegroundService.this);
     if (account != null)
     {
@@ -171,6 +186,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
         {
           pushNotification(FINISHED_NOTIFICATION_ID, buildOnSuccessNotification());
         }
+        success = true;
         break;
       case GoogleDriveInterface.RESULT_AUTHENTICATION_ERROR:
         pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_recovery_sign_in_fail_notification_text));
@@ -198,6 +214,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
     {
       pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_recovery_sign_in_fail_notification_text));
     }
+    return success;
   }
 
   @Override
@@ -238,6 +255,8 @@ public class BackupForegroundService extends ForegroundService implements MediaH
   @Override
   protected Notification buildOnFailNotification(int failureMessageId)
   {
+    m_failureMessageId = failureMessageId;
+
     Intent notificationIntent = new Intent(this, SettingsActivity.class);
     notificationIntent.setAction(ACTION_FINISHED);
     notificationIntent.putExtra("message_title_id", R.string.backup_fail_notification_title);

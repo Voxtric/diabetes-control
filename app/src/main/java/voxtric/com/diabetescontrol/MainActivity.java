@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuCompat;
 import androidx.fragment.app.Fragment;
@@ -555,6 +556,9 @@ public class MainActivity extends AwaitRecoveryActivity
     public void onReceive(Context context, Intent intent)
     {
       cancelBackupProgressDialog();
+      ViewUtilities.launchMessageDialog(MainActivity.this,
+          intent.getIntExtra("message_title_id", R.string.title_undefined),
+          intent.getIntExtra("message_text_id", R.string.message_undefined));
     }
   }
 }
