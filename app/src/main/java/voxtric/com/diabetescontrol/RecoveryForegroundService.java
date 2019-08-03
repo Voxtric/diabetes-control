@@ -81,10 +81,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
           {
             success = unpackZipBackup(zipBytes);
           }
-
           s_progress = -1;
-          stopForeground(true);
-          stopSelf();
 
           Intent recoveryFinishedBroadcast = new Intent(ACTION_FINISHED);
           if (success)
@@ -99,6 +96,9 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
           }
           recoveryFinishedBroadcast.putExtra("notification_id", FINISHED_NOTIFICATION_ID);
           LocalBroadcastManager.getInstance(RecoveryForegroundService.this).sendBroadcast(recoveryFinishedBroadcast);
+
+          stopForeground(true);
+          stopSelf();
         }
       });
       thread.setDaemon(true);

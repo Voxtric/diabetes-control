@@ -1310,36 +1310,34 @@ public class NewEntryFragment extends Fragment
 
   private void tryStartNewEntryBackup(final Activity activity)
   {
-    if (GoogleSignIn.getLastSignedInAccount(activity) != null &&
-        !BackupForegroundService.isUploading() &&
-        !RecoveryForegroundService.isDownloading())
-    {
-      Preference.get(activity,
-          new String[] {
-              "automatic_backup",
-              "wifi_only_backup"
-          },
-          new String[] {
-              getString(R.string.automatic_backup_never_option),
-              String.valueOf(true)
-          },
-          new Preference.ResultRunnable()
+    Preference.get(activity,
+        new String[] {
+            "automatic_backup",
+            "wifi_only_backup"
+        },
+        new String[] {
+            getString(R.string.automatic_backup_never_option),
+            String.valueOf(true)
+        },
+        new Preference.ResultRunnable()
+        {
+          @Override
+          public void run()
           {
-            @Override
-            public void run()
+            String automaticBackup = getResults().get("automatic_backup");
+            String wifiOnlyBackup = getResults().get("wifi_only_backup");
+            if (automaticBackup != null && wifiOnlyBackup != null &&
+                automaticBackup.equals(getString(R.string.automatic_backup_after_new_entry_option)) &&
+                (!Boolean.valueOf(wifiOnlyBackup) || GoogleDriveInterface.hasWifiConnection(activity)) &&
+                GoogleSignIn.getLastSignedInAccount(activity) != null &&
+                !BackupForegroundService.isUploading() &&
+                !RecoveryForegroundService.isDownloading())
             {
-              String automaticBackup = getResults().get("automatic_backup");
-              String wifiOnlyBackup = getResults().get("wifi_only_backup");
-              if (automaticBackup != null && wifiOnlyBackup != null &&
-                  automaticBackup.equals(getString(R.string.automatic_backup_after_new_entry_option)) &&
-                  !Boolean.valueOf(wifiOnlyBackup) || GoogleDriveInterface.hasWifiConnection(activity))
-              {
-                Intent intent = new Intent(activity, BackupForegroundService.class);
-                activity.startService(intent);
-              }
+              Intent intent = new Intent(activity, BackupForegroundService.class);
+              activity.startService(intent);
             }
-          });
-    }
+          }
+        });
   }
 
   private AutoCompleteTextView addNewListItemAutoCompleteTextView(Activity activity, LinearLayout owningLayout, @StringRes int hintResourceID, String tag, String text)

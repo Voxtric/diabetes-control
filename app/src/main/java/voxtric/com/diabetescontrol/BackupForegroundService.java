@@ -28,6 +28,7 @@ import java.util.zip.ZipOutputStream;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.Preference;
+import voxtric.com.diabetescontrol.database.PreferencesDao;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 import voxtric.com.diabetescontrol.utilities.ForegroundService;
 import voxtric.com.diabetescontrol.utilities.GoogleDriveInterface;
@@ -87,14 +88,13 @@ public class BackupForegroundService extends ForegroundService implements MediaH
           {
             success = uploadZipBackup(zipBytes);
           }
-
           s_progress = -1;
-          stopForeground(true);
-          stopSelf();
 
           Intent backupFinishedIntent = new Intent(ACTION_FINISHED);
           if (success)
           {
+            updateLastSuccessfulBackupPreference();
+
             backupFinishedIntent.putExtra("message_title_id", R.string.backup_success_notification_title);
             backupFinishedIntent.putExtra("message_text_id", R.string.backup_success_notification_text);
           }
@@ -105,6 +105,9 @@ public class BackupForegroundService extends ForegroundService implements MediaH
           }
           backupFinishedIntent.putExtra("notification_id", FINISHED_NOTIFICATION_ID);
           LocalBroadcastManager.getInstance(BackupForegroundService.this).sendBroadcast(backupFinishedIntent);
+
+          stopForeground(true);
+          stopSelf();
         }
       });
       thread.setDaemon(true);
@@ -217,6 +220,24 @@ public class BackupForegroundService extends ForegroundService implements MediaH
       pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_recovery_sign_in_fail_notification_text));
     }
     return success;
+  }
+
+  private void updateLastSuccessfulBackupPreference()
+  {
+    PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
+    Preference preference = preferencesDao.getPreference("last_successful_backup_timestamp");
+    if (preference != null)
+    {
+      preference.value = String.valueOf(System.currentTimeMillis());
+      preferencesDao.update(preference);
+    }
+    else
+    {
+      preference = new Preference();
+      preference.name = "last_successful_backup_timestamp";
+      preference.value = String.valueOf(System.currentTimeMillis());
+      preferencesDao.insert(preference);
+    }
   }
 
   @Override

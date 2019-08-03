@@ -31,18 +31,22 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tom_roush.pdfbox.util.PDFBoxResourceLoader;
 
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.Food;
+import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.exporting.ExportDurationDialogFragment;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
+import voxtric.com.diabetescontrol.utilities.GoogleDriveInterface;
 import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class MainActivity extends AwaitRecoveryActivity
@@ -109,6 +113,65 @@ public class MainActivity extends AwaitRecoveryActivity
         actOnIntent(getIntent());
       }
     });
+  }
+
+  @Override
+  public void onResume()
+  {
+    super.onResume();
+    Preference.get(this,
+        new String[] {
+            "automatic_backup",
+            "wifi_only_backup",
+            "last_successful_backup_timestamp"
+        },
+        new String[] {
+            getString(R.string.automatic_backup_never_option),
+            String.valueOf(true),
+            String.valueOf(Long.MIN_VALUE)
+        },
+        new Preference.ResultRunnable()
+        {
+          @Override
+          public void run()
+          {
+            String automaticBackup = getResults().get("automatic_backup");
+            String wifiOnlyBackup = getResults().get("wifi_only_backup");
+            String lastSuccessfulBackupTimestamp = getResults().get("last_successful_backup_timestamp");
+            if (automaticBackup != null && wifiOnlyBackup != null && lastSuccessfulBackupTimestamp != null)
+            {
+              Calendar calendar = Calendar.getInstance();
+              if (automaticBackup.equals(getString(R.string.automatic_backup_daily_option)))
+              {
+                calendar.add(Calendar.DAY_OF_YEAR, -1);
+              }
+              else if (automaticBackup.equals(getString(R.string.automatic_backup_weekly_option)))
+              {
+                calendar.add(Calendar.WEEK_OF_YEAR, -1);
+              }
+              else if (automaticBackup.equals(getString(R.string.automatic_backup_monthly_option)))
+              {
+                calendar.add(Calendar.MONTH, -1);
+              }
+              else
+              {
+                calendar.set(
+                    calendar.getMaximum(Calendar.YEAR),
+                    calendar.getMaximum(Calendar.MONTH),
+                    calendar.getMaximum(Calendar.DATE));
+              }
+
+              if (calendar.getTimeInMillis() >= Long.valueOf(lastSuccessfulBackupTimestamp) &&
+                  (!Boolean.valueOf(wifiOnlyBackup) || GoogleDriveInterface.hasWifiConnection(MainActivity.this)) &&
+                  GoogleSignIn.getLastSignedInAccount(MainActivity.this) != null &&
+                  !BackupForegroundService.isUploading() && !RecoveryForegroundService.isDownloading())
+              {
+                Intent intent = new Intent(MainActivity.this, BackupForegroundService.class);
+                startService(intent);
+              }
+            }
+          }
+        });
   }
 
   @Override
