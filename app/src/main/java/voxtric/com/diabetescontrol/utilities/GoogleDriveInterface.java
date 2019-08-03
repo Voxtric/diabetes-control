@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLHandshakeException;
 
 import voxtric.com.diabetescontrol.R;
 
@@ -56,7 +57,7 @@ public class GoogleDriveInterface
     ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
     if (connectivityManager != null)
     {
-      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
       {
         Network activeNetwork = connectivityManager.getActiveNetwork();
         NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
@@ -212,6 +213,11 @@ public class GoogleDriveInterface
       Log.v(TAG, "File Upload Unknown Host Exception", exception);
       result = RESULT_CONNECTION_ERROR;
     }
+    catch (SSLHandshakeException exception)
+    {
+      Log.v(TAG, "File Upload SSL Handshake Exception");
+      result = RESULT_AUTHENTICATION_ERROR;
+    }
     catch (SSLException exception)
     {
       Log.v(TAG, "File Upload SSL Exception", exception);
@@ -280,6 +286,11 @@ public class GoogleDriveInterface
       Log.v(TAG, "File Download Unknown Host Exception", exception);
       result = RESULT_CONNECTION_ERROR;
     }
+    catch (SSLHandshakeException exception)
+    {
+      Log.v(TAG, "File Download SSL Handshake Exception");
+      result = RESULT_AUTHENTICATION_ERROR;
+    }
     catch (SSLException exception)
     {
       Log.v(TAG, "File Download SSL Exception", exception);
@@ -337,6 +348,11 @@ public class GoogleDriveInterface
     {
       Log.v(TAG, "File Deletion Unknown Host Exception", exception);
       result = RESULT_CONNECTION_ERROR;
+    }
+    catch (SSLHandshakeException exception)
+    {
+      Log.v(TAG, "File Deletion SSL Handshake Exception");
+      result = RESULT_AUTHENTICATION_ERROR;
     }
     catch (SSLException exception)
     {
@@ -397,6 +413,11 @@ public class GoogleDriveInterface
       Log.v(TAG, "File Metadata Retrieval Unknown Host Exception", exception);
       result = RESULT_CONNECTION_ERROR;
     }
+    catch (SSLHandshakeException exception)
+    {
+      Log.v(TAG, "File Metadata Retrieval SSL Handshake Exception");
+      result = RESULT_AUTHENTICATION_ERROR;
+    }
     catch (SSLException exception)
     {
       Log.v(TAG, "File Metadata Retrieval SSL Exception", exception);
@@ -432,7 +453,7 @@ public class GoogleDriveInterface
     {
       if (exceptionMessage.contains("NetworkError"))
       {
-        result = RESULT_CONNECTION_ERROR;
+        result = RESULT_AUTHENTICATION_ERROR;
       }
     }
 
