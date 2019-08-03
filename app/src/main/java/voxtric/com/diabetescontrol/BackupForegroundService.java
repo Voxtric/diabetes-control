@@ -221,7 +221,9 @@ public class BackupForegroundService extends ForegroundService implements MediaH
   {
     Intent notificationIntent = new Intent(this, MainActivity.class);
     notificationIntent.setAction(ACTION_FINISHED);
-    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+    notificationIntent.putExtra("message_title_id", R.string.backup_success_notification_title);
+    notificationIntent.putExtra("message_text_id", R.string.backup_success_notification_text);
+    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
         .setSmallIcon(R.drawable.done)

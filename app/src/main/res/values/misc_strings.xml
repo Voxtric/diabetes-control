@@ -1,9 +1,6 @@
 <resources>
     <string name="app_name">Diabetes Control</string>
 
-    <!-- Toasts -->
-    <string name="not_implemented_message">Feature under construction</string>
-
 
 
     <!-- Menus -->
@@ -39,6 +36,8 @@
 
 
 
-
-
+    <!-- Missing Values -->
+    <string name="not_implemented_message">Feature under construction</string>
+    <string name="title_undefined">Title String Undefined</string>
+    <string name="message_undefined">Message String Undefined</string>
 </resources>

@@ -42,6 +42,7 @@ import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.Food;
 import voxtric.com.diabetescontrol.exporting.ExportDurationDialogFragment;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
+import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class MainActivity extends AwaitRecoveryActivity
 {
@@ -273,11 +274,16 @@ public class MainActivity extends AwaitRecoveryActivity
     {
       switch (action)
       {
+      case BackupForegroundService.ACTION_FINISHED:
+      case RecoveryForegroundService.ACTION_FINISHED:
+        navigateToPageFragment(ENTRY_LIST_FRAGMENT_INDEX);
+        ViewUtilities.launchMessageDialog(this,
+            intent.getIntExtra("message_title_id", R.string.title_undefined),
+            intent.getIntExtra("message_text_id", R.string.message_undefined));
+        break;
       case BackupForegroundService.ACTION_ONGOING:
         launchBackupProgressDialog();
-      case BackupForegroundService.ACTION_FINISHED:
       case RecoveryForegroundService.ACTION_ONGOING:
-      case RecoveryForegroundService.ACTION_FINISHED:
         navigateToPageFragment(ENTRY_LIST_FRAGMENT_INDEX);
         break;
       }
@@ -400,7 +406,7 @@ public class MainActivity extends AwaitRecoveryActivity
         }
       }
     }
-
+// TODO: Re-write getFragment and getFragmentIndex.
     m_activeMenu = new PopupMenu(view.getContext(), view);
     m_activeMenu.getMenuInflater().inflate(R.menu.entry_more, m_activeMenu.getMenu());
     m_activeMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()

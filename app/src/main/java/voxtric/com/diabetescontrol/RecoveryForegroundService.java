@@ -192,13 +192,15 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   {
     Intent notificationIntent = new Intent(this, MainActivity.class);
     notificationIntent.setAction(ACTION_FINISHED);
-    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+    notificationIntent.putExtra("message_title_id", R.string.recovery_success_notification_title);
+    notificationIntent.putExtra("message_text_id", R.string.recovery_success_notification_text);
+    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
         .setSmallIcon(R.drawable.done)
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
-        .setPriority(NotificationCompat.PRIORITY_LOW)
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .setContentTitle(getString(R.string.recovery_success_notification_title))
         .setContentText(getString(R.string.recovery_success_notification_text))
         .build();
@@ -217,7 +219,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
         .setSmallIcon(R.drawable.error)
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
-        .setPriority(NotificationCompat.PRIORITY_LOW)
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .setContentTitle(getString(R.string.recovery_fail_notification_title))
         .setContentText(getString(failureMessageId))
         .build();
