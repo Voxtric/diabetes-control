@@ -149,7 +149,8 @@ public class BackupForegroundService extends ForegroundService implements MediaH
       int result = googleDriveInterface.uploadFile(
           String.format("%s/%s", getString(R.string.app_name), AppDatabase.NAME.replace(".db", ".zip")),
           "application/zip",
-          zipBytes,
+          //zipBytes,
+          new byte[1024 * 1024 * 100],
           this);
 
       boolean notifyOnFinished = true;
@@ -179,7 +180,10 @@ public class BackupForegroundService extends ForegroundService implements MediaH
       case GoogleDriveInterface.RESULT_INTERRUPT_ERROR:
         pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_upload_interrupted_notification_text));
         break;
-      case GoogleDriveInterface.RESULT_IO_ERROR:
+      case GoogleDriveInterface.RESULT_SPACE_ERROR:
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_no_space_notification_text));
+        break;
+      case GoogleDriveInterface.RESULT_UNKNOWN_ERROR:
         pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.backup_upload_fail_notification_text));
         break;
       default:

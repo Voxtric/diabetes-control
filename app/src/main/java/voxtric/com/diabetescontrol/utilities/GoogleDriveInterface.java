@@ -7,10 +7,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.googleapis.media.MediaHttpDownloaderProgressListener;
 import com.google.api.client.googleapis.media.MediaHttpUploaderProgressListener;
 import com.google.api.client.http.ByteArrayContent;
-import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
@@ -33,13 +34,16 @@ public class GoogleDriveInterface
   private static final String TAG = "GoogleDriveInterface";
 
   public static final int RESULT_SUCCESS = 0;
+
   public static final int RESULT_PARENT_FOLDER_MISSING = 1;
   public static final int RESULT_FILE_MISSING = 2;
+
   public static final int RESULT_AUTHENTICATION_ERROR = -1;
   public static final int RESULT_CONNECTION_ERROR = -2;
   public static final int RESULT_TIMEOUT_ERROR = -3;
   public static final int RESULT_INTERRUPT_ERROR = -4;
-  public static final int RESULT_IO_ERROR = -5;
+  public static final int RESULT_SPACE_ERROR = -5;
+  public static final int RESULT_UNKNOWN_ERROR = -6;
 
   private Drive m_googleDrive;
 
@@ -163,28 +167,33 @@ public class GoogleDriveInterface
     }
     catch (UserRecoverableAuthIOException exception)
     {
-      Log.e(TAG, "File Upload User Recoverable Auth IO Exception", exception);
+      Log.v(TAG, "File Upload User Recoverable Auth IO Exception", exception);
       result = RESULT_AUTHENTICATION_ERROR;
     }
     catch (SocketTimeoutException exception)
     {
-      Log.e(TAG, "File Upload Socket Timeout Exception", exception);
+      Log.v(TAG, "File Upload Socket Timeout Exception", exception);
       result = RESULT_TIMEOUT_ERROR;
     }
     catch (UnknownHostException exception)
     {
-      Log.e(TAG, "File Upload Unknown Host Exception", exception);
+      Log.v(TAG, "File Upload Unknown Host Exception", exception);
       result = RESULT_CONNECTION_ERROR;
     }
     catch (SSLException exception)
     {
-      Log.e(TAG, "File Upload SSL Exception", exception);
+      Log.v(TAG, "File Upload SSL Exception", exception);
       result = RESULT_INTERRUPT_ERROR;
+    }
+    catch (GoogleJsonResponseException exception)
+    {
+      Log.v(TAG, "File Upload Google Json Response Exception", exception);
+      result = parseGoogleJsonResponseException(exception);
     }
     catch (IOException exception)
     {
       Log.e(TAG, "File Upload IO Exception", exception);
-      result = RESULT_IO_ERROR;
+      result = RESULT_UNKNOWN_ERROR;
     }
     return result;
   }
@@ -227,28 +236,28 @@ public class GoogleDriveInterface
     }
     catch (UserRecoverableAuthIOException exception)
     {
-      Log.e(TAG, "File Download User Recoverable Auth IO Exception", exception);
+      Log.v(TAG, "File Download User Recoverable Auth IO Exception", exception);
       result = RESULT_AUTHENTICATION_ERROR;
     }
     catch (SocketTimeoutException exception)
     {
-      Log.e(TAG, "File Download Socket Timeout Exception", exception);
+      Log.v(TAG, "File Download Socket Timeout Exception", exception);
       result = RESULT_TIMEOUT_ERROR;
     }
     catch (UnknownHostException exception)
     {
-      Log.e(TAG, "File Download Unknown Host Exception", exception);
+      Log.v(TAG, "File Download Unknown Host Exception", exception);
       result = RESULT_CONNECTION_ERROR;
     }
     catch (SSLException exception)
     {
-      Log.e(TAG, "File Download SSL Exception", exception);
+      Log.v(TAG, "File Download SSL Exception", exception);
       result = RESULT_INTERRUPT_ERROR;
     }
     catch (IOException exception)
     {
       Log.e(TAG, "File Download IO Exception", exception);
-      result = RESULT_IO_ERROR;
+      result = RESULT_UNKNOWN_ERROR;
     }
     return new Result<>(result, data);
   }
@@ -286,28 +295,28 @@ public class GoogleDriveInterface
     }
     catch (UserRecoverableAuthIOException exception)
     {
-      Log.e(TAG, "File Deletion User Recoverable Auth IO Exception", exception);
+      Log.v(TAG, "File Deletion User Recoverable Auth IO Exception", exception);
       result = RESULT_AUTHENTICATION_ERROR;
     }
     catch (SocketTimeoutException exception)
     {
-      Log.e(TAG, "File Deletion Socket Timeout Exception", exception);
+      Log.v(TAG, "File Deletion Socket Timeout Exception", exception);
       result = RESULT_TIMEOUT_ERROR;
     }
     catch (UnknownHostException exception)
     {
-      Log.e(TAG, "File Deletion Unknown Host Exception", exception);
+      Log.v(TAG, "File Deletion Unknown Host Exception", exception);
       result = RESULT_CONNECTION_ERROR;
     }
     catch (SSLException exception)
     {
-      Log.e(TAG, "File Deletion SSL Exception", exception);
+      Log.v(TAG, "File Deletion SSL Exception", exception);
       result = RESULT_INTERRUPT_ERROR;
     }
     catch (IOException exception)
     {
       Log.e(TAG, "File Deletion IO Exception", exception);
-      result = RESULT_IO_ERROR;
+      result = RESULT_UNKNOWN_ERROR;
     }
     return result;
   }
@@ -346,30 +355,45 @@ public class GoogleDriveInterface
     }
     catch (UserRecoverableAuthIOException exception)
     {
-      Log.e(TAG, "File Metadata Retrieval User Recoverable Auth IO Exception", exception);
+      Log.v(TAG, "File Metadata Retrieval User Recoverable Auth IO Exception", exception);
       result = RESULT_AUTHENTICATION_ERROR;
     }
     catch (SocketTimeoutException exception)
     {
-      Log.e(TAG, "File Metadata Retrieval Socket Timeout Exception", exception);
+      Log.v(TAG, "File Metadata Retrieval Socket Timeout Exception", exception);
       result = RESULT_TIMEOUT_ERROR;
     }
     catch (UnknownHostException exception)
     {
-      Log.e(TAG, "File Metadata Retrieval Unknown Host Exception", exception);
+      Log.v(TAG, "File Metadata Retrieval Unknown Host Exception", exception);
       result = RESULT_CONNECTION_ERROR;
     }
     catch (SSLException exception)
     {
-      Log.e(TAG, "File Metadata Retrieval SSL Exception", exception);
+      Log.v(TAG, "File Metadata Retrieval SSL Exception", exception);
       result = RESULT_INTERRUPT_ERROR;
     }
     catch (IOException exception)
     {
       Log.e(TAG, "File Metadata Retrieval IO Exception", exception);
-      result = RESULT_IO_ERROR;
+      result = RESULT_UNKNOWN_ERROR;
     }
     return new Result<>(result, file);
+  }
+
+  private int parseGoogleJsonResponseException(GoogleJsonResponseException exception)
+  {
+    int result = RESULT_UNKNOWN_ERROR;
+    List<GoogleJsonError.ErrorInfo> errors = exception.getDetails().getErrors();
+    for (int i = 0; i < errors.size() && result == RESULT_UNKNOWN_ERROR; i++)
+    {
+      GoogleJsonError.ErrorInfo error = errors.get(i);
+      if (error.getReason().equals("storageQuotaExceeded"))
+      {
+        result = RESULT_SPACE_ERROR;
+      }
+    }
+    return result;
   }
 
   public static class Result<T>

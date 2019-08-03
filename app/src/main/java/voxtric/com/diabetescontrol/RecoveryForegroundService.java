@@ -123,7 +123,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
       case GoogleDriveInterface.RESULT_INTERRUPT_ERROR:
         pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_download_interrupted_notification_text));
         break;
-      case GoogleDriveInterface.RESULT_IO_ERROR:
+      case GoogleDriveInterface.RESULT_UNKNOWN_ERROR:
         pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_download_fail_notification_text));
         break;
       default:

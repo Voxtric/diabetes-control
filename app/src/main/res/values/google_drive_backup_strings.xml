@@ -103,6 +103,7 @@ This may take some time, so feel free to close the app and you will be notified 
     <string name="backup_find_database_fail_notification_text">Could not find data for backup.</string>
     <string name="backup_create_file_fail_notification_text">Could not create backup file.</string>
     <string name="backup_upload_interrupted_notification_text">Google Drive backup upload interrupted.</string>
+    <string name="backup_no_space_notification_text">Insufficient space for backup file on Google Drive.</string>
     <string name="backup_upload_fail_notification_text">Unknown upload failure.</string>
 
     <string name="recovering_notification_title">Recovering Backup</string>
