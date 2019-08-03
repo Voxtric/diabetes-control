@@ -35,7 +35,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
 {
   private static final String TAG = "BackupForegroundService";
 
-  public static final String ACTION_COMPLETE = "voxtric.com.diabetescontrol.RecoveryForegroundService.ACTION_COMPLETE";
+  public static final String ACTION_COMPLETE = "voxtric.com.diabetescontrol.RecoveryForegroundService.ACTION_FINISHED";
 
   private static final String ONGOING_CHANNEL_ID = "OngoingBackupForegroundServiceChannel";
   private static final String ONGOING_CHANNEL_NAME = "Ongoing Backup Foreground Service";

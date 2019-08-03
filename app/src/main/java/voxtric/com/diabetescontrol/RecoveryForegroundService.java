@@ -31,7 +31,8 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
 {
   private static final String TAG = "RecoveryForegroundServi";
 
-  public static final String ACTION_COMPLETE = "voxtric.com.diabetescontrol.RecoveryForegroundService.ACTION_COMPLETE";
+  public static final String ACTION_ONGOING = "voxtric.com.diabetescontrol.RecoveryForegroundService.ACTION_ONGOING";
+  public static final String ACTION_FINISHED = "voxtric.com.diabetescontrol.RecoveryForegroundService.ACTION_FINISHED";
 
   private static final String ONGOING_CHANNEL_ID = "OngoingRecoveryForegroundServiceChannel";
   private static final String ONGOING_CHANNEL_NAME = "Ongoing Recovery Foreground Service";
@@ -40,12 +41,16 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   private static final String FINISHED_CHANNEL_ID = "FinishedRecoveryForegroundServiceChannel";
   private static final String FINISHED_CHANNEL_NAME = "Finished Recovery Foreground Service";
   private static final int FINISHED_NOTIFICATION_ID = 1094;
-  private static final int MAX_DOWNLOAD_PROGRESS = 100;
+  public static final int MAX_DOWNLOAD_PROGRESS = 100;
 
-  private static boolean s_isDownloading = false;
+  private static int s_progress = -1;
   public static boolean isDownloading()
   {
-    return s_isDownloading;
+    return s_progress != -1;
+  }
+  public static int getProgress()
+  {
+    return s_progress;
   }
 
   @Override
@@ -55,7 +60,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
 
     if (!isDownloading())
     {
-      s_isDownloading = true;
+      s_progress = 0;
       createNotificationChannel(ONGOING_CHANNEL_ID, ONGOING_CHANNEL_NAME, true);
       createNotificationChannel(FINISHED_CHANNEL_ID, FINISHED_CHANNEL_NAME, false);
       startForeground(ONGOING_NOTIFICATION_ID, buildOngoingNotification(0));
@@ -71,11 +76,11 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
             unpackZipBackup(zipBytes);
           }
 
+          s_progress = -1;
           stopForeground(true);
           stopSelf();
-          s_isDownloading = false;
 
-          Intent recoveryCompleteBroadcast = new Intent(ACTION_COMPLETE);
+          Intent recoveryCompleteBroadcast = new Intent(ACTION_FINISHED);
           LocalBroadcastManager.getInstance(RecoveryForegroundService.this).sendBroadcast(recoveryCompleteBroadcast);
         }
       });
@@ -220,7 +225,10 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   @Override
   public void progressChanged(MediaHttpDownloader downloader)
   {
-    int progress = (int)(downloader.getProgress() * 100.0);
-    pushNotification(ONGOING_NOTIFICATION_ID, buildOngoingNotification(progress));
+    s_progress = (int)(downloader.getProgress() * 100.0);
+    pushNotification(ONGOING_NOTIFICATION_ID, buildOngoingNotification(s_progress));
+
+    Intent recoveryCompleteBroadcast = new Intent(ACTION_ONGOING);
+    LocalBroadcastManager.getInstance(RecoveryForegroundService.this).sendBroadcast(recoveryCompleteBroadcast);
   }
 }
