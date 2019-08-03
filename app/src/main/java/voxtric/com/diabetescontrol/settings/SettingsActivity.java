@@ -3,7 +3,9 @@ package voxtric.com.diabetescontrol.settings;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -82,7 +84,7 @@ public class SettingsActivity extends AwaitRecoveryActivity
     return false;
   }
 
-  private void actOnIntent(Intent intent)
+  private void actOnIntent(final Intent intent)
   {
     String action = intent.getAction();
     if (action != null)
@@ -92,7 +94,19 @@ public class SettingsActivity extends AwaitRecoveryActivity
       {
         ViewUtilities.launchMessageDialog(this,
             intent.getIntExtra("message_title_id", R.string.title_undefined),
-            intent.getIntExtra("message_text_id", R.string.message_undefined));
+            intent.getIntExtra("message_text_id", R.string.message_undefined),
+            new DialogInterface.OnClickListener()
+            {
+              @Override
+              public void onClick(DialogInterface dialogInterface, int i)
+              {
+                NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                if (notificationManager != null)
+                {
+                  notificationManager.cancel(intent.getIntExtra("notification_id", -1));
+                }
+              }
+            });
       }
       intent.setAction(null);
     }

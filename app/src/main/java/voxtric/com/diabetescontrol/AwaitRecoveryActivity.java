@@ -1,8 +1,10 @@
 package voxtric.com.diabetescontrol;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -30,9 +32,22 @@ public abstract class AwaitRecoveryActivity extends AppCompatActivity
     SharedPreferences preferences = getPreferences(MODE_PRIVATE);
     @StringRes int messageTitleId = preferences.getInt("recovery_message_title_id", -1);
     @StringRes int messageTextId = preferences.getInt("recovery_message_text_id", -1);
-    if (messageTitleId != -1 && messageTextId != -1)
+    final int notificationId = preferences.getInt("recovery_notification_id", -1);
+    if (messageTitleId != -1 && messageTextId != -1 && notificationId != -1)
     {
-      ViewUtilities.launchMessageDialog(AwaitRecoveryActivity.this, messageTitleId, messageTextId);
+      ViewUtilities.launchMessageDialog(AwaitRecoveryActivity.this, messageTitleId, messageTextId,
+          new DialogInterface.OnClickListener()
+          {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+              NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+              if (notificationManager != null)
+              {
+                notificationManager.cancel(notificationId);
+              }
+            }
+          });
     }
     SharedPreferences.Editor preferencesEditor = preferences.edit();
     preferencesEditor.putInt("recovery_message_title_id", -1);
@@ -129,18 +144,32 @@ public abstract class AwaitRecoveryActivity extends AppCompatActivity
       cancelRecoveryWaitDialog();
       @StringRes int messageTitleId = intent.getIntExtra("message_title_id", R.string.title_undefined);
       @StringRes int messageTextId = intent.getIntExtra("message_text_id", R.string.message_undefined);
+      final int notificationId = intent.getIntExtra("notification_id", -1);
       if (messageTitleId == R.string.recovery_success_notification_title)
       {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor preferencesEditor = preferences.edit();
         preferencesEditor.putInt("recovery_message_title_id", messageTitleId);
         preferencesEditor.putInt("recovery_message_text_id", messageTextId);
+        preferencesEditor.putInt("recovery_notification_id", notificationId);
         preferencesEditor.commit();
         recreate();
       }
       else
       {
-        ViewUtilities.launchMessageDialog(AwaitRecoveryActivity.this, messageTitleId, messageTextId);
+        ViewUtilities.launchMessageDialog(AwaitRecoveryActivity.this, messageTitleId, messageTextId,
+            new DialogInterface.OnClickListener()
+            {
+              @Override
+              public void onClick(DialogInterface dialogInterface, int i)
+              {
+                NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                if (notificationManager != null)
+                {
+                  notificationManager.cancel(notificationId);
+                }
+              }
+            });
       }
     }
   }

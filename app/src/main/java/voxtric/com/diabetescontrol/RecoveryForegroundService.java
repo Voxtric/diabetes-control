@@ -68,6 +68,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
       createNotificationChannel(ONGOING_CHANNEL_ID, ONGOING_CHANNEL_NAME, true);
       createNotificationChannel(FINISHED_CHANNEL_ID, FINISHED_CHANNEL_NAME, false);
       startForeground(ONGOING_NOTIFICATION_ID, buildOngoingNotification(0));
+      cancelNotification(FINISHED_NOTIFICATION_ID);
 
       Thread thread = new Thread(new Runnable()
       {
@@ -96,6 +97,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
             recoveryFinishedBroadcast.putExtra("message_title_id", R.string.recovery_fail_notification_title);
             recoveryFinishedBroadcast.putExtra("message_text_id", m_failureMessageId);
           }
+          recoveryFinishedBroadcast.putExtra("notification_id", FINISHED_NOTIFICATION_ID);
           LocalBroadcastManager.getInstance(RecoveryForegroundService.this).sendBroadcast(recoveryFinishedBroadcast);
         }
       });

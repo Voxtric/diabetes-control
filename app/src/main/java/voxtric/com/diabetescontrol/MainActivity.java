@@ -2,6 +2,7 @@ package voxtric.com.diabetescontrol;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,7 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuCompat;
 import androidx.fragment.app.Fragment;
@@ -293,7 +293,7 @@ public class MainActivity extends AwaitRecoveryActivity
     m_viewPager.setCurrentItem(fragmentIndex);
   }
 
-  private void actOnIntent(Intent intent)
+  private void actOnIntent(final Intent intent)
   {
     String action = intent.getAction();
     if (action != null)
@@ -303,9 +303,7 @@ public class MainActivity extends AwaitRecoveryActivity
       case BackupForegroundService.ACTION_FINISHED:
       case RecoveryForegroundService.ACTION_FINISHED:
         navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
-        ViewUtilities.launchMessageDialog(this,
-            intent.getIntExtra("message_title_id", R.string.title_undefined),
-            intent.getIntExtra("message_text_id", R.string.message_undefined));
+        launchMessageDialog(intent);
         break;
       case BackupForegroundService.ACTION_ONGOING:
         launchBackupProgressDialog();
@@ -315,6 +313,25 @@ public class MainActivity extends AwaitRecoveryActivity
       }
       intent.setAction(null);
     }
+  }
+
+  private void launchMessageDialog(final Intent intent)
+  {
+    ViewUtilities.launchMessageDialog(this,
+        intent.getIntExtra("message_title_id", R.string.title_undefined),
+        intent.getIntExtra("message_text_id", R.string.message_undefined),
+        new DialogInterface.OnClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i)
+          {
+            NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager != null)
+            {
+              notificationManager.cancel(intent.getIntExtra("notification_id", -1));
+            }
+          }
+        });
   }
 
   private void export(final String title, String startMessage, String endMessage)
@@ -556,9 +573,7 @@ public class MainActivity extends AwaitRecoveryActivity
     public void onReceive(Context context, Intent intent)
     {
       cancelBackupProgressDialog();
-      ViewUtilities.launchMessageDialog(MainActivity.this,
-          intent.getIntExtra("message_title_id", R.string.title_undefined),
-          intent.getIntExtra("message_text_id", R.string.message_undefined));
+      launchMessageDialog(intent);
     }
   }
 }

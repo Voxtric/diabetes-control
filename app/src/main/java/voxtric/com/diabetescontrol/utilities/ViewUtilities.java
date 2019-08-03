@@ -2,6 +2,7 @@ package voxtric.com.diabetescontrol.utilities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.view.View;
 
@@ -27,12 +28,12 @@ public class ViewUtilities
     }
   }
 
-  public static AlertDialog launchMessageDialog(Activity activity, @StringRes int messageTitleId, @StringRes int messageTextId)
+  public static AlertDialog launchMessageDialog(Activity activity, @StringRes int messageTitleId, @StringRes int messageTextId, DialogInterface.OnClickListener onOkClicked)
   {
     AlertDialog dialog = new AlertDialog.Builder(activity)
         .setTitle(messageTitleId)
         .setMessage(messageTextId)
-        .setPositiveButton(R.string.ok_dialog_option, null)
+        .setPositiveButton(R.string.ok_dialog_option, onOkClicked)
         .create();
     dialog.show();
     return dialog;

@@ -33,6 +33,11 @@ public abstract class ForegroundService extends Service
     m_notificationManager.notify(notificationId, notification);
   }
 
+  protected void cancelNotification(int notificiationId)
+  {
+    m_notificationManager.cancel(notificiationId);
+  }
+
   protected void createNotificationChannel(String channelId, String channelName, boolean ongoingNotification)
   {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)

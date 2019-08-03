@@ -74,6 +74,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
       createNotificationChannel(ONGOING_CHANNEL_ID, ONGOING_CHANNEL_NAME, true);
       createNotificationChannel(FINISHED_CHANNEL_ID, FINISHED_CHANNEL_NAME, false);
       startForeground(ONGOING_NOTIFICATION_ID, buildOngoingNotification(0));
+      cancelNotification(FINISHED_NOTIFICATION_ID);
 
       Thread thread = new Thread(new Runnable()
       {
@@ -102,6 +103,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
             backupFinishedIntent.putExtra("message_title_id", R.string.backup_fail_notification_title);
             backupFinishedIntent.putExtra("message_text_id", m_failureMessageId);
           }
+          backupFinishedIntent.putExtra("notification_id", FINISHED_NOTIFICATION_ID);
           LocalBroadcastManager.getInstance(BackupForegroundService.this).sendBroadcast(backupFinishedIntent);
         }
       });
