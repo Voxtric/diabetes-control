@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
@@ -46,11 +47,6 @@ import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class MainActivity extends AwaitRecoveryActivity
 {
-  private static final int NEW_ENTRY_FRAGMENT_INDEX = 0;
-  private static final int ENTRY_LIST_FRAGMENT_INDEX = 1;
-  private static final int GRAPH_VIEW_FRAGMENT_INDEX = 2;
-  private static final int START_FRAGMENT_INDEX = NEW_ENTRY_FRAGMENT_INDEX;
-
   private static final int REQUEST_EDIT_SETTINGS = 100;
   public static final int RESULT_UPDATE_EVENT_SPINNER = 0x01;
   public static final int RESULT_UPDATE_BGL_HIGHLIGHTING = 0x02;
@@ -78,10 +74,10 @@ public class MainActivity extends AwaitRecoveryActivity
       switch (item.getItemId())
       {
         case R.id.navigation_add_new:
-          m_viewPager.setCurrentItem(NEW_ENTRY_FRAGMENT_INDEX);
+          m_viewPager.setCurrentItem(getFragmentIndex(NewEntryFragment.class));
           return true;
         case R.id.navigation_view_all:
-          m_viewPager.setCurrentItem(ENTRY_LIST_FRAGMENT_INDEX);
+          m_viewPager.setCurrentItem(getFragmentIndex(EntryListFragment.class));
           return true;
         case R.id.navigation_graph:
           Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
@@ -104,16 +100,19 @@ public class MainActivity extends AwaitRecoveryActivity
     m_viewPager = findViewById(R.id.fragment_container);
     initialiseViewPager(m_viewPager, navigation);
 
-    if (savedInstanceState == null)
+    // Ensures act on intent happens after the relevant fragments have been created.
+    m_viewPager.post(new Runnable()
     {
-      navigateToPageFragment(START_FRAGMENT_INDEX);
-    }
-
-    actOnIntent(getIntent());
+      @Override
+      public void run()
+      {
+        actOnIntent(getIntent());
+      }
+    });
   }
 
   @Override
-  protected void onPause()
+  public void onPause()
   {
     if (m_backupProgressDialog != null)
     {
@@ -177,11 +176,11 @@ public class MainActivity extends AwaitRecoveryActivity
     {
       if ((resultCode & RESULT_UPDATE_EVENT_SPINNER) == RESULT_UPDATE_EVENT_SPINNER)
       {
-        ((NewEntryFragment) getSupportFragmentManager().getFragments().get(NEW_ENTRY_FRAGMENT_INDEX)).updateEventSpinner();
+        getFragment(NewEntryFragment.class).updateEventSpinner();
       }
       else if ((resultCode & RESULT_UPDATE_BGL_HIGHLIGHTING) == RESULT_UPDATE_BGL_HIGHLIGHTING)
       {
-        ((EntryListFragment)getSupportFragmentManager().getFragments().get(ENTRY_LIST_FRAGMENT_INDEX)).refreshEntryList();
+        getFragment(EntryListFragment.class).refreshEntryList();
       }
     }
     else
@@ -208,6 +207,33 @@ public class MainActivity extends AwaitRecoveryActivity
     {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+  }
+
+  public <E extends Fragment> int getFragmentIndex(Class<E> classType)
+  {
+    List<Fragment> fragments = getSupportFragmentManager().getFragments();
+    for (int i = 0; i < fragments.size(); i++)
+    {
+      if (classType.isInstance(fragments.get(i)))
+      {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  public <E extends Fragment> E getFragment(Class<E> classType)
+  {
+    List<Fragment> fragments = getSupportFragmentManager().getFragments();
+    for (Fragment fragment : fragments)
+    {
+      if (classType.isInstance(fragment))
+      {
+        //noinspection unchecked
+        return (E)fragment;
+      }
+    }
+    return null;
   }
 
   private void launchBackupProgressDialog()
@@ -276,7 +302,7 @@ public class MainActivity extends AwaitRecoveryActivity
       {
       case BackupForegroundService.ACTION_FINISHED:
       case RecoveryForegroundService.ACTION_FINISHED:
-        navigateToPageFragment(ENTRY_LIST_FRAGMENT_INDEX);
+        navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
         ViewUtilities.launchMessageDialog(this,
             intent.getIntExtra("message_title_id", R.string.title_undefined),
             intent.getIntExtra("message_text_id", R.string.message_undefined));
@@ -284,7 +310,7 @@ public class MainActivity extends AwaitRecoveryActivity
       case BackupForegroundService.ACTION_ONGOING:
         launchBackupProgressDialog();
       case RecoveryForegroundService.ACTION_ONGOING:
-        navigateToPageFragment(ENTRY_LIST_FRAGMENT_INDEX);
+        navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
         break;
       }
       intent.setAction(null);
@@ -406,7 +432,6 @@ public class MainActivity extends AwaitRecoveryActivity
         }
       }
     }
-// TODO: Re-write getFragment and getFragmentIndex.
     m_activeMenu = new PopupMenu(view.getContext(), view);
     m_activeMenu.getMenuInflater().inflate(R.menu.entry_more, m_activeMenu.getMenu());
     m_activeMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
@@ -417,13 +442,13 @@ public class MainActivity extends AwaitRecoveryActivity
         switch (item.getItemId())
         {
           case R.id.navigation_view_full:
-            ((EntryListFragment)getSupportFragmentManager().getFragments().get(ENTRY_LIST_FRAGMENT_INDEX)).viewFull(MainActivity.this, dataView);
+            getFragment(EntryListFragment.class).viewFull(MainActivity.this, dataView);
             return true;
           case R.id.navigation_edit:
-            ((EntryListFragment)getSupportFragmentManager().getFragments().get(ENTRY_LIST_FRAGMENT_INDEX)).launchEdit(MainActivity.this, dataView);
+            getFragment(EntryListFragment.class).launchEdit(MainActivity.this, dataView);
             return true;
           case R.id.navigation_delete:
-            ((EntryListFragment)getSupportFragmentManager().getFragments().get(ENTRY_LIST_FRAGMENT_INDEX)).deleteEntry(MainActivity.this, dataView);
+            getFragment(EntryListFragment.class).deleteEntry(MainActivity.this, dataView);
             return true;
           case R.id.navigation_cancel:
             return true;
