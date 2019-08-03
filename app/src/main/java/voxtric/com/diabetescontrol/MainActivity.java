@@ -2,9 +2,11 @@ package voxtric.com.diabetescontrol;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +27,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -39,10 +43,12 @@ import voxtric.com.diabetescontrol.database.Food;
 import voxtric.com.diabetescontrol.exporting.ExportDurationDialogFragment;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 
-public class MainActivity extends AwaitDatabaseUpdateActivity
+public class MainActivity extends AwaitRecoveryActivity
 {
-  public static final String ACTION_MOVE_TO_LIST = "voxtric.com.diabetescontrol.MainActivity.ACTION_MOVE_TO_LIST";
-  private static final int START_FRAGMENT = 0;
+  private static final int NEW_ENTRY_FRAGMENT_INDEX = 0;
+  private static final int ENTRY_LIST_FRAGMENT_INDEX = 1;
+  private static final int GRAPH_VIEW_FRAGMENT_INDEX = 2;
+  private static final int START_FRAGMENT_INDEX = NEW_ENTRY_FRAGMENT_INDEX;
 
   private static final int REQUEST_EDIT_SETTINGS = 100;
   public static final int RESULT_UPDATE_EVENT_SPINNER = 0x01;
@@ -58,6 +64,10 @@ public class MainActivity extends AwaitDatabaseUpdateActivity
 
   private PopupMenu m_activeMenu = null;
 
+  private AlertDialog m_backupProgressDialog = null;
+  private BackupOngoingBroadcastReceiver m_backupOngoingBroadcastReceiver = new BackupOngoingBroadcastReceiver();
+  private BackupFinishedBroadcastReceiver m_backupFinishedBroadcastReceiver = new BackupFinishedBroadcastReceiver();
+
   private BottomNavigationView.OnNavigationItemSelectedListener m_onNavigationItemSelectedListener
       = new BottomNavigationView.OnNavigationItemSelectedListener()
   {
@@ -67,10 +77,10 @@ public class MainActivity extends AwaitDatabaseUpdateActivity
       switch (item.getItemId())
       {
         case R.id.navigation_add_new:
-          m_viewPager.setCurrentItem(0);
+          m_viewPager.setCurrentItem(NEW_ENTRY_FRAGMENT_INDEX);
           return true;
         case R.id.navigation_view_all:
-          m_viewPager.setCurrentItem(1);
+          m_viewPager.setCurrentItem(ENTRY_LIST_FRAGMENT_INDEX);
           return true;
         case R.id.navigation_graph:
           Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
@@ -95,11 +105,20 @@ public class MainActivity extends AwaitDatabaseUpdateActivity
 
     if (savedInstanceState == null)
     {
-      navigation.getMenu().getItem(START_FRAGMENT).setChecked(true);
-      m_viewPager.setCurrentItem(START_FRAGMENT);
+      navigateToPageFragment(START_FRAGMENT_INDEX);
     }
 
     actOnIntent(getIntent());
+  }
+
+  @Override
+  protected void onPause()
+  {
+    if (m_backupProgressDialog != null)
+    {
+      cancelBackupProgressDialog();
+    }
+    super.onPause();
   }
 
   @Override
@@ -157,11 +176,11 @@ public class MainActivity extends AwaitDatabaseUpdateActivity
     {
       if ((resultCode & RESULT_UPDATE_EVENT_SPINNER) == RESULT_UPDATE_EVENT_SPINNER)
       {
-        ((NewEntryFragment) getSupportFragmentManager().getFragments().get(0)).updateEventSpinner();
+        ((NewEntryFragment) getSupportFragmentManager().getFragments().get(NEW_ENTRY_FRAGMENT_INDEX)).updateEventSpinner();
       }
       else if ((resultCode & RESULT_UPDATE_BGL_HIGHLIGHTING) == RESULT_UPDATE_BGL_HIGHLIGHTING)
       {
-        ((EntryListFragment)getSupportFragmentManager().getFragments().get(1)).refreshEntryList();
+        ((EntryListFragment)getSupportFragmentManager().getFragments().get(ENTRY_LIST_FRAGMENT_INDEX)).refreshEntryList();
       }
     }
     else
@@ -190,18 +209,79 @@ public class MainActivity extends AwaitDatabaseUpdateActivity
     }
   }
 
+  private void launchBackupProgressDialog()
+  {
+    if (m_backupProgressDialog != null)
+    {
+      cancelBackupProgressDialog();
+    }
+
+    m_backupProgressDialog = new AlertDialog.Builder(this)
+        .setTitle(R.string.title_backup_in_progress)
+        .setView(R.layout.dialog_backup_recovery_ongoing)
+        .setPositiveButton(R.string.ok_dialog_option, null)
+        .create();
+    m_backupProgressDialog.show();
+    TextView message = m_backupProgressDialog.findViewById(R.id.message);
+    if (message != null)
+    {
+      message.setText(R.string.message_backup_in_progress);
+    }
+    updateBackupDialogProgress();
+
+    LocalBroadcastManager.getInstance(this).registerReceiver(
+        m_backupOngoingBroadcastReceiver,
+        new IntentFilter(BackupForegroundService.ACTION_ONGOING));
+    LocalBroadcastManager.getInstance(this).registerReceiver(
+        m_backupFinishedBroadcastReceiver,
+        new IntentFilter(BackupForegroundService.ACTION_FINISHED));
+  }
+
+  private void cancelBackupProgressDialog()
+  {
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(m_backupOngoingBroadcastReceiver);
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(m_backupFinishedBroadcastReceiver);
+    m_backupProgressDialog.cancel();
+    m_backupProgressDialog = null;
+  }
+
+  private void updateBackupDialogProgress()
+  {
+    if (m_backupProgressDialog != null && BackupForegroundService.isUploading())
+    {
+      ProgressBar progressBar = m_backupProgressDialog.findViewById(R.id.progress);
+      if (progressBar != null)
+      {
+        int progress = BackupForegroundService.getProgress();
+        progressBar.setIndeterminate(progress == 0);
+        progressBar.setProgress(progress);
+      }
+    }
+  }
+
+  private void navigateToPageFragment(int fragmentIndex)
+  {
+    BottomNavigationView navigation = findViewById(R.id.navigation);
+    navigation.getMenu().getItem(fragmentIndex).setChecked(true);
+    m_viewPager.setCurrentItem(fragmentIndex);
+  }
+
   private void actOnIntent(Intent intent)
   {
     String action = intent.getAction();
     if (action != null)
     {
-      if (action.equals(ACTION_MOVE_TO_LIST))
+      switch (action)
       {
-        BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.getMenu().getItem(1).setChecked(true);
-        m_viewPager.setCurrentItem(1);
+      case BackupForegroundService.ACTION_ONGOING:
+        launchBackupProgressDialog();
+      case BackupForegroundService.ACTION_FINISHED:
+      case RecoveryForegroundService.ACTION_ONGOING:
+      case RecoveryForegroundService.ACTION_FINISHED:
+        navigateToPageFragment(ENTRY_LIST_FRAGMENT_INDEX);
+        break;
       }
-      getIntent().setAction(null);
+      intent.setAction(null);
     }
   }
 
@@ -331,13 +411,13 @@ public class MainActivity extends AwaitDatabaseUpdateActivity
         switch (item.getItemId())
         {
           case R.id.navigation_view_full:
-            ((EntryListFragment)getSupportFragmentManager().getFragments().get(1)).viewFull(MainActivity.this, dataView);
+            ((EntryListFragment)getSupportFragmentManager().getFragments().get(ENTRY_LIST_FRAGMENT_INDEX)).viewFull(MainActivity.this, dataView);
             return true;
           case R.id.navigation_edit:
-            ((EntryListFragment)getSupportFragmentManager().getFragments().get(1)).launchEdit(MainActivity.this, dataView);
+            ((EntryListFragment)getSupportFragmentManager().getFragments().get(ENTRY_LIST_FRAGMENT_INDEX)).launchEdit(MainActivity.this, dataView);
             return true;
           case R.id.navigation_delete:
-            ((EntryListFragment)getSupportFragmentManager().getFragments().get(1)).deleteEntry(MainActivity.this, dataView);
+            ((EntryListFragment)getSupportFragmentManager().getFragments().get(ENTRY_LIST_FRAGMENT_INDEX)).deleteEntry(MainActivity.this, dataView);
             return true;
           case R.id.navigation_cancel:
             return true;
@@ -428,5 +508,23 @@ public class MainActivity extends AwaitDatabaseUpdateActivity
     }
 
     return view;
+  }
+
+  private class BackupOngoingBroadcastReceiver extends BroadcastReceiver
+  {
+    @Override
+    public void onReceive(Context context, Intent intent)
+    {
+      updateBackupDialogProgress();
+    }
+  }
+
+  private class BackupFinishedBroadcastReceiver extends BroadcastReceiver
+  {
+    @Override
+    public void onReceive(Context context, Intent intent)
+    {
+      cancelBackupProgressDialog();
+    }
   }
 }

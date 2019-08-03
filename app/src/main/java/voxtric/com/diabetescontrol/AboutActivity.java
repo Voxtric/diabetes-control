@@ -27,7 +27,7 @@ import java.util.HashMap;
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.Preference;
 
-public class AboutActivity extends AwaitDatabaseUpdateActivity
+public class AboutActivity extends AwaitRecoveryActivity
 {
   private final int EXPAND_COLLAPSE_DURATION = 2;
 

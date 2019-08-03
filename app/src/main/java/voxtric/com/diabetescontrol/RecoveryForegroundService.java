@@ -175,7 +175,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   protected Notification buildOngoingNotification(int progress)
   {
     Intent notificationIntent = new Intent(this, MainActivity.class);
-    notificationIntent.setAction(MainActivity.ACTION_MOVE_TO_LIST);
+    notificationIntent.setAction(ACTION_ONGOING);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
     return new NotificationCompat.Builder(this, ONGOING_CHANNEL_ID)
@@ -191,7 +191,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   protected Notification buildOnSuccessNotification()
   {
     Intent notificationIntent = new Intent(this, MainActivity.class);
-    notificationIntent.setAction(MainActivity.ACTION_MOVE_TO_LIST);
+    notificationIntent.setAction(ACTION_FINISHED);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
     return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
@@ -208,6 +208,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   protected Notification buildOnFailNotification(int failureMessageId)
   {
     Intent notificationIntent = new Intent(this, SettingsActivity.class);
+    notificationIntent.setAction(ACTION_FINISHED);
     TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
     stackBuilder.addNextIntentWithParentStack(notificationIntent);
     PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -228,7 +229,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
     s_progress = (int)(downloader.getProgress() * 100.0);
     pushNotification(ONGOING_NOTIFICATION_ID, buildOngoingNotification(s_progress));
 
-    Intent recoveryCompleteBroadcast = new Intent(ACTION_ONGOING);
-    LocalBroadcastManager.getInstance(RecoveryForegroundService.this).sendBroadcast(recoveryCompleteBroadcast);
+    Intent recoveryOngoingBroadcast = new Intent(ACTION_ONGOING);
+    LocalBroadcastManager.getInstance(this).sendBroadcast(recoveryOngoingBroadcast);
   }
 }

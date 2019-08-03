@@ -35,7 +35,8 @@ public class BackupForegroundService extends ForegroundService implements MediaH
 {
   private static final String TAG = "BackupForegroundService";
 
-  public static final String ACTION_COMPLETE = "voxtric.com.diabetescontrol.RecoveryForegroundService.ACTION_FINISHED";
+  public static final String ACTION_ONGOING = "voxtric.com.diabetescontrol.BackupForegroundService.ACTION_ONGOING";
+  public static final String ACTION_FINISHED = "voxtric.com.diabetescontrol.BackupForegroundService.ACTION_FINISHED";
 
   private static final String ONGOING_CHANNEL_ID = "OngoingBackupForegroundServiceChannel";
   private static final String ONGOING_CHANNEL_NAME = "Ongoing Backup Foreground Service";
@@ -48,10 +49,14 @@ public class BackupForegroundService extends ForegroundService implements MediaH
   private static final int MAX_UPLOAD_PROGRESS = 100;
   private static final int ZIP_ENTRY_BUFFER_SIZE = 1024 * 1024; // 1 MiB
 
-  private static boolean s_isUploading = false;
+  private static int s_progress = -1;
   public static boolean isUploading()
   {
-    return s_isUploading;
+    return s_progress != -1;
+  }
+  public static int getProgress()
+  {
+    return s_progress;
   }
 
   @Override
@@ -61,7 +66,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
 
     if (!isUploading())
     {
-      s_isUploading = true;
+      s_progress = 0;
       createNotificationChannel(ONGOING_CHANNEL_ID, ONGOING_CHANNEL_NAME, true);
       createNotificationChannel(FINISHED_CHANNEL_ID, FINISHED_CHANNEL_NAME, false);
       startForeground(ONGOING_NOTIFICATION_ID, buildOngoingNotification(0));
@@ -78,11 +83,11 @@ public class BackupForegroundService extends ForegroundService implements MediaH
             uploadZipBackup(zipBytes);
           }
 
+          s_progress = -1;
           stopForeground(true);
           stopSelf();
-          s_isUploading = false;
 
-          Intent backupCompleteIntent = new Intent(ACTION_COMPLETE);
+          Intent backupCompleteIntent = new Intent(ACTION_FINISHED);
           LocalBroadcastManager.getInstance(BackupForegroundService.this).sendBroadcast(backupCompleteIntent);
         }
       });
@@ -149,8 +154,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
       int result = googleDriveInterface.uploadFile(
           String.format("%s/%s", getString(R.string.app_name), AppDatabase.NAME.replace(".db", ".zip")),
           "application/zip",
-          //zipBytes,
-          new byte[1024 * 1024 * 100],
+          zipBytes,
           this);
 
       boolean notifyOnFinished = true;
@@ -200,7 +204,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
   protected Notification buildOngoingNotification(int progress)
   {
     Intent notificationIntent = new Intent(this, MainActivity.class);
-    notificationIntent.setAction(MainActivity.ACTION_MOVE_TO_LIST);
+    notificationIntent.setAction(ACTION_ONGOING);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
     return new NotificationCompat.Builder(this, ONGOING_CHANNEL_ID)
@@ -216,7 +220,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
   protected Notification buildOnSuccessNotification()
   {
     Intent notificationIntent = new Intent(this, MainActivity.class);
-    notificationIntent.setAction(MainActivity.ACTION_MOVE_TO_LIST);
+    notificationIntent.setAction(ACTION_FINISHED);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
     return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
@@ -233,6 +237,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
   protected Notification buildOnFailNotification(int failureMessageId)
   {
     Intent notificationIntent = new Intent(this, SettingsActivity.class);
+    notificationIntent.setAction(ACTION_FINISHED);
     TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
     stackBuilder.addNextIntentWithParentStack(notificationIntent);
     PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -250,10 +255,10 @@ public class BackupForegroundService extends ForegroundService implements MediaH
   @Override
   public void progressChanged(MediaHttpUploader uploader) throws IOException
   {
-    int progress = (int)(uploader.getProgress() * 100.0);
-    if (progress < MAX_UPLOAD_PROGRESS)
-    {
-      pushNotification(ONGOING_NOTIFICATION_ID, buildOngoingNotification(progress));
-    }
+    s_progress = (int)(uploader.getProgress() * 100.0);
+    pushNotification(ONGOING_NOTIFICATION_ID, buildOngoingNotification(s_progress));
+
+    Intent backupOngoingBroadcast = new Intent(ACTION_ONGOING);
+    LocalBroadcastManager.getInstance(this).sendBroadcast(backupOngoingBroadcast);
   }
 }

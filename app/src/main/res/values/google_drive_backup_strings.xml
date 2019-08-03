@@ -44,6 +44,16 @@ This will overwrite your local data with the data stored on your Google Drive."
 
 
 
+    <!-- Backup Progress Dialog -->
+    <string name="title_backup_in_progress">Backup In Progress</string>
+        <string name="message_backup_in_progress">
+"Your data is being backed up to your Google Drive.
+
+You can use the app as usual whilst this happens, and if you have allowed it in your settings, you will be notified once the backup is complete."
+        </string>
+
+
+
     <!-- Recovery Wait Dialog -->
     <string name="title_recovery_wait">Recovery In Progress</string>
         <string name="message_recovery_wait">

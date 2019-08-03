@@ -12,9 +12,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-public abstract class AwaitDatabaseUpdateActivity extends AppCompatActivity
+public abstract class AwaitRecoveryActivity extends AppCompatActivity
 {
-  private AlertDialog m_waitDialog = null;
+  private AlertDialog m_recoveryWaitDialog = null;
   private RecoveryOngoingBroadcastReceiver m_recoveryOngoingBroadcastReceiver = new RecoveryOngoingBroadcastReceiver();
   private RecoveryCompleteBroadcastReceiver m_recoveryCompleteBroadcastReceiver = new RecoveryCompleteBroadcastReceiver();
 
@@ -24,61 +24,62 @@ public abstract class AwaitDatabaseUpdateActivity extends AppCompatActivity
     super.onResume();
     if (RecoveryForegroundService.isDownloading())
     {
-      launchWaitDialog();
+      launchRecoveryWaitDialog();
     }
   }
 
   @Override
   protected void onPause()
   {
-    if (m_waitDialog != null)
+    if (m_recoveryWaitDialog != null)
     {
-      cancelWaitDialog();
+      cancelRecoveryWaitDialog();
     }
     super.onPause();
   }
 
-  public void launchWaitDialog()
+  public void launchRecoveryWaitDialog()
   {
-    if (m_waitDialog != null)
+    if (m_recoveryWaitDialog != null)
     {
-      cancelWaitDialog();
+      cancelRecoveryWaitDialog();
     }
-    m_waitDialog = new AlertDialog.Builder(this)
+
+    m_recoveryWaitDialog = new AlertDialog.Builder(this)
         .setTitle(R.string.title_recovery_wait)
         .setView(R.layout.dialog_backup_recovery_ongoing)
         .create();
-    m_waitDialog.setCancelable(false);
-    m_waitDialog.setCanceledOnTouchOutside(false);
-    m_waitDialog.show();
-    TextView message = m_waitDialog.findViewById(R.id.message);
+    m_recoveryWaitDialog.setCancelable(false);
+    m_recoveryWaitDialog.setCanceledOnTouchOutside(false);
+    m_recoveryWaitDialog.show();
+    TextView message = m_recoveryWaitDialog.findViewById(R.id.message);
     if (message != null)
     {
       message.setText(R.string.message_recovery_wait);
     }
-    updateProgress();
+    updateRecoveryWaitDialogProgress();
 
-    LocalBroadcastManager.getInstance(this).registerReceiver(
-        m_recoveryCompleteBroadcastReceiver,
-        new IntentFilter(RecoveryForegroundService.ACTION_FINISHED));
     LocalBroadcastManager.getInstance(this).registerReceiver(
         m_recoveryOngoingBroadcastReceiver,
         new IntentFilter(RecoveryForegroundService.ACTION_ONGOING));
+    LocalBroadcastManager.getInstance(this).registerReceiver(
+        m_recoveryCompleteBroadcastReceiver,
+        new IntentFilter(RecoveryForegroundService.ACTION_FINISHED));
   }
 
-  public void cancelWaitDialog()
+  public void cancelRecoveryWaitDialog()
   {
     LocalBroadcastManager.getInstance(this).unregisterReceiver(m_recoveryOngoingBroadcastReceiver);
     LocalBroadcastManager.getInstance(this).unregisterReceiver(m_recoveryCompleteBroadcastReceiver);
-    m_waitDialog.cancel();
-    m_waitDialog = null;
+    m_recoveryWaitDialog.cancel();
+    m_recoveryWaitDialog = null;
   }
 
-  private void updateProgress()
+  private void updateRecoveryWaitDialogProgress()
   {
-    if (m_waitDialog != null && RecoveryForegroundService.isDownloading())
+    if (m_recoveryWaitDialog != null && RecoveryForegroundService.isDownloading())
     {
-      ProgressBar progressBar = m_waitDialog.findViewById(R.id.progress);
+      ProgressBar progressBar = m_recoveryWaitDialog.findViewById(R.id.progress);
       if (progressBar != null)
       {
         int progress = RecoveryForegroundService.getProgress();
@@ -93,7 +94,7 @@ public abstract class AwaitDatabaseUpdateActivity extends AppCompatActivity
     @Override
     public void onReceive(Context context, Intent intent)
     {
-      updateProgress();
+      updateRecoveryWaitDialogProgress();
     }
   }
 
@@ -102,9 +103,9 @@ public abstract class AwaitDatabaseUpdateActivity extends AppCompatActivity
     @Override
     public void onReceive(Context context, Intent intent)
     {
-      cancelWaitDialog();
+      cancelRecoveryWaitDialog();
       recreate();
-      Toast.makeText(AwaitDatabaseUpdateActivity.this, R.string.recovery_finished_message, Toast.LENGTH_LONG).show();
+      Toast.makeText(AwaitRecoveryActivity.this, R.string.recovery_finished_message, Toast.LENGTH_LONG).show();
     }
   }
 }

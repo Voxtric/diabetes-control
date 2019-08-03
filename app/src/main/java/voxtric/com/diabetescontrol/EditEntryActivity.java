@@ -18,7 +18,7 @@ import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.Food;
 
-public class EditEntryActivity extends AwaitDatabaseUpdateActivity
+public class EditEntryActivity extends AwaitRecoveryActivity
 {
   private DataEntry m_editedEntry = null;
   private List<Food> m_editedFoods = null;

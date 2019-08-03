@@ -27,7 +27,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.api.services.drive.model.File;
 
-import voxtric.com.diabetescontrol.AwaitDatabaseUpdateActivity;
+import voxtric.com.diabetescontrol.AwaitRecoveryActivity;
 import voxtric.com.diabetescontrol.BackupForegroundService;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.RecoveryForegroundService;
@@ -38,7 +38,7 @@ import voxtric.com.diabetescontrol.utilities.GoogleDriveInterface;
 public class BackupSettingsFragment extends GoogleDriveSignInFragment
 {
   private boolean m_backupEnabledSwitchForced = false;
-  private BackupCompleteBroadcastReceiver m_backupCompleteBroadcastReceiver = null;
+  private BackupFinishedBroadcastReceiver m_backupFinishedBroadcastReceiver = null;
 
   public BackupSettingsFragment()
   {
@@ -120,14 +120,13 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
   public void onResume()
   {
     super.onResume();
-    if (m_backupCompleteBroadcastReceiver != null)
+    if (m_backupFinishedBroadcastReceiver != null)
     {
       Context context = getContext();
       if (context != null)
       {
-        LocalBroadcastManager.getInstance(context).registerReceiver(
-            m_backupCompleteBroadcastReceiver,
-            new IntentFilter(BackupForegroundService.ACTION_COMPLETE));
+        LocalBroadcastManager.getInstance(context).registerReceiver(m_backupFinishedBroadcastReceiver,
+            new IntentFilter(BackupForegroundService.ACTION_FINISHED));
       }
     }
   }
@@ -135,12 +134,12 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
   @Override
   public void onPause()
   {
-    if (m_backupCompleteBroadcastReceiver != null)
+    if (m_backupFinishedBroadcastReceiver != null)
     {
       Context context = getContext();
       if (context != null)
       {
-        LocalBroadcastManager.getInstance(context).unregisterReceiver(m_backupCompleteBroadcastReceiver);
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(m_backupFinishedBroadcastReceiver);
       }
     }
     super.onPause();
@@ -367,8 +366,8 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     Button applyBackupButton = activity.findViewById(R.id.apply_backup_button);
     applyBackupButton.setEnabled(false);
 
-    m_backupCompleteBroadcastReceiver = new BackupCompleteBroadcastReceiver();
-    LocalBroadcastManager.getInstance(activity).registerReceiver(m_backupCompleteBroadcastReceiver, new IntentFilter(BackupForegroundService.ACTION_COMPLETE));
+    m_backupFinishedBroadcastReceiver = new BackupFinishedBroadcastReceiver();
+    LocalBroadcastManager.getInstance(activity).registerReceiver(m_backupFinishedBroadcastReceiver, new IntentFilter(BackupForegroundService.ACTION_FINISHED));
   }
 
   private void startRecovery(final Activity activity, boolean confirmWithUser)
@@ -394,17 +393,17 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     {
       Intent intent = new Intent(activity, RecoveryForegroundService.class);
       activity.startService(intent);
-      ((AwaitDatabaseUpdateActivity)activity).launchWaitDialog();
+      ((AwaitRecoveryActivity)activity).launchRecoveryWaitDialog();
     }
   }
 
-  public class BackupCompleteBroadcastReceiver extends BroadcastReceiver
+  public class BackupFinishedBroadcastReceiver extends BroadcastReceiver
   {
     @Override
     public void onReceive(Context context, Intent intent)
     {
       LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
-      m_backupCompleteBroadcastReceiver = null;
+      m_backupFinishedBroadcastReceiver = null;
 
       Activity activity = getActivity();
       if (activity != null)

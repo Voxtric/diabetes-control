@@ -10,12 +10,12 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import voxtric.com.diabetescontrol.AwaitDatabaseUpdateActivity;
+import voxtric.com.diabetescontrol.AwaitRecoveryActivity;
 import voxtric.com.diabetescontrol.R;
 import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 
-public class SettingsActivity extends AwaitDatabaseUpdateActivity
+public class SettingsActivity extends AwaitRecoveryActivity
 {
   private int m_result = 0;
 
