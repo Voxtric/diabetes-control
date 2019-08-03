@@ -75,12 +75,17 @@ This may take some time, so feel free to close the app and you will be notified 
     <string name="backup_enabled_text">Backup Enabled</string>
     <string name="automatic_backup_label">Automatically Backup</string>
         <string-array name="automatic_backup_options">
+            <item>Never</item>
             <item>Monthly</item>
             <item>Weekly</item>
             <item>Daily</item>
             <item>After New Entry</item>
-            <item>Never</item>
         </string-array>
+        <string name="automatic_backup_never_option">Never</string>
+        <string name="automatic_backup_monthly_option">Monthly</string>
+        <string name="automatic_backup_weekly_option">Weekly</string>
+        <string name="automatic_backup_daily_option">Daily</string>
+        <string name="automatic_backup_after_new_entry_option">After New Entry</string>
     <string name="wifi_only_backup_label">Automatic Backup Over WiFi Only</string>
     <string name="notify_on_backup_finished_label">Notify When Backup Finishes</string>
     <string name="apply_backup_text">Apply Backup</string>

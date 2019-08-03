@@ -1,6 +1,11 @@
 package voxtric.com.diabetescontrol.utilities;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -44,6 +49,33 @@ public class GoogleDriveInterface
   public static final int RESULT_INTERRUPT_ERROR = -4;
   public static final int RESULT_SPACE_ERROR = -5;
   public static final int RESULT_UNKNOWN_ERROR = -6;
+
+  public static boolean hasWifiConnection(Context context)
+  {
+    boolean hasWifiConnection = false;
+    ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    if (connectivityManager != null)
+    {
+      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+      {
+        Network activeNetwork = connectivityManager.getActiveNetwork();
+        NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
+        if (networkCapabilities != null)
+        {
+          hasWifiConnection = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI);
+        }
+      }
+      else
+      {
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if (activeNetworkInfo != null)
+        {
+          hasWifiConnection = activeNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI && activeNetworkInfo.isConnected();
+        }
+      }
+    }
+    return hasWifiConnection;
+  }
 
   private Drive m_googleDrive;
 

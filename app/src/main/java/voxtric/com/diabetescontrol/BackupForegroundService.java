@@ -174,7 +174,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
           zipBytes,
           this);
 
-      boolean notifyOnFinished = true;
+      boolean notifyOnFinished = false;
       Preference preference = AppDatabase.getInstance().preferencesDao().getPreference("backup_complete_notify");
       if (preference != null)
       {

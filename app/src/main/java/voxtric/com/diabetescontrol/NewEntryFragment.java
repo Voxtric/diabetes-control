@@ -2,7 +2,9 @@ package voxtric.com.diabetescontrol;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Typeface;
@@ -44,6 +46,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.shuhart.bubblepagerindicator.BubblePageIndicator;
 
 import java.text.DateFormat;
@@ -61,10 +64,12 @@ import voxtric.com.diabetescontrol.database.Event;
 import voxtric.com.diabetescontrol.database.EventsDao;
 import voxtric.com.diabetescontrol.database.Food;
 import voxtric.com.diabetescontrol.database.FoodsDao;
+import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.settings.EditEventsActivity;
 import voxtric.com.diabetescontrol.utilities.AutoCompleteTextViewUtilities;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 import voxtric.com.diabetescontrol.utilities.DecimalDigitsInputFilter;
+import voxtric.com.diabetescontrol.utilities.GoogleDriveInterface;
 import voxtric.com.diabetescontrol.utilities.HintHideOnFocusChangeListener;
 
 public class NewEntryFragment extends Fragment
@@ -1299,8 +1304,31 @@ public class NewEntryFragment extends Fragment
       public void run()
       {
         updateUIWithNewEntry(activity);
+        tryStartNewEntryBackup(activity);
       }
     });
+  }
+
+  private void tryStartNewEntryBackup(final Activity activity)
+  {
+    if (GoogleSignIn.getLastSignedInAccount(activity) != null &&
+        GoogleDriveInterface.hasWifiConnection(activity) &&
+        !BackupForegroundService.isUploading() &&
+        !RecoveryForegroundService.isDownloading())
+    {
+      Preference.get(activity, "automatic_backup", getString(R.string.automatic_backup_never_option), new Preference.ResultRunnable()
+      {
+        @Override
+        public void run()
+        {
+          if (getResult().equals(getString(R.string.automatic_backup_after_new_entry_option)))
+          {
+            Intent intent = new Intent(activity, BackupForegroundService.class);
+            activity.startService(intent);
+          }
+        }
+      });
+    }
   }
 
   private AutoCompleteTextView addNewListItemAutoCompleteTextView(Activity activity, LinearLayout owningLayout, @StringRes int hintResourceID, String tag, String text)
