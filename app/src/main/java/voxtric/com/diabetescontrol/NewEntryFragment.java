@@ -2,7 +2,6 @@ package voxtric.com.diabetescontrol;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -1312,22 +1311,34 @@ public class NewEntryFragment extends Fragment
   private void tryStartNewEntryBackup(final Activity activity)
   {
     if (GoogleSignIn.getLastSignedInAccount(activity) != null &&
-        GoogleDriveInterface.hasWifiConnection(activity) &&
         !BackupForegroundService.isUploading() &&
         !RecoveryForegroundService.isDownloading())
     {
-      Preference.get(activity, "automatic_backup", getString(R.string.automatic_backup_never_option), new Preference.ResultRunnable()
-      {
-        @Override
-        public void run()
-        {
-          if (getResult().equals(getString(R.string.automatic_backup_after_new_entry_option)))
+      Preference.get(activity,
+          new String[] {
+              "automatic_backup",
+              "wifi_only_backup"
+          },
+          new String[] {
+              getString(R.string.automatic_backup_never_option),
+              String.valueOf(true)
+          },
+          new Preference.ResultRunnable()
           {
-            Intent intent = new Intent(activity, BackupForegroundService.class);
-            activity.startService(intent);
-          }
-        }
-      });
+            @Override
+            public void run()
+            {
+              String automaticBackup = getResults().get("automatic_backup");
+              String wifiOnlyBackup = getResults().get("wifi_only_backup");
+              if (automaticBackup != null && wifiOnlyBackup != null &&
+                  automaticBackup.equals(getString(R.string.automatic_backup_after_new_entry_option)) &&
+                  !Boolean.valueOf(wifiOnlyBackup) || GoogleDriveInterface.hasWifiConnection(activity))
+              {
+                Intent intent = new Intent(activity, BackupForegroundService.class);
+                activity.startService(intent);
+              }
+            }
+          });
     }
   }
 
