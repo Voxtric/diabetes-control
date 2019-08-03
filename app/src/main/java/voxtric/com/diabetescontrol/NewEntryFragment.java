@@ -608,37 +608,7 @@ public class NewEntryFragment extends Fragment
               AutoCompleteTextViewUtilities.saveAutoCompleteView(activity, foodEatenItem);
             }
           }
-
-          boolean proceed = true;
-
-          String bloodGlucoseLevel = ((EditText)activity.findViewById(R.id.blood_glucose_level_input)).getText().toString();
-          String insulinName = ((EditText)activity.findViewById(R.id.insulin_name_input)).getText().toString().trim();
-          String insulinDose = ((EditText)activity.findViewById(R.id.insulin_dose_input)).getText().toString();
-          if (bloodGlucoseLevel.length() == 0)
-          {
-            proceed = false;
-            Toast.makeText(activity, R.string.new_entry_bgl_empty_message, Toast.LENGTH_LONG).show();
-          }
-          else if (insulinName.length() == 0)
-          {
-            if (insulinDose.length() > 0)
-            {
-              proceed = false;
-              Toast.makeText(activity, R.string.new_entry_insulin_name_empty_message, Toast.LENGTH_LONG).show();
-            }
-          }
-          else if (insulinDose.length() == 0)
-          {
-            proceed = false;
-            Toast.makeText(activity, R.string.new_entry_insulin_dose_empty_message, Toast.LENGTH_LONG).show();
-          }
-
-          if (proceed)
-          {
-            final DataEntry entry = createEntry(activity);
-            final List<Food> foods = createFoodList(activity, entry);
-            checkFutureEntry(activity, entry, null, foods);
-          }
+          beginNewEntryProcess(activity, null);
         }
       }
     });
@@ -900,7 +870,7 @@ public class NewEntryFragment extends Fragment
     });
   }
 
-  DataEntry createEntry(Activity activity)
+  private DataEntry createEntry(Activity activity)
   {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(m_date);
@@ -931,7 +901,7 @@ public class NewEntryFragment extends Fragment
     return entry;
   }
 
-  List<Food> createFoodList(Activity activity, DataEntry associatedEntry)
+  private List<Food> createFoodList(Activity activity, DataEntry associatedEntry)
   {
     List<Food> foodList = new ArrayList<>();
     String[] foodNames = getFoodNames(activity);
@@ -1054,7 +1024,41 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  void checkFutureEntry(final Activity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
+  void beginNewEntryProcess(final Activity activity, DataEntry entryToReplace)
+  {
+    boolean proceed = true;
+
+    String bloodGlucoseLevel = ((EditText)activity.findViewById(R.id.blood_glucose_level_input)).getText().toString();
+    String insulinName = ((EditText)activity.findViewById(R.id.insulin_name_input)).getText().toString().trim();
+    String insulinDose = ((EditText)activity.findViewById(R.id.insulin_dose_input)).getText().toString();
+    if (bloodGlucoseLevel.length() == 0)
+    {
+      proceed = false;
+      Toast.makeText(activity, R.string.new_entry_bgl_empty_message, Toast.LENGTH_LONG).show();
+    }
+    else if (insulinName.length() == 0)
+    {
+      if (insulinDose.length() > 0)
+      {
+        proceed = false;
+        Toast.makeText(activity, R.string.new_entry_insulin_name_empty_message, Toast.LENGTH_LONG).show();
+      }
+    }
+    else if (insulinDose.length() == 0)
+    {
+      proceed = false;
+      Toast.makeText(activity, R.string.new_entry_insulin_dose_empty_message, Toast.LENGTH_LONG).show();
+    }
+
+    if (proceed)
+    {
+      final DataEntry entry = createEntry(activity);
+      final List<Food> foods = createFoodList(activity, entry);
+      checkFutureEntry(activity, entry, entryToReplace, foods);
+    }
+  }
+
+  private void checkFutureEntry(final Activity activity, final DataEntry entry, final DataEntry entryToReplace, final List<Food> foodList)
   {
     Calendar calendar = Calendar.getInstance();
     calendar.add(Calendar.MINUTE, 15);

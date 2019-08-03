@@ -125,9 +125,7 @@ public class EditEntryActivity extends AwaitRecoveryActivity
         final NewEntryFragment newEntryFragment = (NewEntryFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_edit_entry);
         if (newEntryFragment != null)
         {
-          final DataEntry entry = newEntryFragment.createEntry(EditEntryActivity.this);
-          final List<Food> foodList = newEntryFragment.createFoodList(EditEntryActivity.this, entry);
-          newEntryFragment.checkFutureEntry(EditEntryActivity.this, entry, m_editedEntry, foodList);
+          newEntryFragment.beginNewEntryProcess(EditEntryActivity.this, m_editedEntry);
         }
       }
     });
