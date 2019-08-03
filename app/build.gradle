@@ -42,6 +42,14 @@ android.applicationVariants.all { variant ->
     }
 }
 
+configurations {
+    all {
+        exclude module: 'commons-logging'
+        exclude module: 'httpclient'
+    }
+}
+
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
