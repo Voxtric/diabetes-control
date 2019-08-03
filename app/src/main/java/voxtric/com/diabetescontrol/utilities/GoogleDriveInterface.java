@@ -192,8 +192,7 @@ public class GoogleDriveInterface
     }
     catch (IOException exception)
     {
-      Log.e(TAG, "File Upload IO Exception", exception);
-      result = RESULT_UNKNOWN_ERROR;
+      result = parseGenericIOException("File Upload IO Exception", exception);
     }
     return result;
   }
@@ -256,8 +255,7 @@ public class GoogleDriveInterface
     }
     catch (IOException exception)
     {
-      Log.e(TAG, "File Download IO Exception", exception);
-      result = RESULT_UNKNOWN_ERROR;
+      result = parseGenericIOException("File Download IO Exception", exception);
     }
     return new Result<>(result, data);
   }
@@ -315,8 +313,7 @@ public class GoogleDriveInterface
     }
     catch (IOException exception)
     {
-      Log.e(TAG, "File Deletion IO Exception", exception);
-      result = RESULT_UNKNOWN_ERROR;
+      result = parseGenericIOException("File Deletion IO Exception", exception);
     }
     return result;
   }
@@ -375,8 +372,7 @@ public class GoogleDriveInterface
     }
     catch (IOException exception)
     {
-      Log.e(TAG, "File Metadata Retrieval IO Exception", exception);
-      result = RESULT_UNKNOWN_ERROR;
+      result = parseGenericIOException("File Metadata Retrieval IO Exception", exception);
     }
     return new Result<>(result, file);
   }
@@ -392,6 +388,29 @@ public class GoogleDriveInterface
       {
         result = RESULT_SPACE_ERROR;
       }
+    }
+    return result;
+  }
+
+  private int parseGenericIOException(String message, IOException exception)
+  {
+    int result = RESULT_UNKNOWN_ERROR;
+    String exceptionMessage = exception.getMessage();
+    if (exceptionMessage != null)
+    {
+      if (exceptionMessage.contains("NetworkError"))
+      {
+        result = RESULT_CONNECTION_ERROR;
+      }
+    }
+
+    if (result != RESULT_UNKNOWN_ERROR)
+    {
+      Log.v(TAG, message, exception);
+    }
+    else
+    {
+      Log.e(TAG, message, exception);
     }
     return result;
   }

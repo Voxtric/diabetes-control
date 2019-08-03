@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,9 +12,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import voxtric.com.diabetescontrol.AwaitRecoveryActivity;
+import voxtric.com.diabetescontrol.BackupForegroundService;
 import voxtric.com.diabetescontrol.R;
+import voxtric.com.diabetescontrol.RecoveryForegroundService;
 import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
+import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class SettingsActivity extends AwaitRecoveryActivity
 {
@@ -30,28 +34,8 @@ public class SettingsActivity extends AwaitRecoveryActivity
     {
       actionBar.setDisplayHomeAsUpEnabled(true);
     }
-  }
 
-  @Override
-  public boolean onOptionsItemSelected(@NonNull MenuItem item)
-  {
-    if (item.getItemId() == android.R.id.home)
-    {
-      finish();
-      return true;
-    }
-    return false;
-  }
-
-  @Override
-  public void onPause()
-  {
-    View view = getCurrentFocus();
-    if (view != null)
-    {
-      view.clearFocus();
-    }
-    super.onPause();
+    actOnIntent(getIntent());
   }
 
   @Override
@@ -67,6 +51,50 @@ public class SettingsActivity extends AwaitRecoveryActivity
       {
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
       }
+    }
+  }
+
+  @Override
+  public void onPause()
+  {
+    View view = getCurrentFocus();
+    if (view != null)
+    {
+      view.clearFocus();
+    }
+    super.onPause();
+  }
+
+  @Override
+  public void onNewIntent(Intent intent)
+  {
+    actOnIntent(intent);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item)
+  {
+    if (item.getItemId() == android.R.id.home)
+    {
+      finish();
+      return true;
+    }
+    return false;
+  }
+
+  private void actOnIntent(Intent intent)
+  {
+    String action = intent.getAction();
+    if (action != null)
+    {
+      if (action.equals(BackupForegroundService.ACTION_FINISHED) ||
+          action.equals(RecoveryForegroundService.ACTION_FINISHED))
+      {
+        ViewUtilities.launchMessageDialog(this,
+            intent.getIntExtra("message_title_id", R.string.title_undefined),
+            intent.getIntExtra("message_text_id", R.string.message_undefined));
+      }
+      intent.setAction(null);
     }
   }
 
