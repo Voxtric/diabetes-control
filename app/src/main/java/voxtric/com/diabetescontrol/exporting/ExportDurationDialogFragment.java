@@ -1,6 +1,5 @@
 package voxtric.com.diabetescontrol.exporting;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -17,12 +16,14 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.fragment.app.DialogFragment;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import voxtric.com.diabetescontrol.MainActivity;
 import voxtric.com.diabetescontrol.R;
 
 public class ExportDurationDialogFragment extends DialogFragment
@@ -54,7 +55,7 @@ public class ExportDurationDialogFragment extends DialogFragment
       m_withinTimePeriodEndTimeStamp = savedInstanceState.getLong("end_time_stamp");
     }
 
-    final Activity activity = getActivity();
+    final MainActivity activity = (MainActivity)getActivity();
     if (activity != null)
     {
       final View view = View.inflate(activity, R.layout.dialog_export_duration, null);
@@ -92,36 +93,61 @@ public class ExportDurationDialogFragment extends DialogFragment
       m_endDateButton.setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
       m_endDateButton.setEnabled(enableWithinTimePeriod);
 
-      m_alertDialog = new AlertDialog.Builder(activity).setTitle(R.string.title_export_data).setView(view).setNegativeButton(R.string.cancel_dialog_option, null).setPositiveButton(R.string.export_dialog_option, new DialogInterface.OnClickListener()
-      {
-        @Override
-        public void onClick(DialogInterface dialog, int which)
-        {
-          preferences.edit().putLong("last_export_time_stamp", System.currentTimeMillis()).apply();
+      m_alertDialog = new AlertDialog.Builder(activity)
+          .setTitle(R.string.title_export_data)
+          .setView(view)
+          .setNegativeButton(R.string.cancel_dialog_option, null)
+          .setPositiveButton(R.string.export_dialog_option, new DialogInterface.OnClickListener()
+          {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+              preferences.edit().putLong("last_export_time_stamp", System.currentTimeMillis()).apply();
 
-          int selectedID = ((RadioGroup)view.findViewById(R.id.radio_group_duration)).getCheckedRadioButtonId();
-          if (selectedID == view.findViewById(R.id.radio_button_all_recorded).getId())
-          {
-            preferences.edit().putInt("last_export_duration_chosen", 0).apply();
-            m_exportIntent.putExtra("export_start", 0L);
-            m_exportIntent.putExtra("export_end", Long.MAX_VALUE);
-          }
-          else if (selectedID == view.findViewById(R.id.radio_button_since_last_export).getId())
-          {
-            preferences.edit().putInt("last_export_duration_chosen", 1).apply();
-            m_exportIntent.putExtra("export_start", lastExportTimeStamp);
-            m_exportIntent.putExtra("export_end", Long.MAX_VALUE);
-          }
-          else if (selectedID == view.findViewById(R.id.radio_button_within_time_period).getId())
-          {
-            preferences.edit().putInt("last_export_duration_chosen", 2).apply();
-            m_exportIntent.putExtra("export_start", m_withinTimePeriodStartTimeStamp);
-            m_exportIntent.putExtra("export_end", m_withinTimePeriodEndTimeStamp);
-          }
+              int selectedID = ((RadioGroup)view.findViewById(R.id.radio_group_duration)).getCheckedRadioButtonId();
+              if (selectedID == view.findViewById(R.id.radio_button_all_recorded).getId())
+              {
+                preferences.edit().putInt("last_export_duration_chosen", 0).apply();
+                m_exportIntent.putExtra("export_start", 0L);
+                m_exportIntent.putExtra("export_end", Long.MAX_VALUE);
+              }
+              else if (selectedID == view.findViewById(R.id.radio_button_since_last_export).getId())
+              {
+                preferences.edit().putInt("last_export_duration_chosen", 1).apply();
+                m_exportIntent.putExtra("export_start", lastExportTimeStamp);
+                m_exportIntent.putExtra("export_end", Long.MAX_VALUE);
+              }
+              else if (selectedID == view.findViewById(R.id.radio_button_within_time_period).getId())
+              {
+                preferences.edit().putInt("last_export_duration_chosen", 2).apply();
+                m_exportIntent.putExtra("export_start", m_withinTimePeriodStartTimeStamp);
+                m_exportIntent.putExtra("export_end", m_withinTimePeriodEndTimeStamp);
+              }
 
-          activity.startService(m_exportIntent);
-        }
-      }).create();
+              @StringRes int titleId;
+              switch (m_exportIntent.getIntExtra("export_type", -1))
+              {
+              case R.id.navigation_export_nhs:
+                titleId = R.string.export_nhs_fail_notification_title;
+                break;
+              case R.id.navigation_export_ads:
+                titleId = R.string.export_ads_fail_notification_title;
+                break;
+              case R.id.navigation_export_excel:
+                titleId = R.string.export_excel_fail_notification_title;
+                break;
+              case R.id.navigation_export_csv:
+                titleId = R.string.export_csv_fail_notification_title;
+                break;
+              default:
+                titleId = R.string.title_undefined;
+              }
+
+              activity.startService(m_exportIntent);
+              activity.launchExportProgressDialog(titleId);
+            }
+          })
+          .create();
 
       RadioButton withinTimePeriodRadioButton = view.findViewById(R.id.radio_button_within_time_period);
       withinTimePeriodRadioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()

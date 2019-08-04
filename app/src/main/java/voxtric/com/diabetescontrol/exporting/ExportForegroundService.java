@@ -43,6 +43,7 @@ public class ExportForegroundService extends ForegroundService
   private static final int FINISHED_NOTIFICATION_ID = 1096;
 
   private static int s_progress = -1;
+  private static int s_maxProgress = -1;
   public static boolean isExporting()
   {
     return s_progress != -1;
@@ -51,8 +52,12 @@ public class ExportForegroundService extends ForegroundService
   {
     return s_progress;
   }
+  public static int getMaxProgress()
+  {
+    return s_maxProgress;
+  }
 
-  private int m_maxProgress = 0;
+  @IdRes private int m_exportType = -1;
   private NotificationStringIds m_notificationStringIds = null;
 
   private String m_exportFormatName = null;
@@ -67,6 +72,7 @@ public class ExportForegroundService extends ForegroundService
     if (!isExporting())
     {
       s_progress = 0;
+      s_maxProgress = 0;
       createNotificationChannel(ONGOING_CHANNEL_ID, ONGOING_CHANNEL_NAME, true);
       createNotificationChannel(FINISHED_CHANNEL_ID, FINISHED_CHANNEL_NAME, false);
       startForeground(ONGOING_NOTIFICATION_ID, buildOngoingNotification(0));
@@ -78,18 +84,18 @@ public class ExportForegroundService extends ForegroundService
         public void run()
         {
           boolean success = false;
-          int exportType = intent.getIntExtra("export_type", -1);
+          m_exportType = intent.getIntExtra("export_type", -1);
           long exportStart = intent.getLongExtra("export_start", Long.MAX_VALUE);
           long exportEnd = intent.getLongExtra("export_end", Long.MIN_VALUE);
-          if (exportType != -1 && exportStart != Long.MAX_VALUE && exportEnd != Long.MIN_VALUE)
+          if (m_exportType != -1 && exportStart != Long.MAX_VALUE && exportEnd != Long.MIN_VALUE)
           {
-            m_notificationStringIds = new NotificationStringIds(exportType);
+            m_notificationStringIds = new NotificationStringIds(m_exportType);
             pushNotification(ONGOING_NOTIFICATION_ID, buildOngoingNotification(0));
 
             List<DataEntry> entries = AppDatabase.getInstance().dataEntriesDao().findAllBetween(exportStart, exportEnd);
             if (!entries.isEmpty())
             {
-              byte[] exportFileBytes = generateExportFile(exportType, entries);
+              byte[] exportFileBytes = generateExportFile(m_exportType, entries);
               if (exportFileBytes != null)
               {
                 String fileName = getFileName(entries);
@@ -110,6 +116,7 @@ public class ExportForegroundService extends ForegroundService
             pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.export_intent_details_fail_notification_text));
           }
           s_progress = -1;
+          s_maxProgress = -1;
 
           stopForeground(true);
           stopSelf();
@@ -141,7 +148,7 @@ public class ExportForegroundService extends ForegroundService
   private byte[] generateExportFile(@IdRes int exportType, List<DataEntry> entries)
   {
     byte[] exportFileBytes = null;
-    m_maxProgress = entries.size();
+    s_maxProgress = entries.size();
     IExporter exporter = null;
     switch (exportType)
     {
@@ -222,13 +229,17 @@ public class ExportForegroundService extends ForegroundService
   {
     Intent notificationIntent = new Intent(this, MainActivity.class);
     notificationIntent.setAction(ACTION_ONGOING);
-    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+    if (m_notificationStringIds != null)
+    {
+      notificationIntent.putExtra("message_title_id", m_notificationStringIds.ongoingNotificationTitleId);
+    }
+    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, ONGOING_CHANNEL_ID)
         .setSmallIcon(R.drawable.exporting)
         .setContentIntent(pendingIntent)
         .setPriority(NotificationCompat.PRIORITY_LOW)
-        .setProgress(m_maxProgress, progress, progress == 0|| progress == m_maxProgress);
+        .setProgress(s_maxProgress, progress, progress == 0|| progress == s_maxProgress);
     if (m_notificationStringIds != null)
     {
       notificationBuilder.setContentTitle(getString(m_notificationStringIds.ongoingNotificationTitleId));

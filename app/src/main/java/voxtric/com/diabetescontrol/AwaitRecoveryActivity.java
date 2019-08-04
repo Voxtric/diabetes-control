@@ -84,7 +84,7 @@ public abstract class AwaitRecoveryActivity extends AppCompatActivity
 
     m_recoveryWaitDialog = new AlertDialog.Builder(this)
         .setTitle(R.string.title_recovery_wait)
-        .setView(R.layout.dialog_backup_recovery_ongoing)
+        .setView(R.layout.dialog_service_ongoing)
         .create();
     m_recoveryWaitDialog.setCancelable(false);
     m_recoveryWaitDialog.setCanceledOnTouchOutside(false);

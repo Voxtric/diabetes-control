@@ -23,7 +23,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuCompat;
 import androidx.fragment.app.Fragment;
@@ -63,6 +65,10 @@ public class MainActivity extends AwaitRecoveryActivity
   private Intent m_exportIntent = null;
 
   private PopupMenu m_activeMenu = null;
+
+  private AlertDialog m_exportProgressDialog = null;
+  private ExportOngoingBroadcastReceiver m_exportOngoingBroadcastReceiver = new ExportOngoingBroadcastReceiver();
+  private ExportFinishedBroadcastReceiver m_exportFinishedBroadcastReceiver = new ExportFinishedBroadcastReceiver();
 
   private AlertDialog m_backupProgressDialog = null;
   private BackupOngoingBroadcastReceiver m_backupOngoingBroadcastReceiver = new BackupOngoingBroadcastReceiver();
@@ -179,6 +185,10 @@ public class MainActivity extends AwaitRecoveryActivity
     if (m_backupProgressDialog != null)
     {
       cancelBackupProgressDialog();
+    }
+    if (m_exportProgressDialog != null)
+    {
+      cancelExportProgressDialog();
     }
     super.onPause();
   }
@@ -300,6 +310,57 @@ public class MainActivity extends AwaitRecoveryActivity
     return null;
   }
 
+  public void launchExportProgressDialog(@StringRes int exportTitleId)
+  {
+    if (m_exportProgressDialog != null)
+    {
+      cancelExportProgressDialog();
+    }
+
+    m_exportProgressDialog = new AlertDialog.Builder(this)
+        .setTitle(exportTitleId)
+        .setView(R.layout.dialog_service_ongoing)
+        .setPositiveButton(R.string.ok_dialog_option, null)
+        .create();
+    m_exportProgressDialog.show();
+    TextView message = m_exportProgressDialog.findViewById(R.id.message);
+    if (message != null)
+    {
+      message.setText(R.string.message_export_in_progress);
+    }
+    updateExportDialogProgress();
+
+    LocalBroadcastManager.getInstance(this).registerReceiver(
+        m_exportOngoingBroadcastReceiver,
+        new IntentFilter(ExportForegroundService.ACTION_ONGOING));
+    LocalBroadcastManager.getInstance(this).registerReceiver(
+        m_exportFinishedBroadcastReceiver,
+        new IntentFilter(ExportForegroundService.ACTION_FINISHED));
+  }
+
+  private void cancelExportProgressDialog()
+  {
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(m_exportOngoingBroadcastReceiver);
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(m_exportFinishedBroadcastReceiver);
+    m_exportProgressDialog.cancel();
+    m_exportProgressDialog = null;
+  }
+
+  private void updateExportDialogProgress()
+  {
+    if (m_exportProgressDialog != null && ExportForegroundService.isExporting())
+    {
+      ProgressBar progressBar = m_exportProgressDialog.findViewById(R.id.progress);
+      if (progressBar != null)
+      {
+        int progress = ExportForegroundService.getProgress();
+        progressBar.setIndeterminate(progress == 0);
+        progressBar.setMax(ExportForegroundService.getMaxProgress());
+        progressBar.setProgress(progress);
+      }
+    }
+  }
+
   private void launchBackupProgressDialog()
   {
     if (m_backupProgressDialog != null)
@@ -309,7 +370,7 @@ public class MainActivity extends AwaitRecoveryActivity
 
     m_backupProgressDialog = new AlertDialog.Builder(this)
         .setTitle(R.string.title_backup_in_progress)
-        .setView(R.layout.dialog_backup_recovery_ongoing)
+        .setView(R.layout.dialog_service_ongoing)
         .setPositiveButton(R.string.ok_dialog_option, null)
         .create();
     m_backupProgressDialog.show();
@@ -364,15 +425,19 @@ public class MainActivity extends AwaitRecoveryActivity
     {
       switch (action)
       {
-      case BackupForegroundService.ACTION_FINISHED:
-      case RecoveryForegroundService.ACTION_FINISHED:
-        navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
-        launchMessageDialog(intent);
+      case ExportForegroundService.ACTION_ONGOING:
+        launchExportProgressDialog(intent.getIntExtra("message_title_id", R.string.title_undefined));
         break;
+
       case BackupForegroundService.ACTION_ONGOING:
         launchBackupProgressDialog();
       case RecoveryForegroundService.ACTION_ONGOING:
         navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
+        break;
+      case BackupForegroundService.ACTION_FINISHED:
+      case RecoveryForegroundService.ACTION_FINISHED:
+        navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
+        launchMessageDialog(intent);
         break;
       }
       intent.setAction(null);
@@ -617,6 +682,25 @@ public class MainActivity extends AwaitRecoveryActivity
     }
 
     return view;
+  }
+
+  private class ExportOngoingBroadcastReceiver extends BroadcastReceiver
+  {
+    @Override
+    public void onReceive(Context context, Intent intent)
+    {
+      updateExportDialogProgress();
+    }
+  }
+
+  private class ExportFinishedBroadcastReceiver extends BroadcastReceiver
+  {
+    @Override
+    public void onReceive(Context context, Intent intent)
+    {
+      cancelExportProgressDialog();
+      //launchMessageDialog(intent);
+    }
   }
 
   private class BackupOngoingBroadcastReceiver extends BroadcastReceiver

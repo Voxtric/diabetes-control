@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Export Data Dialog -->
+    <!-- Export Duration Dialog -->
     <string name="title_export_data">Export Data</string>
         <string name="export_duration_all_recorded">All recorded</string>
         <string name="export_duration_since_last">Since last recorded</string>
         <string name="export_duration_within_period">Within date period</string>
         <string name="date_period_start_label">Start Date:</string>
         <string name="date_period_end_label">End Date:</string>
+
+
+
+    <!-- Export Progress Dialog -->
+    <string name="message_export_in_progress">
+"Your data is being exported.
+
+You can use the app as usual whilst this happens, and you will be notified once the export file is ready."
+        </string>
 
 
 
