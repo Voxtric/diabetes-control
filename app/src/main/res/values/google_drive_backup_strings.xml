@@ -88,8 +88,8 @@ This may take some time, so feel free to close the app and you will be notified 
         <string name="automatic_backup_after_new_entry_option">After New Entry</string>
     <string name="wifi_only_backup_label">Automatic Backup Over WiFi Only</string>
     <string name="notify_on_backup_finished_label">Notify When Backup Finishes</string>
-    <string name="apply_backup_text">Apply Backup</string>
-    <string name="backup_now_text">Backup Now</string>
+    <string name="apply_backup_text">Restore</string>
+    <string name="backup_now_text">Backup</string>
 
 
 
@@ -110,7 +110,7 @@ This may take some time, so feel free to close the app and you will be notified 
     <string name="backup_recovery_request_timeout_text">Google Drive connection timed out.</string>
 
     <string name="backing_up_notification_title">Backing Up</string>
-    <string name="backup_success_notification_title">Backup Complete</string>
+    <string name="backup_success_notification_title">Backup Finished</string>
     <string name="backup_success_notification_text">Backup to Google Drive successful.</string>
 
     <string name="backup_fail_notification_title">Backup Failed</string>

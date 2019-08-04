@@ -18,6 +18,16 @@ import java.util.HashMap;
 
 public class AutoCompleteTextViewUtilities
 {
+  private static File getAutoCompletionFile(Activity activity, String autoCompletions)
+  {
+    File directory = new File(activity.getFilesDir(), "auto-completions");
+    if (directory.exists() || directory.mkdirs())
+    {
+      return new File(directory, autoCompletions);
+    }
+    return null;
+  }
+
   private static HashMap<String, Long> readAutocompleteValue(File file)
   {
     HashMap<String, Long> autocompleteValues = null;
@@ -71,7 +81,7 @@ public class AutoCompleteTextViewUtilities
       @Override
       public void run()
       {
-        File file = new File(activity.getFilesDir(), (String)inputView.getTag());
+        File file = getAutoCompletionFile(activity, (String)inputView.getTag());
         HashMap<String, Long> autoCompleteValues = readAutocompleteValue(file);
         ArrayList<String> toRemove = new ArrayList<>();
         for (String value : autoCompleteValues.keySet())
@@ -101,7 +111,7 @@ public class AutoCompleteTextViewUtilities
         @Override
         public void run()
         {
-          File file = new File(activity.getFilesDir(), (String)inputView.getTag());
+          File file = getAutoCompletionFile(activity, (String)inputView.getTag());
           HashMap<String, Long> autocompleteValues = readAutocompleteValue(file);
           autocompleteValues.put(text, System.currentTimeMillis());
           writeAutoCompleteValues(file, autocompleteValues);
@@ -114,7 +124,7 @@ public class AutoCompleteTextViewUtilities
 
   public static void refreshAutoCompleteView(final Activity activity, final AutoCompleteTextView inputView, HashMap<String, Long> autoCompleteValues)
   {
-    File file = new File(activity.getFilesDir(), (String)inputView.getTag());
+    File file = getAutoCompletionFile(activity, (String)inputView.getTag());
     if (autoCompleteValues == null)
     {
       autoCompleteValues = readAutocompleteValue(file);

@@ -1,7 +1,5 @@
 package voxtric.com.diabetescontrol.exporting;
 
-import android.app.Activity;
-
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
@@ -31,8 +29,7 @@ public abstract class PDFGenerator
     }
   }
 
-  public abstract String getFileName();
-  public abstract ByteArrayOutputStream createPDF(Activity activity);
+  public abstract byte[] createPDF(ExportForegroundService exportForegroundService);
 
   static final float VERTICAL_SPACE = 15.0f;
   static final float BORDER = 30.0f;

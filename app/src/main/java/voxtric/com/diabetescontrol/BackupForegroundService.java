@@ -110,7 +110,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
           stopSelf();
         }
       });
-      thread.setDaemon(true);
+      thread.setDaemon(false);
       thread.start();
     }
 
@@ -248,7 +248,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
     return new NotificationCompat.Builder(this, ONGOING_CHANNEL_ID)
-        .setSmallIcon(R.drawable.upload)
+        .setSmallIcon(R.drawable.uploading)
         .setContentIntent(pendingIntent)
         .setPriority(NotificationCompat.PRIORITY_LOW)
         .setContentTitle(getString(R.string.backing_up_notification_title))

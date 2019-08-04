@@ -20,7 +20,7 @@
                     android:title="@string/title_export_csv"/>
 
                 <item
-                    android:id="@+id/navigation_export_xlsx"
+                    android:id="@+id/navigation_export_excel"
                     android:title="@string/title_export_excel"/>
             </menu>
         </item>

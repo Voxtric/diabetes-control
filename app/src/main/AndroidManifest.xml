@@ -31,6 +31,7 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
+        <service android:name=".exporting.ExportForegroundService"/>
         <service android:name=".BackupForegroundService"/>
         <service android:name=".RecoveryForegroundService"/>
 

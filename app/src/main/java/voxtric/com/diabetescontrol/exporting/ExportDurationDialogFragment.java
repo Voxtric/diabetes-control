@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -33,12 +34,15 @@ public class ExportDurationDialogFragment extends DialogFragment
   private Button m_startDateButton = null;
   private Button m_endDateButton = null;
 
-  private String m_title = null;
-  private String m_startMessage = null;
-  private String m_endMessage = null;
+  private Intent m_exportIntent;
 
   private long m_withinTimePeriodStartTimeStamp = -1;
   private long m_withinTimePeriodEndTimeStamp = -1;
+
+  public ExportDurationDialogFragment(Intent exportIntent)
+  {
+    m_exportIntent = exportIntent;
+  }
 
   @NonNull
   @Override
@@ -46,15 +50,12 @@ public class ExportDurationDialogFragment extends DialogFragment
   {
     if (savedInstanceState != null)
     {
-      m_title = savedInstanceState.getString("title");
-      m_startMessage = savedInstanceState.getString("start_message");
-      m_endMessage = savedInstanceState.getString("end_message");
-
+      m_exportIntent = savedInstanceState.getParcelable("export_intent");
       m_withinTimePeriodStartTimeStamp = savedInstanceState.getLong("start_time_stamp");
       m_withinTimePeriodEndTimeStamp = savedInstanceState.getLong("end_time_stamp");
     }
 
-    Activity activity = getActivity();
+    final Activity activity = getActivity();
     final View view = View.inflate(activity, R.layout.dialog_export_duration, null);
     m_startDateButton = view.findViewById(R.id.button_start_date);
     m_endDateButton = view.findViewById(R.id.button_end_date);
@@ -100,29 +101,28 @@ public class ExportDurationDialogFragment extends DialogFragment
           public void onClick(DialogInterface dialog, int which)
           {
             preferences.edit().putLong("last_export_time_stamp", System.currentTimeMillis()).apply();
-            FragmentManager fragmentManager = getFragmentManager();
-            if (fragmentManager != null)
+
+            int selectedID = ((RadioGroup)view.findViewById(R.id.radio_group_duration)).getCheckedRadioButtonId();
+            if (selectedID == view.findViewById(R.id.radio_button_all_recorded).getId())
             {
-              ExportDialogFragment exportDialog = new ExportDialogFragment();
-              exportDialog.setText(m_title, m_startMessage, m_endMessage);
-              int selectedID = ((RadioGroup)view.findViewById(R.id.radio_group_duration)).getCheckedRadioButtonId();
-              if (selectedID == view.findViewById(R.id.radio_button_all_recorded).getId())
-              {
-                preferences.edit().putInt("last_export_duration_chosen", 0).apply();
-                exportDialog.setTime(0, Long.MAX_VALUE);
-              }
-              else if (selectedID == view.findViewById(R.id.radio_button_since_last_export).getId())
-              {
-                preferences.edit().putInt("last_export_duration_chosen", 1).apply();
-                exportDialog.setTime(lastExportTimeStamp, System.currentTimeMillis());
-              }
-              else if (selectedID == view.findViewById(R.id.radio_button_within_time_period).getId())
-              {
-                preferences.edit().putInt("last_export_duration_chosen", 2).apply();
-                exportDialog.setTime(m_withinTimePeriodStartTimeStamp, m_withinTimePeriodEndTimeStamp);
-              }
-              exportDialog.showNow(fragmentManager, ExportDialogFragment.TAG);
+              preferences.edit().putInt("last_export_duration_chosen", 0).apply();
+              m_exportIntent.putExtra("export_start", 0L);
+              m_exportIntent.putExtra("export_end", Long.MAX_VALUE);
             }
+            else if (selectedID == view.findViewById(R.id.radio_button_since_last_export).getId())
+            {
+              preferences.edit().putInt("last_export_duration_chosen", 1).apply();
+              m_exportIntent.putExtra("export_start", lastExportTimeStamp);
+              m_exportIntent.putExtra("export_end", Long.MAX_VALUE);
+            }
+            else if (selectedID == view.findViewById(R.id.radio_button_within_time_period).getId())
+            {
+              preferences.edit().putInt("last_export_duration_chosen", 2).apply();
+              m_exportIntent.putExtra("export_start", m_withinTimePeriodStartTimeStamp);
+              m_exportIntent.putExtra("export_end", m_withinTimePeriodEndTimeStamp);
+            }
+
+            activity.startService(m_exportIntent);
           }
         })
         .create();
@@ -152,19 +152,9 @@ public class ExportDurationDialogFragment extends DialogFragment
   public void onSaveInstanceState(@NonNull Bundle outState)
   {
     super.onSaveInstanceState(outState);
-    outState.putString("title", m_title);
-    outState.putString("start_message", m_startMessage);
-    outState.putString("end_message", m_endMessage);
-
+    outState.putParcelable("export_intent", m_exportIntent);
     outState.putLong("within_time_period_start_time_stamp", m_withinTimePeriodStartTimeStamp);
     outState.putLong("within_time_period_end_time_stamp", m_withinTimePeriodEndTimeStamp);
-  }
-
-  public void setText(String title, String startMessage, String endMessage)
-  {
-    m_title = title;
-    m_startMessage = startMessage;
-    m_endMessage = endMessage;
   }
 
   private void initialiseDateButton(final Button dateButton)

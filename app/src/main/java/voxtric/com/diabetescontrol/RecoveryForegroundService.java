@@ -101,7 +101,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
           stopSelf();
         }
       });
-      thread.setDaemon(true);
+      thread.setDaemon(false);
       thread.start();
     }
 
@@ -199,7 +199,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
     return new NotificationCompat.Builder(this, ONGOING_CHANNEL_ID)
-        .setSmallIcon(R.drawable.download)
+        .setSmallIcon(R.drawable.downloading)
         .setContentIntent(pendingIntent)
         .setPriority(NotificationCompat.PRIORITY_LOW)
         .setContentTitle(getString(R.string.recovering_notification_title))

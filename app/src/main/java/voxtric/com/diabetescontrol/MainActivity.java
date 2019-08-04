@@ -45,6 +45,7 @@ import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.Food;
 import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.exporting.ExportDurationDialogFragment;
+import voxtric.com.diabetescontrol.exporting.ExportForegroundService;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 import voxtric.com.diabetescontrol.utilities.GoogleDriveInterface;
 import voxtric.com.diabetescontrol.utilities.ViewUtilities;
@@ -59,9 +60,7 @@ public class MainActivity extends AwaitRecoveryActivity
 
   private ViewPager m_viewPager = null;
 
-  private String m_exportTitle = null;
-  private String m_exportStartMessage = null;
-  private String m_exportEndMessage = null;
+  private Intent m_exportIntent = null;
 
   private PopupMenu m_activeMenu = null;
 
@@ -208,12 +207,14 @@ public class MainActivity extends AwaitRecoveryActivity
         Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
         return true;
       case R.id.navigation_export_ads:
-        export(getString(R.string.ads_export_title), getString(R.string.ads_export_start_message), getString(R.string.ads_export_end_message));
+        intent = new Intent(this, ExportForegroundService.class);
+        intent.putExtra("export_type", menuItem.getItemId());
+        export(intent);
         return true;
       case R.id.navigation_export_csv:
         Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
         return true;
-      case R.id.navigation_export_xlsx:
+      case R.id.navigation_export_excel:
         Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
         return true;
 
@@ -259,7 +260,7 @@ public class MainActivity extends AwaitRecoveryActivity
     {
       if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
       {
-        export(m_exportTitle, m_exportStartMessage, m_exportEndMessage);
+        export(m_exportIntent);
       }
       else
       {
@@ -397,17 +398,14 @@ public class MainActivity extends AwaitRecoveryActivity
         });
   }
 
-  private void export(final String title, String startMessage, String endMessage)
+  private void export(Intent exportIntent)
   {
-    m_exportTitle = title;
-    m_exportStartMessage = startMessage;
-    m_exportEndMessage = endMessage;
-
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
     {
       int hasWriteExternalStoragePermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
       if (hasWriteExternalStoragePermission != PackageManager.PERMISSION_GRANTED)
       {
+        m_exportIntent = exportIntent;
         if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))
         {
           AlertDialog dialog = new AlertDialog.Builder(this)
@@ -440,8 +438,7 @@ public class MainActivity extends AwaitRecoveryActivity
       }
     }
 
-    ExportDurationDialogFragment dialog = new ExportDurationDialogFragment();
-    dialog.setText(title, startMessage, endMessage);
+    ExportDurationDialogFragment dialog = new ExportDurationDialogFragment(exportIntent);
     dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
   }
 

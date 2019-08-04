@@ -46,27 +46,58 @@ Allow this app to access external storage?"
 
 
 
-    <!-- General -->
-    <string name="ads_export_start_message">Generating PDF…</string>
-    <string name="ads_export_end_message">PDF generated!</string>
+    <!-- Export Failure Messages -->
+    <string name="export_intent_details_fail_notification_text">Export service missing details.</string>
+    <string name="export_time_range_fail_notification_text">No entries within time range.</string>
+    <string name="export_file_generation_fail_notification_text">Export file could not be generated.</string>
+    <string name="export_type_fail_notification_text">Invalid export format.</string>
+    <string name="export_directory_fail_notification_text">Export directory could not be created.</string>
+    <string name="export_fail_notification_text">Unknown export failure.</string>
+
+
+
+    <!-- NHS Export -->
+    <string name="exporting_nhs_notification_title">NHS PDF Exporting</string>
+    <string name="export_nhs_success_notification_title">NHS PDF Export Finished</string>
+    <string name="export_nhs_success_notification_text">NHS PDF export successful.</string>
+    <string name="export_nhs_fail_notification_title">NHS PDF Export Failed</string>
 
 
 
     <!-- ADS Export -->
-    <string name="ads_export_title">ADS Export</string>
+    <string name="exporting_ads_notification_title">ADS PDF Exporting</string>
+    <string name="export_ads_success_notification_title">ADS PDF Export Finished</string>
+    <string name="export_ads_success_notification_text">ADS PDF export successful.</string>
+    <string name="export_ads_fail_notification_title">ADS PDF Export Failed</string>
 
-        <string name="week_commencing">Week Commencing: %1$s</string>
-        <string name="blood_glucose_targets">Blood Glucose Targets (mmol/L): Pre-meal %1$.1f - %2$.1f, Post-meal %3$.1f - %4$.1f</string>
-        <string name="blood_glucose_targets_empty">Blood Glucose Targets (mmol/L): Pre-meal ........., Post-meal .........</string>
+    <string name="week_commencing">Week Commencing: %1$s</string>
+    <string name="blood_glucose_targets">Blood Glucose Targets (mmol/L): Pre-meal %1$.1f - %2$.1f, Post-meal %3$.1f - %4$.1f</string>
+    <string name="blood_glucose_targets_empty">Blood Glucose Targets (mmol/L): Pre-meal ........., Post-meal .........</string>
 
-        <string name="reading">Reading</string>
-        <string name="time">Time</string>
-        <string name="dose">Dose</string>
+    <string name="reading">Reading</string>
+    <string name="time">Time</string>
+    <string name="dose">Dose</string>
 
-        <string name="food_eaten_title">Food Eaten /</string>
-        <string name="additional_notes_title">Additional Notes</string>
-        <string name="insulin_used">Insulin Used: %1$s</string>
+    <string name="food_eaten_title">Food Eaten /</string>
+    <string name="additional_notes_title">Additional Notes</string>
+    <string name="insulin_used">Insulin Used: %1$s</string>
 
-        <string name="contact_name">Contact Name: %1$s</string>
-        <string name="contact_number">Contact Number: %1$s</string>
+    <string name="contact_name">Contact Name: %1$s</string>
+    <string name="contact_number">Contact Number: %1$s</string>
+
+
+
+    <!-- Excel Export -->
+    <string name="exporting_excel_notification_title">Excel Spreadsheet Exporting</string>
+    <string name="export_excel_success_notification_title">Excel Spreadsheet Export Finished</string>
+    <string name="export_excel_success_notification_text">Excel spreadsheet export successful.</string>
+    <string name="export_excel_fail_notification_title">Excel Spreadsheet Export Failed</string>
+
+
+
+    <!-- CSV Export -->
+    <string name="exporting_csv_notification_title">CSV Spreadsheet Exporting</string>
+    <string name="export_csv_success_notification_title">CSV Spreadsheet Export Finished</string>
+    <string name="export_csv_success_notification_text">CSV spreadsheet export successful.</string>
+    <string name="export_csv_fail_notification_title">CSV Spreadsheet Export Failed</string>
 </resources>

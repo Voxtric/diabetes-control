@@ -1,14 +1,9 @@
 package voxtric.com.diabetescontrol.exporting;
 
-import android.app.Activity;
-import android.widget.ProgressBar;
-
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
+import android.content.Context;
 
 import com.tom_roush.pdfbox.pdmodel.common.PDRectangle;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -26,7 +21,7 @@ import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.database.PreferencesDao;
 import voxtric.com.diabetescontrol.database.TargetChange;
 
-public class ADSExporter extends PDFGenerator
+public class ADSExporter extends PDFGenerator implements IExporter
 {
   private static final float DAY_HEADER_WIDTH = 30.0f;
   private static final float DAY_HEADER_HEIGHT = 80.0f;
@@ -36,57 +31,47 @@ public class ADSExporter extends PDFGenerator
   private static final float DATA_GAP = FONT_SIZE_MEDIUM * 1.6f;
 
   private final List<Week> m_weeks;
-  private final String m_fileName;
 
   ADSExporter(List<DataEntry> entries)
   {
     m_weeks = Week.splitEntries(entries, AppDatabase.getInstance().eventsDao());
-    Date startDate = new Date(entries.get(entries.size() - 1).dayTimeStamp);
-    Date endDate = new Date(entries.get(0).dayTimeStamp);
-    String startDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(startDate);
-    String endDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(endDate);
-    if (startDateString.equals(endDateString))
-    {
-      m_fileName = String.format("%s (ADS).pdf", startDateString);
-    }
-    else
-    {
-      m_fileName = String.format("%s - %s (ADS).pdf", startDateString, endDateString);
-    }
   }
 
   @Override
-  public String getFileName()
+  public byte[] export(ExportForegroundService exportForegroundService)
   {
-    return m_fileName;
+    return createPDF(exportForegroundService);
   }
 
   @Override
-  public ByteArrayOutputStream createPDF(final Activity activity)
+  public String getFormatName()
+  {
+    return "ADS";
+  }
+
+  @Override
+  public String getFileExtension()
+  {
+    return ".pdf";
+  }
+
+  @Override
+  public String getFileMimeType()
+  {
+    return "application/pdf";
+  }
+
+  @Override
+  public byte[] createPDF(ExportForegroundService exportForegroundService)
   {
     try
     {
       for (final Week week : m_weeks)
       {
-        addPage(week, activity);
-        if (activity instanceof FragmentActivity)
-        {
-          activity.runOnUiThread(new Runnable()
-          {
-            @Override
-            public void run()
-            {
-              FragmentManager fragmentManager = ((FragmentActivity)activity).getSupportFragmentManager();
-              ExportDialogFragment exportDialogFragment = (ExportDialogFragment)fragmentManager.findFragmentByTag(ExportDialogFragment.TAG);
-              if (exportDialogFragment != null)
-              {
-                ((ProgressBar)exportDialogFragment.getAlertDialog().findViewById(R.id.progress_bar_export)).incrementProgressBy(week.entries.size());
-              }
-            }
-          });
-        }
+        addPage(exportForegroundService, week);
+        exportForegroundService.incrementProgress(week.entries.size());
       }
-      return getOutputStream();
+      return getOutputStream().toByteArray();
     }
     catch (IOException exception)
     {
@@ -95,34 +80,34 @@ public class ADSExporter extends PDFGenerator
     }
   }
 
-  private void showExtras(Activity activity, StringBuilder foodEatenStringBuilder, StringBuilder additionalNotesStringBuilder, float startX, float availableSpace, float height) throws IOException
+  private void showExtras(Context context, StringBuilder foodEatenStringBuilder, StringBuilder additionalNotesStringBuilder, float startX, float availableSpace, float height) throws IOException
   {
     float minimumHeight = height - DAY_HEADER_HEIGHT;
     if (foodEatenStringBuilder.length() > 0)
     {
-      height = drawText(FONT_BOLD, FONT_SIZE_SMALL, activity.getString(R.string.food_eaten_label), startX + LINE_SPACING, height);
+      height = drawText(FONT_BOLD, FONT_SIZE_SMALL, context.getString(R.string.food_eaten_label), startX + LINE_SPACING, height);
       String foodEatenString = foodEatenStringBuilder.substring(0, foodEatenStringBuilder.length() - 3);
       height = drawTextParagraphed(FONT, FONT_SIZE_SMALL, foodEatenString, startX + LINE_SPACING, startX + availableSpace - LINE_SPACING, height, minimumHeight);
       foodEatenStringBuilder.setLength(0);
     }
     if (additionalNotesStringBuilder.length() > 0)
     {
-      height = drawText(FONT_BOLD, FONT_SIZE_SMALL, activity.getString(R.string.additional_notes_label), startX + LINE_SPACING, height);
+      height = drawText(FONT_BOLD, FONT_SIZE_SMALL, context.getString(R.string.additional_notes_label), startX + LINE_SPACING, height);
       String additionalNotesString = additionalNotesStringBuilder.substring(0, additionalNotesStringBuilder.length() - 1);
       drawTextParagraphed(FONT, FONT_SIZE_SMALL, additionalNotesString, startX + LINE_SPACING, startX + availableSpace - LINE_SPACING, height, minimumHeight);
       additionalNotesStringBuilder.setLength(0);
     }
   }
 
-  private void addPage(Week week, Activity activity) throws IOException
+  private void addPage(Context context, Week week) throws IOException
   {
     super.addPage();
-    final String[] DAYS = activity.getResources().getStringArray(R.array.days);
+    final String[] DAYS = context.getResources().getStringArray(R.array.days);
     float height = PDRectangle.A4.getHeight() - BORDER;
 
     // Week Commencing.
     Date date = new Date(week.weekBeginning);
-    String dateString = activity.getString(R.string.week_commencing, DateFormat.getDateInstance(DateFormat.SHORT).format(date));
+    String dateString = context.getString(R.string.week_commencing, DateFormat.getDateInstance(DateFormat.SHORT).format(date));
     drawText(FONT, FONT_SIZE_MEDIUM, dateString, BORDER, height);
 
     // Pre-meal and post-meal targets.
@@ -133,12 +118,12 @@ public class ADSExporter extends PDFGenerator
       targetChange = AppDatabase.getInstance().targetChangesDao().findFirstBefore(week.weekBeginning);
       if (targetChange == null)
       {
-        targetString = activity.getString(R.string.blood_glucose_targets_empty);
+        targetString = context.getString(R.string.blood_glucose_targets_empty);
       }
     }
     if (targetChange != null)
     {
-      targetString = activity.getString(R.string.blood_glucose_targets, targetChange.preMealLower,
+      targetString = context.getString(R.string.blood_glucose_targets, targetChange.preMealLower,
           targetChange.preMealUpper, targetChange.postMealLower, targetChange.postMealUpper);
     }
     height = drawText(FONT, FONT_SIZE_MEDIUM, targetString, BORDER + (m_pageWidth / 3.0f), height);
@@ -162,9 +147,9 @@ public class ADSExporter extends PDFGenerator
         drawBox(startX, dayHeight, startX + eventWidth, dayHeight - DAY_HEADER_HEIGHT, BLACK, null);
 
         dayHeight -= 1.0f;
-        dayHeight = drawTextCenterAligned(FONT, FONT_SIZE_SMALL, activity.getString(R.string.reading), startX + (eventWidth / 2.0f), dayHeight) - DATA_GAP;
-        dayHeight = drawTextCenterAligned(FONT, FONT_SIZE_SMALL, activity.getString(R.string.time), startX + (eventWidth / 2.0f), dayHeight) - DATA_GAP;
-        drawTextCenterAligned(FONT, FONT_SIZE_SMALL, activity.getString(R.string.dose), startX + (eventWidth / 2.0f), dayHeight);
+        dayHeight = drawTextCenterAligned(FONT, FONT_SIZE_SMALL, context.getString(R.string.reading), startX + (eventWidth / 2.0f), dayHeight) - DATA_GAP;
+        dayHeight = drawTextCenterAligned(FONT, FONT_SIZE_SMALL, context.getString(R.string.time), startX + (eventWidth / 2.0f), dayHeight) - DATA_GAP;
+        drawTextCenterAligned(FONT, FONT_SIZE_SMALL, context.getString(R.string.dose), startX + (eventWidth / 2.0f), dayHeight);
       }
 
       startX += eventWidth;
@@ -175,8 +160,8 @@ public class ADSExporter extends PDFGenerator
     // Day headers and extras.
     float tempHeight = height + (FONT_SIZE_LARGE * 2.2f);
     drawBox(startX, tempHeight, startX + availableSpace, height, BLACK, null);
-    tempHeight = drawTextCenterAligned(FONT, FONT_SIZE_LARGE, activity.getString(R.string.food_eaten_title), startX + (availableSpace / 2.0f), tempHeight);
-    drawTextCenterAligned(FONT, FONT_SIZE_LARGE, activity.getString(R.string.additional_notes_title), startX + (availableSpace / 2.0f), tempHeight);
+    tempHeight = drawTextCenterAligned(FONT, FONT_SIZE_LARGE, context.getString(R.string.food_eaten_title), startX + (availableSpace / 2.0f), tempHeight);
+    drawTextCenterAligned(FONT, FONT_SIZE_LARGE, context.getString(R.string.additional_notes_title), startX + (availableSpace / 2.0f), tempHeight);
     for (int i = 0; i < DAYS.length; i++)
     {
       float dayHeight = height - (DAY_HEADER_HEIGHT * i);
@@ -214,7 +199,7 @@ public class ADSExporter extends PDFGenerator
       // Food eaten and additional notes.
       if (lastDayOfWeek != -1 && lastDayOfWeek != dayOfWeek)
       {
-        showExtras(activity, foodEatenStringBuilder, additionalNotesStringBuilder, startX, availableSpace, height - (DAY_HEADER_HEIGHT * lastDayOfWeek));
+        showExtras(context, foodEatenStringBuilder, additionalNotesStringBuilder, startX, availableSpace, height - (DAY_HEADER_HEIGHT * lastDayOfWeek));
       }
       lastDayOfWeek = dayOfWeek;
 
@@ -235,7 +220,7 @@ public class ADSExporter extends PDFGenerator
         additionalNotesStringBuilder.append('\n');
       }
     }
-    showExtras(activity, foodEatenStringBuilder, additionalNotesStringBuilder, startX, availableSpace, dayStartHeight);
+    showExtras(context, foodEatenStringBuilder, additionalNotesStringBuilder, startX, availableSpace, dayStartHeight);
     height -= DAY_HEADER_HEIGHT * DAYS.length;
 
     // Insulin used
@@ -251,18 +236,18 @@ public class ADSExporter extends PDFGenerator
       }
       insulinUsedString = insulinUsedStringBuilder.substring(0, insulinUsedStringBuilder.length() - 2);
     }
-    height = drawText(FONT, FONT_SIZE_MEDIUM, activity.getString(R.string.insulin_used, insulinUsedString), BORDER, height);
+    height = drawText(FONT, FONT_SIZE_MEDIUM, context.getString(R.string.insulin_used, insulinUsedString), BORDER, height);
 
     // Contact Details
     height -= VERTICAL_SPACE / 2.0f;
 
     PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
-    Preference preference = preferencesDao.getPreference(activity.getResources().getResourceName(R.id.edit_text_contact_name));
+    Preference preference = preferencesDao.getPreference(context.getResources().getResourceName(R.id.edit_text_contact_name));
     String contactName = preference != null && preference.value.length() > 0 ? preference.value : "...........................................";
-    drawText(FONT, FONT_SIZE_MEDIUM, activity.getString(R.string.contact_name, contactName), BORDER, height);
+    drawText(FONT, FONT_SIZE_MEDIUM, context.getString(R.string.contact_name, contactName), BORDER, height);
 
-    preference = preferencesDao.getPreference(activity.getResources().getResourceName(R.id.edit_text_contact_number));
+    preference = preferencesDao.getPreference(context.getResources().getResourceName(R.id.edit_text_contact_number));
     String contactNumber = preference != null && preference.value.length() > 0  ? preference.value : "...........................................";
-    drawText(FONT, FONT_SIZE_MEDIUM, activity.getString(R.string.contact_number, contactNumber), BORDER + (m_pageWidth / 2.0f), height);
+    drawText(FONT, FONT_SIZE_MEDIUM, context.getString(R.string.contact_number, contactNumber), BORDER + (m_pageWidth / 2.0f), height);
   }
 }
