@@ -83,16 +83,26 @@ public class ExportForegroundService extends ForegroundService
           long exportEnd = intent.getLongExtra("export_end", Long.MIN_VALUE);
           if (exportType != -1 && exportStart != Long.MAX_VALUE && exportEnd != Long.MIN_VALUE)
           {
+            m_notificationStringIds = new NotificationStringIds(exportType);
+            pushNotification(ONGOING_NOTIFICATION_ID, buildOngoingNotification(0));
+
             List<DataEntry> entries = AppDatabase.getInstance().dataEntriesDao().findAllBetween(exportStart, exportEnd);
-            byte[] exportFileBytes = generateExportFile(exportType, exportStart, exportEnd, entries);
-            if (exportFileBytes != null)
+            if (!entries.isEmpty())
             {
-              String fileName = getFileName(entries);
-              success = writeExportFile(fileName, exportFileBytes);
+              byte[] exportFileBytes = generateExportFile(exportType, entries);
+              if (exportFileBytes != null)
+              {
+                String fileName = getFileName(entries);
+                success = writeExportFile(fileName, exportFileBytes);
+              }
+              else
+              {
+                pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.export_file_generation_fail_notification_text));
+              }
             }
             else
             {
-              pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.export_file_generation_fail_notification_text));
+              pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.export_time_range_fail_notification_text));
             }
           }
           else
@@ -128,41 +138,33 @@ public class ExportForegroundService extends ForegroundService
     }
   }
 
-  private byte[] generateExportFile(@IdRes int exportType, long exportStart, long exportEnd, List<DataEntry> entries)
+  private byte[] generateExportFile(@IdRes int exportType, List<DataEntry> entries)
   {
     byte[] exportFileBytes = null;
-    if (!entries.isEmpty())
+    m_maxProgress = entries.size();
+    IExporter exporter = null;
+    switch (exportType)
     {
-      m_maxProgress = entries.size();
-      m_notificationStringIds = new NotificationStringIds(exportType);
-      IExporter exporter = null;
-      switch (exportType)
-      {
-      case R.id.navigation_export_nhs:
-        break;
-      case R.id.navigation_export_ads:
-        exporter = new ADSExporter(entries);
-        break;
-      case R.id.navigation_export_excel:
-        break;
-      case R.id.navigation_export_csv:
-        break;
-      }
-      if (exporter != null)
-      {
-        exportFileBytes = exporter.export(ExportForegroundService.this);
-        m_exportFormatName = exporter.getFormatName();
-        m_exportFileExtension = exporter.getFileExtension();
-        m_exportFileMimeType = exporter.getFileMimeType();
-      }
-      else
-      {
-        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.export_type_fail_notification_text));
-      }
+    case R.id.navigation_export_nhs:
+      break;
+    case R.id.navigation_export_ads:
+      exporter = new ADSExporter(entries);
+      break;
+    case R.id.navigation_export_excel:
+      break;
+    case R.id.navigation_export_csv:
+      break;
+    }
+    if (exporter != null)
+    {
+      exportFileBytes = exporter.export(ExportForegroundService.this);
+      m_exportFormatName = exporter.getFormatName();
+      m_exportFileExtension = exporter.getFileExtension();
+      m_exportFileMimeType = exporter.getFileMimeType();
     }
     else
     {
-      pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.export_time_range_fail_notification_text));
+      pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.export_type_fail_notification_text));
     }
     return exportFileBytes;
   }
@@ -194,8 +196,23 @@ public class ExportForegroundService extends ForegroundService
     }
     catch (IOException exception)
     {
-      Log.e(TAG, "Export IO Exception", exception);
-      pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.export_fail_notification_text));
+      boolean handled = false;
+      String exceptionMessage = exception.getMessage();
+      if (exceptionMessage != null)
+      {
+        if (exception.getMessage().contains("No space left on device"))
+        {
+          Log.v(TAG, getString(R.string.storage_space_fail_notification_text), exception);
+          pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.storage_space_fail_notification_text));
+          handled = true;
+        }
+      }
+
+      if (!handled)
+      {
+        Log.e(TAG, "Export IO Exception", exception);
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.export_fail_notification_text));
+      }
     }
     return success;
   }

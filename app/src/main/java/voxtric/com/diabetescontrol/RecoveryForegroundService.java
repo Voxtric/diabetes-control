@@ -185,8 +185,23 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
     }
     catch (IOException exception)
     {
-      Log.e(TAG, getString(R.string.recovery_read_file_fail_notification_text), exception);
-      pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_read_file_fail_notification_text));
+      boolean handled = false;
+      String exceptionMessage = exception.getMessage();
+      if (exceptionMessage != null)
+      {
+        if (exception.getMessage().contains("No space left on device"))
+        {
+          Log.v(TAG, getString(R.string.storage_space_fail_notification_text), exception);
+          pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.storage_space_fail_notification_text));
+          handled = true;
+        }
+      }
+
+      if (!handled)
+      {
+        Log.e(TAG, getString(R.string.recovery_read_file_fail_notification_text), exception);
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_read_file_fail_notification_text));
+      }
     }
     return success;
   }

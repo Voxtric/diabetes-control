@@ -3,6 +3,11 @@
 
 
 
+    <!-- Errors -->
+    <string name="storage_space_fail_notification_text">No storage space left on device.</string>
+
+
+
     <!-- Menus -->
     <string name="title_add_new">Add New</string>
     <string name="title_view_all">View All</string>
