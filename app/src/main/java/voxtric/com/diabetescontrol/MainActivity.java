@@ -440,6 +440,7 @@ public class MainActivity extends AwaitRecoveryActivity
 
     ExportDurationDialogFragment dialog = new ExportDurationDialogFragment(exportIntent);
     dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
+    dialog.initialiseExportButton();
   }
 
   private void initialiseViewPager(ViewPager viewPager, final BottomNavigationView navigation)

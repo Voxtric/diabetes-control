@@ -18,7 +18,6 @@ import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -56,21 +55,23 @@ public class ExportDurationDialogFragment extends DialogFragment
     }
 
     final Activity activity = getActivity();
-    final View view = View.inflate(activity, R.layout.dialog_export_duration, null);
-    m_startDateButton = view.findViewById(R.id.button_start_date);
-    m_endDateButton = view.findViewById(R.id.button_end_date);
-    initialiseDateButton(m_startDateButton);
-    initialiseDateButton(m_endDateButton);
+    if (activity != null)
+    {
+      final View view = View.inflate(activity, R.layout.dialog_export_duration, null);
+      m_startDateButton = view.findViewById(R.id.button_start_date);
+      m_endDateButton = view.findViewById(R.id.button_end_date);
+      initialiseDateButton(m_startDateButton);
+      initialiseDateButton(m_endDateButton);
 
-    final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
-    final long lastExportTimeStamp = preferences.getLong("last_export_time_stamp", -1);
-    if (lastExportTimeStamp == -1)
-    {
-      view.findViewById(R.id.radio_button_since_last_export).setEnabled(false);
-    }
-    int lastChosen = preferences.getInt("last_export_duration_chosen", 0);
-    switch (lastChosen)
-    {
+      final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+      final long lastExportTimeStamp = preferences.getLong("last_export_time_stamp", -1);
+      if (lastExportTimeStamp == -1)
+      {
+        view.findViewById(R.id.radio_button_since_last_export).setEnabled(false);
+      }
+      int lastChosen = preferences.getInt("last_export_duration_chosen", 0);
+      switch (lastChosen)
+      {
       default:
       case 0:
         ((RadioButton)view.findViewById(R.id.radio_button_all_recorded)).setChecked(true);
@@ -81,69 +82,65 @@ public class ExportDurationDialogFragment extends DialogFragment
       case 2:
         ((RadioButton)view.findViewById(R.id.radio_button_within_time_period)).setChecked(true);
         break;
-    }
-    boolean enableWithinTimePeriod = lastChosen == 2;
-    view.findViewById(R.id.text_view_start_date).setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
-    m_startDateButton.setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
-    m_startDateButton.setEnabled(enableWithinTimePeriod);
-
-    view.findViewById(R.id.text_view_end_date).setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
-    m_endDateButton.setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
-    m_endDateButton.setEnabled(enableWithinTimePeriod);
-
-    m_alertDialog = new AlertDialog.Builder(activity)
-        .setTitle(R.string.title_export_data)
-        .setView(view)
-        .setNegativeButton(R.string.cancel_dialog_option, null)
-        .setPositiveButton(R.string.export_dialog_option, new DialogInterface.OnClickListener()
-        {
-          @Override
-          public void onClick(DialogInterface dialog, int which)
-          {
-            preferences.edit().putLong("last_export_time_stamp", System.currentTimeMillis()).apply();
-
-            int selectedID = ((RadioGroup)view.findViewById(R.id.radio_group_duration)).getCheckedRadioButtonId();
-            if (selectedID == view.findViewById(R.id.radio_button_all_recorded).getId())
-            {
-              preferences.edit().putInt("last_export_duration_chosen", 0).apply();
-              m_exportIntent.putExtra("export_start", 0L);
-              m_exportIntent.putExtra("export_end", Long.MAX_VALUE);
-            }
-            else if (selectedID == view.findViewById(R.id.radio_button_since_last_export).getId())
-            {
-              preferences.edit().putInt("last_export_duration_chosen", 1).apply();
-              m_exportIntent.putExtra("export_start", lastExportTimeStamp);
-              m_exportIntent.putExtra("export_end", Long.MAX_VALUE);
-            }
-            else if (selectedID == view.findViewById(R.id.radio_button_within_time_period).getId())
-            {
-              preferences.edit().putInt("last_export_duration_chosen", 2).apply();
-              m_exportIntent.putExtra("export_start", m_withinTimePeriodStartTimeStamp);
-              m_exportIntent.putExtra("export_end", m_withinTimePeriodEndTimeStamp);
-            }
-
-            activity.startService(m_exportIntent);
-          }
-        })
-        .create();
-
-    ((RadioButton)view.findViewById(R.id.radio_button_within_time_period)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-    {
-      @Override
-      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-      {
-        view.findViewById(R.id.text_view_start_date).setAlpha(isChecked ? 1.0f : 0.3f);
-        m_startDateButton.setAlpha(isChecked ? 1.0f : 0.3f);
-        m_startDateButton.setEnabled(isChecked);
-
-        view.findViewById(R.id.text_view_end_date).setAlpha(isChecked ? 1.0f : 0.3f);
-        m_endDateButton.setAlpha(isChecked ? 1.0f : 0.3f);
-        m_endDateButton.setEnabled(isChecked);
-
-        m_alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(
-            !isChecked || (m_startDateButton.getText().length() > 0 && m_endDateButton.getText().length() > 0));
       }
-    });
+      boolean enableWithinTimePeriod = lastChosen == 2;
+      view.findViewById(R.id.text_view_start_date).setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
+      m_startDateButton.setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
+      m_startDateButton.setEnabled(enableWithinTimePeriod);
+
+      view.findViewById(R.id.text_view_end_date).setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
+      m_endDateButton.setAlpha(enableWithinTimePeriod ? 1.0f : 0.3f);
+      m_endDateButton.setEnabled(enableWithinTimePeriod);
+
+      m_alertDialog = new AlertDialog.Builder(activity).setTitle(R.string.title_export_data).setView(view).setNegativeButton(R.string.cancel_dialog_option, null).setPositiveButton(R.string.export_dialog_option, new DialogInterface.OnClickListener()
+      {
+        @Override
+        public void onClick(DialogInterface dialog, int which)
+        {
+          preferences.edit().putLong("last_export_time_stamp", System.currentTimeMillis()).apply();
+
+          int selectedID = ((RadioGroup)view.findViewById(R.id.radio_group_duration)).getCheckedRadioButtonId();
+          if (selectedID == view.findViewById(R.id.radio_button_all_recorded).getId())
+          {
+            preferences.edit().putInt("last_export_duration_chosen", 0).apply();
+            m_exportIntent.putExtra("export_start", 0L);
+            m_exportIntent.putExtra("export_end", Long.MAX_VALUE);
+          }
+          else if (selectedID == view.findViewById(R.id.radio_button_since_last_export).getId())
+          {
+            preferences.edit().putInt("last_export_duration_chosen", 1).apply();
+            m_exportIntent.putExtra("export_start", lastExportTimeStamp);
+            m_exportIntent.putExtra("export_end", Long.MAX_VALUE);
+          }
+          else if (selectedID == view.findViewById(R.id.radio_button_within_time_period).getId())
+          {
+            preferences.edit().putInt("last_export_duration_chosen", 2).apply();
+            m_exportIntent.putExtra("export_start", m_withinTimePeriodStartTimeStamp);
+            m_exportIntent.putExtra("export_end", m_withinTimePeriodEndTimeStamp);
+          }
+
+          activity.startService(m_exportIntent);
+        }
+      }).create();
+
+      RadioButton withinTimePeriodRadioButton = view.findViewById(R.id.radio_button_within_time_period);
+      withinTimePeriodRadioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+      {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean checked)
+        {
+          view.findViewById(R.id.text_view_start_date).setAlpha(checked ? 1.0f : 0.3f);
+          m_startDateButton.setAlpha(checked ? 1.0f : 0.3f);
+          m_startDateButton.setEnabled(checked);
+
+          view.findViewById(R.id.text_view_end_date).setAlpha(checked ? 1.0f : 0.3f);
+          m_endDateButton.setAlpha(checked ? 1.0f : 0.3f);
+          m_endDateButton.setEnabled(checked);
+
+          m_alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(!checked || (m_startDateButton.getText().length() > 0 && m_endDateButton.getText().length() > 0));
+        }
+      });
+    }
 
     return m_alertDialog;
   }
@@ -208,5 +205,17 @@ public class ExportDurationDialogFragment extends DialogFragment
         dialog.show();
       }
     });
+  }
+
+  public void initialiseExportButton()
+  {
+    if (m_alertDialog != null)
+    {
+      Button button = m_alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+      if (button != null)
+      {
+        button.setEnabled(!((RadioButton)m_alertDialog.findViewById(R.id.radio_button_within_time_period)).isChecked());
+      }
+    }
   }
 }
