@@ -9,8 +9,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,10 +25,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
 import androidx.core.view.MenuCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -37,6 +39,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tom_roush.pdfbox.util.PDFBoxResourceLoader;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,9 +57,13 @@ import voxtric.com.diabetescontrol.utilities.ViewUtilities;
 
 public class MainActivity extends AwaitRecoveryActivity
 {
+  private static final String TAG = "MainActivity";
+
   private static final int REQUEST_EDIT_SETTINGS = 100;
   public static final int RESULT_UPDATE_EVENT_SPINNER = 0x01;
   public static final int RESULT_UPDATE_BGL_HIGHLIGHTING = 0x02;
+
+  private static final int REQUEST_CHOOSE_DIRECTORY = 101;
 
   private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 112;
 
@@ -425,8 +432,21 @@ public class MainActivity extends AwaitRecoveryActivity
     {
       switch (action)
       {
+      case Intent.ACTION_OPEN_DOCUMENT_TREE:
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
+        {
+          Intent openDirectoryExplorerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+          startActivityForResult(openDirectoryExplorerIntent, REQUEST_CHOOSE_DIRECTORY);
+        }
+
       case ExportForegroundService.ACTION_ONGOING:
         launchExportProgressDialog(intent.getIntExtra("message_title_id", R.string.title_undefined));
+        break;
+      case ExportForegroundService.ACTION_FINISHED:
+        if (!intent.getBooleanExtra("success", false))
+        {
+          launchMessageDialog(intent);
+        }
         break;
 
       case BackupForegroundService.ACTION_ONGOING:
@@ -696,10 +716,65 @@ public class MainActivity extends AwaitRecoveryActivity
   private class ExportFinishedBroadcastReceiver extends BroadcastReceiver
   {
     @Override
-    public void onReceive(Context context, Intent intent)
+    public void onReceive(Context context, final Intent intent)
     {
       cancelExportProgressDialog();
-      //launchMessageDialog(intent);
+      if (!intent.getBooleanExtra("success", false))
+      {
+        launchMessageDialog(intent);
+      }
+      else
+      {
+        String exportFilePath = intent.getStringExtra("export_file_path");
+        final String exportFileMimeType = intent.getStringExtra("export_file_mime_type");
+        if (exportFilePath == null)
+        {
+          Log.e(TAG, "Export finished intent missing: 'export_file_path'");
+        }
+        else if (exportFileMimeType == null)
+        {
+          Log.e(TAG, "Export finished intent missing: 'export_file_mime_type'");
+        }
+        else
+        {
+          final File exportFile = new File(exportFilePath);
+          final Uri exportFileUri = FileProvider.getUriForFile(MainActivity.this, getApplicationContext().getPackageName() + ".provider", exportFile);
+
+          AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this)
+              .setTitle(getString(intent.getIntExtra("message_title_id", R.string.title_undefined)))
+              .setMessage(getString(intent.getIntExtra("message_text_id", R.string.message_undefined)))
+              .setPositiveButton(R.string.view_dialog_option, new DialogInterface.OnClickListener()
+              {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i)
+                {
+                  ExportForegroundService.viewFile(MainActivity.this, exportFileUri, exportFileMimeType);
+                }
+              }).setNegativeButton(R.string.share_dialog_option, new DialogInterface.OnClickListener()
+              {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i)
+                {
+                  ExportForegroundService.shareFile(MainActivity.this, exportFileUri, exportFileMimeType, exportFile.getName());
+                }
+              });
+
+          if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
+          {
+            dialogBuilder.setNeutralButton(R.string.move_dialog_option, new DialogInterface.OnClickListener()
+            {
+              @Override
+              public void onClick(DialogInterface dialogInterface, int i)
+              {
+                Intent openDirectoryExplorerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                startActivityForResult(openDirectoryExplorerIntent, REQUEST_CHOOSE_DIRECTORY);
+              }
+            });
+          }
+
+          dialogBuilder.show();
+        }
+      }
     }
   }
 

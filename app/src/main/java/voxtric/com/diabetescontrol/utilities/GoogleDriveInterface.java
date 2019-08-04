@@ -5,7 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -57,7 +56,7 @@ public class GoogleDriveInterface
     ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
     if (connectivityManager != null)
     {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
       {
         Network activeNetwork = connectivityManager.getActiveNetwork();
         NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork);

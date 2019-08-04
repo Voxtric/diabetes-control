@@ -6,7 +6,6 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.IBinder;
 
 import androidx.annotation.StringRes;
@@ -40,7 +39,7 @@ public abstract class ForegroundService extends Service
 
   protected void createNotificationChannel(String channelId, String channelName, boolean ongoingNotification)
   {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
     {
       NotificationChannel serviceChannel = new NotificationChannel(
           channelId,

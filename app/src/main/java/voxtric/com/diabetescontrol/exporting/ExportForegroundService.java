@@ -2,6 +2,7 @@ package voxtric.com.diabetescontrol.exporting;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -57,6 +58,9 @@ public class ExportForegroundService extends ForegroundService
     return s_maxProgress;
   }
 
+  @StringRes
+  private int m_failureMessageId = -1;
+
   @IdRes private int m_exportType = -1;
   private NotificationStringIds m_notificationStringIds = null;
 
@@ -69,7 +73,31 @@ public class ExportForegroundService extends ForegroundService
   public int onStartCommand(final Intent intent, int flags, int startId)
   {
     super.onStartCommand(intent, flags, startId);
-    if (!isExporting())
+
+    String action = intent.getAction();
+    if (action != null && action.equals(Intent.ACTION_SEND))
+    {
+      String exportFilePath = intent.getStringExtra("export_file_path");
+      String exportFileMimeType = intent.getStringExtra("export_file_mime_type");
+      if (exportFilePath == null)
+      {
+        Log.e(TAG, "Export finished intent missing: 'export_file_path'");
+      }
+      else if (exportFileMimeType == null)
+      {
+        Log.e(TAG, "Export finished intent missing: 'export_file_mime_type'");
+      }
+      else
+      {
+        File exportFile = new File(exportFilePath);
+        Uri exportFileUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", exportFile);
+
+        viewFile(this, exportFileUri, exportFileMimeType);
+        shareFile(this, exportFileUri, exportFileMimeType, exportFile.getName());
+        sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+      }
+    }
+    else if (!isExporting())
     {
       s_progress = 0;
       s_maxProgress = 0;
@@ -117,6 +145,22 @@ public class ExportForegroundService extends ForegroundService
           }
           s_progress = -1;
           s_maxProgress = -1;
+
+          Intent exportFinishedIntent = new Intent(ACTION_FINISHED);
+          exportFinishedIntent.putExtra("success", success);
+          if (success)
+          {
+            exportFinishedIntent.putExtra("export_file_path", m_exportFile.getAbsolutePath());
+            exportFinishedIntent.putExtra("export_file_mime_type", m_exportFileMimeType);
+            exportFinishedIntent.putExtra("message_title_id", m_notificationStringIds.successNotificationTitleId);
+            exportFinishedIntent.putExtra("message_text_id", m_notificationStringIds.successNotificationTextId);
+          }
+          else
+          {
+            exportFinishedIntent.putExtra("message_title_id", m_notificationStringIds.failNotificationTitleId);
+            exportFinishedIntent.putExtra("message_text_id", m_failureMessageId);
+          }
+          LocalBroadcastManager.getInstance(ExportForegroundService.this).sendBroadcast(exportFinishedIntent);
 
           stopForeground(true);
           stopSelf();
@@ -251,30 +295,46 @@ public class ExportForegroundService extends ForegroundService
   protected Notification buildOnSuccessNotification()
   {
     Uri exportFileUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", m_exportFile);
-    Intent notificationIntent = new Intent(Intent.ACTION_VIEW);
-    notificationIntent.setDataAndType(exportFileUri, m_exportFileMimeType);
-    int intentFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION |
-                      Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                      Intent.FLAG_ACTIVITY_SINGLE_TOP |
-                      Intent.FLAG_ACTIVITY_NEW_TASK;
-    notificationIntent.addFlags(intentFlags);
-    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-    return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
+    Intent viewFileIntent = buildViewFileIntent(exportFileUri, m_exportFileMimeType);
+    PendingIntent viewFilePendingIntent = PendingIntent.getActivity(this, 0, viewFileIntent, 0);
+
+    Intent shareFileIntent = new Intent(this, ExportForegroundService.class);
+    shareFileIntent.setAction(Intent.ACTION_SEND);
+    shareFileIntent.putExtra("export_file_path", m_exportFile.getAbsolutePath());
+    shareFileIntent.putExtra("export_file_mime_type", m_exportFileMimeType);
+    PendingIntent shareFilePendingIntent = PendingIntent.getService(this, 0, shareFileIntent, 0);
+
+    NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
         .setSmallIcon(R.drawable.done)
-        .setContentIntent(pendingIntent)
-        .setAutoCancel(true)
+        .setContentIntent(viewFilePendingIntent)
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .setContentTitle(getString(m_notificationStringIds.successNotificationTitleId))
-        .setContentText(getString(m_notificationStringIds.successNotificationTitleId))
-        .build();
+        .setContentText(getString(m_notificationStringIds.successNotificationTextId));
+
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
+    {
+      Intent moveFileIntent = new Intent(this, MainActivity.class);
+      moveFileIntent.setAction(Intent.ACTION_OPEN_DOCUMENT_TREE);
+      PendingIntent moveFilePendingIntent = PendingIntent.getActivity(this, 0, moveFileIntent, 0);
+      notificationBuilder.addAction(-1, getString(R.string.move_dialog_option), moveFilePendingIntent);
+    }
+
+    notificationBuilder.addAction(-1, getString(R.string.share_dialog_option), shareFilePendingIntent);
+    notificationBuilder.addAction(-1, getString(R.string.view_dialog_option), viewFilePendingIntent);
+
+    return notificationBuilder.build();
   }
 
   @Override
   protected Notification buildOnFailNotification(int failureMessageId)
   {
+    m_failureMessageId = failureMessageId;
+
     Intent notificationIntent = new Intent(this, MainActivity.class);
     notificationIntent.setAction(ACTION_FINISHED);
+    notificationIntent.putExtra("message_title_id", m_notificationStringIds.failNotificationTitleId);
+    notificationIntent.putExtra("message_text_id", failureMessageId);
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
@@ -294,6 +354,38 @@ public class ExportForegroundService extends ForegroundService
 
     Intent exportOngoingBroadcast = new Intent(ACTION_ONGOING);
     LocalBroadcastManager.getInstance(this).sendBroadcast(exportOngoingBroadcast);
+  }
+
+  private static Intent buildViewFileIntent(Uri exportFileUri, String exportFileMimeType)
+  {
+    Intent viewFileIntent = new Intent(Intent.ACTION_VIEW);
+    viewFileIntent.setDataAndType(exportFileUri, exportFileMimeType);
+    viewFileIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+    return viewFileIntent;
+  }
+
+  private static Intent buildShareFileIntent(Context context, Uri exportFileUri, String exportFileMimeType, String exportFileName)
+  {
+    Intent shareFileIntent = new Intent(Intent.ACTION_SEND);
+    shareFileIntent.setType(exportFileMimeType);
+    shareFileIntent.putExtra(Intent.EXTRA_STREAM, exportFileUri);
+    shareFileIntent.putExtra(Intent.EXTRA_SUBJECT, exportFileName);
+    shareFileIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_message, context.getString(R.string.app_name)));
+    shareFileIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+    return shareFileIntent;
+  }
+
+  public static void viewFile(Context context, Uri exportFileUri, String exportFileMimeType)
+  {
+    context.startActivity(buildViewFileIntent(exportFileUri, exportFileMimeType));
+  }
+
+  public static void shareFile(Context context, Uri exportFileUri, String exportFileMimeType, String exportFileName)
+  {
+    Intent shareFileIntent = buildShareFileIntent(context, exportFileUri, exportFileMimeType, exportFileName);
+    Intent createChooserIntent = Intent.createChooser(shareFileIntent, context.getString(R.string.share_title, exportFileName));
+    createChooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    context.startActivity(createChooserIntent);
   }
 
   private static class NotificationStringIds

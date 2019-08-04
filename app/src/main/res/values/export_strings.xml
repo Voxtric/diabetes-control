@@ -31,8 +31,9 @@ Allow this app to access external storage?"
 
     <!-- Dialog Options -->
     <string name="export_dialog_option">Export</string>
-    <string name="finish_dialog_options">Finish</string>
-    <string name="share_dialog_options">Share</string>
+    <string name="view_dialog_option">View</string>
+    <string name="share_dialog_option">Share</string>
+    <string name="move_dialog_option">Move</string>
 
 
 
@@ -52,6 +53,12 @@ Allow this app to access external storage?"
         <item>Saturday</item>
         <item>Sunday</item>
     </string-array>
+
+
+
+    <!-- Export File Sharing -->
+    <string name="share_title">Share \'%1$s\'</string>
+    <string name="share_message">Shared from \'%1$s\' app.</string>
 
 
 

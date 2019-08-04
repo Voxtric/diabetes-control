@@ -128,16 +128,16 @@ public class ExportDurationDialogFragment extends DialogFragment
               switch (m_exportIntent.getIntExtra("export_type", -1))
               {
               case R.id.navigation_export_nhs:
-                titleId = R.string.export_nhs_fail_notification_title;
+                titleId = R.string.exporting_nhs_notification_title;
                 break;
               case R.id.navigation_export_ads:
-                titleId = R.string.export_ads_fail_notification_title;
+                titleId = R.string.exporting_ads_notification_title;
                 break;
               case R.id.navigation_export_excel:
-                titleId = R.string.export_excel_fail_notification_title;
+                titleId = R.string.exporting_excel_notification_title;
                 break;
               case R.id.navigation_export_csv:
-                titleId = R.string.export_csv_fail_notification_title;
+                titleId = R.string.exporting_csv_notification_title;
                 break;
               default:
                 titleId = R.string.title_undefined;

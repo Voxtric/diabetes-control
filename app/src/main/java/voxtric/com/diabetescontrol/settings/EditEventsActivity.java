@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -180,7 +179,7 @@ public class EditEventsActivity extends AwaitRecoveryActivity
             else
             {
               m_eventMoving = true;
-              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+              if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
               {
                 dataView.setZ(1.0f);
               }
@@ -192,7 +191,7 @@ public class EditEventsActivity extends AwaitRecoveryActivity
               }
 
               ViewPropertyAnimator animator = dataView.animate().translationYBy(swappingView.getHeight() * direction).setDuration(ANIMATION_DURATION);
-              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+              if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT)
               {
                 animator.setUpdateListener(new ValueAnimator.AnimatorUpdateListener()
                 {
