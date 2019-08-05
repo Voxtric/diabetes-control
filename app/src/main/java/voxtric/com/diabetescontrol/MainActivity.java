@@ -233,17 +233,21 @@ public class MainActivity extends AwaitRecoveryActivity
         Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
         return true;
     case R.id.navigation_export_ads:
-      if (!RecoveryForegroundService.isDownloading())
+      if (RecoveryForegroundService.isDownloading())
+      {
+        Toast.makeText(this, R.string.export_recovery_in_progress_message, Toast.LENGTH_LONG).show();
+      }
+      else if (ExportForegroundService.isExporting())
+      {
+        Toast.makeText(this, R.string.export_already_in_progress_message, Toast.LENGTH_LONG).show();
+      }
+      else
       {
         intent = new Intent(this, ExportForegroundService.class);
         intent.putExtra("export_type", menuItem.getItemId());
         ExportDurationDialogFragment dialog = new ExportDurationDialogFragment(intent);
         dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
         dialog.initialiseExportButton();
-      }
-      else
-      {
-        Toast.makeText(this, R.string.export_recovery_in_progress_message, Toast.LENGTH_LONG).show();
       }
       return true;
 
