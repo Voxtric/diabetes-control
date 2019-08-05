@@ -316,7 +316,9 @@ public class ExportForegroundService extends ForegroundService
     {
       Intent moveFileIntent = new Intent(this, MainActivity.class);
       moveFileIntent.setAction(Intent.ACTION_OPEN_DOCUMENT_TREE);
-      PendingIntent moveFilePendingIntent = PendingIntent.getActivity(this, 0, moveFileIntent, 0);
+      moveFileIntent.putExtra("export_file_path", m_exportFile.getAbsolutePath());
+      moveFileIntent.putExtra("export_file_mime_type", m_exportFileMimeType);
+      PendingIntent moveFilePendingIntent = PendingIntent.getActivity(this, 0, moveFileIntent, PendingIntent.FLAG_UPDATE_CURRENT);
       notificationBuilder.addAction(-1, getString(R.string.move_dialog_option), moveFilePendingIntent);
     }
 

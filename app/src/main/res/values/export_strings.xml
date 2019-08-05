@@ -20,12 +20,12 @@ You can use the app as usual whilst this happens, and you will be notified once 
 
 
     <!-- Justify Write External Storage Permission Dialog -->
-    <string name="write_external_storage_export_permission_justification_message">
-"In order to export your data, permission to write to the external storage of the device must be given.
+    <string name="write_external_storage_move_export_permission_justification_message">
+"In order to move your export file, permission to write to the external storage of the device must be given.
 
 Allow this app to access external storage?"
     </string>
-    <string name="write_external_storage_export_permission_needed_message">Cannot export until write external storage permissions are granted.</string>
+    <string name="write_external_storage_move_export_permission_needed_message">Cannot move export file until write external storage permissions are granted.</string>
 
 
 

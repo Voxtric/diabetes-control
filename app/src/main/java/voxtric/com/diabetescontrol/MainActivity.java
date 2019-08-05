@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,10 +27,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.core.view.MenuCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -40,6 +43,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tom_roush.pdfbox.util.PDFBoxResourceLoader;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -69,8 +77,6 @@ public class MainActivity extends AwaitRecoveryActivity
 
   private ViewPager m_viewPager = null;
 
-  private Intent m_exportIntent = null;
-
   private PopupMenu m_activeMenu = null;
 
   private AlertDialog m_exportProgressDialog = null;
@@ -80,6 +86,9 @@ public class MainActivity extends AwaitRecoveryActivity
   private AlertDialog m_backupProgressDialog = null;
   private BackupOngoingBroadcastReceiver m_backupOngoingBroadcastReceiver = new BackupOngoingBroadcastReceiver();
   private BackupFinishedBroadcastReceiver m_backupFinishedBroadcastReceiver = new BackupFinishedBroadcastReceiver();
+
+  private String m_moveExportFilePath = null;
+  private String m_moveExportFileMimeType = null;
 
   private BottomNavigationView.OnNavigationItemSelectedListener m_onNavigationItemSelectedListener
       = new BottomNavigationView.OnNavigationItemSelectedListener()
@@ -226,7 +235,9 @@ public class MainActivity extends AwaitRecoveryActivity
       case R.id.navigation_export_ads:
         intent = new Intent(this, ExportForegroundService.class);
         intent.putExtra("export_type", menuItem.getItemId());
-        export(intent);
+        ExportDurationDialogFragment dialog = new ExportDurationDialogFragment(intent);
+        dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
+        dialog.initialiseExportButton();
         return true;
       case R.id.navigation_export_csv:
         Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
@@ -253,8 +264,9 @@ public class MainActivity extends AwaitRecoveryActivity
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data)
   {
-    if (requestCode == REQUEST_EDIT_SETTINGS)
+    switch (requestCode)
     {
+    case REQUEST_EDIT_SETTINGS:
       if ((resultCode & RESULT_UPDATE_EVENT_SPINNER) == RESULT_UPDATE_EVENT_SPINNER)
       {
         getFragment(NewEntryFragment.class).updateEventSpinner();
@@ -263,9 +275,15 @@ public class MainActivity extends AwaitRecoveryActivity
       {
         getFragment(EntryListFragment.class).refreshEntryList();
       }
-    }
-    else
-    {
+      break;
+    case REQUEST_CHOOSE_DIRECTORY:
+      Uri directoryUri = data.getData();
+      if (resultCode == RESULT_OK && directoryUri != null)
+      {
+        moveExportFile(directoryUri);
+      }
+      break;
+    default:
       super.onActivityResult(requestCode, resultCode, data);
     }
   }
@@ -277,11 +295,18 @@ public class MainActivity extends AwaitRecoveryActivity
     {
       if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
       {
-        export(m_exportIntent);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
+        {
+          beginMoveExportFile(m_moveExportFilePath, m_moveExportFileMimeType);
+        }
+        else
+        {
+          // TODO: Inform user of failure.
+        }
       }
       else
       {
-        Toast.makeText(this, R.string.write_external_storage_export_permission_needed_message, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.write_external_storage_move_export_permission_needed_message, Toast.LENGTH_LONG).show();
       }
     }
     else
@@ -433,11 +458,14 @@ public class MainActivity extends AwaitRecoveryActivity
       switch (action)
       {
       case Intent.ACTION_OPEN_DOCUMENT_TREE:
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
+        String exportFilePath = intent.getStringExtra("export_file_path");
+        String exportFileMimeType = intent.getStringExtra("export_file_mime_type");
+        if (exportFilePath != null && exportFileMimeType != null &&
+            android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
         {
-          Intent openDirectoryExplorerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-          startActivityForResult(openDirectoryExplorerIntent, REQUEST_CHOOSE_DIRECTORY);
+          beginMoveExportFile(exportFilePath, exportFileMimeType);
         }
+        break;
 
       case ExportForegroundService.ACTION_ONGOING:
         launchExportProgressDialog(intent.getIntExtra("message_title_id", R.string.title_undefined));
@@ -483,25 +511,79 @@ public class MainActivity extends AwaitRecoveryActivity
         });
   }
 
-  private void export(Intent exportIntent)
+  private void moveExportFile(Uri directoryUri)
   {
+    DocumentFile directory = DocumentFile.fromTreeUri(this, directoryUri);
+    if (directory != null)
+    {
+      String fileName = new File(m_moveExportFilePath).getName();
+      DocumentFile exportFile = directory.createFile(m_moveExportFileMimeType, fileName);
+      if (exportFile != null)
+      {
+        Uri exportFileUri = exportFile.getUri();
+        try
+        {
+          InputStream inputStream = new FileInputStream(new File(m_moveExportFilePath));
+          OutputStream outputStream = getContentResolver().openOutputStream(exportFileUri);
+          if (outputStream != null)
+          {
+            int exportFileData = inputStream.read();
+            while (exportFileData != -1)
+            {
+              outputStream.write(exportFileData);
+              exportFileData = inputStream.read();
+            }
+            ExportForegroundService.viewFile(this, exportFileUri, m_moveExportFileMimeType);
+          }
+          else
+          {
+            // TODO: couldn't get output stream.
+          }
+        }
+        catch (FileNotFoundException exception)
+        {
+          Log.e(TAG, "Move Export File Not Found Exception", exception);
+          // TODO: Couldn't find file.
+        }
+        catch (IOException exception)
+        {
+          Log.e(TAG, "Move Export File Not Found Exception", exception);
+          // TODO: Couldn't write file.
+        }
+      }
+      else
+      {
+        // TODO: Couldn't create file.
+      }
+    }
+    else
+    {
+      // TODO: Invalid directory chosen.
+    }
+  }
+
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+  private void beginMoveExportFile(String exportFilePath, String exportFileMimeType)
+  {
+    m_moveExportFilePath = exportFilePath;
+    m_moveExportFileMimeType = exportFileMimeType;
+
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
     {
       int hasWriteExternalStoragePermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
       if (hasWriteExternalStoragePermission != PackageManager.PERMISSION_GRANTED)
       {
-        m_exportIntent = exportIntent;
         if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))
         {
           AlertDialog dialog = new AlertDialog.Builder(this)
               .setTitle(R.string.permission_justification_title)
-              .setMessage(R.string.write_external_storage_export_permission_justification_message)
+              .setMessage(R.string.write_external_storage_move_export_permission_justification_message)
               .setNegativeButton(R.string.deny_dialog_option, new DialogInterface.OnClickListener()
               {
                 @Override
                 public void onClick(DialogInterface dialog, int which)
                 {
-                  Toast.makeText(MainActivity.this, R.string.write_external_storage_export_permission_needed_message, Toast.LENGTH_LONG).show();
+                  Toast.makeText(MainActivity.this, R.string.write_external_storage_move_export_permission_needed_message, Toast.LENGTH_LONG).show();
                 }
               })
               .setPositiveButton(R.string.allow_dialog_option, new DialogInterface.OnClickListener()
@@ -509,7 +591,7 @@ public class MainActivity extends AwaitRecoveryActivity
                 @Override
                 public void onClick(DialogInterface dialog, int which)
                 {
-                  requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
+                  requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
                 }
               })
               .create();
@@ -517,15 +599,14 @@ public class MainActivity extends AwaitRecoveryActivity
         }
         else
         {
-          requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
+          requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
         }
         return;
       }
     }
 
-    ExportDurationDialogFragment dialog = new ExportDurationDialogFragment(exportIntent);
-    dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
-    dialog.initialiseExportButton();
+    Intent moveFileIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+    startActivityForResult(moveFileIntent, REQUEST_CHOOSE_DIRECTORY);
   }
 
   private void initialiseViewPager(ViewPager viewPager, final BottomNavigationView navigation)
@@ -725,7 +806,7 @@ public class MainActivity extends AwaitRecoveryActivity
       }
       else
       {
-        String exportFilePath = intent.getStringExtra("export_file_path");
+        final String exportFilePath = intent.getStringExtra("export_file_path");
         final String exportFileMimeType = intent.getStringExtra("export_file_mime_type");
         if (exportFilePath == null)
         {
@@ -766,8 +847,7 @@ public class MainActivity extends AwaitRecoveryActivity
               @Override
               public void onClick(DialogInterface dialogInterface, int i)
               {
-                Intent openDirectoryExplorerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                startActivityForResult(openDirectoryExplorerIntent, REQUEST_CHOOSE_DIRECTORY);
+                beginMoveExportFile(exportFilePath, exportFileMimeType);
               }
             });
           }
