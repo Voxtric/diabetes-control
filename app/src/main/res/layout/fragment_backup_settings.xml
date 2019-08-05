@@ -96,7 +96,7 @@
         app:layout_constraintTop_toTopOf="@id/notify_on_backup_finished_label" />
 
     <Button
-        android:id="@+id/apply_backup_button"
+        android:id="@+id/restore_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -106,7 +106,7 @@
         app:layout_constraintWidth_percent=".5" />
 
     <Button
-        android:id="@+id/backup_now_button"
+        android:id="@+id/backup_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
