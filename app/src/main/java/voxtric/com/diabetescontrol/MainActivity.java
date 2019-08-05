@@ -140,59 +140,57 @@ public class MainActivity extends AwaitRecoveryActivity
   public void onResume()
   {
     super.onResume();
-    Preference.get(this,
-        new String[] {
-            "automatic_backup",
-            "wifi_only_backup",
-            "last_successful_backup_timestamp"
-        },
-        new String[] {
-            getString(R.string.automatic_backup_never_option),
-            String.valueOf(true),
-            String.valueOf(Long.MIN_VALUE)
-        },
-        new Preference.ResultRunnable()
-        {
-          @Override
-          public void run()
-          {
-            String automaticBackup = getResults().get("automatic_backup");
-            String wifiOnlyBackup = getResults().get("wifi_only_backup");
-            String lastSuccessfulBackupTimestamp = getResults().get("last_successful_backup_timestamp");
-            if (automaticBackup != null && wifiOnlyBackup != null && lastSuccessfulBackupTimestamp != null)
-            {
-              Calendar calendar = Calendar.getInstance();
-              if (automaticBackup.equals(getString(R.string.automatic_backup_daily_option)))
-              {
-                calendar.add(Calendar.DAY_OF_YEAR, -1);
-              }
-              else if (automaticBackup.equals(getString(R.string.automatic_backup_weekly_option)))
-              {
-                calendar.add(Calendar.WEEK_OF_YEAR, -1);
-              }
-              else if (automaticBackup.equals(getString(R.string.automatic_backup_monthly_option)))
-              {
-                calendar.add(Calendar.MONTH, -1);
-              }
-              else
-              {
-                calendar.set(
-                    calendar.getMaximum(Calendar.YEAR),
-                    calendar.getMaximum(Calendar.MONTH),
-                    calendar.getMaximum(Calendar.DATE));
-              }
+    if (!RecoveryForegroundService.isDownloading())
+    {
+      Preference.get(this,
+                     new String[]{
+                         "automatic_backup", "wifi_only_backup", "last_successful_backup_timestamp"
+                     },
+                     new String[]{
+                         getString(R.string.automatic_backup_never_option), String.valueOf(true), String.valueOf(Long.MIN_VALUE)
+                     },
+                     new Preference.ResultRunnable()
+                     {
+                       @Override
+                       public void run()
+                       {
+                         String automaticBackup = getResults().get("automatic_backup");
+                         String wifiOnlyBackup = getResults().get("wifi_only_backup");
+                         String lastSuccessfulBackupTimestamp = getResults().get("last_successful_backup_timestamp");
+                         if (automaticBackup != null && wifiOnlyBackup != null && lastSuccessfulBackupTimestamp != null)
+                         {
+                           Calendar calendar = Calendar.getInstance();
+                           if (automaticBackup.equals(getString(R.string.automatic_backup_daily_option)))
+                           {
+                             calendar.add(Calendar.DAY_OF_YEAR, -1);
+                           }
+                           else if (automaticBackup.equals(getString(R.string.automatic_backup_weekly_option)))
+                           {
+                             calendar.add(Calendar.WEEK_OF_YEAR, -1);
+                           }
+                           else if (automaticBackup.equals(getString(R.string.automatic_backup_monthly_option)))
+                           {
+                             calendar.add(Calendar.MONTH, -1);
+                           }
+                           else
+                           {
+                             calendar.set(calendar.getMaximum(Calendar.YEAR),
+                                          calendar.getMaximum(Calendar.MONTH),
+                                          calendar.getMaximum(Calendar.DATE));
+                           }
 
-              if (calendar.getTimeInMillis() >= Long.valueOf(lastSuccessfulBackupTimestamp) &&
-                  (!Boolean.valueOf(wifiOnlyBackup) || GoogleDriveInterface.hasWifiConnection(MainActivity.this)) &&
-                  GoogleSignIn.getLastSignedInAccount(MainActivity.this) != null &&
-                  !BackupForegroundService.isUploading() && !RecoveryForegroundService.isDownloading())
-              {
-                Intent intent = new Intent(MainActivity.this, BackupForegroundService.class);
-                startService(intent);
-              }
-            }
-          }
-        });
+                           if (calendar.getTimeInMillis() >= Long.valueOf(lastSuccessfulBackupTimestamp) && (!Boolean.valueOf(
+                               wifiOnlyBackup) || GoogleDriveInterface.hasWifiConnection(MainActivity.this)) && GoogleSignIn
+                               .getLastSignedInAccount(MainActivity.this) != null && !BackupForegroundService.isUploading() && !RecoveryForegroundService
+                               .isDownloading())
+                           {
+                             Intent intent = new Intent(MainActivity.this, BackupForegroundService.class);
+                             startService(intent);
+                           }
+                         }
+                       }
+                     });
+    }
   }
 
   @Override
@@ -229,35 +227,38 @@ public class MainActivity extends AwaitRecoveryActivity
     Intent intent;
     switch (menuItem.getItemId())
     {
-      case R.id.navigation_export_nhs:
+    case R.id.navigation_export_nhs:
+    case R.id.navigation_export_csv:
+    case R.id.navigation_export_excel:
         Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
         return true;
-      case R.id.navigation_export_ads:
+    case R.id.navigation_export_ads:
+      if (!RecoveryForegroundService.isDownloading())
+      {
         intent = new Intent(this, ExportForegroundService.class);
         intent.putExtra("export_type", menuItem.getItemId());
         ExportDurationDialogFragment dialog = new ExportDurationDialogFragment(intent);
         dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
         dialog.initialiseExportButton();
-        return true;
-      case R.id.navigation_export_csv:
-        Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
-        return true;
-      case R.id.navigation_export_excel:
-        Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
-        return true;
+      }
+      else
+      {
+        Toast.makeText(this, R.string.export_recovery_in_progress_message, Toast.LENGTH_LONG).show();
+      }
+      return true;
 
 
-      case R.id.navigation_about:
-        intent = new Intent(this, AboutActivity.class);
-        startActivity(intent);
-        return true;
-      case R.id.navigation_settings:
-        intent = new Intent(this, SettingsActivity.class);
-        startActivityForResult(intent, REQUEST_EDIT_SETTINGS);
-        return true;
+    case R.id.navigation_about:
+      intent = new Intent(this, AboutActivity.class);
+      startActivity(intent);
+      return true;
+    case R.id.navigation_settings:
+      intent = new Intent(this, SettingsActivity.class);
+      startActivityForResult(intent, REQUEST_EDIT_SETTINGS);
+      return true;
 
-      default:
-        return false;
+    default:
+      return false;
     }
   }
 

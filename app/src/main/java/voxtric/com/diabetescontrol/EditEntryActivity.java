@@ -38,7 +38,7 @@ public class EditEntryActivity extends AwaitRecoveryActivity
     }
 
     Bundle extras = getIntent().getExtras();
-    if (extras != null)
+    if (extras != null && !RecoveryForegroundService.isDownloading())
     {
       final long timestamp = extras.getLong("timestamp", 0);
       if (timestamp != 0)

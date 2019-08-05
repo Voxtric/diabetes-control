@@ -24,6 +24,7 @@ import java.util.Map;
 
 import voxtric.com.diabetescontrol.MainActivity;
 import voxtric.com.diabetescontrol.R;
+import voxtric.com.diabetescontrol.RecoveryForegroundService;
 import voxtric.com.diabetescontrol.database.Preference;
 import voxtric.com.diabetescontrol.settings.SettingsActivity;
 import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
@@ -152,42 +153,44 @@ public class BGLHighlightingSettingsFragment extends Fragment
 
   private void setValues(final Activity activity, View view)
   {
-    final Switch highlightingEnabledSwitch = view.findViewById(R.id.highlighting_enabled_switch);
-    final EditText idealRangeLower = view.findViewById(R.id.ideal_range_lower);
-    final EditText idealRangeUpper = view.findViewById(R.id.ideal_range_upper);
-    final EditText highRangeLower = view.findViewById(R.id.high_range_lower);
-    final EditText highRangeUpper = view.findViewById(R.id.high_range_upper);
+    if (!RecoveryForegroundService.isDownloading())
+    {
+      final Switch highlightingEnabledSwitch = view.findViewById(R.id.highlighting_enabled_switch);
+      final EditText idealRangeLower = view.findViewById(R.id.ideal_range_lower);
+      final EditText idealRangeUpper = view.findViewById(R.id.ideal_range_upper);
+      final EditText highRangeLower = view.findViewById(R.id.high_range_lower);
+      final EditText highRangeUpper = view.findViewById(R.id.high_range_upper);
 
-    Preference.get(activity,
-        new String[] {
-            HIGHLIGHTING_ENABLED_PREFERENCE,
-            IDEAL_MINIMUM_PREFERENCE,
-            HIGH_MINIMUM_PREFERENCE,
-            ACTION_REQUIRED_MINIMUM_PREFERENCE
-        },
-        new String[] {
-            String.valueOf(true),
-            String.valueOf(DEFAULT_VALUES.get(IDEAL_MINIMUM_PREFERENCE)),
-            String.valueOf(DEFAULT_VALUES.get(HIGH_MINIMUM_PREFERENCE)),
-            String.valueOf(DEFAULT_VALUES.get(ACTION_REQUIRED_MINIMUM_PREFERENCE))
-        },
-        new Preference.ResultRunnable()
-        {
-          @Override
-          public void run()
-          {
-            m_bglRangeValues = getResults();
-            idealRangeLower.setText(m_bglRangeValues.get(IDEAL_MINIMUM_PREFERENCE));
-            idealRangeUpper.setText(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE));
-            highRangeLower.setText(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE));
-            highRangeUpper.setText(m_bglRangeValues.get(ACTION_REQUIRED_MINIMUM_PREFERENCE));
+      Preference.get(activity,
+                     new String[]{
+                         HIGHLIGHTING_ENABLED_PREFERENCE,
+                         IDEAL_MINIMUM_PREFERENCE,
+                         HIGH_MINIMUM_PREFERENCE,
+                         ACTION_REQUIRED_MINIMUM_PREFERENCE },
+                     new String[]{
+                        String.valueOf(true),
+                        String.valueOf(DEFAULT_VALUES.get(IDEAL_MINIMUM_PREFERENCE)),
+                        String.valueOf(DEFAULT_VALUES.get(HIGH_MINIMUM_PREFERENCE)),
+                        String.valueOf(DEFAULT_VALUES.get(ACTION_REQUIRED_MINIMUM_PREFERENCE)) },
+                     new Preference.ResultRunnable()
+                     {
+                       @Override
+                       public void run()
+                       {
+                         m_bglRangeValues = getResults();
+                         idealRangeLower.setText(m_bglRangeValues.get(IDEAL_MINIMUM_PREFERENCE));
+                         idealRangeUpper.setText(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE));
+                         highRangeLower.setText(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE));
+                         highRangeUpper.setText(m_bglRangeValues.get(ACTION_REQUIRED_MINIMUM_PREFERENCE));
 
-            boolean highlightingEnabled = Boolean.valueOf(m_bglRangeValues.get(HIGHLIGHTING_ENABLED_PREFERENCE));
-            highlightingEnabledSwitch.setChecked(highlightingEnabled);
-            highlightingEnabledSwitch.jumpDrawablesToCurrentState();
-            setBGLHighlightingEnabled(activity, highlightingEnabled);
-          }
-        });
+                         boolean highlightingEnabled = Boolean.valueOf(m_bglRangeValues.get(
+                             HIGHLIGHTING_ENABLED_PREFERENCE));
+                         highlightingEnabledSwitch.setChecked(highlightingEnabled);
+                         highlightingEnabledSwitch.jumpDrawablesToCurrentState();
+                         setBGLHighlightingEnabled(activity, highlightingEnabled);
+                       }
+                     });
+    }
   }
 
   private void setBGLHighlightingEnabled(Activity activity, boolean enabled)

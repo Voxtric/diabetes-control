@@ -10,6 +10,9 @@ public class DiabetesControl extends MultiDexApplication
   public void onCreate()
   {
     super.onCreate();
-    AppDatabase.initialise(this);
+    if (!RecoveryForegroundService.isDownloading())
+    {
+      AppDatabase.initialise(this);
+    }
   }
 }

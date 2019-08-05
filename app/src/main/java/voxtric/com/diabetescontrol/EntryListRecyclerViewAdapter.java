@@ -63,7 +63,7 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
 
   void loadMore(final Activity activity)
   {
-    if (!m_loadingMore)
+    if (!m_loadingMore && !RecoveryForegroundService.isDownloading())
     {
       m_loadingMore = true;
       AsyncTask.execute(new Runnable()

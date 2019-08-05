@@ -2,6 +2,7 @@ package voxtric.com.diabetescontrol;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,7 +11,6 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -302,7 +302,7 @@ public class NewEntryFragment extends Fragment
   private void pickBestEvent()
   {
     final Activity activity = getActivity();
-    if (activity != null)
+    if (activity != null && !RecoveryForegroundService.isDownloading())
     {
       AsyncTask.execute(new Runnable()
       {
@@ -556,7 +556,7 @@ public class NewEntryFragment extends Fragment
                     int radioGroupButtonID = radioGroup.getCheckedRadioButtonId();
                     displaySimilar(activity, layout, radioGroupButtonID);
 
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+                    SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
                     if (radioGroupButtonID == layout.findViewById(R.id.radio_insulin_name).getId())
                     {
                       preferences.edit().putInt("previous_criteria", 0).apply();
@@ -616,7 +616,7 @@ public class NewEntryFragment extends Fragment
 
   private void determineCriteria(View layout, Activity activity)
   {
-    final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+    final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
     int defaultSelected = preferences.getInt("previous_criteria", -1);
     @IdRes int[] ids = {
         R.id.radio_blood_glucose_level,
@@ -1314,34 +1314,34 @@ public class NewEntryFragment extends Fragment
 
   private void tryStartNewEntryBackup(final Activity activity)
   {
-    Preference.get(activity,
-        new String[] {
-            "automatic_backup",
-            "wifi_only_backup"
-        },
-        new String[] {
-            getString(R.string.automatic_backup_never_option),
-            String.valueOf(true)
-        },
-        new Preference.ResultRunnable()
-        {
-          @Override
-          public void run()
-          {
-            String automaticBackup = getResults().get("automatic_backup");
-            String wifiOnlyBackup = getResults().get("wifi_only_backup");
-            if (automaticBackup != null && wifiOnlyBackup != null &&
-                automaticBackup.equals(getString(R.string.automatic_backup_after_new_entry_option)) &&
-                (!Boolean.valueOf(wifiOnlyBackup) || GoogleDriveInterface.hasWifiConnection(activity)) &&
-                GoogleSignIn.getLastSignedInAccount(activity) != null &&
-                !BackupForegroundService.isUploading() &&
-                !RecoveryForegroundService.isDownloading())
-            {
-              Intent intent = new Intent(activity, BackupForegroundService.class);
-              activity.startService(intent);
-            }
-          }
-        });
+    if (!RecoveryForegroundService.isDownloading())
+    {
+      Preference.get(activity,
+                     new String[] {
+                         "automatic_backup", "wifi_only_backup"
+                     },
+                     new String[] {
+                         getString(R.string.automatic_backup_never_option), String.valueOf(true)
+                     },
+                     new Preference.ResultRunnable()
+                     {
+                       @Override
+                       public void run()
+                       {
+                         String automaticBackup = getResults().get("automatic_backup");
+                         String wifiOnlyBackup = getResults().get("wifi_only_backup");
+                         if (automaticBackup != null && wifiOnlyBackup != null &&
+                             automaticBackup.equals(getString(R.string.automatic_backup_after_new_entry_option)) &&
+                             (!Boolean.valueOf(wifiOnlyBackup) || GoogleDriveInterface.hasWifiConnection(activity)) &&
+                             GoogleSignIn.getLastSignedInAccount(activity) != null &&
+                             !BackupForegroundService.isUploading() && !RecoveryForegroundService.isDownloading())
+                         {
+                           Intent intent = new Intent(activity, BackupForegroundService.class);
+                           activity.startService(intent);
+                         }
+                       }
+                     });
+    }
   }
 
   private AutoCompleteTextView addNewListItemAutoCompleteTextView(Activity activity, LinearLayout owningLayout, @StringRes int hintResourceID, String tag, String text)

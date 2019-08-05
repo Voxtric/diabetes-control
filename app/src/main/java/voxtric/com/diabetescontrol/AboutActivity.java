@@ -47,15 +47,20 @@ public class AboutActivity extends AwaitRecoveryActivity
       actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    ((TextView)findViewById(R.id.app_version_text)).setText(getString(R.string.app_version_text, BuildConfig.VERSION_NAME));
-    Preference.get(this, "database_version", String.valueOf(AppDatabase.VERSION), new Preference.ResultRunnable()
+    if (!RecoveryForegroundService.isDownloading())
     {
-      @Override
-      public void run()
+      ((TextView)findViewById(R.id.app_version_text)).setText(getString(R.string.app_version_text, BuildConfig.VERSION_NAME));
+      Preference.get(this, "database_version", String.valueOf(AppDatabase.VERSION), new Preference.ResultRunnable()
       {
-        ((TextView)findViewById(R.id.database_version_text)).setText(getString(R.string.database_version_text, getResult(), AppDatabase.VERSION));
-      }
-    });
+        @Override
+        public void run()
+        {
+          ((TextView)findViewById(R.id.database_version_text)).setText(getString(R.string.database_version_text,
+                                                                                 getResult(),
+                                                                                 AppDatabase.VERSION));
+        }
+      });
+    }
 
     fillContent(R.id.disclaimer_text, "disclaimer.html");
     fillContent(R.id.privacy_policy_text, "privacy_policy.html");

@@ -38,6 +38,8 @@ Allow this app to access external storage?"
 
 
     <!-- Toasts -->
+    <string name="export_recovery_in_progress_message">Cannot export whilst recovery in progress</string>
+
     <string name="export_move_output_stream_not_created_message">Output Stream could not be created</string>
     <string name="export_move_no_file_found_message">Could not find export file</string>
     <string name="export_move_write_fail_message">Could not write to export file</string>

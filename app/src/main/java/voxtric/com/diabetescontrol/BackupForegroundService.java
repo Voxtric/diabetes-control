@@ -69,7 +69,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
   {
     super.onStartCommand(intent, flags, startId);
 
-    if (!isUploading())
+    if (!isUploading() && !RecoveryForegroundService.isDownloading())
     {
       s_progress = 0;
       createNotificationChannel(ONGOING_CHANNEL_ID, ONGOING_CHANNEL_NAME, true);
