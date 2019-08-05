@@ -68,21 +68,6 @@
             android:name=".settings.SettingsActivity"
             android:label="@string/title_settings"
             android:parentActivityName=".MainActivity"/>
-
-        <activity
-            android:name=".utilities.CsvViewer"
-            android:label="@string/title_csv_viewer">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:mimeType="text/csv" />
-                <data android:pathPattern=".*\\.csv" />
-                <data android:host="*" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>
