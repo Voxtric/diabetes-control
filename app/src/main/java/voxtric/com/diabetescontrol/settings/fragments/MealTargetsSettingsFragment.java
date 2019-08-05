@@ -109,14 +109,14 @@ public class MealTargetsSettingsFragment extends Fragment
         {
           Preference.get(activity,
               new String[]{
-                  BGLHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE,
-                  BGLHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE,
-                  BGLHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE
+                  BglHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE,
+                  BglHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE,
+                  BglHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE
               },
               new String[]{
-                  String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get(BGLHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE)),
-                  String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get(BGLHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE)),
-                  String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get(BGLHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE))
+                  String.valueOf(BglHighlightingSettingsFragment.DEFAULT_VALUES.get(BglHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE)),
+                  String.valueOf(BglHighlightingSettingsFragment.DEFAULT_VALUES.get(BglHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE)),
+                  String.valueOf(BglHighlightingSettingsFragment.DEFAULT_VALUES.get(BglHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE))
               },
               new Preference.ResultRunnable()
               {
@@ -124,10 +124,10 @@ public class MealTargetsSettingsFragment extends Fragment
                 public void run()
                 {
                   String[] preferences = new String[]{
-                      BGLHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE,
-                      BGLHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE,
-                      BGLHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE,
-                      BGLHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE
+                      BglHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE,
+                      BglHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE,
+                      BglHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE,
+                      BglHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE
                   };
 
                   for (int i = 0; i < VIEW_IDS.length; i++)

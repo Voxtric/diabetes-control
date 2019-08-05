@@ -24,7 +24,7 @@ import java.util.List;
 import voxtric.com.diabetescontrol.database.AppDatabase;
 import voxtric.com.diabetescontrol.database.DataEntry;
 import voxtric.com.diabetescontrol.database.Preference;
-import voxtric.com.diabetescontrol.settings.fragments.BGLHighlightingSettingsFragment;
+import voxtric.com.diabetescontrol.settings.fragments.BglHighlightingSettingsFragment;
 
 public class EntryListFragment extends Fragment
 {
@@ -127,16 +127,19 @@ public class EntryListFragment extends Fragment
 
                 Preference.get(activity,
                     new String[] {
-                        BGLHighlightingSettingsFragment.HIGHLIGHTING_ENABLED_PREFERENCE,
-                        BGLHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE,
-                        BGLHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE,
-                        BGLHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE
+                        BglHighlightingSettingsFragment.HIGHLIGHTING_ENABLED_PREFERENCE,
+                        BglHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE,
+                        BglHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE,
+                        BglHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE
                     },
                     new String[] {
                         String.valueOf(true),
-                        String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get(BGLHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE)),
-                        String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get(BGLHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE)),
-                        String.valueOf(BGLHighlightingSettingsFragment.DEFAULT_VALUES.get(BGLHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE))
+                        String.valueOf(BglHighlightingSettingsFragment.DEFAULT_VALUES.get(
+                            BglHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE)),
+                        String.valueOf(BglHighlightingSettingsFragment.DEFAULT_VALUES.get(
+                            BglHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE)),
+                        String.valueOf(BglHighlightingSettingsFragment.DEFAULT_VALUES.get(
+                            BglHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE))
                     },
                     new Preference.ResultRunnable()
                     {
@@ -145,12 +148,12 @@ public class EntryListFragment extends Fragment
                       {
                         float[] bglHighlightingValues = null;
                         HashMap<String, String> results = getResults();
-                        if (Boolean.valueOf(results.get(BGLHighlightingSettingsFragment.HIGHLIGHTING_ENABLED_PREFERENCE)))
+                        if (Boolean.valueOf(results.get(BglHighlightingSettingsFragment.HIGHLIGHTING_ENABLED_PREFERENCE)))
                         {
                           bglHighlightingValues = new float[3];
-                          bglHighlightingValues[0] = Float.valueOf(results.get(BGLHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE));
-                          bglHighlightingValues[1] = Float.valueOf(results.get(BGLHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE));
-                          bglHighlightingValues[2] = Float.valueOf(results.get(BGLHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE));
+                          bglHighlightingValues[0] = Float.valueOf(results.get(BglHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE));
+                          bglHighlightingValues[1] = Float.valueOf(results.get(BglHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE));
+                          bglHighlightingValues[2] = Float.valueOf(results.get(BglHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE));
                         }
 
                         m_adapter = new EntryListRecyclerViewAdapter(activity, entries, bglHighlightingValues);

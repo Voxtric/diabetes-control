@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/settings_fragment_margin"
-            class="voxtric.com.diabetescontrol.settings.fragments.BGLHighlightingSettingsFragment"/>
+            class="voxtric.com.diabetescontrol.settings.fragments.BglHighlightingSettingsFragment"/>
 
         <fragment
             android:id="@+id/meal_targets_settings_fragment"

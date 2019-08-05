@@ -186,11 +186,11 @@ public class ExportForegroundService extends ForegroundService
     String endDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(endDate);
     if (startDateString.equals(endDateString))
     {
-      return String.format("%s (%s)%s", startDateString, m_exportFormatName, m_exportFileExtension);
+      return String.format("%s (%s).%s", startDateString, m_exportFormatName, m_exportFileExtension);
     }
     else
     {
-      return String.format("%s - %s (%s)%s", startDateString, endDateString, m_exportFormatName, m_exportFileExtension);
+      return String.format("%s - %s (%s).%s", startDateString, endDateString, m_exportFormatName, m_exportFileExtension);
     }
   }
 
@@ -204,16 +204,17 @@ public class ExportForegroundService extends ForegroundService
     case R.id.navigation_export_nhs:
       break;
     case R.id.navigation_export_ads:
-      exporter = new ADSExporter(entries);
+      exporter = new AdsExporter();
       break;
     case R.id.navigation_export_excel:
       break;
     case R.id.navigation_export_csv:
+      exporter = new CsvExporter();
       break;
     }
     if (exporter != null)
     {
-      exportFileBytes = exporter.export(ExportForegroundService.this);
+      exportFileBytes = exporter.export(entries, ExportForegroundService.this);
       m_exportFormatName = exporter.getFormatName();
       m_exportFileExtension = exporter.getFileExtension();
       m_exportFileMimeType = exporter.getFileMimeType();

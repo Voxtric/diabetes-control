@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PDFGenerator
+public abstract class PdfGenerator
 {
   protected static class PDFColor
   {
@@ -45,7 +45,7 @@ public abstract class PDFGenerator
   private PDPageContentStream m_content = null;
   float m_pageWidth = 0.0f;
 
-  PDFGenerator()
+  PdfGenerator()
   {
     m_document = new PDDocument();
   }

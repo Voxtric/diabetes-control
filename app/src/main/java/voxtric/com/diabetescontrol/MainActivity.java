@@ -228,11 +228,11 @@ public class MainActivity extends AwaitRecoveryActivity
     switch (menuItem.getItemId())
     {
     case R.id.navigation_export_nhs:
-    case R.id.navigation_export_csv:
     case R.id.navigation_export_excel:
         Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
         return true;
     case R.id.navigation_export_ads:
+    case R.id.navigation_export_csv:
       if (RecoveryForegroundService.isDownloading())
       {
         Toast.makeText(this, R.string.export_recovery_in_progress_message, Toast.LENGTH_LONG).show();

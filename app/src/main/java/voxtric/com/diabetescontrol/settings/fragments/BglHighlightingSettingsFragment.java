@@ -31,7 +31,7 @@ import voxtric.com.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 import voxtric.com.diabetescontrol.utilities.DecimalDigitsInputFilter;
 import voxtric.com.diabetescontrol.utilities.HintHideOnFocusChangeListener;
 
-public class BGLHighlightingSettingsFragment extends Fragment
+public class BglHighlightingSettingsFragment extends Fragment
 {
   public static final String HIGHLIGHTING_ENABLED_PREFERENCE = "bgl_highlighting_enabled";
   public static final String IDEAL_MINIMUM_PREFERENCE = "bgl_ideal_minimum";
@@ -50,7 +50,7 @@ public class BGLHighlightingSettingsFragment extends Fragment
 
   private HashMap<String, String> m_bglRangeValues = null;
 
-  public BGLHighlightingSettingsFragment()
+  public BglHighlightingSettingsFragment()
   {
     // Required empty public constructor
   }

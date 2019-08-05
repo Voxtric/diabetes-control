@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".settings.fragments.BGLHighlightingSettingsFragment">
+    tools:context=".settings.fragments.BglHighlightingSettingsFragment">
 
     <TextView
         android:id="@+id/title_bgl_highlighting_settings"
