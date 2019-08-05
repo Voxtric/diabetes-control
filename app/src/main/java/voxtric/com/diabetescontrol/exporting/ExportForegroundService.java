@@ -14,6 +14,7 @@ import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -128,6 +129,10 @@ public class ExportForegroundService extends ForegroundService
               {
                 String fileName = getFileName(entries);
                 success = writeExportFile(fileName, exportFileBytes);
+                if (success)
+                {
+                  deleteOldExportFiles(m_exportFile);
+                }
               }
               else
               {
@@ -266,6 +271,29 @@ public class ExportForegroundService extends ForegroundService
       }
     }
     return success;
+  }
+
+  private void deleteOldExportFiles(final File fileToKeep)
+  {
+    File exportDirectory = fileToKeep.getParentFile();
+    if (exportDirectory != null)
+    {
+      File[] oldExportFiles = exportDirectory.listFiles(new FileFilter()
+      {
+        @Override
+        public boolean accept(File file)
+        {
+          return !file.getName().equals(fileToKeep.getName());
+        }
+      });
+      if (oldExportFiles != null)
+      {
+        for (File oldExportFile : oldExportFiles)
+        {
+          oldExportFile.delete();
+        }
+      }
+    }
   }
 
   @Override
