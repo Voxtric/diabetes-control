@@ -5,6 +5,7 @@
 
     <!-- Errors -->
     <string name="storage_space_fail_notification_text">No storage space left on device.</string>
+    <string name="action_not_supported_message">Action not supported on this version of Android</string>
 
 
 

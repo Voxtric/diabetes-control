@@ -191,7 +191,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
       {
         if (exception.getMessage().contains("No space left on device"))
         {
-          Log.v(TAG, getString(R.string.storage_space_fail_notification_text), exception);
+          Log.v(TAG, "Recovery: " + getString(R.string.storage_space_fail_notification_text), exception);
           pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.storage_space_fail_notification_text));
           handled = true;
         }

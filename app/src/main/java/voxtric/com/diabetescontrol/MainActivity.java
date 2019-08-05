@@ -301,7 +301,7 @@ public class MainActivity extends AwaitRecoveryActivity
         }
         else
         {
-          // TODO: Inform user of failure.
+          Toast.makeText(this, R.string.action_not_supported_message, Toast.LENGTH_LONG).show();
         }
       }
       else
@@ -537,28 +537,46 @@ public class MainActivity extends AwaitRecoveryActivity
           }
           else
           {
-            // TODO: couldn't get output stream.
+            Log.e(TAG, String.format("Couldn't create output stream for export file: '%s': '%s': '%s'", directory.getName(), exportFile.getName(), exportFileUri.toString()));
+            Toast.makeText(this, R.string.export_move_output_stream_not_created_message, Toast.LENGTH_LONG).show();
           }
         }
         catch (FileNotFoundException exception)
         {
-          Log.e(TAG, "Move Export File Not Found Exception", exception);
-          // TODO: Couldn't find file.
+          Log.e(TAG, String.format("Move Export File Not Found Exception: '%s': '%s': '%s'", directory.getName(), exportFile.getName(), exportFileUri.toString()));
+          Toast.makeText(this, R.string.export_move_no_file_found_message, Toast.LENGTH_LONG).show();
         }
         catch (IOException exception)
         {
-          Log.e(TAG, "Move Export File Not Found Exception", exception);
-          // TODO: Couldn't write file.
+          boolean handled = false;
+          String exceptionMessage = exception.getMessage();
+          if (exceptionMessage != null)
+          {
+            if (exception.getMessage().contains("No space left on device"))
+            {
+              Log.v(TAG, "Move Export: " + getString(R.string.storage_space_fail_notification_text), exception);
+              Toast.makeText(this, R.string.storage_space_fail_notification_text, Toast.LENGTH_LONG).show();
+              handled = true;
+            }
+          }
+
+          if (!handled)
+          {
+            Log.e(TAG, String.format("Move Export IO Exception: '%s': '%s': '%s'", directory.getName(), fileName, exportFileUri.toString()));
+            Toast.makeText(this, R.string.export_move_write_fail_message, Toast.LENGTH_LONG).show();
+          }
         }
       }
       else
       {
-        // TODO: Couldn't create file.
+        Log.e(TAG, String.format("Couldn't create export file: '%s': '%s'", directory.getName(), fileName));
+        Toast.makeText(this, R.string.export_move_create_fail_message, Toast.LENGTH_LONG).show();
       }
     }
     else
     {
-      // TODO: Invalid directory chosen.
+      Log.e(TAG, "Invalid directory chosen to move export file to.");
+      Toast.makeText(this, R.string.export_move_invalid_directory_message, Toast.LENGTH_LONG).show();
     }
   }
 

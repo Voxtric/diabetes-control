@@ -37,6 +37,15 @@ Allow this app to access external storage?"
 
 
 
+    <!-- Toasts -->
+    <string name="export_move_output_stream_not_created_message">Output Stream could not be created</string>
+    <string name="export_move_no_file_found_message">Could not find export file</string>
+    <string name="export_move_write_fail_message">Could not write to export file</string>
+    <string name="export_move_create_fail_message">Could not create export file</string>
+    <string name="export_move_invalid_directory_message">Invalid directory to move export to</string>
+
+
+
     <!-- Content Descriptions -->
     <string name="date_period_start_content_description">Start Date</string>
     <string name="date_period_end_content_description">End Date</string>
