@@ -1132,7 +1132,8 @@ public class NewEntryFragment extends Fragment
             calendar.getMinimum(Calendar.YEAR),
             calendar.getMinimum(Calendar.MONTH),
             calendar.getMinimum(Calendar.DATE));
-        queryDateMismatch = event.id != firstEvent.id && firstEvent.timeInDay > calendar.getTimeInMillis();
+        queryDateMismatch = event.id != firstEvent.id && firstEvent.timeInDay > calendar.getTimeInMillis() &&
+            (previousEntry != null && !entry.event.equals(previousEntry.event));
       }
     }
 
