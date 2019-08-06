@@ -135,7 +135,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     Context context = getContext();
     if (context != null)
     {
-      if (m_backupFinishedBroadcastReceiver == null)
+      if (m_backupFinishedBroadcastReceiver != null)
       {
         LocalBroadcastManager.getInstance(context).registerReceiver(
             m_backupFinishedBroadcastReceiver,
@@ -424,7 +424,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     }
   }
 
-  private void configureBackupButtonsEnables(Activity activity)
+  private void configureBackupButtonsEnabled(Activity activity)
   {
     boolean backupButtonsEnabled = GoogleSignIn.getLastSignedInAccount(activity) != null && !ExportForegroundService.isExporting();
     Button backupNowButton = activity.findViewById(R.id.backup_button);
@@ -444,7 +444,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
       Activity activity = getActivity();
       if (activity != null)
       {
-        configureBackupButtonsEnables(activity);
+        configureBackupButtonsEnabled(activity);
 
         Toast.makeText(activity, R.string.backup_succeeded_message, Toast.LENGTH_LONG).show();
       }
@@ -462,7 +462,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
       Activity activity = getActivity();
       if (activity != null)
       {
-        configureBackupButtonsEnables(activity);
+        configureBackupButtonsEnabled(activity);
       }
     }
   }
