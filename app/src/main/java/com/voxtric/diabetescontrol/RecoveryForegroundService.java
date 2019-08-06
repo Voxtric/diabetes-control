@@ -86,13 +86,13 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
           Intent recoveryFinishedBroadcast = new Intent(ACTION_FINISHED);
           if (success)
           {
-            recoveryFinishedBroadcast.putExtra("message_title_id", R.string.recovery_success_notification_title);
-            recoveryFinishedBroadcast.putExtra("message_text_id", R.string.recovery_success_notification_text);
+            recoveryFinishedBroadcast.putExtra("message_title", getString(R.string.recovery_success_notification_title));
+            recoveryFinishedBroadcast.putExtra("message_text", getString(R.string.recovery_success_notification_text));
           }
           else
           {
-            recoveryFinishedBroadcast.putExtra("message_title_id", R.string.recovery_fail_notification_title);
-            recoveryFinishedBroadcast.putExtra("message_text_id", m_failureMessageId);
+            recoveryFinishedBroadcast.putExtra("message_title", getString(R.string.recovery_fail_notification_title));
+            recoveryFinishedBroadcast.putExtra("message_text", getString(m_failureMessageId));
           }
           recoveryFinishedBroadcast.putExtra("notification_id", FINISHED_NOTIFICATION_ID);
           LocalBroadcastManager.getInstance(RecoveryForegroundService.this).sendBroadcast(recoveryFinishedBroadcast);
@@ -245,8 +245,8 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   {
     Intent notificationIntent = new Intent(this, MainActivity.class);
     notificationIntent.setAction(ACTION_FINISHED);
-    notificationIntent.putExtra("message_title_id", R.string.recovery_success_notification_title);
-    notificationIntent.putExtra("message_text_id", R.string.recovery_success_notification_text);
+    notificationIntent.putExtra("message_title", getString(R.string.recovery_success_notification_title));
+    notificationIntent.putExtra("message_text", getString(R.string.recovery_success_notification_text));
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
@@ -266,8 +266,8 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
 
     Intent notificationIntent = new Intent(this, SettingsActivity.class);
     notificationIntent.setAction(ACTION_FINISHED);
-    notificationIntent.putExtra("message_title_id", R.string.recovery_fail_notification_title);
-    notificationIntent.putExtra("message_text_id", failureMessageId);
+    notificationIntent.putExtra("message_title", getString(R.string.recovery_fail_notification_title));
+    notificationIntent.putExtra("message_text", getString(failureMessageId));
     TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
     stackBuilder.addNextIntentWithParentStack(notificationIntent);
     PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);

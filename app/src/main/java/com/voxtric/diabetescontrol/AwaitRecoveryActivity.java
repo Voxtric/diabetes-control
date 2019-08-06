@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -30,28 +29,27 @@ public abstract class AwaitRecoveryActivity extends AppCompatActivity
     super.onStart();
 
     SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-    @StringRes int messageTitleId = preferences.getInt("recovery_message_title_id", -1);
-    @StringRes int messageTextId = preferences.getInt("recovery_message_text_id", -1);
-    final int notificationId = preferences.getInt("recovery_notification_id", -1);
-    if (messageTitleId != -1 && messageTextId != -1 && notificationId != -1)
+    boolean hasRecoveryMessage = preferences.getBoolean("has_recovery_message", false);
+    if (hasRecoveryMessage)
     {
-      ViewUtilities.launchMessageDialog(AwaitRecoveryActivity.this, messageTitleId, messageTextId,
-          new DialogInterface.OnClickListener()
+      String messageTitle = preferences.getString("message_title", getString(R.string.title_undefined));
+      String messageText = preferences.getString("message_text", getString(R.string.message_undefined));
+      final int notificationId = preferences.getInt("recovery_notification_id", -1);
+      ViewUtilities.launchMessageDialog(AwaitRecoveryActivity.this, messageTitle, messageText, new DialogInterface.OnClickListener()
+      {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i)
+        {
+          NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+          if (notificationManager != null)
           {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i)
-            {
-              NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-              if (notificationManager != null)
-              {
-                notificationManager.cancel(notificationId);
-              }
-            }
-          });
+            notificationManager.cancel(notificationId);
+          }
+        }
+      });
     }
     SharedPreferences.Editor preferencesEditor = preferences.edit();
-    preferencesEditor.putInt("recovery_message_title_id", -1);
-    preferencesEditor.putInt("recovery_message_text_id", -1);
+    preferencesEditor.putBoolean("has_recovery_message", false);
     preferencesEditor.apply();
   }
 
@@ -142,22 +140,31 @@ public abstract class AwaitRecoveryActivity extends AppCompatActivity
     public void onReceive(Context context, Intent intent)
     {
       cancelRecoveryWaitDialog();
-      @StringRes int messageTitleId = intent.getIntExtra("message_title_id", R.string.title_undefined);
-      @StringRes int messageTextId = intent.getIntExtra("message_text_id", R.string.message_undefined);
+      String messageTitle = intent.getStringExtra("message_title");
+      if (messageTitle == null)
+      {
+        messageTitle = getString(R.string.title_undefined);
+      }
+      String messageText = intent.getStringExtra("message_text");
+      if (messageText == null)
+      {
+        messageText = getString(R.string.message_undefined);
+      }
       final int notificationId = intent.getIntExtra("notification_id", -1);
-      if (messageTitleId == R.string.recovery_success_notification_title)
+      if (messageTitle.equals(getString(R.string.recovery_success_notification_title)))
       {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor preferencesEditor = preferences.edit();
-        preferencesEditor.putInt("recovery_message_title_id", messageTitleId);
-        preferencesEditor.putInt("recovery_message_text_id", messageTextId);
+        preferencesEditor.putString("recovery_message_title", messageTitle);
+        preferencesEditor.putString("recovery_message_text", messageText);
         preferencesEditor.putInt("recovery_notification_id", notificationId);
+        preferencesEditor.putBoolean("has_recovery_message", true);
         preferencesEditor.commit();
         recreate();
       }
       else
       {
-        ViewUtilities.launchMessageDialog(AwaitRecoveryActivity.this, messageTitleId, messageTextId,
+        ViewUtilities.launchMessageDialog(AwaitRecoveryActivity.this, messageTitle, messageText,
             new DialogInterface.OnClickListener()
             {
               @Override

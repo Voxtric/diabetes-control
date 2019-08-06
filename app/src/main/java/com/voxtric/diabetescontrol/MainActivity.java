@@ -28,7 +28,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.core.view.MenuCompat;
@@ -347,7 +346,7 @@ public class MainActivity extends AwaitRecoveryActivity
     return null;
   }
 
-  public void launchExportProgressDialog(@StringRes int exportTitleId)
+  public void launchExportProgressDialog(String messageTitle)
   {
     if (m_exportProgressDialog != null)
     {
@@ -355,7 +354,7 @@ public class MainActivity extends AwaitRecoveryActivity
     }
 
     m_exportProgressDialog = new AlertDialog.Builder(this)
-        .setTitle(exportTitleId)
+        .setTitle(messageTitle)
         .setView(R.layout.dialog_service_ongoing)
         .setPositiveButton(R.string.ok_dialog_option, null)
         .create();
@@ -463,6 +462,7 @@ public class MainActivity extends AwaitRecoveryActivity
       switch (action)
       {
       case Intent.ACTION_OPEN_DOCUMENT_TREE:
+        navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
         String exportFilePath = intent.getStringExtra("export_file_path");
         String exportFileMimeType = intent.getStringExtra("export_file_mime_type");
         if (exportFilePath != null && exportFileMimeType != null &&
@@ -473,13 +473,24 @@ public class MainActivity extends AwaitRecoveryActivity
         break;
 
       case ExportForegroundService.ACTION_ONGOING:
-        launchExportProgressDialog(intent.getIntExtra("message_title_id", R.string.title_undefined));
+        navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
+        String messageTitle = intent.getStringExtra("message_title");
+        if (messageTitle == null)
+        {
+          messageTitle = getString(R.string.title_undefined);
+        }
+        launchExportProgressDialog(messageTitle);
         break;
       case ExportForegroundService.ACTION_FINISHED:
+        navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
         if (!intent.getBooleanExtra("success", false))
         {
           launchMessageDialog(intent);
         }
+        break;
+      case ExportForegroundService.ACTION_VIEW_EXPORT_FAIL:
+        navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
+        launchMessageDialog(intent);
         break;
 
       case BackupForegroundService.ACTION_ONGOING:
@@ -499,9 +510,21 @@ public class MainActivity extends AwaitRecoveryActivity
 
   private void launchMessageDialog(final Intent intent)
   {
+    String messageTitle = intent.getStringExtra("message_title");
+    if (messageTitle == null)
+    {
+      messageTitle = getString(R.string.title_undefined);
+    }
+
+    String messageText = intent.getStringExtra("message_text");
+    if (messageText == null)
+    {
+      messageText = getString(R.string.message_undefined);
+    }
+
     ViewUtilities.launchMessageDialog(this,
-        intent.getIntExtra("message_title_id", R.string.title_undefined),
-        intent.getIntExtra("message_text_id", R.string.message_undefined),
+        messageTitle,
+        messageText,
         new DialogInterface.OnClickListener()
         {
           @Override
@@ -538,7 +561,7 @@ public class MainActivity extends AwaitRecoveryActivity
               outputStream.write(exportFileData);
               exportFileData = inputStream.read();
             }
-            ExportForegroundService.viewFile(this, exportFileUri, m_moveExportFileMimeType);
+            ExportForegroundService.viewFile(this, exportFileUri, m_moveExportFileMimeType, false);
           }
           else
           {
@@ -844,15 +867,27 @@ public class MainActivity extends AwaitRecoveryActivity
           final File exportFile = new File(exportFilePath);
           final Uri exportFileUri = FileProvider.getUriForFile(MainActivity.this, getApplicationContext().getPackageName() + ".provider", exportFile);
 
+          String messageTitle = intent.getStringExtra("message_title");
+          if (messageTitle == null)
+          {
+            messageTitle = getString(R.string.title_undefined);
+          }
+
+          String messageText = intent.getStringExtra("message_text");
+          if (messageText == null)
+          {
+            messageText = getString(R.string.message_undefined);
+          }
+
           AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this)
-              .setTitle(getString(intent.getIntExtra("message_title_id", R.string.title_undefined)))
-              .setMessage(getString(intent.getIntExtra("message_text_id", R.string.message_undefined)))
+              .setTitle(messageTitle)
+              .setMessage(messageText)
               .setPositiveButton(R.string.view_dialog_option, new DialogInterface.OnClickListener()
               {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i)
                 {
-                  ExportForegroundService.viewFile(MainActivity.this, exportFileUri, exportFileMimeType);
+                  ExportForegroundService.viewFile(MainActivity.this, exportFileUri, exportFileMimeType, true);
                 }
               }).setNegativeButton(R.string.share_dialog_option, new DialogInterface.OnClickListener()
               {

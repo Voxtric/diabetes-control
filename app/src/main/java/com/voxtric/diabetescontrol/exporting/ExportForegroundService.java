@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
 
@@ -33,8 +34,9 @@ public class ExportForegroundService extends ForegroundService
 {
   private static final String TAG = "ExportForegroundService";
 
-  public static final String ACTION_ONGOING = "voxtric.voxtric.diabetescontrol.exporting.ExportForegroundService.ACTION_ONGOING";
-  public static final String ACTION_FINISHED = "voxtric.voxtric.diabetescontrol.exporting.ExportForegroundService.ACTION_FINISHED";
+  public static final String ACTION_ONGOING = "com.voxtric.diabetescontrol.exporting.ExportForegroundService.ACTION_ONGOING";
+  public static final String ACTION_FINISHED = "com.voxtric.diabetescontrol.exporting.ExportForegroundService.ACTION_FINISHED";
+  public static final String ACTION_VIEW_EXPORT_FAIL = "com.voxtric.diabetescontrol.exporting.ExportForegroundService.ACTION_VIEW_EXPORT_FAIL";
 
   private static final String ONGOING_CHANNEL_ID = "OngoingExportForegroundServiceChannel";
   private static final String ONGOING_CHANNEL_NAME = "Ongoing Export Foreground Service";
@@ -93,7 +95,7 @@ public class ExportForegroundService extends ForegroundService
         File exportFile = new File(exportFilePath);
         Uri exportFileUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", exportFile);
 
-        viewFile(this, exportFileUri, exportFileMimeType);
+        viewFile(this, exportFileUri, exportFileMimeType, false);
         shareFile(this, exportFileUri, exportFileMimeType, exportFile.getName());
         sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
       }
@@ -157,13 +159,13 @@ public class ExportForegroundService extends ForegroundService
           {
             exportFinishedIntent.putExtra("export_file_path", m_exportFile.getAbsolutePath());
             exportFinishedIntent.putExtra("export_file_mime_type", m_exportFileMimeType);
-            exportFinishedIntent.putExtra("message_title_id", m_notificationStringIds.successNotificationTitleId);
-            exportFinishedIntent.putExtra("message_text_id", m_notificationStringIds.successNotificationTextId);
+            exportFinishedIntent.putExtra("message_title", getString(m_notificationStringIds.successNotificationTitleId));
+            exportFinishedIntent.putExtra("message_text", getString(m_notificationStringIds.successNotificationTextId));
           }
           else
           {
-            exportFinishedIntent.putExtra("message_title_id", m_notificationStringIds.failNotificationTitleId);
-            exportFinishedIntent.putExtra("message_text_id", m_failureMessageId);
+            exportFinishedIntent.putExtra("message_title", getString(m_notificationStringIds.failNotificationTitleId));
+            exportFinishedIntent.putExtra("message_text", getString(m_failureMessageId));
           }
           LocalBroadcastManager.getInstance(ExportForegroundService.this).sendBroadcast(exportFinishedIntent);
 
@@ -291,6 +293,7 @@ public class ExportForegroundService extends ForegroundService
       {
         for (File oldExportFile : oldExportFiles)
         {
+          //noinspection ResultOfMethodCallIgnored
           oldExportFile.delete();
         }
       }
@@ -304,7 +307,7 @@ public class ExportForegroundService extends ForegroundService
     notificationIntent.setAction(ACTION_ONGOING);
     if (m_notificationStringIds != null)
     {
-      notificationIntent.putExtra("message_title_id", m_notificationStringIds.ongoingNotificationTitleId);
+      notificationIntent.putExtra("message_title", getString(m_notificationStringIds.ongoingNotificationTitleId));
     }
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -325,8 +328,8 @@ public class ExportForegroundService extends ForegroundService
   {
     Uri exportFileUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", m_exportFile);
 
-    Intent viewFileIntent = buildViewFileIntent(exportFileUri, m_exportFileMimeType);
-    PendingIntent viewFilePendingIntent = PendingIntent.getActivity(this, 0, viewFileIntent, 0);
+    Intent viewFileIntent = buildViewFileIntent(this, exportFileUri, m_exportFileMimeType, true);
+    PendingIntent viewFilePendingIntent = PendingIntent.getActivity(this, 0, viewFileIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     Intent shareFileIntent = new Intent(this, ExportForegroundService.class);
     shareFileIntent.setAction(Intent.ACTION_SEND);
@@ -364,8 +367,8 @@ public class ExportForegroundService extends ForegroundService
 
     Intent notificationIntent = new Intent(this, MainActivity.class);
     notificationIntent.setAction(ACTION_FINISHED);
-    notificationIntent.putExtra("message_title_id", m_notificationStringIds.failNotificationTitleId);
-    notificationIntent.putExtra("message_text_id", failureMessageId);
+    notificationIntent.putExtra("message_title", getString(m_notificationStringIds.failNotificationTitleId));
+    notificationIntent.putExtra("message_text", getString(failureMessageId));
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
@@ -387,11 +390,25 @@ public class ExportForegroundService extends ForegroundService
     LocalBroadcastManager.getInstance(this).sendBroadcast(exportOngoingBroadcast);
   }
 
-  private static Intent buildViewFileIntent(Uri exportFileUri, String exportFileMimeType)
+  private static Intent buildViewFileIntent(Context context, Uri exportFileUri, String exportFileMimeType, boolean showViewExportFail)
   {
     Intent viewFileIntent = new Intent(Intent.ACTION_VIEW);
     viewFileIntent.setDataAndType(exportFileUri, exportFileMimeType);
     viewFileIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+    boolean canOpenFile = !context.getPackageManager().queryIntentActivities(viewFileIntent, PackageManager.MATCH_DEFAULT_ONLY).isEmpty();
+    if (!canOpenFile)
+    {
+      viewFileIntent = new Intent(context, MainActivity.class);
+      if (showViewExportFail)
+      {
+        viewFileIntent.setAction(ACTION_VIEW_EXPORT_FAIL);
+        String uriString = exportFileUri.toString();
+        String fileExtension = uriString.substring(uriString.lastIndexOf("."));
+        viewFileIntent.putExtra("message_title", context.getString(R.string.title_view_export_fail));
+        viewFileIntent.putExtra("message_text", context.getString(R.string.message_view_export_fail, fileExtension));
+      }
+    }
     return viewFileIntent;
   }
 
@@ -406,9 +423,9 @@ public class ExportForegroundService extends ForegroundService
     return shareFileIntent;
   }
 
-  public static void viewFile(Context context, Uri exportFileUri, String exportFileMimeType)
+  public static void viewFile(Context context, Uri exportFileUri, String exportFileMimeType, boolean showViewExportFail)
   {
-    context.startActivity(buildViewFileIntent(exportFileUri, exportFileMimeType));
+    context.startActivity(buildViewFileIntent(context, exportFileUri, exportFileMimeType, showViewExportFail));
   }
 
   public static void shareFile(Context context, Uri exportFileUri, String exportFileMimeType, String exportFileName)

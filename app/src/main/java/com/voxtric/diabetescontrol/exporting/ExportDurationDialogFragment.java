@@ -144,7 +144,7 @@ public class ExportDurationDialogFragment extends DialogFragment
               }
 
               activity.startService(m_exportIntent);
-              activity.launchExportProgressDialog(titleId);
+              activity.launchExportProgressDialog(getString(titleId));
             }
           })
           .create();

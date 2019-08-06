@@ -92,21 +92,33 @@ public class SettingsActivity extends AwaitRecoveryActivity
       if (action.equals(BackupForegroundService.ACTION_FINISHED) ||
           action.equals(RecoveryForegroundService.ACTION_FINISHED))
       {
+        String messageTitle = intent.getStringExtra("message_title");
+        if (messageTitle == null)
+        {
+          messageTitle = getString(R.string.title_undefined);
+        }
+
+        String messageText = intent.getStringExtra("message_text");
+        if (messageText == null)
+        {
+          messageText = getString(R.string.message_undefined);
+        }
+
         ViewUtilities.launchMessageDialog(this,
-            intent.getIntExtra("message_title_id", R.string.title_undefined),
-            intent.getIntExtra("message_text_id", R.string.message_undefined),
-            new DialogInterface.OnClickListener()
-            {
-              @Override
-              public void onClick(DialogInterface dialogInterface, int i)
-              {
-                NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-                if (notificationManager != null)
-                {
-                  notificationManager.cancel(intent.getIntExtra("notification_id", -1));
-                }
-              }
-            });
+                                          messageTitle,
+                                          messageText,
+                                          new DialogInterface.OnClickListener()
+                                          {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i)
+                                            {
+                                              NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                                              if (notificationManager != null)
+                                              {
+                                                notificationManager.cancel(intent.getIntExtra("notification_id", -1));
+                                              }
+                                            }
+                                          });
       }
       intent.setAction(null);
     }

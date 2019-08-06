@@ -29,6 +29,14 @@ Allow this app to access external storage?"
 
 
 
+    <!-- View Export Fail Dialog -->
+    <string name="title_view_export_fail">Export File Cannot Be Opened</string>
+    <string name="message_view_export_fail">
+This device does not have an application installed capable of opening \'%1$s\' files.
+    </string>
+
+
+
     <!-- Dialog Options -->
     <string name="export_dialog_option">Export</string>
     <string name="view_dialog_option">View</string>

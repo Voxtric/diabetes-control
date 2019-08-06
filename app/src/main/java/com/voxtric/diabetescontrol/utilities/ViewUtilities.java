@@ -28,11 +28,11 @@ public class ViewUtilities
     }
   }
 
-  public static AlertDialog launchMessageDialog(Activity activity, @StringRes int messageTitleId, @StringRes int messageTextId, DialogInterface.OnClickListener onOkClicked)
+  public static AlertDialog launchMessageDialog(Activity activity, String messageTitle, String messageText, DialogInterface.OnClickListener onOkClicked)
   {
     AlertDialog dialog = new AlertDialog.Builder(activity)
-        .setTitle(messageTitleId)
-        .setMessage(messageTextId)
+        .setTitle(messageTitle)
+        .setMessage(messageText)
         .setPositiveButton(R.string.ok_dialog_option, onOkClicked)
         .create();
     dialog.show();

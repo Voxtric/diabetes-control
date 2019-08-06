@@ -95,13 +95,13 @@ public class BackupForegroundService extends ForegroundService implements MediaH
           {
             updateLastSuccessfulBackupPreference();
 
-            backupFinishedIntent.putExtra("message_title_id", R.string.backup_success_notification_title);
-            backupFinishedIntent.putExtra("message_text_id", R.string.backup_success_notification_text);
+            backupFinishedIntent.putExtra("message_title", getString(R.string.backup_success_notification_title));
+            backupFinishedIntent.putExtra("message_text", getString(R.string.backup_success_notification_text));
           }
           else
           {
-            backupFinishedIntent.putExtra("message_title_id", R.string.backup_fail_notification_title);
-            backupFinishedIntent.putExtra("message_text_id", m_failureMessageId);
+            backupFinishedIntent.putExtra("message_title", getString(R.string.backup_fail_notification_title));
+            backupFinishedIntent.putExtra("message_text", getString(m_failureMessageId));
           }
           backupFinishedIntent.putExtra("notification_id", FINISHED_NOTIFICATION_ID);
           LocalBroadcastManager.getInstance(BackupForegroundService.this).sendBroadcast(backupFinishedIntent);
@@ -261,8 +261,8 @@ public class BackupForegroundService extends ForegroundService implements MediaH
   {
     Intent notificationIntent = new Intent(this, MainActivity.class);
     notificationIntent.setAction(ACTION_FINISHED);
-    notificationIntent.putExtra("message_title_id", R.string.backup_success_notification_title);
-    notificationIntent.putExtra("message_text_id", R.string.backup_success_notification_text);
+    notificationIntent.putExtra("message_title", getString(R.string.backup_success_notification_title));
+    notificationIntent.putExtra("message_text", getString(R.string.backup_success_notification_text));
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     return new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
@@ -282,8 +282,8 @@ public class BackupForegroundService extends ForegroundService implements MediaH
 
     Intent notificationIntent = new Intent(this, SettingsActivity.class);
     notificationIntent.setAction(ACTION_FINISHED);
-    notificationIntent.putExtra("message_title_id", R.string.backup_fail_notification_title);
-    notificationIntent.putExtra("message_text_id", failureMessageId);
+    notificationIntent.putExtra("message_title", getString(R.string.backup_fail_notification_title));
+    notificationIntent.putExtra("message_text", getString(failureMessageId));
     TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
     stackBuilder.addNextIntentWithParentStack(notificationIntent);
     PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
