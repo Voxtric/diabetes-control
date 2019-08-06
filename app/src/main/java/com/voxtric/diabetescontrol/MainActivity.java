@@ -281,10 +281,13 @@ public class MainActivity extends AwaitRecoveryActivity
       }
       break;
     case REQUEST_CHOOSE_DIRECTORY:
-      Uri directoryUri = data.getData();
-      if (resultCode == RESULT_OK && directoryUri != null)
+      if (data != null)
       {
-        moveExportFile(directoryUri);
+        Uri directoryUri = data.getData();
+        if (resultCode == RESULT_OK && directoryUri != null)
+        {
+          moveExportFile(directoryUri);
+        }
       }
       break;
     default:
