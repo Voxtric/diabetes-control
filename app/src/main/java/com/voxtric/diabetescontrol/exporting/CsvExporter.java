@@ -1,27 +1,44 @@
 package com.voxtric.diabetescontrol.exporting;
 
+import android.util.Log;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import com.opencsv.CSVWriter;
 import com.voxtric.diabetescontrol.database.DataEntry;
 
 public class CsvExporter implements IExporter
 {
-  private StringBuilder m_fileContents = new StringBuilder();
+  private static final String TAG = "CsvExporter";
+
+  private CSVWriter m_fileContents = null;
 
   @Override
   public byte[] export(List<DataEntry> entries, ExportForegroundService exportForegroundService)
   {
-    for (int i = entries.size() - 1; i >= 0; i--)
+    try
     {
-      addEntry(entries.get(i));
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      m_fileContents = new CSVWriter(new OutputStreamWriter(outputStream), ',', '"', '"', "\n");
+      for (int i = entries.size() - 1; i >= 0; i--)
+      {
+        addEntry(entries.get(i));
+      }
+      m_fileContents.close();
+      return outputStream.toByteArray();
     }
-    int lastCommaIndex = m_fileContents.lastIndexOf(",");
-    m_fileContents.replace(lastCommaIndex, lastCommaIndex + 1, "");
-    return m_fileContents.toString().trim().getBytes();
+    catch (IOException exception)
+    {
+      Log.e(TAG, "CSV Export IO Exception", exception);
+      return null;
+    }
   }
 
   @Override
@@ -46,43 +63,16 @@ public class CsvExporter implements IExporter
   {
     Date date = new Date(entry.actualTimestamp);
 
-    append(new SimpleDateFormat("EEEE", Locale.getDefault()).format(date));
+    String[] line = new String[]{
+        new SimpleDateFormat("EEEE", Locale.getDefault()).format(date),
+        DateFormat.getDateInstance(DateFormat.MEDIUM).format(date),
+        DateFormat.getTimeInstance(DateFormat.SHORT).format(date),
+        String.valueOf(entry.bloodGlucoseLevel),
+        entry.insulinName,
+        entry.insulinDose > 0 ? String.valueOf(entry.insulinDose) : "",
+        entry.additionalNotes
+    };
 
-    append(DateFormat.getDateInstance(DateFormat.MEDIUM).format(date));
-
-    append(DateFormat.getTimeInstance(DateFormat.SHORT).format(date));
-
-    append(entry.bloodGlucoseLevel);
-
-    append(entry.insulinName);
-
-    append(entry.insulinDose);
-
-    append(entry.additionalNotes);
-
-    int lastCommaIndex = m_fileContents.lastIndexOf(",");
-    m_fileContents.replace(lastCommaIndex, lastCommaIndex + 1, "\n");
-  }
-
-  private void append(String string)
-  {
-    if (string != null && !string.isEmpty())
-    {
-      m_fileContents.append(String.format("\"%s\",", string));
-    }
-    else
-    {
-      m_fileContents.append(',');
-    }
-  }
-
-  private void append(float value)
-  {
-    m_fileContents.append(String.format(Locale.getDefault(), "%.1f,", value));
-  }
-
-  private void append(int value)
-  {
-    m_fileContents.append(String.format(Locale.getDefault(), "%d,", value));
+    m_fileContents.writeNext(line, false);
   }
 }

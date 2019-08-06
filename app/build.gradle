@@ -75,4 +75,5 @@ dependencies {
 
     implementation 'com.shuhart.bubblepagerindicator:bubblepagerindicator:1.1.2'
     implementation 'com.tom_roush:pdfbox-android:1.8.10.1'
+    implementation 'com.opencsv:opencsv:4.6'
 }
