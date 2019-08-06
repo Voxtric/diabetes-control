@@ -163,45 +163,63 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   {
     boolean success = false;
     ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(zipBytes));
-    try
+    String databaseDirectoryPath = new File(getDatabasePath(AppDatabase.NAME).getAbsolutePath()).getParent();
+    if (databaseDirectoryPath != null)
     {
-      ZipEntry zipEntry;
-      while ((zipEntry = zipInputStream.getNextEntry()) != null)
+      try
       {
-        String databaseDirectory = new File(getDatabasePath(AppDatabase.NAME).getAbsolutePath()).getParent();
-        FileOutputStream outputStream = new FileOutputStream(new File(databaseDirectory, zipEntry.getName()));
-        int data = zipInputStream.read();
-        while (data != -1)
+        ZipEntry zipEntry;
+        while ((zipEntry = zipInputStream.getNextEntry()) != null)
         {
-          outputStream.write(data);
-          data = zipInputStream.read();
+          File databaseFile = new File(databaseDirectoryPath, zipEntry.getName());
+          if (!databaseFile.getAbsolutePath().startsWith(databaseDirectoryPath))
+          {
+            throw new SecurityException("Zip Path Traversal Vulnerability.");
+          }
+          FileOutputStream outputStream = new FileOutputStream(databaseFile);
+          int data = zipInputStream.read();
+          while (data != -1)
+          {
+            outputStream.write(data);
+            data = zipInputStream.read();
+          }
+          zipInputStream.closeEntry();
+          outputStream.close();
         }
-        zipInputStream.closeEntry();
-        outputStream.close();
+        AppDatabase.initialise(this);
+        success = true;
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnSuccessNotification());
       }
-      AppDatabase.initialise(this);
-      success = true;
-      pushNotification(FINISHED_NOTIFICATION_ID, buildOnSuccessNotification());
-    }
-    catch (IOException exception)
-    {
-      boolean handled = false;
-      String exceptionMessage = exception.getMessage();
-      if (exceptionMessage != null)
+      catch (SecurityException exception)
       {
-        if (exception.getMessage().contains("No space left on device"))
-        {
-          Log.v(TAG, "Recovery: " + getString(R.string.storage_space_fail_notification_text), exception);
-          pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.storage_space_fail_notification_text));
-          handled = true;
-        }
+        Log.e(TAG, "Recovery Security Exception", exception);
+        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_zip_bomb_notification_text));
       }
+      catch (IOException exception)
+      {
+        boolean handled = false;
+        String exceptionMessage = exception.getMessage();
+        if (exceptionMessage != null)
+        {
+          if (exception.getMessage().contains("No space left on device"))
+          {
+            Log.v(TAG, "Recovery: " + getString(R.string.storage_space_fail_notification_text), exception);
+            pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.storage_space_fail_notification_text));
+            handled = true;
+          }
+        }
 
-      if (!handled)
-      {
-        Log.e(TAG, getString(R.string.recovery_read_file_fail_notification_text), exception);
-        pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_read_file_fail_notification_text));
+        if (!handled)
+        {
+          Log.e(TAG, "Recovery IO Exception", exception);
+          pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_read_file_fail_notification_text));
+        }
       }
+    }
+    else
+    {
+      Log.e(TAG, "Couldn't find database directory");
+      pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_no_database_directory_notification_text));
     }
     return success;
   }

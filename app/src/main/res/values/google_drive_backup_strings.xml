@@ -129,4 +129,6 @@ This may take some time, so feel free to close the app and you will be notified 
     <string name="recovery_download_interrupted_notification_text">Google Drive backup download interrupted.</string>
     <string name="recovery_download_fail_notification_text">Unknown download failure.</string>
     <string name="recovery_read_file_fail_notification_text">Could not read backup file.</string>
+    <string name="recovery_zip_bomb_notification_text">Zip path traversal vulnerability detected.</string>
+    <string name="recovery_no_database_directory_notification_text">Could not find internal database directory.</string>
 </resources>
