@@ -1506,6 +1506,7 @@ public class NewEntryFragment extends Fragment
           AutoCompleteTextView newItem = addNewListItemAutoCompleteTextView(
               m_activity, m_owningLayout, m_hintResourceID, m_newViewTag, null);
           lastItem.setNextFocusForwardId(newItem.getId());
+          m_activity.findViewById(R.id.new_entry_root).scrollBy(0, lastItem.getHeight());
         }
       }
     }
