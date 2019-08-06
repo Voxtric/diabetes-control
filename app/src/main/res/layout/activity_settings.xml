@@ -21,33 +21,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/settings_fragment_margin"
-            class="voxtric.com.diabetescontrol.settings.fragments.BackupSettingsFragment"/>
+            class="com.voxtric.diabetescontrol.settings.fragments.BackupSettingsFragment"/>
 
         <fragment
             android:id="@+id/events_settings_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/settings_fragment_margin"
-            class="voxtric.com.diabetescontrol.settings.fragments.EventsSettingsFragment"/>
+            class="com.voxtric.diabetescontrol.settings.fragments.EventsSettingsFragment"/>
 
         <fragment
             android:id="@+id/contact_details_settings_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/settings_fragment_margin"
-            class="voxtric.com.diabetescontrol.settings.fragments.ContactDetailsSettingsFragment"/>
+            class="com.voxtric.diabetescontrol.settings.fragments.ContactDetailsSettingsFragment"/>
 
         <fragment
             android:id="@+id/bgl_highlighting_settings_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/settings_fragment_margin"
-            class="voxtric.com.diabetescontrol.settings.fragments.BglHighlightingSettingsFragment"/>
+            class="com.voxtric.diabetescontrol.settings.fragments.BglHighlightingSettingsFragment"/>
 
         <fragment
             android:id="@+id/meal_targets_settings_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            class="voxtric.com.diabetescontrol.settings.fragments.MealTargetsSettingsFragment"/>
+            class="com.voxtric.diabetescontrol.settings.fragments.MealTargetsSettingsFragment"/>
     </LinearLayout>
 </ScrollView>

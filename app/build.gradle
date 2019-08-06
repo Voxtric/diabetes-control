@@ -3,11 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 29
     defaultConfig {
-        applicationId "voxtric.com.diabetescontrol"
+        applicationId "com.voxtric.diabetescontrol"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 10500
-        versionName "1.5.0"
+        versionCode 500
+        versionName "0.5.0"
         resConfigs "en", "en_US", "en_UK", "en_AU"
         multiDexEnabled true
 
