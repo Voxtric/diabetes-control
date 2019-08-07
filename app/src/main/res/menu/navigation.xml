@@ -12,8 +12,8 @@
         android:title="@string/title_view_all" />
 
     <item
-        android:id="@+id/navigation_graph"
+        android:id="@+id/navigation_view_graph"
         android:icon="@drawable/line_chart"
-        android:title="@string/title_graph" />
+        android:title="@string/title_view_graph" />
 
 </menu>

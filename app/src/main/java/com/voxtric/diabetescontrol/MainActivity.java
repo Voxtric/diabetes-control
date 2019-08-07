@@ -33,6 +33,7 @@ import androidx.core.content.FileProvider;
 import androidx.core.view.MenuCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
@@ -47,6 +48,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.InvalidParameterException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -103,8 +105,8 @@ public class MainActivity extends AwaitRecoveryActivity
         case R.id.navigation_view_all:
           m_viewPager.setCurrentItem(getFragmentIndex(EntryListFragment.class));
           return true;
-        case R.id.navigation_graph:
-          Toast.makeText(MainActivity.this, R.string.not_implemented_message, Toast.LENGTH_LONG).show();
+        case R.id.navigation_view_graph:
+          m_viewPager.setCurrentItem(getFragmentIndex(EntryGraphFragment.class));
           return false;
       }
       return false;
@@ -665,25 +667,28 @@ public class MainActivity extends AwaitRecoveryActivity
 
   private void initialiseViewPager(ViewPager viewPager, final BottomNavigationView navigation)
   {
-    FragmentStatePagerAdapter fragmentStatePagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager())
+    FragmentPagerAdapter fragmentStatePagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager())
     {
       @Override
       public Fragment getItem(int i)
       {
         switch (i)
         {
-          case 0:
-            return new NewEntryFragment();
-          case 1:
-          default:
-            return new EntryListFragment();
+        case 0:
+          return new NewEntryFragment();
+        case 1:
+          return new EntryListFragment();
+        case 2:
+          return new EntryGraphFragment();
+        default:
+          throw new InvalidParameterException(String.format("%d is an invalid fragment index for MainActivity view pager.", i));
         }
       }
 
       @Override
       public int getCount()
       {
-        return 2;
+        return 3;
       }
     };
     viewPager.setAdapter(fragmentStatePagerAdapter);
@@ -713,6 +718,7 @@ public class MainActivity extends AwaitRecoveryActivity
         }
       }
     });
+    viewPager.setOffscreenPageLimit(2);
   }
 
   public void openEntryMoreMenu(View view)
