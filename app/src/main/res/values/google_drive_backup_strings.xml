@@ -88,7 +88,7 @@ This may take some time, so feel free to close the app and you will be notified 
         <string name="automatic_backup_after_new_entry_option">After New Entry</string>
     <string name="wifi_only_backup_label">Automatic Backup Over WiFi Only</string>
     <string name="notify_on_backup_finished_label">Notify When Backup Finishes</string>
-    <string name="apply_backup_text">Restore</string>
+    <string name="apply_backup_text">Recover</string>
     <string name="backup_now_text">Backup</string>
 
 

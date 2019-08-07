@@ -32,8 +32,8 @@ public abstract class AwaitRecoveryActivity extends AppCompatActivity
     boolean hasRecoveryMessage = preferences.getBoolean("has_recovery_message", false);
     if (hasRecoveryMessage)
     {
-      String messageTitle = preferences.getString("message_title", getString(R.string.title_undefined));
-      String messageText = preferences.getString("message_text", getString(R.string.message_undefined));
+      String messageTitle = preferences.getString("recovery_message_title", getString(R.string.title_undefined));
+      String messageText = preferences.getString("recovery_message_text", getString(R.string.message_undefined));
       final int notificationId = preferences.getInt("recovery_notification_id", -1);
       ViewUtilities.launchMessageDialog(AwaitRecoveryActivity.this, messageTitle, messageText, new DialogInterface.OnClickListener()
       {
