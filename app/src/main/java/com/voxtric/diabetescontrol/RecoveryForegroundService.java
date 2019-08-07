@@ -19,6 +19,7 @@ import com.google.api.client.googleapis.media.MediaHttpDownloaderProgressListene
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -163,16 +164,16 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
   {
     boolean success = false;
     ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(zipBytes));
-    String databaseDirectoryPath = new File(getDatabasePath(AppDatabase.NAME).getAbsolutePath()).getParent();
-    if (databaseDirectoryPath != null)
+    File databaseDirectory = new File(getDatabasePath(AppDatabase.NAME).getAbsolutePath()).getParentFile();
+    if (databaseDirectory != null)
     {
       try
       {
         ZipEntry zipEntry;
         while ((zipEntry = zipInputStream.getNextEntry()) != null)
         {
-          File databaseFile = new File(databaseDirectoryPath, zipEntry.getName());
-          if (!databaseFile.getAbsolutePath().startsWith(databaseDirectoryPath))
+          File databaseFile = new File(databaseDirectory, zipEntry.getName() + ".tmp");
+          if (!databaseFile.getAbsolutePath().startsWith(databaseDirectory.getAbsolutePath()))
           {
             throw new SecurityException("Zip Path Traversal Vulnerability.");
           }
@@ -186,9 +187,35 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
           zipInputStream.closeEntry();
           outputStream.close();
         }
-        AppDatabase.initialise(this);
         success = true;
-        pushNotification(FINISHED_NOTIFICATION_ID, buildOnSuccessNotification());
+
+        File[] recoveryFiles = databaseDirectory.listFiles(new FilenameFilter()
+        {
+          @Override
+          public boolean accept(File file, String fileName)
+          {
+            return fileName.endsWith(".tmp");
+          }
+        });
+        if (recoveryFiles != null)
+        {
+          for (int i = 0; i < recoveryFiles.length && success; i++)
+          {
+            File recoveryFile = recoveryFiles[i];
+            success = recoveryFile.renameTo(new File(recoveryFile.getAbsolutePath().replace(".tmp", "")));
+          }
+        }
+
+        if (success)
+        {
+          AppDatabase.initialise(this);
+          success = true;
+          pushNotification(FINISHED_NOTIFICATION_ID, buildOnSuccessNotification());
+        }
+        else
+        {
+          pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_file_rename_fail_notification_text));
+        }
       }
       catch (SecurityException exception)
       {
@@ -213,6 +240,25 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
         {
           Log.e(TAG, "Recovery IO Exception", exception);
           pushNotification(FINISHED_NOTIFICATION_ID, buildOnFailNotification(R.string.recovery_read_file_fail_notification_text));
+        }
+      }
+      finally
+      {
+        File[] tempFiles = databaseDirectory.listFiles(new FilenameFilter()
+        {
+          @Override
+          public boolean accept(File file, String fileName)
+          {
+            return fileName.endsWith(".tmp");
+          }
+        });
+        if (tempFiles != null)
+        {
+          for (File tempFile : tempFiles)
+          {
+            //noinspection ResultOfMethodCallIgnored
+            tempFile.delete();
+          }
         }
       }
     }
