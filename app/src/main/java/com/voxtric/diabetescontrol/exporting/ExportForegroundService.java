@@ -77,30 +77,7 @@ public class ExportForegroundService extends ForegroundService
   {
     super.onStartCommand(intent, flags, startId);
 
-    String action = intent.getAction();
-    if (action != null && action.equals(Intent.ACTION_SEND))
-    {
-      String exportFilePath = intent.getStringExtra("export_file_path");
-      String exportFileMimeType = intent.getStringExtra("export_file_mime_type");
-      if (exportFilePath == null)
-      {
-        Log.e(TAG, "Export finished intent missing: 'export_file_path'");
-      }
-      else if (exportFileMimeType == null)
-      {
-        Log.e(TAG, "Export finished intent missing: 'export_file_mime_type'");
-      }
-      else
-      {
-        File exportFile = new File(exportFilePath);
-        Uri exportFileUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", exportFile);
-
-        viewFile(this, exportFileUri, exportFileMimeType, false);
-        shareFile(this, exportFileUri, exportFileMimeType, exportFile.getName());
-        sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-      }
-    }
-    else if (!isExporting())
+    if (!isExporting())
     {
       s_progress = 0;
       s_maxProgress = 0;
@@ -331,11 +308,8 @@ public class ExportForegroundService extends ForegroundService
     Intent viewFileIntent = buildViewFileIntent(this, exportFileUri, m_exportFileMimeType, true);
     PendingIntent viewFilePendingIntent = PendingIntent.getActivity(this, 0, viewFileIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-    Intent shareFileIntent = new Intent(this, ExportForegroundService.class);
-    shareFileIntent.setAction(Intent.ACTION_SEND);
-    shareFileIntent.putExtra("export_file_path", m_exportFile.getAbsolutePath());
-    shareFileIntent.putExtra("export_file_mime_type", m_exportFileMimeType);
-    PendingIntent shareFilePendingIntent = PendingIntent.getService(this, 0, shareFileIntent, 0);
+    Intent shareFileIntent = buildShareFileIntent(this, m_exportFile.getAbsolutePath(), m_exportFileMimeType);
+    PendingIntent shareFilePendingIntent = PendingIntent.getActivity(this, 0, shareFileIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
         .setSmallIcon(R.drawable.done)
@@ -390,7 +364,7 @@ public class ExportForegroundService extends ForegroundService
     LocalBroadcastManager.getInstance(this).sendBroadcast(exportOngoingBroadcast);
   }
 
-  private static Intent buildViewFileIntent(Context context, Uri exportFileUri, String exportFileMimeType, boolean showViewExportFail)
+  public static Intent buildViewFileIntent(Context context, Uri exportFileUri, String exportFileMimeType, boolean showViewExportFail)
   {
     Intent viewFileIntent = new Intent(Intent.ACTION_VIEW);
     viewFileIntent.setDataAndType(exportFileUri, exportFileMimeType);
@@ -412,28 +386,14 @@ public class ExportForegroundService extends ForegroundService
     return viewFileIntent;
   }
 
-  private static Intent buildShareFileIntent(Context context, Uri exportFileUri, String exportFileMimeType, String exportFileName)
+  private static Intent buildShareFileIntent(Context context, String exportFilePath, String exportFileMimeType)
   {
-    Intent shareFileIntent = new Intent(Intent.ACTION_SEND);
-    shareFileIntent.setType(exportFileMimeType);
-    shareFileIntent.putExtra(Intent.EXTRA_STREAM, exportFileUri);
-    shareFileIntent.putExtra(Intent.EXTRA_SUBJECT, exportFileName);
-    shareFileIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_message, context.getString(R.string.app_name)));
-    shareFileIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+    Intent shareFileIntent = new Intent(context, MainActivity.class);
+    shareFileIntent.setAction(Intent.ACTION_SEND);
+    shareFileIntent.putExtra("export_file_path", exportFilePath);
+    shareFileIntent.putExtra("export_file_mime_type", exportFileMimeType);
+    shareFileIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
     return shareFileIntent;
-  }
-
-  public static void viewFile(Context context, Uri exportFileUri, String exportFileMimeType, boolean showViewExportFail)
-  {
-    context.startActivity(buildViewFileIntent(context, exportFileUri, exportFileMimeType, showViewExportFail));
-  }
-
-  public static void shareFile(Context context, Uri exportFileUri, String exportFileMimeType, String exportFileName)
-  {
-    Intent shareFileIntent = buildShareFileIntent(context, exportFileUri, exportFileMimeType, exportFileName);
-    Intent createChooserIntent = Intent.createChooser(shareFileIntent, context.getString(R.string.share_title, exportFileName));
-    createChooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    context.startActivity(createChooserIntent);
   }
 
   private static class NotificationStringIds

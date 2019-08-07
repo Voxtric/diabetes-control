@@ -496,6 +496,11 @@ public class MainActivity extends AwaitRecoveryActivity
         launchMessageDialog(intent);
         break;
 
+      case Intent.ACTION_SEND:
+        navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
+        shareExportFile(intent.getStringExtra("export_file_path"), intent.getStringExtra("export_file_mime_type"));
+        break;
+
       case BackupForegroundService.ACTION_ONGOING:
         launchBackupProgressDialog();
       case RecoveryForegroundService.ACTION_ONGOING:
@@ -564,7 +569,7 @@ public class MainActivity extends AwaitRecoveryActivity
               outputStream.write(exportFileData);
               exportFileData = inputStream.read();
             }
-            ExportForegroundService.viewFile(this, exportFileUri, m_moveExportFileMimeType, false);
+            viewExportFile(exportFileUri, m_moveExportFileMimeType, false);
           }
           else
           {
@@ -834,6 +839,28 @@ public class MainActivity extends AwaitRecoveryActivity
     return view;
   }
 
+  public void viewExportFile(Uri exportFileUri, String exportFileMimeType, boolean showViewExportFail)
+  {
+    Intent viewFileIntent = ExportForegroundService.buildViewFileIntent(this, exportFileUri, exportFileMimeType, showViewExportFail);
+    startActivity(viewFileIntent);
+  }
+
+  public void shareExportFile(String exportFilePath, String exportFileMimeType)
+  {
+    File exportFile = new File(exportFilePath);
+    Uri exportFileUri = FileProvider.getUriForFile(this, getPackageName() + ".provider", exportFile);
+
+    Intent shareFileIntent = new Intent(Intent.ACTION_SEND);
+    shareFileIntent.setType(exportFileMimeType);
+    shareFileIntent.putExtra(Intent.EXTRA_STREAM, exportFileUri);
+    shareFileIntent.putExtra(Intent.EXTRA_SUBJECT, exportFile.getName());
+    shareFileIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message, getString(R.string.app_name)));
+    shareFileIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+    Intent createChooserIntent = Intent.createChooser(shareFileIntent, getString(R.string.share_title, exportFile.getName()));
+    createChooserIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+    startActivity(createChooserIntent);
+  }
+
   private class ExportOngoingBroadcastReceiver extends BroadcastReceiver
   {
     @Override
@@ -890,14 +917,14 @@ public class MainActivity extends AwaitRecoveryActivity
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i)
                 {
-                  ExportForegroundService.viewFile(MainActivity.this, exportFileUri, exportFileMimeType, true);
+                  viewExportFile(exportFileUri, exportFileMimeType, true);
                 }
               }).setNegativeButton(R.string.share_dialog_option, new DialogInterface.OnClickListener()
               {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i)
                 {
-                  ExportForegroundService.shareFile(MainActivity.this, exportFileUri, exportFileMimeType, exportFile.getName());
+                  shareExportFile(exportFile.getAbsolutePath(), exportFileMimeType);
                 }
               });
 
