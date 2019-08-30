@@ -1,10 +1,13 @@
 package com.voxtric.diabetescontrol;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -35,6 +39,7 @@ public class EntryListFragment extends Fragment
   private static final int LOAD_BOUNDARY = 10;
 
   private EntryListRecyclerViewAdapter m_adapter = null;
+  private int m_recyclerViewScroll = 0;
 
   public EntryListFragment()
   {
@@ -56,6 +61,15 @@ public class EntryListFragment extends Fragment
     if (activity != null)
     {
       final RecyclerView recyclerView = activity.findViewById(R.id.recycler_view_entry_list);
+      recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
+      {
+        @Override
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
+        {
+          super.onScrolled(recyclerView, dx, dy);
+          m_recyclerViewScroll += dy;
+        }
+      });
       final GridLayoutManager layoutManager = new GridLayoutManager(activity, 1);
       recyclerView.setLayoutManager(layoutManager);
       refreshEntryList();
@@ -66,7 +80,16 @@ public class EntryListFragment extends Fragment
         @Override
         public void onClick(View view)
         {
-          recyclerView.scrollToPosition(0);
+          RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(activity)
+          {
+            @Override
+            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics)
+            {
+              return (displayMetrics.densityDpi / (float)m_recyclerViewScroll) * 0.3f;
+            }
+          };
+          smoothScroller.setTargetPosition(0);
+          layoutManager.startSmoothScroll(smoothScroller);
         }
       });
 
