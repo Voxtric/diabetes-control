@@ -173,7 +173,7 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
           color = R.color.green;
           if (entry.bloodGlucoseLevel >= m_highlightingValues[1])
           {
-            color = R.color.yellow;
+            color = R.color.text_yellow;
             if (entry.bloodGlucoseLevel >= m_highlightingValues[2])
             {
               color = R.color.red;

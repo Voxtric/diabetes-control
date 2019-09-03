@@ -132,7 +132,7 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
 
     Resources resources = getResources();
     float[] rangeValues = new float[]{ 0.0f, idealMin, highMin, actionRequiredMin, maxValue };
-    int[] rangeColors = new int[] { resources.getColor(R.color.red), resources.getColor(R.color.green), resources.getColor(R.color.yellow), resources.getColor(R.color.red) };
+    int[] rangeColors = new int[] { resources.getColor(R.color.red), resources.getColor(R.color.green), resources.getColor(R.color.graph_yellow), resources.getColor(R.color.red) };
     graph.setRangeHighlights(rangeValues, rangeColors, TimeGraph.DISPLAY_MODE_UNDERLINE_WITH_FADE, false);
   }
 }

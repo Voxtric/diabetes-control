@@ -5,7 +5,8 @@
     <color name="colorAccent">#08754f</color>
     <color name="colorText">#000000</color>
 
-    <color name="green">#00ad00</color>
-    <color name="yellow">#adaa00</color>
-    <color name="red">#ad0000</color>
+    <color name="green">#00b518</color>
+    <color name="graph_yellow">#f2fa00</color>
+    <color name="text_yellow">#adaa00</color>
+    <color name="red">#de0000</color>
 </resources>
