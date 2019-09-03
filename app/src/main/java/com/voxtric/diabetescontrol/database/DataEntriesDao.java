@@ -76,4 +76,9 @@ public interface DataEntriesDao
 
   @Insert
   void insert(DataEntry entry);
+
+
+
+  @Query("SELECT MAX(blood_glucose_level) FROM data_entries")
+  float getMaxBloodGlucoseLevel();
 }
