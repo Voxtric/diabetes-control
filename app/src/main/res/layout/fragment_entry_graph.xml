@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/maximum_bgl_label"
         style="@style/BasicText"
-        android:text="Statistics for Graph Period"
+        android:text="@string/statistics_title"
         android:textStyle="bold"/>
 
     <!-- Maximum BGL -->
@@ -33,7 +33,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="@id/minimum_bgl_label"
         style="@style/BasicText"
-        android:text="Maximum BGL:"/>
+        android:text="@string/maximum_bgl_label"/>
 
     <TextView
         android:id="@+id/maximum_bgl"
@@ -54,7 +54,7 @@
         app:layout_constraintBottom_toTopOf="@+id/average_bgl_label"
         app:layout_constraintLeft_toLeftOf="parent"
         style="@style/BasicText"
-        android:text="Minimum BGL:"/>
+        android:text="@string/minimum_bgl_label"/>
 
     <TextView
         android:id="@+id/minimum_bgl"
@@ -63,7 +63,6 @@
         android:layout_marginStart="@dimen/text_margin"
         app:layout_constraintTop_toTopOf="@id/minimum_bgl_label"
         app:layout_constraintBottom_toBottomOf="@id/minimum_bgl_label"
-        app:layout_constraintLeft_toLeftOf="@id/maximum_bgl"
         app:layout_constraintRight_toRightOf="@id/maximum_bgl"
         android:gravity="end"
         style="@style/BasicText"/>
@@ -76,7 +75,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         style="@style/BasicText"
-        android:text="Average BGL:"/>
+        android:text="@string/average_bgl_label"/>
 
     <TextView
         android:id="@+id/average_bgl"
@@ -85,7 +84,6 @@
         android:layout_marginStart="@dimen/text_margin"
         app:layout_constraintTop_toTopOf="@id/average_bgl_label"
         app:layout_constraintBottom_toBottomOf="@id/average_bgl_label"
-        app:layout_constraintLeft_toLeftOf="@id/maximum_bgl"
         app:layout_constraintRight_toRightOf="@id/maximum_bgl"
         android:gravity="end"
         style="@style/BasicText"/>

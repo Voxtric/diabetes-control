@@ -79,6 +79,15 @@ public interface DataEntriesDao
 
 
 
+  @Query("SELECT AVG(blood_glucose_level) FROM data_entries WHERE actual_timestamp >= :startTimestamp AND actual_timestamp <= :endTimestamp")
+  float getAverageBloodGlucoseLevel(long startTimestamp, long endTimestamp);
+
+  @Query("SELECT MIN(blood_glucose_level) FROM data_entries WHERE actual_timestamp >= :startTimestamp AND actual_timestamp <= :endTimestamp")
+  float getMinBloodGlucoseLevel(long startTimestamp, long endTimestamp);
+
+  @Query("SELECT MAX(blood_glucose_level) FROM data_entries WHERE actual_timestamp >= :startTimestamp AND actual_timestamp <= :endTimestamp")
+  float getMaxBloodGlucoseLevel(long startTimestamp, long endTimestamp);
+
   @Query("SELECT MAX(blood_glucose_level) FROM data_entries")
   float getMaxBloodGlucoseLevel();
 }
