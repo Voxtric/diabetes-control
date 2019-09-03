@@ -40,6 +40,7 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
     ConstraintLayout view = (ConstraintLayout)inflater.inflate(R.layout.fragment_entry_graph, container, false);
 
     final TimeGraph graph = view.findViewById(R.id.graph);
+    graph.setDisallowHorizontalScrollViews(new ViewGroup[] { container.findViewById(R.id.fragment_container) });
     AsyncTask.execute(new Runnable()
     {
       @Override
@@ -48,6 +49,10 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
         DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
 
         float maxValue = dataEntriesDao.getMaxBloodGlucoseLevel();
+        if (maxValue == 0.0f)
+        {
+          maxValue = 16.0f;
+        }
         graph.setValueAxisMax(maxValue, false);
         setGraphHighlighting(graph, maxValue);
 
@@ -111,6 +116,7 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
     return TimeAxisLabelData.autoLabel(data);
   }
 
+  @SuppressWarnings("ConstantConditions")
   private void setGraphHighlighting(TimeGraph graph, float maxValue)
   {
     PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
