@@ -52,13 +52,13 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
     graph.setOnPeriodChangedListener(new TimeGraph.OnPeriodChangeListener()
     {
       @Override
-      public void onPeriodChanged(long startTimestamp, long endTimestamp)
+      public void onPeriodChanged(TimeGraph view, long startTimestamp, long endTimestamp)
       {
         m_periodStartTimestamp = startTimestamp;
         m_periodEndTimestamp = endTimestamp;
         if (!m_calculatingNewStatistics)
         {
-          calculateNewStatistics(!graph.hasEnoughData());
+          calculateNewStatistics(!view.hasEnoughData());
         }
         else
         {
@@ -69,11 +69,11 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
     graph.setOnRefreshListener(new TimeGraph.OnRefreshListener()
     {
       @Override
-      public void onRefresh(long startTimestamp, long endTimestamp, GraphData[] data)
+      public void onRefresh(TimeGraph view, long startTimestamp, long endTimestamp, GraphData[] data)
       {
         if (!m_calculatingNewStatistics)
         {
-          calculateNewStatistics(!graph.hasEnoughData());
+          calculateNewStatistics(!view.hasEnoughData());
         }
         else
         {
