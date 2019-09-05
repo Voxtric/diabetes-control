@@ -842,6 +842,11 @@ public class MainActivity extends AwaitRecoveryActivity
     return view;
   }
 
+  public void toggleStatisticsVisibility(View view)
+  {
+    getFragment(EntryGraphFragment.class).toggleStatisticsVisibility(this);
+  }
+
   public void viewExportFile(Uri exportFileUri, String exportFileMimeType, boolean showViewExportFail)
   {
     Intent viewFileIntent = ExportForegroundService.buildViewFileIntent(this, exportFileUri, exportFileMimeType, showViewExportFail);

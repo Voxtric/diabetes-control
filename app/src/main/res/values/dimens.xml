@@ -5,6 +5,7 @@
     <dimen name="text_margin">16dp</dimen>
 
     <dimen name="settings_fragment_margin">24dp</dimen>
+    <dimen name="graph_fragment_margin">8dp</dimen>
 
     <dimen name="text_size">18sp</dimen>
     <dimen name="large_text_size">24sp</dimen>

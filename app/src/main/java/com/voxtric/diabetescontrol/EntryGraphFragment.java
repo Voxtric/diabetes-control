@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,7 +29,8 @@ import java.util.List;
 
 public class EntryGraphFragment extends Fragment implements GraphDataProvider
 {
-  private static final Long DEFAULT_DISPLAY_DURATION = 86400000L * 5L;
+  private static final long DEFAULT_DISPLAY_DURATION = 86400000L * 5L;
+  private static final long STATISTICS_RAISE_DURATION = 200L;
 
   private boolean m_calculatingNewStatistics = false;
 
@@ -38,6 +39,8 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
   private long m_periodEndTimestamp = 0L;
 
   private float m_maxValue = 0.0f;
+
+  private float m_moveDirection = 1.0f;
 
   public EntryGraphFragment()
   {
@@ -84,6 +87,19 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
         }
       }
     });
+
+    final LinearLayout statisticsContentView = view.findViewById(R.id.statistics_content);
+    if (statisticsContentView != null)
+    {
+      statisticsContentView.post(new Runnable()
+      {
+        @Override
+        public void run()
+        {
+          statisticsContentView.animate().translationYBy(statisticsContentView.getHeight()).setDuration(0L).start();
+        }
+      });
+    }
 
     if (savedInstanceState == null)
     {
@@ -268,5 +284,17 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
         m_calculatingNewStatistics = false;
       }
     });
+  }
+
+  void toggleStatisticsVisibility(Activity activity)
+  {
+    LinearLayout headerView = activity.findViewById(R.id.statistics_layout);
+    LinearLayout contentView = activity.findViewById(R.id.statistics_content);
+    float moveBy = -contentView.getHeight() * m_moveDirection;
+    headerView.animate().translationYBy(moveBy).setDuration(STATISTICS_RAISE_DURATION).start();
+    contentView.animate().translationYBy(moveBy).setDuration(STATISTICS_RAISE_DURATION).start();
+    headerView.getChildAt(1).animate().rotationBy(-90.0f * m_moveDirection).setDuration(STATISTICS_RAISE_DURATION).start();
+
+    m_moveDirection *= -1.0f;
   }
 }
