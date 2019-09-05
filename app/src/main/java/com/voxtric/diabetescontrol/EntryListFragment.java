@@ -1,13 +1,11 @@
 package com.voxtric.diabetescontrol;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import com.voxtric.diabetescontrol.database.AppDatabase;
 import com.voxtric.diabetescontrol.database.DataEntry;
@@ -118,6 +117,13 @@ public class EntryListFragment extends Fragment
     if (requestCode == REQUEST_EDIT_ENTRY && resultCode == RESULT_LIST_UPDATE_NEEDED)
     {
       refreshEntryList();
+
+      MainActivity activity = (MainActivity)getActivity();
+      if (activity != null)
+      {
+        EntryGraphFragment graphFragment = activity.getFragment(EntryGraphFragment.class);
+        graphFragment.refreshGraph(false, false);
+      }
     }
   }
 
@@ -174,9 +180,12 @@ public class EntryListFragment extends Fragment
                         if (Boolean.valueOf(results.get(BglHighlightingSettingsFragment.HIGHLIGHTING_ENABLED_PREFERENCE)))
                         {
                           bglHighlightingValues = new float[3];
-                          bglHighlightingValues[0] = Float.valueOf(results.get(BglHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE));
-                          bglHighlightingValues[1] = Float.valueOf(results.get(BglHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE));
-                          bglHighlightingValues[2] = Float.valueOf(results.get(BglHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE));
+                          bglHighlightingValues[0] = Float.valueOf(Objects.requireNonNull(results.get(
+                              BglHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE)));
+                          bglHighlightingValues[1] = Float.valueOf(Objects.requireNonNull(results.get(
+                              BglHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE)));
+                          bglHighlightingValues[2] = Float.valueOf(Objects.requireNonNull(results.get(
+                              BglHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE)));
                         }
 
                         m_adapter = new EntryListRecyclerViewAdapter(activity, entries, bglHighlightingValues);
@@ -228,7 +237,7 @@ public class EntryListFragment extends Fragment
     startActivityForResult(intent, REQUEST_EDIT_ENTRY);
   }
 
-  void deleteEntry(final Activity activity, final View dataView)
+  void deleteEntry(final MainActivity activity, final View dataView)
   {
     final DataEntry entry = m_adapter.getEntry(dataView);
     AlertDialog dialog = new AlertDialog.Builder(activity)
@@ -251,6 +260,8 @@ public class EntryListFragment extends Fragment
                   @Override
                   public void run()
                   {
+                    EntryGraphFragment graphFragment = activity.getFragment(EntryGraphFragment.class);
+                    graphFragment.refreshGraph(false, false);
                     m_adapter.deleteEntry(dataView);
                     if (m_adapter.getItemCount() == 0)
                     {

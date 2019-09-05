@@ -98,7 +98,7 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
   public void onResume()
   {
     super.onResume();
-    refreshGraph(true);
+    refreshGraph(true, false);
   }
 
   @Override
@@ -135,13 +135,26 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
     return TimeAxisLabelData.autoLabel(data);
   }
 
-  public void refreshGraph(boolean animate)
+  void refreshGraph(boolean animate, boolean moveToEnd)
   {
     Activity activity = getActivity();
     if (activity != null)
     {
       TimeGraph graph = activity.findViewById(R.id.graph);
-      graph.refresh(this, animate);
+      if (!moveToEnd)
+      {
+        graph.refresh(this, animate);
+      }
+      else
+      {
+        DataEntry lastEntry = AppDatabase.getInstance().dataEntriesDao().findFirstBefore(Long.MAX_VALUE);
+        if (lastEntry != null)
+        {
+          long endTimestamp = lastEntry.actualTimestamp;
+          long startTimestamp = endTimestamp - DEFAULT_DISPLAY_DURATION;
+          graph.setVisibleDataPeriod(startTimestamp, endTimestamp, EntryGraphFragment.this, true);
+        }
+      }
     }
   }
 

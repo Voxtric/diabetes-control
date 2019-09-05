@@ -1311,6 +1311,12 @@ public class NewEntryFragment extends Fragment
         tryStartNewEntryBackup(activity);
       }
     });
+
+    if (activity instanceof MainActivity)
+    {
+      EntryGraphFragment entryGraphFragment = ((MainActivity)activity).getFragment(EntryGraphFragment.class);
+      entryGraphFragment.refreshGraph(false, true);
+    }
   }
 
   private void tryStartNewEntryBackup(final Activity activity)
