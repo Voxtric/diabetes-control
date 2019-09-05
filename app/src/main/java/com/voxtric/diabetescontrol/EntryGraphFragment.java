@@ -28,6 +28,8 @@ import java.util.List;
 
 public class EntryGraphFragment extends Fragment implements GraphDataProvider
 {
+  private static final Long DEFAULT_DISPLAY_DURATION = 86400000L * 5L;
+
   private boolean m_calculatingNewStatistics = false;
 
   private boolean m_calculateNewStatistics = false;
@@ -85,7 +87,7 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
         if (lastEntry != null)
         {
           long endTimestamp = lastEntry.actualTimestamp;
-          long startTimestamp = endTimestamp - 86400000L;
+          long startTimestamp = endTimestamp - DEFAULT_DISPLAY_DURATION;
           graph.setVisibleDataPeriod(startTimestamp, endTimestamp, EntryGraphFragment.this, true);
         }
       }
