@@ -11,9 +11,4 @@
     <string name="insulin_dose_column_title">Insulin Dose</string>
 
     <string name="event_column_title">Event</string>
-
-
-
-    <!-- Messages -->
-    <string name="no_data_notice">No data to display</string>
 </resources>

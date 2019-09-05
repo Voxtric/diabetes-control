@@ -67,31 +67,29 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
       }
     });
 
-
-    AsyncTask.execute(new Runnable()
+    if (savedInstanceState == null)
     {
-      @Override
-      public void run()
+      AsyncTask.execute(new Runnable()
       {
-        DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
-
-        float maxValue = dataEntriesDao.getMaxBloodGlucoseLevel();
-        if (maxValue == 0.0f)
+        @Override
+        public void run()
         {
-          maxValue = 16.0f;
-        }
-        graph.setValueAxisMax(maxValue, false);
-        setGraphHighlighting(graph, maxValue);
+          DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
 
-        DataEntry lastEntry = dataEntriesDao.findFirstBefore(System.currentTimeMillis());
-        if (lastEntry != null)
-        {
-          long endTimestamp = lastEntry.actualTimestamp;
-          long startTimestamp = endTimestamp - DEFAULT_DISPLAY_DURATION;
-          graph.setVisibleDataPeriod(startTimestamp, endTimestamp, EntryGraphFragment.this, true);
+          float maxValue = Math.max(dataEntriesDao.getMaxBloodGlucoseLevel(), 16.0f);
+          graph.setValueAxisMax(maxValue, false);
+          setGraphHighlighting(graph, maxValue);
+
+          DataEntry lastEntry = dataEntriesDao.findFirstBefore(Long.MAX_VALUE);
+          if (lastEntry != null)
+          {
+            long endTimestamp = lastEntry.actualTimestamp;
+            long startTimestamp = endTimestamp - DEFAULT_DISPLAY_DURATION;
+            graph.setVisibleDataPeriod(startTimestamp, endTimestamp, EntryGraphFragment.this, true);
+          }
         }
-      }
-    });
+      });
+    }
 
     return view;
   }
@@ -100,13 +98,7 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
   public void onResume()
   {
     super.onResume();
-
-    Activity activity = getActivity();
-    if (activity != null)
-    {
-      TimeGraph graph = activity.findViewById(R.id.graph);
-      graph.refresh(this, true);
-    }
+    refreshGraph(true);
   }
 
   @Override
@@ -141,6 +133,16 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
   public TimeAxisLabelData[] getLabelsForData(GraphData[] data)
   {
     return TimeAxisLabelData.autoLabel(data);
+  }
+
+  public void refreshGraph(boolean animate)
+  {
+    Activity activity = getActivity();
+    if (activity != null)
+    {
+      TimeGraph graph = activity.findViewById(R.id.graph);
+      graph.refresh(this, animate);
+    }
   }
 
   @SuppressWarnings("ConstantConditions")

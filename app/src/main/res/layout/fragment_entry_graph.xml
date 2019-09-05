@@ -13,8 +13,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/statistics_title"
         android:layout_marginBottom="@dimen/text_margin"
-        android:focusable="true"
-        android:focusableInTouchMode="true"/>
+        app:noData_text="@string/no_data_notice"/>
 
     <TextView
         android:id="@+id/statistics_title"

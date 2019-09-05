@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="statistics_title">Statistics for Graph Period</string>
+    <string name="maximum_bgl_label">Maximum BGL:</string>
+    <string name="minimum_bgl_label">Minimum BGL:</string>
+    <string name="average_bgl_label">Average BGL:</string>
+    <string name="bgl_postfix">%1$.1f mmol/L</string>
+</resources>
