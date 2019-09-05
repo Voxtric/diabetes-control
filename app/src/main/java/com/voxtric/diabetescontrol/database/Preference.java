@@ -53,6 +53,21 @@ public class Preference
     });
   }
 
+  public static void put(final String name, final String value)
+  {
+    AsyncTask.execute(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
+        Preference preference = ensurePreferenceExists(preferencesDao, name);
+        preference.value = value;
+        preferencesDao.update(preference);
+      }
+    });
+  }
+
   public static void remove(final Activity activity, final String name, final Runnable onCompletionMainThread)
   {
     AsyncTask.execute(new Runnable()

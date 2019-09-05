@@ -25,6 +25,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.voxtric.diabetescontrol.database.AppDatabase;
+import com.voxtric.diabetescontrol.database.Preference;
 import com.voxtric.diabetescontrol.settings.SettingsActivity;
 import com.voxtric.diabetescontrol.utilities.ForegroundService;
 import com.voxtric.diabetescontrol.utilities.GoogleDriveInterface;
@@ -209,7 +210,7 @@ public class RecoveryForegroundService extends ForegroundService implements Medi
         if (success)
         {
           AppDatabase.initialise(this);
-          success = true;
+          BackupForegroundService.updateLastSuccessfulBackupPreference();
           pushNotification(FINISHED_NOTIFICATION_ID, buildOnSuccessNotification());
         }
         else

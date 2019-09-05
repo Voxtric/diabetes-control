@@ -222,7 +222,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
     return success;
   }
 
-  private void updateLastSuccessfulBackupPreference()
+  public static void updateLastSuccessfulBackupPreference()
   {
     PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
     Preference preference = preferencesDao.getPreference("last_successful_backup_timestamp");
