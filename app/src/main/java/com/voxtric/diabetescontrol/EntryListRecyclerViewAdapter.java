@@ -162,7 +162,7 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
       m_eventTextView.setText(entry.event);
       if (m_insulinNameTextView != null)
       {
-        m_insulinNameTextView.setText(entry.insulinName);
+        m_insulinNameTextView.setText((entry.insulinName != null && entry.insulinName.length() > 0) ? entry.insulinName : "N/A");
       }
 
       if (m_highlightingValues != null)

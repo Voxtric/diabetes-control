@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,8 +108,18 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
         }
       });
     }
+    else
+    {
+      m_maxValue = savedInstanceState.getFloat("m_maxValue");
+    }
 
     return view;
+  }
+
+  @Override
+  public void onSaveInstanceState(@NonNull Bundle savedInstanceState)
+  {
+    savedInstanceState.putFloat("m_maxValue", m_maxValue);
   }
 
   @Override

@@ -75,5 +75,5 @@ dependencies {
     implementation 'com.tom_roush:pdfbox-android:1.8.10.1'
     implementation 'com.opencsv:opencsv:4.6'
 
-    implementation 'com.voxtric.timegraph:timegraph:0.6.0'
+    implementation 'com.voxtric.timegraph:timegraph:0.6.1'
 }

@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.voxtric.diabetescontrol.MainActivity;
 import com.voxtric.diabetescontrol.R;
@@ -228,14 +229,14 @@ public class BglHighlightingSettingsFragment extends Fragment
             switch (preferenceName)
             {
               case IDEAL_MINIMUM_PREFERENCE:
-                valueValid = value < Float.valueOf(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE));
+                valueValid = value < Float.valueOf(Objects.requireNonNull(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE)));
                 break;
               case HIGH_MINIMUM_PREFERENCE:
-                valueValid = value > Float.valueOf(m_bglRangeValues.get(IDEAL_MINIMUM_PREFERENCE)) &&
-                    value < Float.valueOf(m_bglRangeValues.get(ACTION_REQUIRED_MINIMUM_PREFERENCE));
+                valueValid = value > Float.valueOf(Objects.requireNonNull(m_bglRangeValues.get(IDEAL_MINIMUM_PREFERENCE))) &&
+                    value < Float.valueOf(Objects.requireNonNull(m_bglRangeValues.get(ACTION_REQUIRED_MINIMUM_PREFERENCE)));
                 break;
               case ACTION_REQUIRED_MINIMUM_PREFERENCE:
-                valueValid = value > Float.valueOf(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE));
+                valueValid = value > Float.valueOf(Objects.requireNonNull(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE)));
                 break;
               default:
                 valueValid = false;
