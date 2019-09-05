@@ -34,7 +34,6 @@ import androidx.core.view.MenuCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
@@ -280,6 +279,7 @@ public class MainActivity extends AwaitRecoveryActivity
       else if ((resultCode & RESULT_UPDATE_BGL_HIGHLIGHTING) == RESULT_UPDATE_BGL_HIGHLIGHTING)
       {
         getFragment(EntryListFragment.class).refreshEntryList();
+        getFragment(EntryGraphFragment.class).updateRangeHighlighting();
       }
       break;
     case REQUEST_CHOOSE_DIRECTORY:
@@ -493,10 +493,6 @@ public class MainActivity extends AwaitRecoveryActivity
           launchMessageDialog(intent);
         }
         break;
-      case ExportForegroundService.ACTION_VIEW_EXPORT_FAIL:
-        navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
-        launchMessageDialog(intent);
-        break;
 
       case Intent.ACTION_SEND:
         navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
@@ -508,6 +504,7 @@ public class MainActivity extends AwaitRecoveryActivity
       case RecoveryForegroundService.ACTION_ONGOING:
         navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
         break;
+      case ExportForegroundService.ACTION_VIEW_EXPORT_FAIL:
       case BackupForegroundService.ACTION_FINISHED:
       case RecoveryForegroundService.ACTION_FINISHED:
         navigateToPageFragment(getFragmentIndex(EntryListFragment.class));
