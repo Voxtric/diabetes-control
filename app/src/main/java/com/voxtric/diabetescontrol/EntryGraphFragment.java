@@ -175,7 +175,9 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
       }
       else
       {
-        DataEntry lastEntry = AppDatabase.getInstance().dataEntriesDao().findFirstBefore(Long.MAX_VALUE);
+        DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
+        DataEntry lastEntry = dataEntriesDao.findFirstBefore(Long.MAX_VALUE);
+        m_maxValue = Math.max(dataEntriesDao.getMaxBloodGlucoseLevel(), 16.0f);
         if (lastEntry != null)
         {
           long endTimestamp = lastEntry.actualTimestamp;
