@@ -58,7 +58,22 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
         m_periodEndTimestamp = endTimestamp;
         if (!m_calculatingNewStatistics)
         {
-          calculateNewStatistics();
+          calculateNewStatistics(!graph.hasEnoughData());
+        }
+        else
+        {
+          m_calculateNewStatistics = true;
+        }
+      }
+    });
+    graph.setOnRefreshListener(new TimeGraph.OnRefreshListener()
+    {
+      @Override
+      public void onRefresh(long startTimestamp, long endTimestamp, GraphData[] data)
+      {
+        if (!m_calculatingNewStatistics)
+        {
+          calculateNewStatistics(!graph.hasEnoughData());
         }
         else
         {
@@ -178,7 +193,7 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
     graph.setRangeHighlights(rangeValues, rangeColors, TimeGraph.DISPLAY_MODE_UNDERLINE_WITH_FADE, false);
   }
 
-  private void calculateNewStatistics()
+  private void calculateNewStatistics(final boolean disableStatisticsViews)
   {
     m_calculatingNewStatistics = true;
 
@@ -205,9 +220,15 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
               @Override
               public void run()
               {
-                ((TextView)activity.findViewById(R.id.average_bgl)).setText(activity.getString(R.string.bgl_postfix, periodAverageBgl));
-                ((TextView)activity.findViewById(R.id.minimum_bgl)).setText(activity.getString(R.string.bgl_postfix, periodMinBgl));
-                ((TextView)activity.findViewById(R.id.maximum_bgl)).setText(activity.getString(R.string.bgl_postfix, periodMaxBgl));
+                TextView averageBgl = activity.findViewById(R.id.average_bgl);
+                TextView minimumBgl = activity.findViewById(R.id.minimum_bgl);
+                TextView maximumBgl = activity.findViewById(R.id.maximum_bgl);
+                averageBgl.setText(activity.getString(R.string.bgl_postfix, periodAverageBgl));
+                minimumBgl.setText(activity.getString(R.string.bgl_postfix, periodMinBgl));
+                maximumBgl.setText(activity.getString(R.string.bgl_postfix, periodMaxBgl));
+                averageBgl.setEnabled(!disableStatisticsViews);
+                minimumBgl.setEnabled(!disableStatisticsViews);
+                maximumBgl.setEnabled(!disableStatisticsViews);
               }
             });
           }
