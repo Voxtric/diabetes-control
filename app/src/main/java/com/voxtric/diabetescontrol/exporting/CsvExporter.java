@@ -12,11 +12,17 @@ import java.util.List;
 import java.util.Locale;
 
 import com.opencsv.CSVWriter;
+import com.voxtric.diabetescontrol.database.AppDatabase;
+import com.voxtric.diabetescontrol.database.DataEntriesDao;
 import com.voxtric.diabetescontrol.database.DataEntry;
+import com.voxtric.diabetescontrol.database.Food;
 
 public class CsvExporter implements IExporter
 {
   private static final String TAG = "CsvExporter";
+  private static final String[] HEADINGS = new String[] {
+      "Day", "Date", "Time", "Blood Glucose Level", "Insulin Name", "Insulin Dose", "Food Eaten", "Additional Notes"
+  };
 
   private CSVWriter m_fileContents = null;
 
@@ -27,10 +33,13 @@ public class CsvExporter implements IExporter
     {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       m_fileContents = new CSVWriter(new OutputStreamWriter(outputStream), ',', '"', '"', "\n");
+
+      m_fileContents.writeNext(HEADINGS, false);
       for (int i = entries.size() - 1; i >= 0; i--)
       {
         addEntry(entries.get(i));
       }
+
       m_fileContents.close();
       return outputStream.toByteArray();
     }
@@ -63,6 +72,19 @@ public class CsvExporter implements IExporter
   {
     Date date = new Date(entry.actualTimestamp);
 
+    List<Food> foods = AppDatabase.getInstance().foodsDao().getFoods(entry.actualTimestamp);
+    StringBuilder foodStringBuilder = new StringBuilder();
+    if (foods != null && !foods.isEmpty())
+    {
+      int foodCount = foods.size();
+      foodStringBuilder.append(foods.get(0).name);
+      for (int i = 1; i < foodCount; i++)
+      {
+        foodStringBuilder.append('\n');
+        foodStringBuilder.append(foods.get(i).name);
+      }
+    }
+
     String[] line = new String[]{
         new SimpleDateFormat("EEEE", Locale.getDefault()).format(date),
         DateFormat.getDateInstance(DateFormat.MEDIUM).format(date),
@@ -70,6 +92,7 @@ public class CsvExporter implements IExporter
         String.valueOf(entry.bloodGlucoseLevel),
         entry.insulinName,
         entry.insulinDose > 0 ? String.valueOf(entry.insulinDose) : "",
+        foodStringBuilder.toString(),
         entry.additionalNotes
     };
 

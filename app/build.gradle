@@ -6,8 +6,8 @@ android {
         applicationId "com.voxtric.diabetescontrol"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 600
-        versionName "0.6.0"
+        versionCode 700
+        versionName "0.7.0"
         resConfigs "en", "en_US", "en_UK", "en_AU"
         multiDexEnabled true
 
