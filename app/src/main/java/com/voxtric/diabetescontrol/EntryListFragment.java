@@ -127,6 +127,43 @@ public class EntryListFragment extends Fragment
     }
   }
 
+  void selectView(final MainActivity activity, final long timestamp)
+  {
+    final RecyclerView recyclerView = activity.findViewById(R.id.recycler_view_entry_list);
+    AsyncTask.execute(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        final int itemPosition = m_adapter.loadToTimestamp(timestamp);
+        activity.runOnUiThread(new Runnable()
+        {
+          @Override
+          public void run()
+          {
+            recyclerView.scrollToPosition(itemPosition);
+            recyclerView.post(new Runnable()
+            {
+              @Override
+              public void run()
+              {
+                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                if (layoutManager != null)
+                {
+                  View view = layoutManager.findViewByPosition(itemPosition);
+                  if (view != null)
+                  {
+                    activity.openEntryMoreMenu(view);
+                  }
+                }
+              }
+            });
+          }
+        });
+      }
+    });
+  }
+
   void refreshEntryList()
   {
     final MainActivity activity = (MainActivity)getActivity();

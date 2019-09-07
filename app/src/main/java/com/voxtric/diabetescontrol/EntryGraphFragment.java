@@ -55,38 +55,7 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
 
     final TimeGraph graph = view.findViewById(R.id.graph);
     graph.setDisallowHorizontalScrollViews(new ViewGroup[] { container.findViewById(R.id.fragment_container) });
-    graph.setOnPeriodChangedListener(new TimeGraph.OnPeriodChangeListener()
-    {
-      @Override
-      public void onPeriodChanged(TimeGraph view, long startTimestamp, long endTimestamp)
-      {
-        m_periodStartTimestamp = startTimestamp;
-        m_periodEndTimestamp = endTimestamp;
-        if (!m_calculatingNewStatistics)
-        {
-          calculateNewStatistics(!view.hasEnoughData());
-        }
-        else
-        {
-          m_calculateNewStatistics = true;
-        }
-      }
-    });
-    graph.setOnRefreshListener(new TimeGraph.OnRefreshListener()
-    {
-      @Override
-      public void onRefresh(TimeGraph view, long startTimestamp, long endTimestamp, GraphData[] data)
-      {
-        if (!m_calculatingNewStatistics)
-        {
-          calculateNewStatistics(!view.hasEnoughData());
-        }
-        else
-        {
-          m_calculateNewStatistics = true;
-        }
-      }
-    });
+    setGraphListeners(graph);
 
     final LinearLayout statisticsContentView = view.findViewById(R.id.statistics_content);
     if (statisticsContentView != null)
@@ -112,7 +81,7 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
 
           m_maxValue = Math.max(dataEntriesDao.getMaxBloodGlucoseLevel(), 16.0f);
           graph.setValueAxisMax(m_maxValue, false);
-          setGraphHighlighting(graph);
+          setGraphHighlighting(graph, m_maxValue);
 
           DataEntry lastEntry = dataEntriesDao.findFirstBefore(Long.MAX_VALUE);
           if (lastEntry != null)
@@ -215,30 +184,10 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
         @Override
         public void run()
         {
-          setGraphHighlighting(graph);
+          setGraphHighlighting(graph, m_maxValue);
         }
       });
     }
-  }
-
-  @SuppressWarnings("ConstantConditions")
-  private void setGraphHighlighting(TimeGraph graph)
-  {
-    PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
-
-    Preference idealMinPreference = preferencesDao.getPreference(BglHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE);
-    Preference highMinPreference = preferencesDao.getPreference(BglHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE);
-    Preference actionRequiredMinPreference = preferencesDao.getPreference(BglHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE);
-    float idealMin = idealMinPreference != null ? Float.valueOf(idealMinPreference.value) : BglHighlightingSettingsFragment.DEFAULT_VALUES.get(BglHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE);
-    float highMin = highMinPreference != null ? Float.valueOf(highMinPreference.value) : BglHighlightingSettingsFragment.DEFAULT_VALUES.get(BglHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE);
-    float actionRequiredMin = actionRequiredMinPreference != null ? Float.valueOf(actionRequiredMinPreference.value) : BglHighlightingSettingsFragment.DEFAULT_VALUES.get(BglHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE);
-
-    graph.setValueAxisMidLabels(new float[]{ idealMin, highMin, actionRequiredMin });
-
-    Resources resources = getResources();
-    float[] rangeValues = new float[]{ 0.0f, idealMin, highMin, actionRequiredMin, m_maxValue };
-    int[] rangeColors = new int[] { resources.getColor(R.color.red), resources.getColor(R.color.green), resources.getColor(R.color.graph_yellow), resources.getColor(R.color.red) };
-    graph.setRangeHighlights(rangeValues, rangeColors, TimeGraph.DISPLAY_MODE_UNDERLINE_WITH_FADE, false);
   }
 
   private void calculateNewStatistics(final boolean disableStatisticsViews)
@@ -296,5 +245,77 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
     headerView.getChildAt(1).animate().rotationBy(-90.0f * m_moveDirection).setDuration(STATISTICS_RAISE_DURATION).start();
 
     m_moveDirection *= -1.0f;
+  }
+
+  private void setGraphListeners(TimeGraph graph)
+  {
+    graph.setOnDataPointClickedListener(new TimeGraph.OnDataPointClickedListener()
+    {
+      @Override
+      public void onDataPointClicked(TimeGraph graph, long timestamp, float value)
+      {
+        MainActivity activity = (MainActivity)getActivity();
+        if (activity != null)
+        {
+          activity.navigateToPageFragment(activity.getFragmentIndex(EntryListFragment.class));
+          EntryListFragment entryListFragment = activity.getFragment(EntryListFragment.class);
+          entryListFragment.selectView(activity, timestamp);
+        }
+      }
+    });
+
+    graph.setOnPeriodChangedListener(new TimeGraph.OnPeriodChangeListener()
+    {
+      @Override
+      public void onPeriodChanged(TimeGraph view, long startTimestamp, long endTimestamp)
+      {
+        m_periodStartTimestamp = startTimestamp;
+        m_periodEndTimestamp = endTimestamp;
+        if (!m_calculatingNewStatistics)
+        {
+          calculateNewStatistics(!view.hasEnoughData());
+        }
+        else
+        {
+          m_calculateNewStatistics = true;
+        }
+      }
+    });
+
+    graph.setOnRefreshListener(new TimeGraph.OnRefreshListener()
+    {
+      @Override
+      public void onRefresh(TimeGraph view, long startTimestamp, long endTimestamp, GraphData[] data)
+      {
+        if (!m_calculatingNewStatistics)
+        {
+          calculateNewStatistics(!view.hasEnoughData());
+        }
+        else
+        {
+          m_calculateNewStatistics = true;
+        }
+      }
+    });
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  private static void setGraphHighlighting(TimeGraph graph, float maxValue)
+  {
+    PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
+
+    Preference idealMinPreference = preferencesDao.getPreference(BglHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE);
+    Preference highMinPreference = preferencesDao.getPreference(BglHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE);
+    Preference actionRequiredMinPreference = preferencesDao.getPreference(BglHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE);
+    float idealMin = idealMinPreference != null ? Float.valueOf(idealMinPreference.value) : BglHighlightingSettingsFragment.DEFAULT_VALUES.get(BglHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE);
+    float highMin = highMinPreference != null ? Float.valueOf(highMinPreference.value) : BglHighlightingSettingsFragment.DEFAULT_VALUES.get(BglHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE);
+    float actionRequiredMin = actionRequiredMinPreference != null ? Float.valueOf(actionRequiredMinPreference.value) : BglHighlightingSettingsFragment.DEFAULT_VALUES.get(BglHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE);
+
+    graph.setValueAxisMidLabels(new float[]{ idealMin, highMin, actionRequiredMin });
+
+    Resources resources = graph.getResources();
+    float[] rangeValues = new float[]{ 0.0f, idealMin, highMin, actionRequiredMin, maxValue };
+    int[] rangeColors = new int[] { resources.getColor(R.color.red), resources.getColor(R.color.green), resources.getColor(R.color.graph_yellow), resources.getColor(R.color.red) };
+    graph.setRangeHighlights(rangeValues, rangeColors, TimeGraph.DISPLAY_MODE_UNDERLINE_WITH_FADE, false);
   }
 }

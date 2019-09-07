@@ -88,6 +88,24 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
     }
   }
 
+  int loadToTimestamp(final long timestamp)
+  {
+    while (m_values.get(m_values.size() - 1).actualTimestamp > timestamp)
+    {
+      List<DataEntry> newEntries = AppDatabase.getInstance().dataEntriesDao().getPreviousEntries(m_values.get(
+          m_values.size() - 1).actualTimestamp, EntryListFragment.LOAD_COUNT);
+      m_values.addAll(newEntries);
+    }
+
+    int targetIndex = m_values.size() - 1;
+    while (m_values.get(targetIndex).actualTimestamp != timestamp)
+    {
+      targetIndex--;
+    }
+
+    return targetIndex;
+  }
+
   DataEntry getEntry(View view)
   {
     DataEntry entry = null;

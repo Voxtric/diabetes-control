@@ -452,7 +452,7 @@ public class MainActivity extends AwaitRecoveryActivity
     }
   }
 
-  private void navigateToPageFragment(int fragmentIndex)
+  void navigateToPageFragment(int fragmentIndex)
   {
     BottomNavigationView navigation = findViewById(R.id.navigation);
     navigation.getMenu().getItem(fragmentIndex).setChecked(true);
@@ -718,7 +718,7 @@ public class MainActivity extends AwaitRecoveryActivity
     viewPager.setOffscreenPageLimit(2);
   }
 
-  public void openEntryMoreMenu(View view)
+  public void openEntryMoreMenu(@NonNull View view)
   {
     final ViewGroup dataView = view instanceof LinearLayout ? (ViewGroup)view : (ViewGroup)view.getParent();
     final ViewGroup listView = (ViewGroup)dataView.getParent();
