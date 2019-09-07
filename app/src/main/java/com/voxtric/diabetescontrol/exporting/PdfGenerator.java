@@ -15,6 +15,9 @@ import java.util.List;
 
 public abstract class PdfGenerator
 {
+  private static final float POINTS_PER_INCH = 72;
+  public static final float MM_PER_INCH = 1 / (10 * 2.54f) * POINTS_PER_INCH;
+
   protected static class PDFColor
   {
     int r;
@@ -43,24 +46,24 @@ public abstract class PdfGenerator
 
   private final PDDocument m_document;
   private PDPageContentStream m_content = null;
-  float m_pageWidth = 0.0f;
+  float m_writableWidth = 0.0f;
 
   PdfGenerator()
   {
     m_document = new PDDocument();
   }
 
-  void addPage() throws IOException
+  void addPage(PDRectangle dimensions, float pageBorder) throws IOException
   {
     if (m_content != null)
     {
       m_content.close();
     }
 
-    PDPage page = new PDPage(PDRectangle.A4);
+    PDPage page = new PDPage(dimensions);
     m_document.addPage(page);
     m_content = new PDPageContentStream(m_document, page);
-    m_pageWidth = page.getMediaBox().getWidth() - (BORDER * 2.0f);
+    m_writableWidth = dimensions.getWidth() - (pageBorder * 2.0f);
   }
 
   ByteArrayOutputStream getOutputStream() throws IOException

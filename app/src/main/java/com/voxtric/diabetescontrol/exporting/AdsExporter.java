@@ -21,7 +21,7 @@ import com.voxtric.diabetescontrol.database.Preference;
 import com.voxtric.diabetescontrol.database.PreferencesDao;
 import com.voxtric.diabetescontrol.database.TargetChange;
 
-public class AdsExporter extends PdfExporter
+public class AdsExporter extends PdfGenerator implements IExporter
 {
   private static final float DAY_HEADER_WIDTH = 30.0f;
   private static final float DAY_HEADER_HEIGHT = 80.0f;
@@ -30,10 +30,31 @@ public class AdsExporter extends PdfExporter
   private static final float EXTRAS_MIN_WIDTH = 140.0f;
   private static final float DATA_GAP = FONT_SIZE_MEDIUM * 1.6f;
 
+  private List<Week> m_weeks = null;
+
+  @Override
+  public byte[] export(List<DataEntry> entries, ExportForegroundService exportForegroundService)
+  {
+    m_weeks = Week.splitEntries(entries, AppDatabase.getInstance().eventsDao());
+    return createPDF(exportForegroundService);
+  }
+
   @Override
   public String getFormatName()
   {
     return "ADS";
+  }
+
+  @Override
+  public String getFileExtension()
+  {
+    return "pdf";
+  }
+
+  @Override
+  public String getFileMimeType()
+  {
+    return "application/pdf";
   }
 
   @Override
@@ -76,7 +97,7 @@ public class AdsExporter extends PdfExporter
 
   private void addPage(Context context, Week week) throws IOException
   {
-    super.addPage();
+    super.addPage(PDRectangle.A4, BORDER);
     final String[] DAYS = context.getResources().getStringArray(R.array.days);
     float height = PDRectangle.A4.getHeight() - BORDER;
 
@@ -101,12 +122,12 @@ public class AdsExporter extends PdfExporter
       targetString = context.getString(R.string.blood_glucose_targets, targetChange.preMealLower,
           targetChange.preMealUpper, targetChange.postMealLower, targetChange.postMealUpper);
     }
-    height = drawText(FONT, FONT_SIZE_MEDIUM, targetString, BORDER + (m_pageWidth / 3.0f), height);
+    height = drawText(FONT, FONT_SIZE_MEDIUM, targetString, BORDER + (m_writableWidth / 3.0f), height);
 
     // Event boxes for each day.
     Map<String, Float> eventStartXMap = new HashMap<>();
     height -= VERTICAL_SPACE;
-    float eventWidth = Math.min((m_pageWidth - DAY_HEADER_WIDTH - EXTRAS_MIN_WIDTH) / week.events.size(), EVENT_MAX_WIDTH);
+    float eventWidth = Math.min((m_writableWidth - DAY_HEADER_WIDTH - EXTRAS_MIN_WIDTH) / week.events.size(), EVENT_MAX_WIDTH);
     float startX = BORDER + DAY_HEADER_WIDTH;
     for (Event event : week.events)
     {
@@ -130,7 +151,7 @@ public class AdsExporter extends PdfExporter
       startX += eventWidth;
     }
     height -= EVENT_HEADER_HEIGHT;
-    float availableSpace = m_pageWidth - startX + BORDER;
+    float availableSpace = m_writableWidth - startX + BORDER;
 
     // Day headers and extras.
     float tempHeight = height + (FONT_SIZE_LARGE * 2.2f);
@@ -223,6 +244,6 @@ public class AdsExporter extends PdfExporter
 
     preference = preferencesDao.getPreference(context.getResources().getResourceName(R.id.edit_text_contact_number));
     String contactNumber = preference != null && preference.value.length() > 0  ? preference.value : "...........................................";
-    drawText(FONT, FONT_SIZE_MEDIUM, context.getString(R.string.contact_number, contactNumber), BORDER + (m_pageWidth / 2.0f), height);
+    drawText(FONT, FONT_SIZE_MEDIUM, context.getString(R.string.contact_number, contactNumber), BORDER + (m_writableWidth / 2.0f), height);
   }
 }

@@ -98,6 +98,14 @@ This device does not have an application installed capable of opening \'%1$s\' f
     <string name="export_nhs_success_notification_text">NHS PDF export successful.</string>
     <string name="export_nhs_fail_notification_title">NHS PDF Export Failed</string>
 
+    <string name="target_pre_meal_blood_glucose_range">My target pre-meal blood glucose range (mmol/L):</string>
+    <string name="target_post_meal_blood_glucose_range">My target post-meal blood glucose range (mmol/L):</string>
+    <string name="target_blood_glucose_range_empty">. . . . . . . . . . . . . . . . . . . . . . . . . . . .</string>
+
+    <string name="insulin_details_header">Name of insulin, the insulin dose, and injection time</string>
+    <string name="blood_glucose_levels_header">Blood glucose level (mmol/L)</string>
+    <string name="key_events_header">Key events/ Notes</string>
+
 
 
     <!-- ADS Export -->
