@@ -1,11 +1,11 @@
 package com.voxtric.diabetescontrol;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +15,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -38,7 +37,6 @@ public class EntryListFragment extends Fragment
   private static final int LOAD_BOUNDARY = 10;
 
   private EntryListRecyclerViewAdapter m_adapter = null;
-  private int m_recyclerViewScroll = 0;
 
   public EntryListFragment()
   {
@@ -60,15 +58,6 @@ public class EntryListFragment extends Fragment
     if (activity != null)
     {
       final RecyclerView recyclerView = activity.findViewById(R.id.recycler_view_entry_list);
-      recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
-      {
-        @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy)
-        {
-          super.onScrolled(recyclerView, dx, dy);
-          m_recyclerViewScroll += dy;
-        }
-      });
       final GridLayoutManager layoutManager = new GridLayoutManager(activity, 1);
       recyclerView.setLayoutManager(layoutManager);
       refreshEntryList();
@@ -109,7 +98,17 @@ public class EntryListFragment extends Fragment
           }
           else
           {
-            backToTopButton.hide();
+            // Listener necessary to fix Google's botched implementation.
+            backToTopButton.hide(new FloatingActionButton.OnVisibilityChangedListener()
+            {
+              @SuppressLint("RestrictedApi")
+              @Override
+              public void onHidden(FloatingActionButton fab)
+              {
+                super.onShown(fab);
+                fab.setVisibility(View.INVISIBLE);
+              }
+            });
           }
         }
       });
@@ -152,7 +151,7 @@ public class EntryListFragment extends Fragment
               @Override
               public void run()
               {
-                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                final LinearLayoutManager layoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
                 if (layoutManager != null)
                 {
                   View view = layoutManager.findViewByPosition(itemPosition);
