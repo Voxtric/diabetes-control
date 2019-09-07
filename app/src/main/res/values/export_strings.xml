@@ -123,14 +123,6 @@ This device does not have an application installed capable of opening \'%1$s\' f
 
 
 
-    <!-- Excel Export -->
-    <string name="exporting_excel_notification_title">Excel Spreadsheet Exporting</string>
-    <string name="export_excel_success_notification_title">Excel Spreadsheet Export Finished</string>
-    <string name="export_excel_success_notification_text">Excel spreadsheet export successful.</string>
-    <string name="export_excel_fail_notification_title">Excel Spreadsheet Export Failed</string>
-
-
-
     <!-- CSV Export -->
     <string name="exporting_csv_notification_title">CSV Spreadsheet Exporting</string>
     <string name="export_csv_success_notification_title">CSV Spreadsheet Export Finished</string>

@@ -133,9 +133,6 @@ public class ExportDurationDialogFragment extends DialogFragment
               case R.id.navigation_export_ads:
                 titleId = R.string.exporting_ads_notification_title;
                 break;
-              case R.id.navigation_export_excel:
-                titleId = R.string.exporting_excel_notification_title;
-                break;
               case R.id.navigation_export_csv:
                 titleId = R.string.exporting_csv_notification_title;
                 break;

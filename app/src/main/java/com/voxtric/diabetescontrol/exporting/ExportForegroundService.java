@@ -181,11 +181,10 @@ public class ExportForegroundService extends ForegroundService
     switch (exportType)
     {
     case R.id.navigation_export_nhs:
+      exporter = new NhsExporter();
       break;
     case R.id.navigation_export_ads:
       exporter = new AdsExporter();
-      break;
-    case R.id.navigation_export_excel:
       break;
     case R.id.navigation_export_csv:
       exporter = new CsvExporter();
@@ -419,12 +418,6 @@ public class ExportForegroundService extends ForegroundService
         successNotificationTitleId = R.string.export_ads_success_notification_title;
         successNotificationTextId = R.string.export_ads_success_notification_text;
         failNotificationTitleId = R.string.export_ads_fail_notification_title;
-        break;
-      case R.id.navigation_export_excel:
-        ongoingNotificationTitleId = R.string.exporting_excel_notification_title;
-        successNotificationTitleId = R.string.export_excel_success_notification_title;
-        successNotificationTextId = R.string.export_excel_success_notification_text;
-        failNotificationTitleId = R.string.export_excel_fail_notification_title;
         break;
       case R.id.navigation_export_csv:
         ongoingNotificationTitleId = R.string.exporting_csv_notification_title;

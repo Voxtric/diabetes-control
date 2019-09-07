@@ -16,10 +16,6 @@
                     android:title="@string/title_export_ads"/>
 
                 <item
-                    android:id="@+id/navigation_export_excel"
-                    android:title="@string/title_export_excel"/>
-
-                <item
                     android:id="@+id/navigation_export_csv"
                     android:title="@string/title_export_csv"/>
             </menu>

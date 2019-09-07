@@ -21,7 +21,7 @@ import com.voxtric.diabetescontrol.database.Preference;
 import com.voxtric.diabetescontrol.database.PreferencesDao;
 import com.voxtric.diabetescontrol.database.TargetChange;
 
-public class AdsExporter extends PdfGenerator implements IExporter
+public class AdsExporter extends PdfExporter
 {
   private static final float DAY_HEADER_WIDTH = 30.0f;
   private static final float DAY_HEADER_HEIGHT = 80.0f;
@@ -30,31 +30,10 @@ public class AdsExporter extends PdfGenerator implements IExporter
   private static final float EXTRAS_MIN_WIDTH = 140.0f;
   private static final float DATA_GAP = FONT_SIZE_MEDIUM * 1.6f;
 
-  private List<Week> m_weeks = null;
-
-  @Override
-  public byte[] export(List<DataEntry> entries, ExportForegroundService exportForegroundService)
-  {
-    m_weeks = Week.splitEntries(entries, AppDatabase.getInstance().eventsDao());
-    return createPDF(exportForegroundService);
-  }
-
   @Override
   public String getFormatName()
   {
     return "ADS";
-  }
-
-  @Override
-  public String getFileExtension()
-  {
-    return "pdf";
-  }
-
-  @Override
-  public String getFileMimeType()
-  {
-    return "application/pdf";
   }
 
   @Override
