@@ -79,16 +79,21 @@ public class EntryListFragment extends Fragment
         @Override
         public void onClick(View view)
         {
-          RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(activity)
+          recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
           {
             @Override
-            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics)
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState)
             {
-              return (displayMetrics.densityDpi / (float)m_recyclerViewScroll) * 0.3f;
+              super.onScrollStateChanged(recyclerView, newState);
+              if (newState == RecyclerView.SCROLL_STATE_IDLE)
+              {
+                recyclerView.scrollToPosition(0);
+                recyclerView.removeOnScrollListener(this);
+              }
             }
-          };
-          smoothScroller.setTargetPosition(0);
-          layoutManager.startSmoothScroll(smoothScroller);
+          });
+          int position = recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0));
+          recyclerView.smoothScrollToPosition(Math.max(position - 5, 0));
         }
       });
 
