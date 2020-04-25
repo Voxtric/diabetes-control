@@ -1,6 +1,7 @@
 package com.voxtric.diabetescontrol;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -365,11 +366,20 @@ public class MainActivity extends AwaitRecoveryActivity
 
   private void performExport(int exportOptionItemId)
   {
-    Intent intent = new Intent(this, ExportForegroundService.class);
+    final Intent intent = new Intent(this, ExportForegroundService.class);
     intent.putExtra("export_type", exportOptionItemId);
-    ExportDurationDialogFragment dialog = new ExportDurationDialogFragment(intent);
-    dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
-    dialog.initialiseExportButton();
+
+    @SuppressLint("DefaultLocale") final String lastExportTimestampPreference = String.format("last_%d_export_timestamp", exportOptionItemId);
+    Preference.get(this, lastExportTimestampPreference, "-1", new Preference.ResultRunnable()
+    {
+      @Override
+      public void run()
+      {
+        ExportDurationDialogFragment dialog = new ExportDurationDialogFragment(intent, Long.valueOf(getResult()));
+        dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
+        dialog.initialiseExportButton();
+      }
+    });
   }
 
   public void launchExportProgressDialog(String messageTitle)

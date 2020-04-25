@@ -1,5 +1,6 @@
 package com.voxtric.diabetescontrol.exporting;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -25,6 +26,7 @@ import java.util.Date;
 
 import com.voxtric.diabetescontrol.MainActivity;
 import com.voxtric.diabetescontrol.R;
+import com.voxtric.diabetescontrol.database.Preference;
 
 public class ExportDurationDialogFragment extends DialogFragment
 {
@@ -35,13 +37,15 @@ public class ExportDurationDialogFragment extends DialogFragment
   private Button m_endDateButton = null;
 
   private Intent m_exportIntent;
+  private long m_lastExportTimestamp;
 
   private long m_withinTimePeriodStartTimeStamp = -1;
   private long m_withinTimePeriodEndTimeStamp = -1;
 
-  public ExportDurationDialogFragment(Intent exportIntent)
+  public ExportDurationDialogFragment(Intent exportIntent, long lastExportTimestamp)
   {
     m_exportIntent = exportIntent;
+    m_lastExportTimestamp = lastExportTimestamp;
   }
 
   @NonNull
@@ -64,13 +68,17 @@ public class ExportDurationDialogFragment extends DialogFragment
       initialiseDateButton(m_startDateButton);
       initialiseDateButton(m_endDateButton);
 
-      final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
-      final long lastExportTimeStamp = preferences.getLong("last_export_time_stamp", -1);
-      if (lastExportTimeStamp == -1)
+      if (m_lastExportTimestamp == -1)
       {
         view.findViewById(R.id.radio_button_since_last_export).setEnabled(false);
       }
+
+      final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
       int lastChosen = preferences.getInt("last_export_duration_chosen", 0);
+      if ((lastChosen == 1) && (m_lastExportTimestamp == -1))
+      {
+        lastChosen = 0;
+      }
       switch (lastChosen)
       {
       default:
@@ -102,7 +110,9 @@ public class ExportDurationDialogFragment extends DialogFragment
             @Override
             public void onClick(DialogInterface dialog, int which)
             {
-              preferences.edit().putLong("last_export_time_stamp", System.currentTimeMillis()).apply();
+              int exportType = m_exportIntent.getIntExtra("export_type", -1);
+              @SuppressLint("DefaultLocale") final String lastExportTimestampPreference = String.format("last_%d_export_timestamp", exportType);
+              Preference.put(lastExportTimestampPreference, String.valueOf(System.currentTimeMillis()));
 
               int selectedID = ((RadioGroup)view.findViewById(R.id.radio_group_duration)).getCheckedRadioButtonId();
               if (selectedID == view.findViewById(R.id.radio_button_all_recorded).getId())
@@ -114,7 +124,7 @@ public class ExportDurationDialogFragment extends DialogFragment
               else if (selectedID == view.findViewById(R.id.radio_button_since_last_export).getId())
               {
                 preferences.edit().putInt("last_export_duration_chosen", 1).apply();
-                m_exportIntent.putExtra("export_start", lastExportTimeStamp);
+                m_exportIntent.putExtra("export_start", m_lastExportTimestamp);
                 m_exportIntent.putExtra("export_end", Long.MAX_VALUE);
               }
               else if (selectedID == view.findViewById(R.id.radio_button_within_time_period).getId())
@@ -125,7 +135,7 @@ public class ExportDurationDialogFragment extends DialogFragment
               }
 
               @StringRes int titleId;
-              switch (m_exportIntent.getIntExtra("export_type", -1))
+              switch (exportType)
               {
               case R.id.navigation_export_nhs:
                 titleId = R.string.exporting_nhs_notification_title;
