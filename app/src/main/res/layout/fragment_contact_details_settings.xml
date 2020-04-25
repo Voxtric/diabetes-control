@@ -21,7 +21,6 @@
     <View
         android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_marginLeft="@dimen/text_box_padding"
         android:layout_marginStart="@dimen/text_box_padding"
         app:layout_constraintTop_toTopOf="@id/title_contact_details_settings"
         app:layout_constraintBottom_toBottomOf="@id/title_contact_details_settings"
@@ -37,15 +36,17 @@
         style="@style/BasicText"
         android:text="@string/contact_name_label"/>
 
-    <EditText
+    <com.autofit.et.lib.AutoFitEditText
         android:id="@+id/edit_text_contact_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/text_margin"
         android:layout_marginStart="@dimen/text_margin"
         app:layout_constraintTop_toBottomOf="@id/title_contact_details_settings"
         app:layout_constraintLeft_toRightOf="@id/contact_number_label"
         app:layout_constraintRight_toRightOf="parent"
+        android:enabled="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:background="@drawable/back"
         android:hint="@string/contact_name_hint"
         android:gravity="center_horizontal"
@@ -68,7 +69,6 @@
         android:id="@+id/edit_text_contact_number"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/text_margin"
         android:layout_marginStart="@dimen/text_margin"
         app:layout_constraintTop_toTopOf="@id/contact_number_label"
         app:layout_constraintLeft_toRightOf="@id/contact_number_label"
@@ -78,7 +78,7 @@
         android:gravity="center_horizontal"
         style="@style/BasicText"
         android:inputType="phone"
-        android:imeOptions="actionDone"/>
+        android:imeOptions="actionDone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -29,6 +29,6 @@
 
 
     <!-- Content Descriptions -->
-    <string name="icon_content_description">Diabetes Control Icon</string>
+    <string name="diabetes_control_icon_content_description">Diabetes Control Icon</string>
     <string name="voxtric_icon_content_description">Voxtric Icon</string>
 </resources>

@@ -74,6 +74,7 @@ dependencies {
     implementation 'com.shuhart.bubblepagerindicator:bubblepagerindicator:1.1.2'
     implementation 'com.tom_roush:pdfbox-android:1.8.10.1'
     implementation 'com.opencsv:opencsv:4.6'
+    implementation 'com.github.ViksaaSkool:AutoFitEditText:53238e2d29'
 
     implementation 'com.voxtric.timegraph:timegraph:0.7.3'
 }

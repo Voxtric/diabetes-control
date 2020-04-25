@@ -17,7 +17,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/icon_content_description"
+        android:contentDescription="@string/diabetes_control_icon_content_description"
         android:scaleType="fitXY"
         android:src="@drawable/app_icon_rounded" />
 
