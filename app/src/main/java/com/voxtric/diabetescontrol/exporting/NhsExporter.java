@@ -62,13 +62,20 @@ public class NhsExporter extends PdfGenerator implements IExporter
     try
     {
       int dayCount = m_days.size();
-      int index = 0;
-      while (index < dayCount)
+      int dayIndex = 0;
+      while (dayIndex < dayCount)
       {
-        int entriesToAdd = Math.min(MAX_DAYS_PER_PAGE, dayCount - index);
-        addPage(exportForegroundService, index, entriesToAdd);
-        exportForegroundService.incrementProgress(entriesToAdd);
-        index += entriesToAdd;
+        int daysToAdd = Math.min(MAX_DAYS_PER_PAGE, dayCount - dayIndex);
+        addPage(exportForegroundService, dayIndex, daysToAdd);
+        int oldDayIndex = dayIndex;
+        dayIndex += daysToAdd;
+
+        int entriesAdded = 0;
+        for (int i = oldDayIndex; i < dayIndex; i++)
+        {
+          entriesAdded += m_days.get(i).entries.size();
+        }
+        exportForegroundService.incrementProgress(entriesAdded);
       }
       return getOutputStream().toByteArray();
     }
