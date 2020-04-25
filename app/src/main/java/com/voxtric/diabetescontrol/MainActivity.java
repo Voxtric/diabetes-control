@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -20,12 +21,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.MenuRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -222,10 +225,11 @@ public class MainActivity extends AwaitRecoveryActivity
   }
 
   @Override
-  public boolean onOptionsItemSelected(@NonNull MenuItem menuItem)
+  public boolean onOptionsItemSelected(@NonNull final MenuItem menuItem)
   {
     Intent intent;
-    switch (menuItem.getItemId())
+    @MenuRes final int menuItemId = menuItem.getItemId();
+    switch (menuItemId)
     {
     case R.id.navigation_export_nhs:
     case R.id.navigation_export_ads:
@@ -238,16 +242,27 @@ public class MainActivity extends AwaitRecoveryActivity
       {
         Toast.makeText(this, R.string.export_already_in_progress_message, Toast.LENGTH_LONG).show();
       }
+      else if ((menuItemId == R.id.navigation_export_nhs) && !getPreferences(MODE_PRIVATE).getBoolean("nhs_warn_dont_show_again", false))
+      {
+        new AlertDialog.Builder(this)
+            .setTitle(R.string.nhs_export_warn_title)
+            .setView(R.layout.dialog_nhs_warn)
+            .setNegativeButton(R.string.nhs_export_warn_negative_button, null)
+            .setPositiveButton(R.string.nhs_export_want_positive_button, new DialogInterface.OnClickListener()
+            {
+              @Override
+              public void onClick(DialogInterface dialogInterface, int i)
+              {
+                performExport(menuItemId);
+              }
+            })
+            .show();
+      }
       else
       {
-        intent = new Intent(this, ExportForegroundService.class);
-        intent.putExtra("export_type", menuItem.getItemId());
-        ExportDurationDialogFragment dialog = new ExportDurationDialogFragment(intent);
-        dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
-        dialog.initialiseExportButton();
+        performExport(menuItemId);
       }
-      return true;
-
+    return true;
 
     case R.id.navigation_about:
       intent = new Intent(this, AboutActivity.class);
@@ -346,6 +361,15 @@ public class MainActivity extends AwaitRecoveryActivity
       }
     }
     return null;
+  }
+
+  private void performExport(int exportOptionItemId)
+  {
+    Intent intent = new Intent(this, ExportForegroundService.class);
+    intent.putExtra("export_type", exportOptionItemId);
+    ExportDurationDialogFragment dialog = new ExportDurationDialogFragment(intent);
+    dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
+    dialog.initialiseExportButton();
   }
 
   public void launchExportProgressDialog(String messageTitle)
@@ -447,6 +471,12 @@ public class MainActivity extends AwaitRecoveryActivity
         progressBar.setProgress(progress);
       }
     }
+  }
+
+  public void updateNHSWarnDontShowAgain(final View view)
+  {
+    SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+    preferences.edit().putBoolean("nhs_warn_dont_show_again", ((CheckBox)view).isChecked()).apply();
   }
 
   void navigateToPageFragment(int fragmentIndex)
