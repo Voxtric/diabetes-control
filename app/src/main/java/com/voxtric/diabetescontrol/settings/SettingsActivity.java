@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 
 import com.voxtric.diabetescontrol.AwaitRecoveryActivity;
 import com.voxtric.diabetescontrol.BackupForegroundService;
+import com.voxtric.diabetescontrol.MainActivity;
 import com.voxtric.diabetescontrol.R;
 import com.voxtric.diabetescontrol.RecoveryForegroundService;
 import com.voxtric.diabetescontrol.database.Preference;
@@ -38,6 +40,20 @@ public class SettingsActivity extends AwaitRecoveryActivity
     }
 
     actOnIntent(getIntent());
+  }
+
+  @Override
+  protected void onStart()
+  {
+    SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+    boolean hasRecoveryMessage = preferences.getBoolean("has_recovery_message", false);
+
+    super.onStart();
+
+    if (hasRecoveryMessage)
+    {
+      applyResultFlag(MainActivity.RESULT_UPDATE_GRAPH_DATA);
+    }
   }
 
   @Override
@@ -70,6 +86,7 @@ public class SettingsActivity extends AwaitRecoveryActivity
   @Override
   public void onNewIntent(Intent intent)
   {
+    super.onNewIntent(intent);
     actOnIntent(intent);
   }
 

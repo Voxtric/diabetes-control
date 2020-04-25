@@ -148,27 +148,41 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
     return TimeAxisLabelData.autoLabel(data);
   }
 
-  void refreshGraph(boolean animate, boolean moveToEnd)
+  void refreshGraph(final boolean animate, boolean moveToEnd)
   {
     Activity activity = getActivity();
     if (activity != null)
     {
-      TimeGraph graph = activity.findViewById(R.id.graph);
+      final TimeGraph graph = activity.findViewById(R.id.graph);
       if (!moveToEnd)
       {
         graph.refresh(this, animate);
       }
       else
       {
-        DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
-        DataEntry lastEntry = dataEntriesDao.findFirstBefore(Long.MAX_VALUE);
-        m_maxValue = Math.max(dataEntriesDao.getMaxBloodGlucoseLevel(), 16.0f);
-        if (lastEntry != null)
+        AsyncTask.execute(new Runnable()
         {
-          long endTimestamp = lastEntry.actualTimestamp;
-          long startTimestamp = endTimestamp - DEFAULT_DISPLAY_DURATION;
-          graph.setVisibleDataPeriod(startTimestamp, endTimestamp, EntryGraphFragment.this, true);
-        }
+          @Override
+          public void run()
+          {
+            DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
+            DataEntry lastEntry = dataEntriesDao.findFirstBefore(Long.MAX_VALUE);
+            m_maxValue = Math.max(dataEntriesDao.getMaxBloodGlucoseLevel(), 16.0f);
+            if (lastEntry != null)
+            {
+              final long endTimestamp = lastEntry.actualTimestamp;
+              final long startTimestamp = endTimestamp - DEFAULT_DISPLAY_DURATION;
+              getActivity().runOnUiThread(new Runnable()
+              {
+                @Override
+                public void run()
+                {
+                  graph.setVisibleDataPeriod(startTimestamp, endTimestamp, EntryGraphFragment.this, animate);
+                }
+              });
+            }
+          }
+        });
       }
     }
   }

@@ -74,6 +74,7 @@ public class MainActivity extends AwaitRecoveryActivity
   private static final int REQUEST_EDIT_SETTINGS = 100;
   public static final int RESULT_UPDATE_EVENT_SPINNER = 0x01;
   public static final int RESULT_UPDATE_BGL_HIGHLIGHTING = 0x02;
+  public static final int RESULT_UPDATE_GRAPH_DATA = 0x04;
 
   private static final int REQUEST_CHOOSE_DIRECTORY = 101;
 
@@ -214,6 +215,7 @@ public class MainActivity extends AwaitRecoveryActivity
   @Override
   public void onNewIntent(Intent intent)
   {
+    super.onNewIntent(intent);
     actOnIntent(intent);
   }
 
@@ -289,10 +291,14 @@ public class MainActivity extends AwaitRecoveryActivity
       {
         getFragment(NewEntryFragment.class).updateEventSpinner();
       }
-      else if ((resultCode & RESULT_UPDATE_BGL_HIGHLIGHTING) == RESULT_UPDATE_BGL_HIGHLIGHTING)
+      if ((resultCode & RESULT_UPDATE_BGL_HIGHLIGHTING) == RESULT_UPDATE_BGL_HIGHLIGHTING)
       {
         getFragment(EntryListFragment.class).refreshEntryList();
         getFragment(EntryGraphFragment.class).updateRangeHighlighting();
+      }
+      if ((resultCode & RESULT_UPDATE_GRAPH_DATA) == RESULT_UPDATE_GRAPH_DATA)
+      {
+        getFragment(EntryGraphFragment.class).refreshGraph(false, true);
       }
       break;
     case REQUEST_CHOOSE_DIRECTORY:
