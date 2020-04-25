@@ -787,8 +787,8 @@ public class MainActivity extends AwaitRecoveryActivity
     ((TextView)view.findViewById(R.id.date_value)).setText(dateString);
     ((TextView)view.findViewById(R.id.time_value)).setText(timeString);
     ((TextView)view.findViewById(R.id.event_value)).setText(entry.event);
-    ((TextView)view.findViewById(R.id.insulin_name_value)).setText(entry.insulinDose > 0 ? entry.insulinName : "N/A");
-    ((TextView)view.findViewById(R.id.insulin_dose_value)).setText(entry.insulinDose > 0 ? String.valueOf(entry.insulinDose) : "N/A");
+    ((TextView)view.findViewById(R.id.insulin_name_value)).setText(entry.insulinDose > 0 ? entry.insulinName : activity.getString(R.string.not_applicable));
+    ((TextView)view.findViewById(R.id.insulin_dose_value)).setText(entry.insulinDose > 0 ? String.valueOf(entry.insulinDose) : activity.getString(R.string.not_applicable));
     ((TextView)view.findViewById(R.id.blood_glucose_level_value)).setText(String.valueOf(entry.bloodGlucoseLevel));
 
     AsyncTask.execute(new Runnable()

@@ -176,11 +176,11 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
         m_timeStampTextView.setText(String.format("%s\n%s", dateString, timeString));
       }
       m_bloodGlucoseLevelTextView.setText(String.valueOf(entry.bloodGlucoseLevel));
-      m_insulinDoseTextView.setText(entry.insulinDose > 0 ? String.valueOf(entry.insulinDose) : "N/A");
+      m_insulinDoseTextView.setText(entry.insulinDose > 0 ? String.valueOf(entry.insulinDose) : m_activity.getString(R.string.not_applicable));
       m_eventTextView.setText(entry.event);
       if (m_insulinNameTextView != null)
       {
-        m_insulinNameTextView.setText((entry.insulinName != null && entry.insulinName.length() > 0) ? entry.insulinName : "N/A");
+        m_insulinNameTextView.setText((entry.insulinName != null && entry.insulinName.length() > 0) ? entry.insulinName : m_activity.getString(R.string.not_applicable));
       }
 
       if (m_highlightingValues != null)

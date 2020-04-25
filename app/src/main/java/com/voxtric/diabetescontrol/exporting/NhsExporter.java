@@ -9,6 +9,10 @@ import com.voxtric.diabetescontrol.database.DataEntry;
 import com.voxtric.diabetescontrol.database.TargetChange;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -18,6 +22,7 @@ public class NhsExporter extends PdfGenerator implements IExporter
   private static final int MAX_DAYS_PER_PAGE = 11;
 
   private static final float FONT_SIZE_MEDIUM = 10.0f;
+  private static final float FONT_SIZE_TINY = 5.0f;
 
   private static final float BORDER = 10.0f;
   private static final float NORMAL_COLUMN_WIDTH = FONT_SIZE_MEDIUM * 3.4f;
@@ -77,7 +82,6 @@ public class NhsExporter extends PdfGenerator implements IExporter
   private void addPage(Context context, int startIndex, int entriesToAdd) throws IOException
   {
     super.addPage(DIMENSIONS, BORDER);
-    final String[] DAYS = context.getResources().getStringArray(R.array.days);
     float height = DIMENSIONS.getHeight() - BORDER;
 
     // Pre-meal and post-meal targets.
@@ -109,12 +113,31 @@ public class NhsExporter extends PdfGenerator implements IExporter
     // Primary data.
     float boxStartHeight = height;
 
+    int endIndex = Math.min(startIndex + MAX_DAYS_PER_PAGE, m_days.size()) - 1;
+    List<DataEntry> data = AppDatabase.getInstance().dataEntriesDao().findAllBetween(m_days.get(startIndex).dayBeginning, m_days.get(endIndex).dayEnding);
+    HashSet<String> insulinUsed = new HashSet<>();
+    StringBuilder insulinUsedStringBuilder = new StringBuilder();
+    for (DataEntry dataEntry : data)
+    {
+      if (dataEntry.insulinName != null)
+      {
+        String insulinName = dataEntry.insulinName.trim();
+        if (!insulinName.equals(context.getString(R.string.not_applicable)) && !insulinUsed.contains(dataEntry.insulinName))
+        {
+          insulinUsed.add(dataEntry.insulinName);
+          insulinUsedStringBuilder.append(dataEntry.insulinName);
+          insulinUsedStringBuilder.append(", ");
+        }
+      }
+    }
+    String insulinUsedString = insulinUsedStringBuilder.substring(0, insulinUsedStringBuilder.length() - 2);
+
     // Headers.
     float priorHeight = height;
     float afterHeight = height - (FONT_SIZE_MEDIUM * 2.2f) - LINE_SPACING;
     drawBox(BORDER, priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 1.0f), afterHeight, WHITE, BLUE);
-    drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 1.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 5.0f), afterHeight, BLUE, null);
     drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 5.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 13.0f), afterHeight, WHITE, BLUE);
+    drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 1.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 5.0f), afterHeight, BLUE, null);
     drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 13.0f), priorHeight, m_writableWidth + BORDER, afterHeight, BLUE, null);
 
     float centeredHeaderHeight = height - (FONT_SIZE_MEDIUM * 1.1f);
@@ -124,9 +147,123 @@ public class NhsExporter extends PdfGenerator implements IExporter
     drawCenteredTextParagraphed(FONT_BOLD, FONT_SIZE_MEDIUM, context.getString(R.string.key_events_header), 0.0f, (BORDER + m_writableWidth) - (remainingSpace * 0.5f), centeredHeaderHeight, remainingSpace);
     height = afterHeight;
 
+    // Sub-headers
+    float SUBHEADING_LENGTH = 72.0f;
+    priorHeight = height;
+    afterHeight = height - SUBHEADING_LENGTH - 4.0f;
+    height -= 2.0f + (SUBHEADING_LENGTH * 0.5f);
+    drawBox(BORDER, priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 1.0f), afterHeight, WHITE, BLUE);
+    drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 5.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 6.0f), afterHeight, WHITE, BLUE);
+    drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 6.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 7.0f), afterHeight, WHITE, BLUE);
+    drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 7.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 8.0f), afterHeight, WHITE, BLUE);
+    drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 8.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 9.0f), afterHeight, WHITE, BLUE);
+    drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 9.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 10.0f), afterHeight, WHITE, BLUE);
+    drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 10.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 11.0f), afterHeight, WHITE, BLUE);
+    drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 11.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 12.0f), afterHeight, WHITE, BLUE);
+    drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 12.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 13.0f), afterHeight, WHITE, BLUE);
+    drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 1.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 5.0f), afterHeight, BLUE, null);
+    drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 13.0f), priorHeight, m_writableWidth + BORDER, afterHeight, BLUE, null);
 
+    drawCenteredTextParagraphed(FONT, FONT_SIZE_MEDIUM, context.getString(R.string.date), 90.0f, BORDER + (NORMAL_COLUMN_WIDTH * 0.6f), height, SUBHEADING_LENGTH);
+    drawCenteredTextParagraphed(FONT, FONT_SIZE_MEDIUM, insulinUsedString, 0.0f, BORDER + (NORMAL_COLUMN_WIDTH * 3.0f), height, NORMAL_COLUMN_WIDTH * 4.0f);
 
+    String[] eventStrings = context.getResources().getStringArray(R.array.nhs_event_names);
+    drawCenteredTextParagraphed(FONT, FONT_SIZE_MEDIUM, eventStrings[0], 90.0f, BORDER + (NORMAL_COLUMN_WIDTH * 5.45f), height, SUBHEADING_LENGTH);
+    drawCenteredTextParagraphed(FONT, FONT_SIZE_MEDIUM, eventStrings[1], 90.0f, BORDER + (NORMAL_COLUMN_WIDTH * 6.45f), height, SUBHEADING_LENGTH);
+    drawCenteredTextParagraphed(FONT, FONT_SIZE_MEDIUM, eventStrings[2], 90.0f, BORDER + (NORMAL_COLUMN_WIDTH * 7.45f), height, SUBHEADING_LENGTH);
+    drawCenteredTextParagraphed(FONT, FONT_SIZE_MEDIUM, eventStrings[3], 90.0f, BORDER + (NORMAL_COLUMN_WIDTH * 8.45f), height, SUBHEADING_LENGTH);
+    drawCenteredTextParagraphed(FONT, FONT_SIZE_MEDIUM, eventStrings[4], 90.0f, BORDER + (NORMAL_COLUMN_WIDTH * 9.45f), height, SUBHEADING_LENGTH);
+    drawCenteredTextParagraphed(FONT, FONT_SIZE_MEDIUM, eventStrings[5], 90.0f, BORDER + (NORMAL_COLUMN_WIDTH * 10.45f), height, SUBHEADING_LENGTH);
+    drawCenteredTextParagraphed(FONT, FONT_SIZE_MEDIUM, eventStrings[6], 90.0f, BORDER + (NORMAL_COLUMN_WIDTH * 11.6f), height, SUBHEADING_LENGTH);
+    drawCenteredTextParagraphed(FONT, FONT_SIZE_MEDIUM, eventStrings[7], 90.0f, BORDER + (NORMAL_COLUMN_WIDTH * 12.6f), height, SUBHEADING_LENGTH);
+
+    height = afterHeight;
+
+    // Dose and BGL
+    float ROW_HEIGHT = 32.0f;
+    for (int dayIndex = startIndex; dayIndex <= endIndex; dayIndex++)
+    {
+      priorHeight = height;
+      afterHeight = height - ROW_HEIGHT;
+      float halfHeight = height - (ROW_HEIGHT * 0.5f);
+
+      drawBox(BORDER, priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 1.0f), afterHeight, WHITE, BLUE);
+      drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 5.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 6.0f), afterHeight, WHITE, BLUE);
+      drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 6.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 7.0f), afterHeight, WHITE, BLUE);
+      drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 7.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 8.0f), afterHeight, WHITE, BLUE);
+      drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 8.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 9.0f), afterHeight, WHITE, BLUE);
+      drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 9.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 10.0f), afterHeight, WHITE, BLUE);
+      drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 10.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 11.0f), afterHeight, WHITE, BLUE);
+      drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 11.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 12.0f), afterHeight, WHITE, BLUE);
+      drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 12.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 13.0f), afterHeight, WHITE, BLUE);
+      drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 1.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 2.0f), afterHeight, BLUE, null);
+      drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 2.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 3.0f), afterHeight, BLUE, null);
+      drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 3.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 4.0f), afterHeight, BLUE, null);
+      drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 4.0f), priorHeight, BORDER + (NORMAL_COLUMN_WIDTH * 5.0f), afterHeight, BLUE, null);
+      drawBox(BORDER + (NORMAL_COLUMN_WIDTH * 13.0f), priorHeight, m_writableWidth + BORDER, afterHeight, BLUE, null);
+
+      Date date = new Date(m_days.get(dayIndex).dayBeginning);
+      String dateString = new SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(date);
+      drawTextCentered(FONT, FONT_SIZE_SMALL, dateString, 0.0f, BORDER + (NORMAL_COLUMN_WIDTH * 0.5f), halfHeight);
+
+      StringBuilder additionalNotesStringBuilder = new StringBuilder();
+
+      int doseColumnIndex = 0;
+      for (DataEntry entry : m_days.get(dayIndex).entries)
+      {
+        if (entry.insulinDose > 0)
+        {
+          date = new Date(entry.actualTimestamp);
+          String timeString = DateFormat.getTimeInstance(DateFormat.SHORT).format(date);
+          String doseTimeString = String.format(Locale.getDefault(), "\n%d\n\n%s", entry.insulinDose, timeString);
+          drawCenteredTextParagraphed(FONT, FONT_SIZE_SMALL, doseTimeString, 0.0f, BORDER + (NORMAL_COLUMN_WIDTH * (doseColumnIndex + 1.5f)), height - (ROW_HEIGHT * 0.25f), NORMAL_COLUMN_WIDTH);
+          drawCenteredTextParagraphed(FONT_BOLD, FONT_SIZE_SMALL, "Dose:\n\nTime:\n", 0.0f, BORDER + (NORMAL_COLUMN_WIDTH * (doseColumnIndex + 1.5f)), height - (ROW_HEIGHT * 0.25f), NORMAL_COLUMN_WIDTH);
+          doseColumnIndex++;
+        }
+
+        int eventColumn = getEventIndex(eventStrings, entry.event);
+        if (eventColumn != -1)
+        {
+          drawTextCentered(FONT, FONT_SIZE_MEDIUM, String.valueOf(entry.bloodGlucoseLevel), 0.0f, BORDER + (NORMAL_COLUMN_WIDTH * (eventColumn + 5.5f)), halfHeight);
+        }
+
+        String additionalNotes = entry.additionalNotes.trim();
+        if (additionalNotes.length() > 0)
+        {
+          additionalNotesStringBuilder.append(additionalNotes);
+          additionalNotesStringBuilder.append(" | ");
+        }
+      }
+
+      if (additionalNotesStringBuilder.length() > 0)
+      {
+        String additionalNotesString = additionalNotesStringBuilder.substring(0, additionalNotesStringBuilder.length() - 3);
+        drawTextParagraphed(FONT, FONT_SIZE_TINY, additionalNotesString, BORDER + (NORMAL_COLUMN_WIDTH * 13.0f) + LINE_SPACING, BORDER + m_writableWidth - LINE_SPACING, priorHeight, afterHeight);
+      }
+
+      height = afterHeight;
+    }
 
     drawBox(BORDER, boxStartHeight, m_writableWidth + BORDER, height, BLUE, null);
+
+    // Bottom Text
+    height -= FONT_SIZE_LARGE;
+    drawTextParagraphed(FONT, 6.0f, context.getString(R.string.bottom_text_a), BORDER + NORMAL_COLUMN_WIDTH, BORDER + (NORMAL_COLUMN_WIDTH * 4.0f), height, BORDER);
+    drawTextParagraphed(FONT, 6.0f, context.getString(R.string.bottom_text_b), BORDER + (NORMAL_COLUMN_WIDTH * 5.0f), BORDER + (NORMAL_COLUMN_WIDTH * 8.0f), height, BORDER);
+    drawTextParagraphed(FONT, 6.0f, context.getString(R.string.bottom_text_c), BORDER + (NORMAL_COLUMN_WIDTH * 9.0f), BORDER + (NORMAL_COLUMN_WIDTH * 12.0f), height, BORDER);
+    drawTextParagraphed(FONT, 6.0f, context.getString(R.string.bottom_text_d), BORDER + (NORMAL_COLUMN_WIDTH * 13.0f), BORDER + m_writableWidth, height, BORDER);
+  }
+
+  private static int getEventIndex(String[] eventStrings, String event)
+  {
+    int eventIndex = -1;
+    for (int i = 0; (i < eventStrings.length) && (eventIndex == -1); i++)
+    {
+      if (eventStrings[i].equals(event))
+      {
+        eventIndex = i;
+      }
+    }
+    return eventIndex;
   }
 }

@@ -190,7 +190,7 @@ public class AdsExporter extends PdfGenerator implements IExporter
       drawTextCenterAligned(FONT, FONT_SIZE_MEDIUM, timeString, eventStartX + (eventWidth / 2.0f), dayHeight);
 
       dayHeight -= FONT_SIZE_SMALL + DATA_GAP;
-      drawTextCenterAligned(FONT, FONT_SIZE_MEDIUM, entry.insulinDose > 0 ? String.valueOf(entry.insulinDose) : "N/A", eventStartX + (eventWidth / 2.0f), dayHeight);
+      drawTextCenterAligned(FONT, FONT_SIZE_MEDIUM, entry.insulinDose > 0 ? String.valueOf(entry.insulinDose) : context.getString(R.string.not_applicable), eventStartX + (eventWidth / 2.0f), dayHeight);
 
       // Food eaten and additional notes.
       if (lastDayOfWeek != -1 && lastDayOfWeek != dayOfWeek)

@@ -106,6 +106,19 @@ This device does not have an application installed capable of opening \'%1$s\' f
     <string name="blood_glucose_levels_header">Blood glucose level (mmol/L)</string>
     <string name="key_events_header">Key events/ Notes</string>
 
+    <string name="bottom_text_a">Record any changes in your dose of insulin (units).</string>
+    <string name="bottom_text_b">
+        Your GP or diabetic clinic will advise you which times to test your blood glucose.
+        \n
+        \nHowever, you may test your blood glucose level whenever you feel it is necessary.
+    </string>
+    <string name="bottom_text_c">Following the advice from your GP or clinic you may use your test results to adjust your dose of insulin.</string>
+    <string name="bottom_text_d">
+        Use this space to record any special events, e.g. party, sporting activity, celebration meal.
+        \n
+        \nYou can record in this space any \'hypos\', illness or changes in eating or exercise patterns which may affect your test results.
+    </string>
+
 
 
     <!-- ADS Export -->
