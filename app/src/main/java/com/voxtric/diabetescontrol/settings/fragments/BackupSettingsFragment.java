@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -34,7 +36,10 @@ import com.voxtric.diabetescontrol.RecoveryForegroundService;
 import com.voxtric.diabetescontrol.database.AppDatabase;
 import com.voxtric.diabetescontrol.database.Preference;
 import com.voxtric.diabetescontrol.exporting.ExportForegroundService;
+import com.voxtric.diabetescontrol.settings.SettingsActivity;
 import com.voxtric.diabetescontrol.utilities.GoogleDriveInterface;
+
+import java.util.Objects;
 
 public class BackupSettingsFragment extends GoogleDriveSignInFragment
 {
@@ -176,6 +181,15 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
     if (activity != null)
     {
       checkAutoBackupSafe(activity);
+
+      String contactName = googleSignInAccount.getDisplayName();
+      EditText contactNameEditText = activity.findViewById(R.id.edit_text_contact_name);
+      if (contactNameEditText.getText().length() == 0)
+      {
+        contactNameEditText.setText(contactName);
+        final String viewName = contactNameEditText.getResources().getResourceName(contactNameEditText.getId());
+        Preference.put(activity, viewName, contactName, null);
+      }
     }
   }
 
