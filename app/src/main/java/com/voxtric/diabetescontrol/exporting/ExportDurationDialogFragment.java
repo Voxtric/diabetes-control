@@ -42,6 +42,11 @@ public class ExportDurationDialogFragment extends DialogFragment
   private long m_withinTimePeriodStartTimeStamp = -1;
   private long m_withinTimePeriodEndTimeStamp = -1;
 
+  public ExportDurationDialogFragment()
+  {
+
+  }
+
   public ExportDurationDialogFragment(Intent exportIntent, long lastExportTimestamp)
   {
     m_exportIntent = exportIntent;
@@ -55,6 +60,7 @@ public class ExportDurationDialogFragment extends DialogFragment
     if (savedInstanceState != null)
     {
       m_exportIntent = savedInstanceState.getParcelable("export_intent");
+      m_lastExportTimestamp = savedInstanceState.getLong("last_export_timestamp");
       m_withinTimePeriodStartTimeStamp = savedInstanceState.getLong("start_time_stamp");
       m_withinTimePeriodEndTimeStamp = savedInstanceState.getLong("end_time_stamp");
     }
@@ -183,6 +189,7 @@ public class ExportDurationDialogFragment extends DialogFragment
   {
     super.onSaveInstanceState(outState);
     outState.putParcelable("export_intent", m_exportIntent);
+    outState.putLong("last_export_timestamp", m_lastExportTimestamp);
     outState.putLong("within_time_period_start_time_stamp", m_withinTimePeriodStartTimeStamp);
     outState.putLong("within_time_period_end_time_stamp", m_withinTimePeriodEndTimeStamp);
   }
