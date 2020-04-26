@@ -39,10 +39,10 @@
     <string name="highlighting_enabled_text">Highlighting Enabled</string>
 
     <string name="bgl_range_indicator">-</string>
-    <string name="ideal_range_label">Ideal Range (mmol/L):</string>
+    <string name="ideal_range_label">Ideal Range <font size="12">(mmol/L)</font>:</string>
         <string name="ideal_range_lower_hint">Ideal Lower</string>
         <string name="ideal_range_upper_hint">Ideal Upper</string>
-    <string name="high_range_label">High Range (mmol/L):</string>
+    <string name="high_range_label">High Range <font size="12">(mmol/L)</font>:</string>
         <string name="high_range_lower_hint">High Lower</string>
         <string name="high_range_upper_hint">High Upper</string>
 
@@ -69,10 +69,10 @@
     <string name="title_meal_targets_settings">Meal Targets</string>
 
     <string name="meal_target_range_indicator">-</string>
-    <string name="target_pre_meal_label">Pre-meal blood glucose range (mmol/L):</string>
+    <string name="target_pre_meal_label">Pre-meal blood glucose range <font size="12">(mmol/L)</font>:</string>
         <string name="target_pre_meal_lower_hint">Pre-meal Lower</string>
         <string name="target_pre_meal_upper_hint">Pre-meal Upper</string>
-    <string name="target_post_meal_label">Post-meal blood glucose range (mmol/L):</string>
+    <string name="target_post_meal_label">Post-meal blood glucose range <font size="12">(mmol/L)</font>:</string>
         <string name="target_post_meal_lower_hint">Post-meal Lower</string>
         <string name="target_post_meal_upper_hint">Post-meal Upper</string>
 

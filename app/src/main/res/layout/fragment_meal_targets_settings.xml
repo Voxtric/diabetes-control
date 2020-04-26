@@ -21,7 +21,6 @@
     <View
         android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_marginLeft="@dimen/text_box_padding"
         android:layout_marginStart="@dimen/text_box_padding"
         app:layout_constraintTop_toTopOf="@id/title_meal_targets_settings"
         app:layout_constraintBottom_toBottomOf="@id/title_meal_targets_settings"
