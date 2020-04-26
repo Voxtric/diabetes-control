@@ -25,9 +25,27 @@
         android:layout_marginStart="@dimen/text_box_padding"
         app:layout_constraintTop_toTopOf="@id/title_meal_targets_settings"
         app:layout_constraintBottom_toBottomOf="@id/title_meal_targets_settings"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/meal_targets_more_info_button"
         app:layout_constraintLeft_toRightOf="@id/title_meal_targets_settings"
         android:background="@drawable/back"/>
+
+    <ImageButton
+        android:id="@+id/meal_targets_more_info_button"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/title_meal_targets_settings"
+        app:layout_constraintBottom_toBottomOf="@id/title_meal_targets_settings"
+        app:layout_constraintRight_toRightOf="parent"
+        android:paddingTop="@dimen/text_box_padding"
+        android:paddingBottom="@dimen/text_box_padding"
+        android:paddingStart="@dimen/text_box_padding"
+        android:paddingEnd="0dp"
+        android:scaleType="fitEnd"
+        android:adjustViewBounds="true"
+        android:src="@drawable/question_mark"
+        android:tint="@color/colorAccent"
+        android:background="@drawable/blank"
+        android:onClick="moreInfo"/>
 
     <TextView
         android:id="@+id/pre_meal_label"
@@ -88,7 +106,7 @@
         android:layout_marginTop="@dimen/activity_vertical_margin"
         app:layout_constraintTop_toBottomOf="@id/edit_text_target_pre_meal_lower"
         style="@style/BasicText"
-        android:text="@string/target_pre_meal_label"/>
+        android:text="@string/target_post_meal_label"/>
 
     <EditText
         android:id="@+id/edit_text_target_post_meal_lower"

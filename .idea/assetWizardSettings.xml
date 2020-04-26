@@ -50,9 +50,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="exporting" />
-                            <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="C:\Users\ben_qxsm9dp\Downloads\exporting.svg" />
+                            <entry key="outputName" value="question_mark" />
+                            <entry key="sourceFile" value="C:\Professional Work\diabetes-control\graphics\question_mark.svg" />
                           </map>
                         </option>
                       </PersistentState>

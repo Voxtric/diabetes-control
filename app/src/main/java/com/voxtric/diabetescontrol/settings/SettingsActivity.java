@@ -1,18 +1,22 @@
 package com.voxtric.diabetescontrol.settings;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.voxtric.diabetescontrol.AwaitRecoveryActivity;
 import com.voxtric.diabetescontrol.BackupForegroundService;
@@ -99,6 +103,49 @@ public class SettingsActivity extends AwaitRecoveryActivity
       return true;
     }
     return false;
+  }
+
+  public void moreInfo(final View view)
+  {
+    @StringRes int titleResource;
+    @StringRes int textResource;
+
+    switch (view.getId())
+    {
+    default:
+      titleResource = 0;
+      textResource = 0;
+      break;
+    case R.id.events_more_info_button:
+      titleResource = R.string.events_settings_help_title;
+      textResource = R.string.events_settings_help_text;
+      break;
+    case R.id.contact_details_more_info_button:
+      titleResource = R.string.contact_details_settings_help_title;
+      textResource = R.string.contact_details_settings_help_text;
+      break;
+    case R.id.bgl_highlighting_more_info_button:
+      titleResource = R.string.bgl_highlighting_settings_help_title;
+      textResource = R.string.bgl_highlighting_settings_help_text;
+      break;
+    case R.id.meal_targets_more_info_button:
+      titleResource = R.string.meal_targets_settings_help_title;
+      textResource = R.string.meal_targets_settings_help_text;
+      break;
+    case R.id.backup_more_info_button:
+      titleResource = R.string.backup_settings_help_title;
+      textResource = R.string.backup_settings_help_text;
+      break;
+    }
+
+    if (titleResource != 0)
+    {
+      AlertDialog dialog = new AlertDialog.Builder(this).setTitle(titleResource)
+                                                        .setView(R.layout.dialog_settings_help)
+                                                        .setPositiveButton(R.string.ok_dialog_option, null)
+                                                        .show();
+      ((TextView)dialog.findViewById(R.id.settings_help_text)).setText(textResource);
+    }
   }
 
   private void actOnIntent(final Intent intent)

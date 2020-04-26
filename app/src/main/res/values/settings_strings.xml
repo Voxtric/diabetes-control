@@ -9,6 +9,11 @@
 
     <string name="edit_events_text">Edit Events</string>
 
+    <string name="events_settings_help_title">Events Settings Help</string>
+    <string name="events_settings_help_text"><i>This section contains settings regarding your events which are used to group insulin doses and blood glucose readings:</i>
+        \n
+        \n<b>Edit Events:</b> Allows you to edit the events that take place throughout your day.</string>
+
 
 
     <!-- Contact Details Settings -->
@@ -19,6 +24,13 @@
     <string name="contact_number_label">Contact Number:</string>
         <string name="contact_number_hint">Contact No.</string>
 
+    <string name="contact_details_settings_help_title">Contact Details Settings Help</string>
+    <string name="contact_details_settings_help_text"><i>This section contains settings regarding your contact details, which are used exclusively for populating fields in PDFs generated on export:</i>
+        \n
+        \n<b>Contact Name:</b> Your full name.
+        \n
+        \n<b>Contact Number:</b> Your mobile or telephone number.</string>
+
 
 
     <!-- Blood Glucose Level Highlighting Settings -->
@@ -27,10 +39,10 @@
     <string name="highlighting_enabled_text">Highlighting Enabled</string>
 
     <string name="bgl_range_indicator">-</string>
-    <string name="ideal_range_label">Ideal Range (BGL):</string>
+    <string name="ideal_range_label">Ideal Range (mmol/L):</string>
         <string name="ideal_range_lower_hint">Ideal Lower</string>
         <string name="ideal_range_upper_hint">Ideal Upper</string>
-    <string name="high_range_label">High Range (BGL):</string>
+    <string name="high_range_label">High Range (mmol/L):</string>
         <string name="high_range_lower_hint">High Lower</string>
         <string name="high_range_upper_hint">High Upper</string>
 
@@ -39,6 +51,17 @@
     <string name="bgl_range_value_out_of_range_message">BGL range value must be higher than the previous value and lower than the next</string>
     <string name="bgl_range_value_empty_message">BGL range value cannot be empty</string>
     <string name="bgl_range_values_reset">BGL values reset to defaults</string>
+
+    <string name="bgl_highlighting_settings_help_title">BGL Highlighting Settings Help</string>
+    <string name="bgl_highlighting_settings_help_text"><i>This section contains settings regarding the coloured highlighting of your blood glucose data:</i>
+        \n
+        \n<b>Highlighting Enabled:</b> When enabled, your blood glucose readings will be coloured red, yellow, or green to indicate how well the reading falls into you desired range.
+        \n
+        \n<b>Ideal Range (mmol/L):</b> The lower and upper limit of the range you would consider ideal for a blood glucose reading. Values within this range will be coloured green.
+        \n
+        \n<b>High Range (mmol/L):</b> The lower and upper limit of the range you would consider higher than ideal for a blood glucose reading, bit not necessarily a problem. Values within this range will be coloured yellow.
+        \n
+        \n<b>Reset BGL Values:</b> Resets the lower and upper limits for your ideal and high ranges to the values suggested by the app.</string>
 
 
 
@@ -54,4 +77,13 @@
         <string name="target_post_meal_upper_hint">Post-meal Upper</string>
 
     <string name="target_set_from_bgl_highlighting_hint">Set From BGL Highlighting Values</string>
+
+    <string name="meal_targets_settings_help_title">Meal Targets Settings Help</string>
+    <string name="meal_targets_settings_help_text"><i>This section contains settings regarding your target blood glucose readings before and after a meal, which are used exclusively for populating fields in PDFs generated on export:</i>
+        \n
+        \n<b>Pre-meal blood glucose range (mmol/L):</b> The lower and upper limit of the range of your expected blood glucose level readings before you have eaten.
+        \n
+        \n<b>Post-meal blood glucose range (mmol/L):</b> The lower and upper limit of the range of your expected blood glucose level readings after you have eaten.
+        \n
+        \n<b>Set From BGL Highlighting Values:</b> Sets the lower and upper limits for your pre-meal and post-meal blood glucose readings to match the lower and upper limits in the blood glucose level highlighting section.</string>
 </resources>
