@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Show Showcases Dialog -->
+    <string name="show_showcases_dialog_title">First-Time Launch</string>
+    <string name="show_showcases_dialog_text">As this is the first time you have used the app, would you like each page to present you with a quick guide on how to use it? These guides will not display in landscape mode.
+        \n
+        \nIf you choose no now, you can always reset this decision later at the bottom of the Settings page.</string>
+
     <!-- Main Activity -->
     <string name="main_activity_showcase_app_title">Diabetes Control</string>
     <string name="main_activity_showcase_app_text">This app allows you to input data regarding your blood glucose level readings and your insulin intake without over-complicating the whole process.</string>

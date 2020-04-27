@@ -96,5 +96,5 @@
     <string name="tutorial_settings_help_title">Tutorial Settings Help</string>
     <string name="tutorial_settings_help_text"><i>This section contains settings regarding your the first-time app launch walk-through:</i>
         \n
-        \n<b>Reset Tutorial:</b> Resets your tutorial progress so that you\'ll be presented with helper dialogs again.</string>
+        \n<b>Reset Tutorial:</b> Resets your tutorial progress so that you\'ll be presented with the helper dialogs again.</string>
 </resources>

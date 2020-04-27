@@ -149,6 +149,40 @@ public class MainActivity extends AwaitRecoveryActivity
   public void onResume()
   {
     super.onResume();
+
+    final SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+    boolean firstTimeLaunch = preferences.getBoolean("first_time_launch", true);
+    if (firstTimeLaunch)
+    {
+      AlertDialog dialog = new AlertDialog.Builder(this)
+          .setTitle(R.string.show_showcases_dialog_title)
+          .setMessage(R.string.show_showcases_dialog_text)
+          .setCancelable(false)
+          .setPositiveButton(R.string.yes_dialog_option, new DialogInterface.OnClickListener()
+          {
+            @SuppressLint("ApplySharedPref")
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+              SharedPreferences.Editor preferenceEditor = preferences.edit();
+              preferenceEditor.putBoolean("first_time_launch", false);
+              preferenceEditor.putBoolean("show_showcases", true);
+              preferenceEditor.commit();
+              ShowcaseViewHandler.handleMainActivityShowcaseViews(MainActivity.this);
+            }
+          })
+          .setNegativeButton(R.string.no_dialog_option, new DialogInterface.OnClickListener()
+          {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+              preferences.edit().putBoolean("first_time_launch", false).apply();
+            }
+          })
+          .show();
+      dialog.setCanceledOnTouchOutside(false);
+    }
+
     if (!RecoveryForegroundService.isDownloading())
     {
       Preference.get(this,
@@ -213,7 +247,7 @@ public class MainActivity extends AwaitRecoveryActivity
       {
         ShowcaseViewHandler.handleMainActivityShowcaseViews(MainActivity.this);
       }
-    }, 500); // TODO: Reduce this.
+    }, 500);
   }
 
   @Override

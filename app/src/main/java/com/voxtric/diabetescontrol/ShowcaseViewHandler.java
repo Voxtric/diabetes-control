@@ -53,11 +53,12 @@ class ShowcaseViewHandler
 
   static void handleMainActivityShowcaseViews(final MainActivity activity)
   {
-    if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+    final SharedPreferences preferences = activity.getSharedPreferences("preferences", Context.MODE_PRIVATE);
+    if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) &&
+        preferences.getBoolean("show_showcases", false))
     {
       Toolbar toolbar = activity.findViewById(R.id.toolbar);
 
-      final SharedPreferences preferences = activity.getSharedPreferences("preferences", Context.MODE_PRIVATE);
       final int mainActivityShowcaseProgress = preferences.getInt("main_activity_showcase_progress", 0);
 
       View showcaseTargetView;
@@ -150,6 +151,7 @@ class ShowcaseViewHandler
     final ViewGroup contentView = activity.findViewById(R.id.new_entry_content);
     if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) &&
         (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) &&
+        preferences.getBoolean("show_showcases", false) &&
         (contentView != null))
     {
       final int fragmentShowcaseProgress = preferences.getInt("add_new_entry_fragment_showcase_progress", 0);
@@ -259,6 +261,7 @@ class ShowcaseViewHandler
     final ViewGroup contentView = activity.findViewById(R.id.entry_list_content);
     if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) &&
         (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) &&
+        preferences.getBoolean("show_showcases", false) &&
         (contentView != null))
     {
       final int fragmentShowcaseProgress = preferences.getInt("entry_list_fragment_showcase_progress", 0);
@@ -310,7 +313,6 @@ class ShowcaseViewHandler
           }
           else
           {
-            // TODO: Test this case properly.
             recyclerView.postDelayed(new Runnable()
             {
               @Override
@@ -359,6 +361,7 @@ class ShowcaseViewHandler
     final ViewGroup contentView = activity.findViewById(R.id.entry_graph_content);
     if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) &&
         (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) &&
+        preferences.getBoolean("show_showcases", false) &&
         (contentView != null))
     {
       final int fragmentShowcaseProgress = preferences.getInt("entry_graph_fragment_showcase_progress", 0);

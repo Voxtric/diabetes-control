@@ -194,7 +194,7 @@ public class NewEntryFragment extends Fragment
           {
             ShowcaseViewHandler.handleAddNewEntryFragmentShowcaseViews((MainActivity)activity);
           }
-        }, 500); // TODO: reduce this.
+        }, 500);
       }
     }
 

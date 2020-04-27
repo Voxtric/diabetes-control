@@ -41,6 +41,9 @@ public class TutorialSettingsFragment extends Fragment
         {
           final SharedPreferences preferences = activity.getSharedPreferences("preferences", Context.MODE_PRIVATE);
           SharedPreferences.Editor preferenceEditor = preferences.edit();
+          preferenceEditor.putBoolean("first_time_launch", true);
+          preferenceEditor.putBoolean("show_showcases", false);
+
           preferenceEditor.putInt("main_activity_showcase_progress", 0);
           preferenceEditor.putInt("add_new_entry_fragment_showcase_progress", 0);
           preferenceEditor.putInt("entry_list_fragment_showcase_progress", 0);
