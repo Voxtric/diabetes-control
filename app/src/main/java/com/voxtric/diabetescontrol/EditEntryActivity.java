@@ -10,6 +10,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -30,6 +31,8 @@ public class EditEntryActivity extends AwaitRecoveryActivity
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_edit_entry);
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
 
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null)

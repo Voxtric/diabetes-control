@@ -62,6 +62,7 @@
         android:textAppearance="?attr/textAppearanceListItem"/>
 
     <ImageButton
+        android:id="@+id/more_options_button"
         android:layout_width="24dp"
         android:layout_height="match_parent"
         android:lines="2"

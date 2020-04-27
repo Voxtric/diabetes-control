@@ -1,53 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".settings.SettingsActivity">
 
-    <LinearLayout
-        android:id="@+id/root"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/activity_horizontal_margin"
-        android:focusable="true"
-        android:focusableInTouchMode="true">
+        android:background="@color/colorPrimary"
+        android:theme="@style/ToolbarAppTheme"
+        app:popupTheme="@style/AppTheme"/>
 
-        <fragment
-            android:id="@+id/backup_settings_fragment"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/root"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/settings_fragment_margin"
-            class="com.voxtric.diabetescontrol.settings.fragments.BackupSettingsFragment"/>
+            android:orientation="vertical"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
 
-        <fragment
-            android:id="@+id/events_settings_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/settings_fragment_margin"
-            class="com.voxtric.diabetescontrol.settings.fragments.EventsSettingsFragment"/>
+            <fragment
+                android:id="@+id/backup_settings_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/settings_fragment_margin"
+                class="com.voxtric.diabetescontrol.settings.fragments.BackupSettingsFragment"/>
 
-        <fragment
-            android:id="@+id/contact_details_settings_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/settings_fragment_margin"
-            class="com.voxtric.diabetescontrol.settings.fragments.ContactDetailsSettingsFragment"/>
+            <fragment
+                android:id="@+id/events_settings_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/settings_fragment_margin"
+                class="com.voxtric.diabetescontrol.settings.fragments.EventsSettingsFragment"/>
 
-        <fragment
-            android:id="@+id/bgl_highlighting_settings_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/settings_fragment_margin"
-            class="com.voxtric.diabetescontrol.settings.fragments.BglHighlightingSettingsFragment"/>
+            <fragment
+                android:id="@+id/contact_details_settings_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/settings_fragment_margin"
+                class="com.voxtric.diabetescontrol.settings.fragments.ContactDetailsSettingsFragment"/>
 
-        <fragment
-            android:id="@+id/meal_targets_settings_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            class="com.voxtric.diabetescontrol.settings.fragments.MealTargetsSettingsFragment"/>
-    </LinearLayout>
-</ScrollView>
+            <fragment
+                android:id="@+id/bgl_highlighting_settings_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/settings_fragment_margin"
+                class="com.voxtric.diabetescontrol.settings.fragments.BglHighlightingSettingsFragment"/>
+
+            <fragment
+                android:id="@+id/meal_targets_settings_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                class="com.voxtric.diabetescontrol.settings.fragments.MealTargetsSettingsFragment"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

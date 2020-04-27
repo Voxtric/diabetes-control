@@ -3,6 +3,7 @@ package com.voxtric.diabetescontrol;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -37,6 +38,8 @@ public class AboutActivity extends AwaitRecoveryActivity
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_about);
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
 
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null)

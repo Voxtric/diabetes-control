@@ -5,8 +5,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.view.View;
+import android.view.ViewGroup;
 
-import androidx.annotation.StringRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
 
 import com.voxtric.diabetescontrol.R;
 
@@ -37,5 +39,37 @@ public class ViewUtilities
         .create();
     dialog.show();
     return dialog;
+  }
+
+  public static void setAlphaForChildren(@NonNull ViewGroup viewGroup, float alpha, @IdRes int[] excluding, float excludedAlpha)
+  {
+    for (int childIndex = 0; childIndex < viewGroup.getChildCount(); childIndex++)
+    {
+      View view = viewGroup.getChildAt(childIndex);
+      boolean viewExcluded = false;
+      if (excluding != null)
+      {
+        for (int excludingIndex = 0; (excludingIndex < excluding.length) && !viewExcluded; excludingIndex++)
+        {
+          viewExcluded = view.getId() == excluding[excludingIndex];
+        }
+      }
+
+      if (viewExcluded)
+      {
+        view.setAlpha(excludedAlpha);
+      }
+      else
+      {
+        if (view instanceof ViewGroup)
+        {
+          setAlphaForChildren((ViewGroup)view, alpha, excluding, excludedAlpha);
+        }
+        else
+        {
+          view.setAlpha(alpha);
+        }
+      }
+    }
   }
 }

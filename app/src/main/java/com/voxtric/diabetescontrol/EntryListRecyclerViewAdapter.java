@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.ColorRes;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +34,7 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
 
   private final float[] m_highlightingValues;
 
-  EntryListRecyclerViewAdapter(MainActivity activity, List<DataEntry> items, float[] highlightingValues)
+  EntryListRecyclerViewAdapter(@NonNull MainActivity activity, @NonNull List<DataEntry> items, float[] highlightingValues)
   {
     m_activity = activity;
     m_values = items;
@@ -88,6 +90,26 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
     }
   }
 
+  void addDummy()
+  {
+    DataEntry dummyEntry = new DataEntry();
+    dummyEntry.actualTimestamp = new Date().getTime();
+    dummyEntry.additionalNotes = "Dummy Notes";
+    dummyEntry.bloodGlucoseLevel = 5.0f;
+    dummyEntry.dayTimeStamp = dummyEntry.actualTimestamp;
+    dummyEntry.event = "Dummy Event";
+    dummyEntry.insulinDose = 3;
+    dummyEntry.insulinName = "Dummy Insulin";
+    m_values.add(dummyEntry);
+    notifyDataSetChanged();
+  }
+
+  void removeDummy()
+  {
+    m_values.clear();
+    notifyDataSetChanged();
+  }
+
   int loadToTimestamp(final long timestamp)
   {
     while (m_values.get(m_values.size() - 1).actualTimestamp > timestamp)
@@ -130,6 +152,7 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
 
   class ViewHolder extends RecyclerView.ViewHolder
   {
+    private final ImageButton m_moreOptionsView;
     private final TextView m_timeStampTextView;
     private final TextView m_bloodGlucoseLevelTextView;
     private final TextView m_insulinDoseTextView;
@@ -141,6 +164,7 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
     ViewHolder(View view)
     {
       super(view);
+      m_moreOptionsView = view.findViewById(R.id.more_options_button);
       m_timeStampTextView = view.findViewById(R.id.text_view_time_stamp);
       m_bloodGlucoseLevelTextView = view.findViewById(R.id.text_view_blood_glucose_level);
       m_insulinDoseTextView = view.findViewById(R.id.text_view_insulin_dose);
@@ -204,6 +228,11 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
         }
         m_bloodGlucoseLevelTextView.setTextColor(m_activity.getResources().getColor(color));
       }
+    }
+
+    View getMoreOptionsView()
+    {
+      return m_moreOptionsView;
     }
   }
 }

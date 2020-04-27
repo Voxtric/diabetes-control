@@ -29,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -59,6 +60,8 @@ public class EditEventsActivity extends AwaitRecoveryActivity
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_edit_events);
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
 
     final ActionBar actionBar = getSupportActionBar();
     if (actionBar != null)

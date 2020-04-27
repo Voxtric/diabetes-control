@@ -3,6 +3,7 @@ package com.voxtric.diabetescontrol.settings;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 
 import android.app.AlertDialog;
 import android.app.NotificationManager;
@@ -36,6 +37,8 @@ public class SettingsActivity extends AwaitRecoveryActivity
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_settings);
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
 
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null)

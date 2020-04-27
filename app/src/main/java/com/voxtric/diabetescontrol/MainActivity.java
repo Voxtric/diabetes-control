@@ -33,6 +33,8 @@ import androidx.annotation.MenuRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.core.view.MenuCompat;
 import androidx.documentfile.provider.DocumentFile;
@@ -120,9 +122,12 @@ public class MainActivity extends AwaitRecoveryActivity
   @Override
   protected void onCreate(Bundle savedInstanceState)
   {
+    PDFBoxResourceLoader.init(this);
+
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    PDFBoxResourceLoader.init(this);
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
 
     BottomNavigationView navigation = findViewById(R.id.navigation);
     navigation.setOnNavigationItemSelectedListener(m_onNavigationItemSelectedListener);
@@ -184,7 +189,7 @@ public class MainActivity extends AwaitRecoveryActivity
                                           calendar.getMaximum(Calendar.DATE));
                            }
 
-                           if (calendar.getTimeInMillis() >= Long.valueOf(lastSuccessfulBackupTimestamp) && (!Boolean.valueOf(
+                           if (calendar.getTimeInMillis() >= Long.parseLong(lastSuccessfulBackupTimestamp) && (!Boolean.parseBoolean(
                                wifiOnlyBackup) || GoogleDriveInterface.hasWifiConnection(MainActivity.this)) && GoogleSignIn
                                .getLastSignedInAccount(MainActivity.this) != null && !BackupForegroundService.isUploading() && !RecoveryForegroundService
                                .isDownloading())
@@ -196,6 +201,20 @@ public class MainActivity extends AwaitRecoveryActivity
                        }
                      });
     }
+  }
+
+  @Override
+  public void onStart()
+  {
+    super.onStart();
+    m_viewPager.postDelayed(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        ShowcaseViewHandler.handleMainActivityShowcaseViews(MainActivity.this);
+      }
+    }, 10);
   }
 
   @Override
@@ -381,7 +400,7 @@ public class MainActivity extends AwaitRecoveryActivity
       @Override
       public void run()
       {
-        ExportDurationDialogFragment dialog = new ExportDurationDialogFragment(intent, Long.valueOf(getResult()));
+        ExportDurationDialogFragment dialog = new ExportDurationDialogFragment(intent, Long.parseLong(getResult()));
         dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
         dialog.initialiseExportButton();
       }
@@ -755,6 +774,21 @@ public class MainActivity extends AwaitRecoveryActivity
         if (inputMethodManager != null)
         {
           inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+
+        switch (pageIndex)
+        {
+        case 0:
+          ShowcaseViewHandler.handleAddNewEntryFragmentShowcaseViews(MainActivity.this);
+          break;
+        case 1:
+          ShowcaseViewHandler.handleEntryListFragmentShowcaseViews(MainActivity.this);
+          break;
+        case 2:
+          ShowcaseViewHandler.handleEntryGraphFragmentShowcaseViews(MainActivity.this);
+          break;
+        default:
+          throw new InvalidParameterException(String.format("%d is an invalid fragment index for MainActivity view pager.", pageIndex));
         }
       }
     });

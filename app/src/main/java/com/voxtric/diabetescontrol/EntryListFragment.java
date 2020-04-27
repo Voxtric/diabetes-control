@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +38,7 @@ public class EntryListFragment extends Fragment
   private static final int LOAD_BOUNDARY = 10;
 
   private EntryListRecyclerViewAdapter m_adapter = null;
+  private boolean m_displayingDummyEntry = false;
 
   public EntryListFragment()
   {
@@ -53,14 +55,28 @@ public class EntryListFragment extends Fragment
   public void onActivityCreated(Bundle savedInstanceState)
   {
     super.onActivityCreated(savedInstanceState);
+    if (savedInstanceState != null)
+    {
+      m_displayingDummyEntry = savedInstanceState.getBoolean("displaying_dummy_entry");
+    }
 
-    final Activity activity = getActivity();
+    final MainActivity activity = (MainActivity)getActivity();
     if (activity != null)
     {
       final RecyclerView recyclerView = activity.findViewById(R.id.recycler_view_entry_list);
       final GridLayoutManager layoutManager = new GridLayoutManager(activity, 1);
       recyclerView.setLayoutManager(layoutManager);
-      refreshEntryList();
+
+      m_adapter = new EntryListRecyclerViewAdapter(activity, new ArrayList<DataEntry>(), null);
+      recyclerView.setAdapter(m_adapter);
+      if (m_displayingDummyEntry)
+      {
+        setDisplayingDummyEntry(true, activity);
+      }
+      else
+      {
+        refreshEntryList();
+      }
 
       final FloatingActionButton backToTopButton = activity.findViewById(R.id.back_to_top_button);
       backToTopButton.setOnClickListener(new View.OnClickListener()
@@ -112,6 +128,11 @@ public class EntryListFragment extends Fragment
           }
         }
       });
+
+      if (isVisible() && getUserVisibleHint())
+      {
+        ShowcaseViewHandler.handleEntryListFragmentShowcaseViews(activity);
+      }
     }
   }
 
@@ -128,6 +149,28 @@ public class EntryListFragment extends Fragment
         EntryGraphFragment graphFragment = activity.getFragment(EntryGraphFragment.class);
         graphFragment.refreshGraph(false, false);
       }
+    }
+  }
+
+  @Override
+  public void onSaveInstanceState(@NonNull Bundle outState)
+  {
+    super.onSaveInstanceState(outState);
+    outState.putBoolean("displaying_dummy_entry", m_displayingDummyEntry);
+  }
+
+  void setDisplayingDummyEntry(boolean displayingDummyEntry, Activity activity)
+  {
+    m_displayingDummyEntry = displayingDummyEntry;
+    if (displayingDummyEntry)
+    {
+      m_adapter.addDummy();
+      activity.findViewById(R.id.recycler_view_entry_list).setVisibility(View.VISIBLE);
+      activity.findViewById(R.id.text_view_no_data).setVisibility(View.GONE);
+    }
+    else
+    {
+      refreshEntryList();
     }
   }
 
@@ -218,14 +261,14 @@ public class EntryListFragment extends Fragment
                       {
                         float[] bglHighlightingValues = null;
                         HashMap<String, String> results = getResults();
-                        if (Boolean.valueOf(results.get(BglHighlightingSettingsFragment.HIGHLIGHTING_ENABLED_PREFERENCE)))
+                        if (Boolean.parseBoolean(results.get(BglHighlightingSettingsFragment.HIGHLIGHTING_ENABLED_PREFERENCE)))
                         {
                           bglHighlightingValues = new float[3];
-                          bglHighlightingValues[0] = Float.valueOf(Objects.requireNonNull(results.get(
+                          bglHighlightingValues[0] = Float.parseFloat(Objects.requireNonNull(results.get(
                               BglHighlightingSettingsFragment.IDEAL_MINIMUM_PREFERENCE)));
-                          bglHighlightingValues[1] = Float.valueOf(Objects.requireNonNull(results.get(
+                          bglHighlightingValues[1] = Float.parseFloat(Objects.requireNonNull(results.get(
                               BglHighlightingSettingsFragment.HIGH_MINIMUM_PREFERENCE)));
-                          bglHighlightingValues[2] = Float.valueOf(Objects.requireNonNull(results.get(
+                          bglHighlightingValues[2] = Float.parseFloat(Objects.requireNonNull(results.get(
                               BglHighlightingSettingsFragment.ACTION_REQUIRED_MINIMUM_PREFERENCE)));
                         }
 

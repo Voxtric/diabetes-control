@@ -102,6 +102,20 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
   }
 
   @Override
+  public void onActivityCreated(Bundle savedInstanceState)
+  {
+    super.onActivityCreated(savedInstanceState);
+    MainActivity activity = (MainActivity)getActivity();
+    if (activity != null)
+    {
+      if (isVisible() && getUserVisibleHint())
+      {
+        ShowcaseViewHandler.handleEntryGraphFragmentShowcaseViews(activity);
+      }
+    }
+  }
+
+  @Override
   public void onSaveInstanceState(@NonNull Bundle savedInstanceState)
   {
     savedInstanceState.putFloat("m_maxValue", m_maxValue);
@@ -133,10 +147,21 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
       }
 
       graphData = new GraphData[entries.size()];
+      int graphDataIndex = 0;
       for (int i = 0; i < graphData.length; i++)
       {
         DataEntry entry = entries.get(graphData.length - 1 - i);
-        graphData[i] = new GraphData(entry.actualTimestamp, entry.bloodGlucoseLevel);
+        if (entry.bloodGlucoseLevel > 0.0f)
+        {
+          graphData[graphDataIndex] = new GraphData(entry.actualTimestamp, entry.bloodGlucoseLevel);
+          graphDataIndex++;
+        }
+      }
+      if (graphDataIndex != graphData.length)
+      {
+        GraphData[] oldGraphData = graphData;
+        graphData = new GraphData[graphDataIndex];
+        System.arraycopy(oldGraphData, 0, graphData, 0, graphDataIndex);
       }
     }
     return graphData;

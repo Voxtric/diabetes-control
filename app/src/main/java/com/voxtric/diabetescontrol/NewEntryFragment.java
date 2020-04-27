@@ -184,6 +184,11 @@ public class NewEntryFragment extends Fragment
       AutoCompleteTextView emptyFoodEatenItemInput = addNewListItemAutoCompleteTextView(activity, foodEatenItemList, R.string.food_item_hint, Food.TAG, null);
       calendar.add(Calendar.MONTH, -1);
       AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, emptyFoodEatenItemInput, calendar.getTimeInMillis());
+
+      if (isVisible() && getUserVisibleHint() && (activity instanceof MainActivity))
+      {
+        ShowcaseViewHandler.handleAddNewEntryFragmentShowcaseViews((MainActivity)activity);
+      }
     }
 
     updateEventSpinner();
@@ -656,7 +661,7 @@ public class NewEntryFragment extends Fragment
       if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
       {
         entry = dataEntriesDao.findPreviousEntryWithBloodGlucoseLevel(
-            timestamp, Float.valueOf(((EditText)activity.findViewById(R.id.blood_glucose_level_input)).getText().toString()));
+            timestamp, Float.parseFloat(((EditText)activity.findViewById(R.id.blood_glucose_level_input)).getText().toString()));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_name).getId())
       {
@@ -683,7 +688,7 @@ public class NewEntryFragment extends Fragment
       if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_blood_glucose_level).getId())
       {
         entry = dataEntriesDao.findNextEntryWithBloodGlucoseLevel(
-            timestamp, Float.valueOf(((EditText) activity.findViewById(R.id.blood_glucose_level_input)).getText().toString()));
+            timestamp, Float.parseFloat(((EditText) activity.findViewById(R.id.blood_glucose_level_input)).getText().toString()));
       }
       else if (radioGroupButtonID == criteriaLayout.findViewById(R.id.radio_insulin_name).getId())
       {
@@ -888,7 +893,7 @@ public class NewEntryFragment extends Fragment
     if (insulinName.length() > 0)
     {
       entry.insulinName = insulinName;
-      entry.insulinDose = Integer.valueOf(((EditText)activity.findViewById(R.id.insulin_dose_input)).getText().toString());
+      entry.insulinDose = Integer.parseInt(((EditText)activity.findViewById(R.id.insulin_dose_input)).getText().toString());
     }
     else
     {
@@ -1339,7 +1344,7 @@ public class NewEntryFragment extends Fragment
                          String wifiOnlyBackup = getResults().get("wifi_only_backup");
                          if (automaticBackup != null && wifiOnlyBackup != null &&
                              automaticBackup.equals(getString(R.string.automatic_backup_after_new_entry_option)) &&
-                             (!Boolean.valueOf(wifiOnlyBackup) || GoogleDriveInterface.hasWifiConnection(activity)) &&
+                             (!Boolean.parseBoolean(wifiOnlyBackup) || GoogleDriveInterface.hasWifiConnection(activity)) &&
                              GoogleSignIn.getLastSignedInAccount(activity) != null &&
                              !BackupForegroundService.isUploading() && !RecoveryForegroundService.isDownloading())
                          {
@@ -1368,7 +1373,8 @@ public class NewEntryFragment extends Fragment
     newItem.setTag(tag);
     newItem.setOnEditorActionListener(new ListItemOnEditActionListener(owningLayout));
     CompositeOnFocusChangeListener.applyListenerToView(newItem, new HintHideOnFocusChangeListener(newItem, Gravity.START));
-    CompositeOnFocusChangeListener.applyListenerToView(newItem, new ListItemOnFocusChangeListener(owningLayout, hintResourceID));
+    CompositeOnFocusChangeListener.applyListenerToView(newItem,
+                                                       new ListItemOnFocusChangeListener(owningLayout, hintResourceID));
     AutoCompleteTextViewUtilities.refreshAutoCompleteView(activity, newItem, null);
     if (text != null)
     {
@@ -1523,7 +1529,7 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  private class ListItemOnFocusChangeListener implements View.OnFocusChangeListener
+  private static class ListItemOnFocusChangeListener implements View.OnFocusChangeListener
   {
     private final LinearLayout m_owningLayout;
     private final @StringRes int m_hintResourceID;
@@ -1568,7 +1574,7 @@ public class NewEntryFragment extends Fragment
     }
   }
 
-  private class ListItemOnEditActionListener implements TextView.OnEditorActionListener
+  private static class ListItemOnEditActionListener implements TextView.OnEditorActionListener
   {
     private final LinearLayout m_owningLayout;
 

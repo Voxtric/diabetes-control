@@ -4,7 +4,7 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.voxtric.diabetescontrol"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 800
         versionName "0.8.0"
@@ -75,6 +75,7 @@ dependencies {
     implementation 'com.tom_roush:pdfbox-android:1.8.10.1'
     implementation 'com.opencsv:opencsv:4.6'
     implementation 'com.github.ViksaaSkool:AutoFitEditText:53238e2d29'
+    implementation 'com.github.amlcurran.showcaseview:library:5.4.3'
 
     implementation 'com.voxtric.timegraph:timegraph:0.7.3'
 }

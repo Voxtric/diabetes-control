@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Main Activity -->
+    <string name="main_activity_showcase_app_title">Diabetes Control</string>
+    <string name="main_activity_showcase_app_text">This app allows you to input data regarding your blood glucose level readings and your insulin intake without over-complicating the whole process.</string>
+
+    <string name="main_activity_showcase_settings_title">Settings</string>
+    <string name="main_activity_showcase_settings_text">Before you start entering your data, you might want to tweak the settings to tailor the app to your needs.</string>
+
+    <string name="main_activity_showcase_exporting_title">Exporting</string>
+    <string name="main_activity_showcase_exporting_text">In the future, you may wish to print your data or send it to your GP. To do this, you have a choice of multiple different layouts that you can use to export your data to PDF. You can even export it to a CSV!</string>
+
+    <string name="main_activity_showcase_navigation_title">Navigation</string>
+    <string name="main_activity_showcase_navigation_text">To move to any one of the three pages you will spend most of your time in, you can click the buttons highlighted below. Alternatively, swiping horizontally in any blank space will move you back or forward through the pages.</string>
+
+    <!-- New Entry Fragment -->
+    <string name="new_entry_fragment_showcase_add_new_entry_title">Adding New Entry</string>
+    <string name="new_entry_fragment_showcase_add_new_entry_text">Whenever you want to add an entry, simply fill in the details on this page and click the highlighted button.</string>
+
+    <string name="new_entry_fragment_showcase_auto_populated_title">Auto-populated Data</string>
+    <string name="new_entry_fragment_showcase_auto_populated_text">Some of the fields will be auto-populated with the apps best guess, however you can change them manually for each entry if you want.</string>
+
+    <string name="new_entry_fragment_showcase_see_previous_title">Viewing Previous Input</string>
+    <string name="new_entry_fragment_showcase_see_previous_text">When inputting data, if you want to see what data you put in the last time you had or did something similar.
+        \n
+        \nFor example, if you want to see how much insulin you gave yourself the last time you ate chips, simply add chips to your food eaten list and then click this button.</string>
+
+    <!-- Entry List Fragment -->
+    <string name="entry_list_fragment_showcase_more_options_title">More Options</string>
+    <string name="entry_list_fragment_showcase_more_options_text">All of your data will be displayed here. You can long click the entry or click the more options button highlighted to open a menu of possible actions.
+        \n
+        \nThese actions allows you to view all data associated with an entry, edit the entry, or delete the entry altogether.</string>
+
+    <!-- Entry Graph Fragment -->
+    <string name="entry_graph_fragment_showcase_graph_control_title">Graph Control</string>
+    <string name="entry_graph_fragment_showcase_graph_control_text">This graph display your blood glucose readings. You can scroll the graph horizontally to view a different range of data, or you can pinch to zoom in and out of the graph.
+        \n
+        \nClicking a point on the graph will take you to its corresponding entry on the \'View All\' page.</string>
+
+    <string name="entry_graph_fragment_showcase_graph_statistics_title">Range Statistics</string>
+    <string name="entry_graph_fragment_showcase_graph_statistics_text">In horizontal view, the statistics for the given graph range are hidden. Just tab the highlighted area to un-hide them.</string>
+</resources>
