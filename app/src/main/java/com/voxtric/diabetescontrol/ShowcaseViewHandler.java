@@ -3,21 +3,26 @@ package com.voxtric.diabetescontrol;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
-import androidx.annotation.IdRes;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.Target;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.voxtric.diabetescontrol.utilities.ViewUtilities;
 
 import java.util.Objects;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.shape.RectangleShape;
+import uk.co.deanwild.materialshowcaseview.shape.Shape;
 
 class ShowcaseViewHandler
 {
@@ -44,152 +49,190 @@ class ShowcaseViewHandler
   private static final int EDIT_EVENTS_ACTIVITY_SHOWCASE_ADD_NEW_EVENT = 2;
 
   @SuppressLint("StaticFieldLeak")
-  private static ShowcaseView s_activeShowcaseView = null;
+  private static MaterialShowcaseView s_activeShowcaseView = null;
 
   static void handleMainActivityShowcaseViews(final MainActivity activity)
   {
-    Toolbar toolbar = activity.findViewById(R.id.toolbar);
-
-    final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
-    final int mainActivityShowcaseProgress = preferences.getInt("main_activity_showcase_progress", 0);
-
-    Target target;
-    @StringRes int showcaseTitle;
-    @StringRes int showcaseText;
-
-    switch (mainActivityShowcaseProgress)
+    if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
     {
-    case MAIN_ACTIVITY_SHOWCASE_APP:
-      target = new ViewTarget(toolbar.getChildAt(0));
-      showcaseTitle = R.string.main_activity_showcase_app_title;
-      showcaseText = R.string.main_activity_showcase_app_text;
-      break;
-    case MAIN_ACTIVITY_SHOWCASE_SETTINGS:
-      target = new ViewTarget(toolbar.getChildAt(1));
-      showcaseTitle = R.string.main_activity_showcase_settings_title;
-      showcaseText = R.string.main_activity_showcase_settings_text;
-      break;
-    case MAIN_ACTIVITY_SHOWCASE_EXPORTING:
-      target = new ViewTarget(toolbar.getChildAt(1));
-      showcaseTitle = R.string.main_activity_showcase_exporting_title;
-      showcaseText = R.string.main_activity_showcase_exporting_text;
-      break;
-    case MAIN_ACTIVITY_SHOWCASE_NAVIGATION:
-      target = new ViewTarget(R.id.navigation, activity);
-      showcaseTitle = R.string.main_activity_showcase_navigation_title;
-      showcaseText = R.string.main_activity_showcase_navigation_text;
-      break;
-    default:
-      target = null;
-      showcaseTitle = 0;
-      showcaseText = 0;
-    }
+      Toolbar toolbar = activity.findViewById(R.id.toolbar);
 
-    if (target != null)
-    {
-      activity.findViewById(R.id.fragment_container).setAlpha(UNDER_SHOWCASE_ALPHA);
-      s_activeShowcaseView = new ShowcaseView.Builder(activity)
-          .setTarget(target)
-          .setContentTitle(showcaseTitle)
-          .setContentText(showcaseText)
-          .blockAllTouches()
-          .hideOnTouchOutside()
-          .withHoloShowcase()
-          .setStyle(R.style.CustomShowcaseTheme)
-          .setOnClickListener(new View.OnClickListener()
+      final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+      final int mainActivityShowcaseProgress = preferences.getInt("main_activity_showcase_progress", 0);
+
+      View showcaseTargetView;
+      Shape showcaseShape = null;
+      @StringRes int showcaseTitle;
+      @StringRes int showcaseText;
+
+      switch (mainActivityShowcaseProgress)
+      {
+      case MAIN_ACTIVITY_SHOWCASE_APP:
+        showcaseTargetView = toolbar.getChildAt(0);
+        showcaseTitle = R.string.main_activity_showcase_app_title;
+        showcaseText = R.string.main_activity_showcase_app_text;
+        break;
+      case MAIN_ACTIVITY_SHOWCASE_SETTINGS:
+        showcaseTargetView = toolbar.getChildAt(1);
+        showcaseTitle = R.string.main_activity_showcase_settings_title;
+        showcaseText = R.string.main_activity_showcase_settings_text;
+        break;
+      case MAIN_ACTIVITY_SHOWCASE_EXPORTING:
+        showcaseTargetView = toolbar.getChildAt(1);
+        showcaseTitle = R.string.main_activity_showcase_exporting_title;
+        showcaseText = R.string.main_activity_showcase_exporting_text;
+        break;
+      case MAIN_ACTIVITY_SHOWCASE_NAVIGATION:
+        showcaseTargetView = activity.findViewById(R.id.navigation);
+        if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+        {
+          showcaseShape = new RectangleShape(new Rect(), false);
+        }
+        showcaseTitle = R.string.main_activity_showcase_navigation_title;
+        showcaseText = R.string.main_activity_showcase_navigation_text;
+        break;
+      default:
+        showcaseTargetView = null;
+        showcaseTitle = 0;
+        showcaseText = 0;
+      }
+
+      if (showcaseTargetView != null)
+      {
+        activity.findViewById(R.id.fragment_container).setAlpha(UNDER_SHOWCASE_ALPHA);
+        MaterialShowcaseView.Builder showcaseViewBuilder = new MaterialShowcaseView.Builder(activity).setTarget(
+            showcaseTargetView).setTitleText(showcaseTitle).setContentText(showcaseText).setTargetTouchable(false).setTitleTextColor(
+            Color.WHITE).setContentTextColor(Color.WHITE).setDismissText(R.string.next_dialog_option);
+        if (showcaseShape != null)
+        {
+          showcaseViewBuilder.setShape(showcaseShape);
+        }
+        s_activeShowcaseView = showcaseViewBuilder.show();
+
+        s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
+        {
+          @SuppressLint("ApplySharedPref")
+          @Override
+          public void onClick(View view)
           {
-            @SuppressLint("ApplySharedPref")
-            @Override
-            public void onClick(View view)
-            {
-              s_activeShowcaseView.hide();
-              s_activeShowcaseView = null;
-              preferences.edit().putInt("main_activity_showcase_progress", mainActivityShowcaseProgress + 1).commit();
-              handleMainActivityShowcaseViews(activity);
-            }
-          })
-          .build();
-    }
-    else
-    {
-      activity.findViewById(R.id.fragment_container).setAlpha(1.0f);
-      handleAddNewEntryFragmentShowcaseViews(activity);
+            s_activeShowcaseView.hide();
+            s_activeShowcaseView = null;
+            preferences.edit().putInt("main_activity_showcase_progress", mainActivityShowcaseProgress + 1).commit();
+            handleMainActivityShowcaseViews(activity);
+          }
+        });
+      }
+      else
+      {
+        activity.findViewById(R.id.fragment_container).setAlpha(1.0f);
+        handleAddNewEntryFragmentShowcaseViews(activity);
+      }
     }
   }
 
   static void handleAddNewEntryFragmentShowcaseViews(final MainActivity activity)
   {
     final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
-    ViewGroup contentView = activity.findViewById(R.id.new_entry_content);
-    if ((preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) && (contentView != null))
+    final ViewGroup contentView = activity.findViewById(R.id.new_entry_content);
+    if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) && (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) && (contentView != null))
     {
       final int fragmentShowcaseProgress = preferences.getInt("add_new_entry_fragment_showcase_progress", 0);
 
-      Target target;
-      View targetView;
+      View showcaseTargetView;
+      View scrollTargetView = null;
+      Shape showcaseShape = null;
       @StringRes int showcaseTitle;
       @StringRes int showcaseText;
+      @StringRes final int showcaseDismissText;
 
       switch (fragmentShowcaseProgress)
       {
       case ADD_NEW_FRAGMENT_SHOWCASE_ADD_NEW_ENTRY:
-        targetView = activity.findViewById(R.id.add_new_entry_button);
-        targetView.getParent().requestChildFocus(targetView, targetView);
-        target = new ViewTarget(R.id.add_new_entry_button, activity);
+        showcaseTargetView = activity.findViewById(R.id.add_new_entry_button);
+        scrollTargetView = showcaseTargetView;
+        if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+        {
+          showcaseShape = new RectangleShape(new Rect(), false);
+        }
         showcaseTitle = R.string.new_entry_fragment_showcase_add_new_entry_title;
         showcaseText = R.string.new_entry_fragment_showcase_add_new_entry_text;
+        showcaseDismissText = R.string.next_dialog_option;
         ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { R.id.add_new_entry_button }, 1.0f);
         break;
       case ADD_NEW_FRAGMENT_SHOWCASE_AUTO_POPULATED:
-        targetView = activity.findViewById(R.id.date_button);
-        targetView.getParent().requestChildFocus(targetView, targetView);
-        target = new ViewTarget(R.id.time_button, activity);
+        showcaseTargetView = (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) ? activity.findViewById(R.id.dummy_showcase_target) : activity.findViewById(R.id.time_button);
+        scrollTargetView = activity.findViewById(R.id.date_button);
         showcaseTitle = R.string.new_entry_fragment_showcase_auto_populated_title;
         showcaseText = R.string.new_entry_fragment_showcase_auto_populated_text;
+        showcaseDismissText = R.string.next_dialog_option;
         ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { R.id.date_button, R.id.time_button, R.id.event_spinner }, 1.0f);
         ((Spinner)activity.findViewById(R.id.event_spinner)).getSelectedView().setAlpha(1.0f);
         break;
       case ADD_NEW_FRAGMENT_SHOWCASE_SEE_PREVIOUS:
-        targetView = activity.findViewById(R.id.see_previous_button);
-        targetView.getParent().requestChildFocus(targetView, targetView);
-        target = new ViewTarget(R.id.see_previous_button, activity);
+        showcaseTargetView = activity.findViewById(R.id.see_previous_button);
+        scrollTargetView = showcaseTargetView;
+        if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+        {
+          showcaseShape = new RectangleShape(new Rect(), false);
+        }
         showcaseTitle = R.string.new_entry_fragment_showcase_see_previous_title;
         showcaseText = R.string.new_entry_fragment_showcase_see_previous_text;
+        showcaseDismissText = R.string.done_dialog_option;
         ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { R.id.see_previous_button }, 1.0f);
         break;
       default:
-        target = null;
+        showcaseTargetView = null;
         showcaseTitle = 0;
         showcaseText = 0;
+        showcaseDismissText = 0;
       }
 
-      if (target != null)
+      if (showcaseTargetView != null)
       {
-        s_activeShowcaseView = new ShowcaseView.Builder(activity)
-            .setTarget(target)
-           .setContentTitle(showcaseTitle)
-           .setContentText(showcaseText)
-           .blockAllTouches()
-           .hideOnTouchOutside()
-           .withHoloShowcase()
-           .setStyle(R.style.CustomShowcaseTheme)
-           .setOnClickListener(new View.OnClickListener()
-           {
-             @SuppressLint("ApplySharedPref")
-             @Override
-             public void onClick(View view)
-             {
-               s_activeShowcaseView.hide();
-               s_activeShowcaseView = null;
-               preferences.edit().putInt("add_new_entry_fragment_showcase_progress", fragmentShowcaseProgress + 1).commit();
-               handleAddNewEntryFragmentShowcaseViews(activity);
-             }
-           })
-           .build();
-      }
-      else
-      {
-        ViewUtilities.setAlphaForChildren(contentView, 1.0f, null, 1.0f);
+        if (scrollTargetView != null)
+        {
+          scrollTargetView.getParent().requestChildFocus(scrollTargetView, scrollTargetView);
+          scrollTargetView.postDelayed(new Runnable()
+          {
+            @Override
+            public void run()
+            {
+              activity.forceKeyboardClosed();
+            }
+          }, 10);
+        }
+
+        MaterialShowcaseView.Builder showcaseViewBuilder = new MaterialShowcaseView.Builder(activity)
+            .setTarget(showcaseTargetView)
+            .setTitleText(showcaseTitle)
+            .setContentText(showcaseText)
+            .setTargetTouchable(false)
+            .setTitleTextColor(Color.WHITE)
+            .setContentTextColor(Color.WHITE)
+            .setDismissText(showcaseDismissText);
+        if (showcaseShape != null)
+        {
+          showcaseViewBuilder.setShape(showcaseShape);
+        }
+        s_activeShowcaseView = showcaseViewBuilder.show();
+
+        s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
+        {
+          @SuppressLint("ApplySharedPref")
+          @Override
+          public void onClick(View view)
+          {
+            s_activeShowcaseView.hide();
+            s_activeShowcaseView = null;
+            preferences.edit().putInt("add_new_entry_fragment_showcase_progress", fragmentShowcaseProgress + 1).commit();
+            handleMainActivityShowcaseViews(activity);
+
+            if (showcaseDismissText == R.string.done_dialog_option)
+            {
+              ViewUtilities.setAlphaForChildren(contentView, 1.0f, null, 1.0f);
+            }
+          }
+        });
       }
     }
   }
@@ -198,7 +241,7 @@ class ShowcaseViewHandler
   {
     final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
     final ViewGroup contentView = activity.findViewById(R.id.entry_list_content);
-    if ((preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) && (contentView != null))
+    if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) && (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) && (contentView != null))
     {
       final int fragmentShowcaseProgress = preferences.getInt("entry_list_fragment_showcase_progress", 0);
       if (fragmentShowcaseProgress == ENTRY_LIST_FRAGMENT_SHOWCASE_MORE_OPTIONS)
@@ -215,31 +258,35 @@ class ShowcaseViewHandler
               @Override
               public void run()
               {
-                View targetView = ((EntryListRecyclerViewAdapter.ViewHolder)Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(0))).getMoreOptionsView();
+                View targetView = ((EntryListRecyclerViewAdapter.ViewHolder)Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(0))).itemView;
                 ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { targetView.getId() }, 1.0f);
 
-                s_activeShowcaseView = new ShowcaseView.Builder(activity)
-                    .setTarget(new ViewTarget(targetView))
-                    .setContentTitle(R.string.entry_list_fragment_showcase_more_options_title)
+                s_activeShowcaseView = new MaterialShowcaseView.Builder(activity)
+                    .setTarget(targetView)
+                    .setTitleText(R.string.entry_list_fragment_showcase_more_options_title)
                     .setContentText(R.string.entry_list_fragment_showcase_more_options_text)
-                    .blockAllTouches()
-                    .hideOnTouchOutside()
-                    .withHoloShowcase()
-                    .setStyle(R.style.CustomShowcaseTheme)
-                    .setOnClickListener(new View.OnClickListener()
-                    {
-                      @SuppressLint("ApplySharedPref")
-                      @Override
-                      public void onClick(View view)
-                      {
-                        s_activeShowcaseView.hide();
-                        s_activeShowcaseView = null;
-                        preferences.edit().putInt("entry_list_fragment_showcase_progress", fragmentShowcaseProgress + 1).commit();
-                        activity.getFragment(EntryListFragment.class).setDisplayingDummyEntry(false, activity);
-                        handleEntryListFragmentShowcaseViews(activity);
-                      }
-                    })
-                    .build();
+                    .setTargetTouchable(false)
+                    .setTitleTextColor(Color.WHITE)
+                    .setContentTextColor(Color.WHITE)
+                    .setDismissText(R.string.done_dialog_option)
+                    .setShape(new RectangleShape(new Rect(), true))
+                    .show();
+
+                s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
+                {
+                  @SuppressLint("ApplySharedPref")
+                  @Override
+                  public void onClick(View view)
+                  {
+                    s_activeShowcaseView.hide();
+                    s_activeShowcaseView = null;
+                    preferences.edit().putInt("entry_list_fragment_showcase_progress", fragmentShowcaseProgress + 1).commit();
+                    activity.getFragment(EntryListFragment.class).setDisplayingDummyEntry(false, activity);
+                    handleEntryListFragmentShowcaseViews(activity);
+
+                    ViewUtilities.setAlphaForChildren(contentView, 1.0f, null, 1.0f);
+                  }
+                });
               }
             }, 10);
           }
@@ -251,39 +298,39 @@ class ShowcaseViewHandler
               @Override
               public void run()
               {
-                View targetView = ((EntryListRecyclerViewAdapter.ViewHolder)Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(0))).getMoreOptionsView();
+                View targetView = ((EntryListRecyclerViewAdapter.ViewHolder)Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(0))).itemView;
                 ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { targetView.getId() }, 1.0f);
 
-                s_activeShowcaseView = new ShowcaseView.Builder(activity)
-                    .setTarget(new ViewTarget(targetView))
-                    .setContentTitle(R.string.entry_list_fragment_showcase_more_options_title)
+                s_activeShowcaseView = new MaterialShowcaseView.Builder(activity)
+                    .setTarget(targetView)
+                    .setTitleText(R.string.entry_list_fragment_showcase_more_options_title)
                     .setContentText(R.string.entry_list_fragment_showcase_more_options_text)
-                    .blockAllTouches()
-                    .hideOnTouchOutside()
-                    .withHoloShowcase()
-                    .setStyle(R.style.CustomShowcaseTheme)
-                    .setOnClickListener(new View.OnClickListener()
-                    {
-                      @SuppressLint("ApplySharedPref")
-                      @Override
-                      public void onClick(View view)
-                      {
-                        s_activeShowcaseView.hide();
-                        s_activeShowcaseView = null;
-                        preferences.edit().putInt("entry_list_fragment_showcase_progress", fragmentShowcaseProgress + 1).commit();
-                        activity.getFragment(EntryListFragment.class).setDisplayingDummyEntry(false, activity);
-                        handleEntryListFragmentShowcaseViews(activity);
-                      }
-                    })
-                    .build();
+                    .setTargetTouchable(false)
+                    .setTitleTextColor(Color.WHITE)
+                    .setContentTextColor(Color.WHITE)
+                    .setShape(new RectangleShape(new Rect(), true))
+                    .setDismissText(R.string.done_dialog_option)
+                    .show();
+
+                s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
+                {
+                  @SuppressLint("ApplySharedPref")
+                  @Override
+                  public void onClick(View view)
+                  {
+                    s_activeShowcaseView.hide();
+                    s_activeShowcaseView = null;
+                    preferences.edit().putInt("entry_list_fragment_showcase_progress", fragmentShowcaseProgress + 1).commit();
+                    activity.getFragment(EntryListFragment.class).setDisplayingDummyEntry(false, activity);
+                    handleEntryListFragmentShowcaseViews(activity);
+
+                    ViewUtilities.setAlphaForChildren(contentView, 1.0f, null, 1.0f);
+                  }
+                });
               }
             }, 1000);
           }
         }
-      }
-      else
-      {
-        ViewUtilities.setAlphaForChildren(contentView, 1.0f, null, 1.0f);
       }
     }
   }
@@ -291,46 +338,57 @@ class ShowcaseViewHandler
   static void handleEntryGraphFragmentShowcaseViews(final MainActivity activity)
   {
     final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
-    ViewGroup contentView = activity.findViewById(R.id.entry_graph_content);
-    if ((preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) && (contentView != null))
+    final ViewGroup contentView = activity.findViewById(R.id.entry_graph_content);
+    if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) && (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) && (contentView != null))
     {
       final int fragmentShowcaseProgress = preferences.getInt("entry_graph_fragment_showcase_progress", 0);
 
-      @IdRes int targetViewId;
-      @StringRes int showcaseTitle;
-      @StringRes int showcaseText;
+      final View targetView;
+      @StringRes final int showcaseTitle;
+      @StringRes final int showcaseText;
+      @StringRes final int showcaseDismissText;
 
       switch (fragmentShowcaseProgress)
       {
       case ENTRY_GRAPH_FRAGMENT_SHOWCASE_GRAPH_CONTROL:
-        ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { R.id.graph }, 1.0f);
-        targetViewId = R.id.graph;
+        ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, null, 1.0f);
+        targetView = activity.findViewById(R.id.dummy_showcase_target);
         showcaseTitle = R.string.entry_graph_fragment_showcase_graph_control_title;
         showcaseText = R.string.entry_graph_fragment_showcase_graph_control_text;
+        showcaseDismissText = (activity.findViewById(R.id.statistics_layout) == null) ? R.string.done_dialog_option : R.string.next_dialog_option;
         break;
       case ENTRY_GRAPH_FRAGMENT_SHOWCASE_GRAPH_STATISTICS:
-        ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { R.id.statistics_layout_button, R.id.graph }, 1.0f);
-        targetViewId = R.id.statistics_layout_button;
+        targetView = activity.findViewById(R.id.statistics_layout_label);
         showcaseTitle = R.string.entry_graph_fragment_showcase_graph_statistics_title;
         showcaseText = R.string.entry_graph_fragment_showcase_graph_statistics_text;
+        showcaseDismissText = R.string.done_dialog_option;
         break;
       default:
-        targetViewId = 0;
+        targetView = null;
         showcaseTitle = 0;
         showcaseText = 0;
+        showcaseDismissText = 0;
       }
 
-      if ((targetViewId != 0) && (activity.findViewById(targetViewId) != null))
+      if (targetView != null)
       {
-        s_activeShowcaseView = new ShowcaseView.Builder(activity)
-            .setTarget(new ViewTarget(targetViewId, activity))
-            .setContentTitle(showcaseTitle)
-            .setContentText(showcaseText)
-            .blockAllTouches()
-            .hideOnTouchOutside()
-            .withHoloShowcase()
-            .setStyle(R.style.CustomShowcaseTheme)
-            .setOnClickListener(new View.OnClickListener()
+        targetView.postDelayed(new Runnable()
+        {
+          @Override
+          public void run()
+          {
+            s_activeShowcaseView = new MaterialShowcaseView.Builder(activity)
+                .setTarget(targetView)
+                .setTitleText(showcaseTitle)
+                .setShape(new RectangleShape(new Rect(), false))
+                .setContentText(showcaseText)
+                .setTargetTouchable(false)
+                .setTitleTextColor(Color.WHITE)
+                .setContentTextColor(Color.WHITE)
+                .setDismissText(showcaseDismissText)
+                .show();
+
+            s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
             {
               @SuppressLint("ApplySharedPref")
               @Override
@@ -340,13 +398,16 @@ class ShowcaseViewHandler
                 s_activeShowcaseView = null;
                 preferences.edit().putInt("entry_graph_fragment_showcase_progress", fragmentShowcaseProgress + 1).commit();
                 handleEntryGraphFragmentShowcaseViews(activity);
+
+                if (showcaseDismissText == R.string.done_dialog_option)
+                {
+                  ViewUtilities.setAlphaForChildren(contentView, 1.0f, null, 1.0f);
+                }
               }
-            })
-            .build();
-      }
-      else
-      {
-        ViewUtilities.setAlphaForChildren(contentView, 1.0f, null, 1.0f);
+            });
+            ((TextView)s_activeShowcaseView.findViewById(R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.text_size));
+          }
+        }, 500);
       }
     }
   }

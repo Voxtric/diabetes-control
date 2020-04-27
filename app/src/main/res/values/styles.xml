@@ -22,15 +22,4 @@
         <item name="android:textColor">@drawable/enableable</item>
     </style>
 
-    <style name="ShowcaseViewTitle">
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-    
-    <style name="CustomShowcaseTheme" parent="ShowcaseView">
-        <item name="sv_backgroundColor">@color/colorPrimaryAlpha</item>
-        <item name="sv_showcaseColor">@color/colorAccent</item>
-        <item name="sv_tintButtonColor">false</item>
-        <item name="sv_titleTextAppearance">@style/ShowcaseViewTitle</item>
-    </style>
-
 </resources>

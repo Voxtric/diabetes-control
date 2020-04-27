@@ -115,7 +115,7 @@ public class NewEntryFragment extends Fragment
   {
     super.onActivityCreated(savedInstanceState);
 
-    Activity activity = getActivity();
+    final Activity activity = getActivity();
     if (activity != null)
     {
       Spinner eventSpinner = activity.findViewById(R.id.event_spinner);
@@ -187,7 +187,14 @@ public class NewEntryFragment extends Fragment
 
       if (isVisible() && getUserVisibleHint() && (activity instanceof MainActivity))
       {
-        ShowcaseViewHandler.handleAddNewEntryFragmentShowcaseViews((MainActivity)activity);
+        eventSpinner.postDelayed(new Runnable()
+        {
+          @Override
+          public void run()
+          {
+            ShowcaseViewHandler.handleAddNewEntryFragmentShowcaseViews((MainActivity)activity);
+          }
+        }, 500); // TODO: reduce this.
       }
     }
 

@@ -152,7 +152,6 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
 
   class ViewHolder extends RecyclerView.ViewHolder
   {
-    private final ImageButton m_moreOptionsView;
     private final TextView m_timeStampTextView;
     private final TextView m_bloodGlucoseLevelTextView;
     private final TextView m_insulinDoseTextView;
@@ -164,7 +163,6 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
     ViewHolder(View view)
     {
       super(view);
-      m_moreOptionsView = view.findViewById(R.id.more_options_button);
       m_timeStampTextView = view.findViewById(R.id.text_view_time_stamp);
       m_bloodGlucoseLevelTextView = view.findViewById(R.id.text_view_blood_glucose_level);
       m_insulinDoseTextView = view.findViewById(R.id.text_view_insulin_dose);
@@ -228,11 +226,6 @@ public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryList
         }
         m_bloodGlucoseLevelTextView.setTextColor(m_activity.getResources().getColor(color));
       }
-    }
-
-    View getMoreOptionsView()
-    {
-      return m_moreOptionsView;
     }
   }
 }

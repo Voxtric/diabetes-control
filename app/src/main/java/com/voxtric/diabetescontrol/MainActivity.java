@@ -33,7 +33,6 @@ import androidx.annotation.MenuRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.core.view.MenuCompat;
@@ -214,7 +213,7 @@ public class MainActivity extends AwaitRecoveryActivity
       {
         ShowcaseViewHandler.handleMainActivityShowcaseViews(MainActivity.this);
       }
-    }, 10);
+    }, 500); // TODO: Reduce this.
   }
 
   @Override
@@ -768,13 +767,7 @@ public class MainActivity extends AwaitRecoveryActivity
         }
 
         navigation.getMenu().getItem(pageIndex).setChecked(true);
-        View view = findViewById(R.id.fragment_container);
-        view.requestFocus();
-        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (inputMethodManager != null)
-        {
-          inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        }
+        forceKeyboardClosed();
 
         switch (pageIndex)
         {
@@ -793,6 +786,17 @@ public class MainActivity extends AwaitRecoveryActivity
       }
     });
     viewPager.setOffscreenPageLimit(2);
+  }
+
+  public void forceKeyboardClosed()
+  {
+    View view = findViewById(R.id.fragment_container);
+    view.requestFocus();
+    InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+    if (inputMethodManager != null)
+    {
+      inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
   }
 
   public void openEntryMoreMenu(@NonNull View view)

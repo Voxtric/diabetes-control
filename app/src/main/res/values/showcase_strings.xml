@@ -27,7 +27,7 @@
 
     <!-- Entry List Fragment -->
     <string name="entry_list_fragment_showcase_more_options_title">More Options</string>
-    <string name="entry_list_fragment_showcase_more_options_text">All of your data will be displayed here. You can long click the entry or click the more options button highlighted to open a menu of possible actions.
+    <string name="entry_list_fragment_showcase_more_options_text">All of your data will be displayed here. You can long click the entry or click the more options button to open a menu of possible actions.
         \n
         \nThese actions allows you to view all data associated with an entry, edit the entry, or delete the entry altogether.</string>
 

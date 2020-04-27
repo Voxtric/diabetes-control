@@ -26,6 +26,7 @@
         android:background="?android:colorBackground">
 
         <TextView
+            android:id="@+id/statistics_layout_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/BasicText"
@@ -33,7 +34,6 @@
             android:textStyle="bold"/>
 
         <ImageView
-            android:id="@+id/statistics_layout_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:scaleType="fitCenter"
@@ -116,5 +116,4 @@
                 style="@style/BasicText"/>
         </LinearLayout>
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
