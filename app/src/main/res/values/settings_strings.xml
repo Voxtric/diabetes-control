@@ -86,4 +86,15 @@
         \n<b>Post-meal blood glucose range (mmol/L):</b> The lower and upper limit of the range of your expected blood glucose level readings after you have eaten.
         \n
         \n<b>Set From BGL Highlighting Values:</b> Sets the lower and upper limits for your pre-meal and post-meal blood glucose readings to match the lower and upper limits in the blood glucose level highlighting section.</string>
+
+    <!-- Tutorial Settings -->
+    <string name="title_tutorial_settings">Tutorial</string>
+
+    <string name="tutorial_text">Reset Tutorial</string>
+    <string name="tutorial_reset_toast">Tutorial Reset</string>
+
+    <string name="tutorial_settings_help_title">Tutorial Settings Help</string>
+    <string name="tutorial_settings_help_text"><i>This section contains settings regarding your the first-time app launch walk-through:</i>
+        \n
+        \n<b>Reset Tutorial:</b> Resets your tutorial progress so that you\'ll be presented with helper dialogs again.</string>
 </resources>

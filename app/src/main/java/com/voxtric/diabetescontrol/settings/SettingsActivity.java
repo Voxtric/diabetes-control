@@ -13,7 +13,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -135,6 +134,10 @@ public class SettingsActivity extends AwaitRecoveryActivity
     case R.id.meal_targets_more_info_button:
       titleResource = R.string.meal_targets_settings_help_title;
       textResource = R.string.meal_targets_settings_help_text;
+      break;
+    case R.id.tutorial_more_info_button:
+      titleResource = R.string.tutorial_settings_help_title;
+      textResource = R.string.tutorial_settings_help_text;
       break;
     case R.id.backup_more_info_button:
       titleResource = R.string.backup_settings_help_title;

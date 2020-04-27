@@ -53,7 +53,7 @@
         android:switchPadding="@dimen/text_box_padding"
         android:text="@string/backup_enabled_text"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_backup_settings" />
+        app:layout_constraintTop_toBottomOf="@id/title_backup_settings"/>
 
     <TextView
         android:id="@+id/automatic_backup_label"

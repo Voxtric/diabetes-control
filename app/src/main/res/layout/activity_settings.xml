@@ -60,7 +60,14 @@
                 android:id="@+id/meal_targets_settings_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/settings_fragment_margin"
                 class="com.voxtric.diabetescontrol.settings.fragments.MealTargetsSettingsFragment"/>
+
+            <fragment
+                android:id="@+id/tutorial_settings_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                class="com.voxtric.diabetescontrol.settings.fragments.TutorialSettingsFragment"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

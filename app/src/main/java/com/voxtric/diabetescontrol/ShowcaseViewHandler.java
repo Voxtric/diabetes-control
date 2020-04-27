@@ -57,7 +57,7 @@ class ShowcaseViewHandler
     {
       Toolbar toolbar = activity.findViewById(R.id.toolbar);
 
-      final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+      final SharedPreferences preferences = activity.getSharedPreferences("preferences", Context.MODE_PRIVATE);
       final int mainActivityShowcaseProgress = preferences.getInt("main_activity_showcase_progress", 0);
 
       View showcaseTargetView;
@@ -125,10 +125,20 @@ class ShowcaseViewHandler
       else
       {
         activity.findViewById(R.id.fragment_container).setAlpha(1.0f);
-        NewEntryFragment fragment = activity.getFragment(NewEntryFragment.class);
-        if (fragment.isVisible() && fragment.getUserVisibleHint())
+        NewEntryFragment newEntryFragment = activity.getFragment(NewEntryFragment.class);
+        EntryListFragment entryListFragment = activity.getFragment(EntryListFragment.class);
+        EntryGraphFragment entryGraphFragment = activity.getFragment(EntryGraphFragment.class);
+        if (newEntryFragment.isVisible() && newEntryFragment.getUserVisibleHint())
         {
           handleAddNewEntryFragmentShowcaseViews(activity);
+        }
+        else if (entryListFragment.isVisible() && entryListFragment.getUserVisibleHint())
+        {
+          handleEntryListFragmentShowcaseViews(activity);
+        }
+        else if (entryGraphFragment.isVisible() && entryGraphFragment.getUserVisibleHint())
+        {
+          handleEntryGraphFragmentShowcaseViews(activity);
         }
       }
     }
@@ -136,7 +146,7 @@ class ShowcaseViewHandler
 
   static void handleAddNewEntryFragmentShowcaseViews(final MainActivity activity)
   {
-    final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+    final SharedPreferences preferences = activity.getSharedPreferences("preferences", Context.MODE_PRIVATE);
     final ViewGroup contentView = activity.findViewById(R.id.new_entry_content);
     if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) &&
         (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) &&
@@ -245,7 +255,7 @@ class ShowcaseViewHandler
 
   static void handleEntryListFragmentShowcaseViews(final MainActivity activity)
   {
-    final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+    final SharedPreferences preferences = activity.getSharedPreferences("preferences", Context.MODE_PRIVATE);
     final ViewGroup contentView = activity.findViewById(R.id.entry_list_content);
     if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) &&
         (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) &&
@@ -345,7 +355,7 @@ class ShowcaseViewHandler
 
   static void handleEntryGraphFragmentShowcaseViews(final MainActivity activity)
   {
-    final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+    final SharedPreferences preferences = activity.getSharedPreferences("preferences", Context.MODE_PRIVATE);
     final ViewGroup contentView = activity.findViewById(R.id.entry_graph_content);
     if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) &&
         (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) &&
