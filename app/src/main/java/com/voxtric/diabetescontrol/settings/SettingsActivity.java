@@ -5,6 +5,7 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -143,10 +144,10 @@ public class SettingsActivity extends AwaitRecoveryActivity
 
     if (titleResource != 0)
     {
-      AlertDialog dialog = new AlertDialog.Builder(this).setTitle(titleResource)
-                                                        .setView(R.layout.dialog_settings_help)
-                                                        .setPositiveButton(R.string.ok_dialog_option, null)
-                                                        .show();
+      @SuppressLint("InflateParams") AlertDialog dialog = new AlertDialog.Builder(this).setTitle(titleResource)
+                                                                                       .setView(getLayoutInflater().inflate(R.layout.dialog_settings_help, null))
+                                                                                       .setPositiveButton(R.string.ok_dialog_option, null)
+                                                                                       .show();
       ((TextView)dialog.findViewById(R.id.settings_help_text)).setText(textResource);
     }
   }

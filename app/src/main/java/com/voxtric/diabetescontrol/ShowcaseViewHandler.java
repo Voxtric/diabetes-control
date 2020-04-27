@@ -125,7 +125,11 @@ class ShowcaseViewHandler
       else
       {
         activity.findViewById(R.id.fragment_container).setAlpha(1.0f);
-        handleAddNewEntryFragmentShowcaseViews(activity);
+        NewEntryFragment fragment = activity.getFragment(NewEntryFragment.class);
+        if (fragment.isVisible() && fragment.getUserVisibleHint())
+        {
+          handleAddNewEntryFragmentShowcaseViews(activity);
+        }
       }
     }
   }
@@ -134,7 +138,9 @@ class ShowcaseViewHandler
   {
     final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
     final ViewGroup contentView = activity.findViewById(R.id.new_entry_content);
-    if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) && (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) && (contentView != null))
+    if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) &&
+        (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) &&
+        (contentView != null))
     {
       final int fragmentShowcaseProgress = preferences.getInt("add_new_entry_fragment_showcase_progress", 0);
 
@@ -241,7 +247,9 @@ class ShowcaseViewHandler
   {
     final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
     final ViewGroup contentView = activity.findViewById(R.id.entry_list_content);
-    if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) && (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) && (contentView != null))
+    if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) &&
+        (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) &&
+        (contentView != null))
     {
       final int fragmentShowcaseProgress = preferences.getInt("entry_list_fragment_showcase_progress", 0);
       if (fragmentShowcaseProgress == ENTRY_LIST_FRAGMENT_SHOWCASE_MORE_OPTIONS)
@@ -339,7 +347,9 @@ class ShowcaseViewHandler
   {
     final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
     final ViewGroup contentView = activity.findViewById(R.id.entry_graph_content);
-    if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) && (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) && (contentView != null))
+    if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) &&
+        (preferences.getInt("main_activity_showcase_progress", 0) > MAIN_ACTIVITY_SHOWCASE_NAVIGATION) &&
+        (contentView != null))
     {
       final int fragmentShowcaseProgress = preferences.getInt("entry_graph_fragment_showcase_progress", 0);
 
