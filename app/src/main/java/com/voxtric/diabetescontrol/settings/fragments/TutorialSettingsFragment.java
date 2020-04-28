@@ -2,10 +2,8 @@ package com.voxtric.diabetescontrol.settings.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.voxtric.diabetescontrol.MainActivity;
 import com.voxtric.diabetescontrol.R;
-import com.voxtric.diabetescontrol.settings.EditEventsActivity;
-import com.voxtric.diabetescontrol.settings.SettingsActivity;
 
 public class TutorialSettingsFragment extends Fragment
 {
@@ -48,7 +43,8 @@ public class TutorialSettingsFragment extends Fragment
           preferenceEditor.putInt("add_new_entry_fragment_showcase_progress", 0);
           preferenceEditor.putInt("entry_list_fragment_showcase_progress", 0);
           preferenceEditor.putInt("entry_graph_fragment_showcase_progress", 0);
-          // TODO: Add the rest.
+          preferenceEditor.putInt("settings_activity_showcase_progress", 0);
+          preferenceEditor.putInt("edit_events_activity_showcase_progress", 0);
           preferenceEditor.apply();
 
           Toast.makeText(activity, R.string.tutorial_reset_toast, Toast.LENGTH_LONG).show();

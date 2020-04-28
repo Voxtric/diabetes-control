@@ -24,6 +24,7 @@ import com.voxtric.diabetescontrol.BackupForegroundService;
 import com.voxtric.diabetescontrol.MainActivity;
 import com.voxtric.diabetescontrol.R;
 import com.voxtric.diabetescontrol.RecoveryForegroundService;
+import com.voxtric.diabetescontrol.ShowcaseViewHandler;
 import com.voxtric.diabetescontrol.database.Preference;
 import com.voxtric.diabetescontrol.utilities.CompositeOnFocusChangeListener;
 import com.voxtric.diabetescontrol.utilities.ViewUtilities;
@@ -61,6 +62,8 @@ public class SettingsActivity extends AwaitRecoveryActivity
     {
       applyResultFlag(MainActivity.RESULT_UPDATE_GRAPH_DATA);
     }
+
+    ShowcaseViewHandler.handleSettingsActivityShowcaseViews(SettingsActivity.this);
   }
 
   @Override

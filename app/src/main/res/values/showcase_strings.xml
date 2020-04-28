@@ -32,10 +32,10 @@
         \nFor example, if you want to see how much insulin you gave yourself the last time you ate chips, simply add chips to your food eaten list and then click this button.</string>
 
     <!-- Entry List Fragment -->
-    <string name="entry_list_fragment_showcase_more_options_title">More Options</string>
-    <string name="entry_list_fragment_showcase_more_options_text">All of your data will be displayed here. You can long click the entry or click the more options button to open a menu of possible actions.
+    <string name="entry_list_fragment_showcase_more_options_title">Recorded Data</string>
+    <string name="entry_list_fragment_showcase_more_options_text">All of your data will be displayed here. You can long click the entry or click the more options button on the right to open a menu of possible actions.
         \n
-        \nThese actions allows you to view all data associated with an entry, edit the entry, or delete the entry altogether.</string>
+        \nThese actions allow you to view all data associated with an entry, edit the entry, or delete the entry altogether.</string>
 
     <!-- Entry Graph Fragment -->
     <string name="entry_graph_fragment_showcase_graph_control_title">Graph Control</string>
@@ -45,4 +45,20 @@
 
     <string name="entry_graph_fragment_showcase_graph_statistics_title">Range Statistics</string>
     <string name="entry_graph_fragment_showcase_graph_statistics_text">In horizontal view, the statistics for the given graph range are hidden. Just tab the highlighted area to un-hide them.</string>
+
+    <!-- Settings Activity -->
+    <string name="settings_activity_showcase_help_button_title">Settings</string>
+    <string name="settings_activity_showcase_help_button_text">You can click any of the \'?\' buttons at the top of each settings section to get an overview of what each setting is for.</string>
+
+    <!-- Edit Events Activity -->
+    <string name="edit_events_activity_showcase_more_options_title">Event List</string>
+    <string name="edit_events_activity_showcase_more_options_text">All of your events will be displayed here. You can long click the event or click the more options button on the right to open a menu of possible actions.
+        \n
+        \nThese actions allow you to change the order of the events throughout your day, change their name or time, or delete the event altogether.</string>
+
+    <string name="edit_events_activity_showcase_reset_events_title">Default Events</string>
+    <string name="edit_events_activity_showcase_reset_events_text">If at any time you want to return the default events provided with the app, clicking this button will revert all changes you\'ve made to your event list.</string>
+
+    <string name="edit_events_activity_showcase_add_new_event_title">Add New Event</string>
+    <string name="edit_events_activity_showcase_add_new_event_text">If you\'ve deleted an event, but want to add a new one back in, simply click this button and a blank event will be inserted for you to modify. However, you may only have eight events at any one time.</string>
 </resources>

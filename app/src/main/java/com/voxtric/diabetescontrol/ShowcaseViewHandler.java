@@ -12,10 +12,14 @@ import android.view.ViewGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.voxtric.diabetescontrol.settings.EditEventsActivity;
+import com.voxtric.diabetescontrol.settings.EditEventsRecyclerViewAdapter;
+import com.voxtric.diabetescontrol.settings.SettingsActivity;
 import com.voxtric.diabetescontrol.utilities.ViewUtilities;
 
 import java.util.Objects;
@@ -24,7 +28,7 @@ import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 import uk.co.deanwild.materialshowcaseview.shape.RectangleShape;
 import uk.co.deanwild.materialshowcaseview.shape.Shape;
 
-class ShowcaseViewHandler
+public class ShowcaseViewHandler
 {
   private static final float UNDER_SHOWCASE_ALPHA = 0.3f;
 
@@ -59,14 +63,14 @@ class ShowcaseViewHandler
     {
       Toolbar toolbar = activity.findViewById(R.id.toolbar);
 
-      final int mainActivityShowcaseProgress = preferences.getInt("main_activity_showcase_progress", 0);
+      final int activityShowcaseProgress = preferences.getInt("main_activity_showcase_progress", 0);
 
       View showcaseTargetView;
       Shape showcaseShape = null;
       @StringRes int showcaseTitle;
       @StringRes int showcaseText;
 
-      switch (mainActivityShowcaseProgress)
+      switch (activityShowcaseProgress)
       {
       case MAIN_ACTIVITY_SHOWCASE_APP:
         showcaseTargetView = toolbar.getChildAt(0);
@@ -118,7 +122,7 @@ class ShowcaseViewHandler
           {
             s_activeShowcaseView.hide();
             s_activeShowcaseView = null;
-            preferences.edit().putInt("main_activity_showcase_progress", mainActivityShowcaseProgress + 1).commit();
+            preferences.edit().putInt("main_activity_showcase_progress", activityShowcaseProgress + 1).commit();
             handleMainActivityShowcaseViews(activity);
           }
         });
@@ -176,6 +180,7 @@ class ShowcaseViewHandler
         showcaseText = R.string.new_entry_fragment_showcase_add_new_entry_text;
         showcaseDismissText = R.string.next_dialog_option;
         ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { R.id.add_new_entry_button }, 1.0f);
+        activity.findViewById(R.id.event_spinner).setAlpha(UNDER_SHOWCASE_ALPHA);
         break;
       case ADD_NEW_FRAGMENT_SHOWCASE_AUTO_POPULATED:
         showcaseTargetView = (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) ? activity.findViewById(R.id.dummy_showcase_target) : activity.findViewById(R.id.time_button);
@@ -197,6 +202,7 @@ class ShowcaseViewHandler
         showcaseText = R.string.new_entry_fragment_showcase_see_previous_text;
         showcaseDismissText = R.string.done_dialog_option;
         ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { R.id.see_previous_button }, 1.0f);
+        activity.findViewById(R.id.event_spinner).setAlpha(UNDER_SHOWCASE_ALPHA);
         break;
       default:
         showcaseTargetView = null;
@@ -248,6 +254,7 @@ class ShowcaseViewHandler
             if (showcaseDismissText == R.string.done_dialog_option)
             {
               ViewUtilities.setAlphaForChildren(contentView, 1.0f, null, 1.0f);
+              activity.findViewById(R.id.event_spinner).setAlpha(1.0f);
             }
           }
         });
@@ -320,6 +327,15 @@ class ShowcaseViewHandler
               {
                 View targetView = ((EntryListRecyclerViewAdapter.ViewHolder)Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(0))).itemView;
                 ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { targetView.getId() }, 1.0f);
+
+                for (int itemIndex = 0; itemIndex < entryList.getItemCount(); itemIndex++)
+                {
+                  EntryListRecyclerViewAdapter.ViewHolder viewHolder = (EntryListRecyclerViewAdapter.ViewHolder)recyclerView.findViewHolderForAdapterPosition(itemIndex);
+                  if ((viewHolder != null) && (viewHolder.itemView != targetView))
+                  {
+                    viewHolder.itemView.setAlpha(UNDER_SHOWCASE_ALPHA);
+                  }
+                }
 
                 s_activeShowcaseView = new MaterialShowcaseView.Builder(activity)
                     .setTarget(targetView)
@@ -431,6 +447,166 @@ class ShowcaseViewHandler
             ((TextView)s_activeShowcaseView.findViewById(R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.text_size));
           }
         }, 500);
+      }
+    }
+  }
+
+  public static void handleSettingsActivityShowcaseViews(final SettingsActivity activity)
+  {
+    final SharedPreferences preferences = activity.getSharedPreferences("preferences", Context.MODE_PRIVATE);
+    if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) &&
+        preferences.getBoolean("show_showcases", false))
+    {
+      final int activityShowcaseProgress = preferences.getInt("settings_activity_showcase_progress", 0);
+
+      @IdRes final int showcaseTargetViewId;
+      @StringRes int showcaseTitle;
+      @StringRes int showcaseText;
+
+      if (activityShowcaseProgress == SETTINGS_ACTIVITY_SHOWCASE_HELP_BUTTON)
+      {
+        showcaseTargetViewId = R.id.backup_more_info_button;
+        showcaseTitle = R.string.settings_activity_showcase_help_button_title;
+        showcaseText = R.string.settings_activity_showcase_help_button_text;
+      }
+      else
+      {
+        showcaseTargetViewId = 0;
+        showcaseTitle = 0;
+        showcaseText = 0;
+      }
+
+      if (showcaseTargetViewId != 0)
+      {
+        ViewUtilities.setAlphaForChildren((ViewGroup)activity.findViewById(R.id.root), UNDER_SHOWCASE_ALPHA, new int[] { showcaseTargetViewId }, 1.0f);
+        s_activeShowcaseView = new MaterialShowcaseView.Builder(activity)
+            .setTarget(activity.findViewById(showcaseTargetViewId))
+            .setTitleText(showcaseTitle)
+            .setContentText(showcaseText)
+            .setTargetTouchable(false)
+            .setTitleTextColor(Color.WHITE)
+            .setContentTextColor(Color.WHITE)
+            .setDismissText(R.string.done_dialog_option)
+            .show();
+
+        s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
+        {
+          @SuppressLint("ApplySharedPref")
+          @Override
+          public void onClick(View view)
+          {
+            s_activeShowcaseView.hide();
+            s_activeShowcaseView = null;
+            preferences.edit().putInt("settings_activity_showcase_progress", activityShowcaseProgress + 1).commit();
+            ViewUtilities.setAlphaForChildren((ViewGroup)activity.findViewById(R.id.root), 1.0f, null, 1.0f);
+          }
+        });
+      }
+    }
+  }
+
+  public static void handleEditEventsActivityShowcaseViews(final EditEventsActivity activity)
+  {
+    final SharedPreferences preferences = activity.getSharedPreferences("preferences", Context.MODE_PRIVATE);
+    if ((activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) &&
+        preferences.getBoolean("show_showcases", false))
+    {
+      final int activityShowcaseProgress = preferences.getInt("edit_events_activity_showcase_progress", 0);
+
+      final RecyclerView recyclerView = activity.findViewById(R.id.recycler_view_event_list);
+
+      final View showcaseTargetView;
+      Shape showcaseShape = null;
+      @StringRes int showcaseTitle;
+      @StringRes int showcaseText;
+      final @StringRes int showcaseDismissText;
+
+      switch (activityShowcaseProgress)
+      {
+      case EDIT_EVENTS_ACTIVITY_SHOWCASE_MORE_OPTIONS:
+        showcaseTargetView = ((EditEventsRecyclerViewAdapter.ViewHolder)Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(0))).itemView;
+        showcaseTitle = R.string.edit_events_activity_showcase_more_options_title;
+        showcaseText = R.string.edit_events_activity_showcase_more_options_text;
+        showcaseShape = new RectangleShape(new Rect(), true);
+        showcaseDismissText = R.string.next_dialog_option;
+        break;
+      case EDIT_EVENTS_ACTIVITY_SHOWCASE_RESET_EVENTS:
+        showcaseTargetView = activity.findViewById(R.id.button_reset_events);
+        showcaseTitle = R.string.edit_events_activity_showcase_reset_events_title;
+        showcaseText = R.string.edit_events_activity_showcase_reset_events_text;
+        showcaseDismissText = R.string.next_dialog_option;
+        break;
+      case EDIT_EVENTS_ACTIVITY_SHOWCASE_ADD_NEW_EVENT:
+        showcaseTargetView = activity.findViewById(R.id.button_add_new_event);
+        showcaseTitle = R.string.edit_events_activity_showcase_add_new_event_title;
+        showcaseText = R.string.edit_events_activity_showcase_add_new_event_text;
+        showcaseDismissText = R.string.done_dialog_option;
+        break;
+      default:
+        showcaseTargetView = null;
+        showcaseTitle = 0;
+        showcaseText = 0;
+        showcaseDismissText = 0;
+      }
+
+      if (showcaseTargetView != null)
+      {
+        ViewUtilities.setAlphaForChildren((ViewGroup)activity.findViewById(R.id.edit_events_content), UNDER_SHOWCASE_ALPHA, new int[] { R.id.toolbar, showcaseTargetView.getId() }, 1.0f);
+        final EditEventsRecyclerViewAdapter eventsList = (EditEventsRecyclerViewAdapter)recyclerView.getAdapter();
+        if (eventsList != null)
+        {
+          for (int itemIndex = 0; itemIndex < eventsList.getItemCount(); itemIndex++)
+          {
+            EditEventsRecyclerViewAdapter.ViewHolder viewHolder = (EditEventsRecyclerViewAdapter.ViewHolder)recyclerView.findViewHolderForAdapterPosition(itemIndex);
+            if ((viewHolder != null) && (viewHolder.itemView != showcaseTargetView))
+            {
+              viewHolder.itemView.setAlpha(UNDER_SHOWCASE_ALPHA);
+            }
+          }
+        }
+
+        MaterialShowcaseView.Builder showcaseViewBuilder = new MaterialShowcaseView.Builder(activity)
+            .setTarget(showcaseTargetView)
+            .setTitleText(showcaseTitle)
+            .setContentText(showcaseText)
+            .setTargetTouchable(false)
+            .setTitleTextColor(Color.WHITE)
+            .setContentTextColor(Color.WHITE)
+            .setDismissText(showcaseDismissText);
+        if (showcaseShape != null)
+        {
+          showcaseViewBuilder.setShape(showcaseShape);
+        }
+        s_activeShowcaseView = showcaseViewBuilder.show();
+
+        s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
+        {
+          @SuppressLint("ApplySharedPref")
+          @Override
+          public void onClick(View view)
+          {
+            s_activeShowcaseView.hide();
+            s_activeShowcaseView = null;
+            preferences.edit().putInt("edit_events_activity_showcase_progress", activityShowcaseProgress + 1).commit();
+            handleEditEventsActivityShowcaseViews(activity);
+
+            if (showcaseDismissText == R.string.done_dialog_option)
+            {
+              ViewUtilities.setAlphaForChildren((ViewGroup)activity.findViewById(R.id.edit_events_content), 1.0f, null, 1.0f);
+              if (eventsList != null)
+              {
+                for (int itemIndex = 0; itemIndex < eventsList.getItemCount(); itemIndex++)
+                {
+                  EditEventsRecyclerViewAdapter.ViewHolder viewHolder = (EditEventsRecyclerViewAdapter.ViewHolder)recyclerView.findViewHolderForAdapterPosition(itemIndex);
+                  if (viewHolder != null)
+                  {
+                    viewHolder.itemView.setAlpha(1.0f);
+                  }
+                }
+              }
+            }
+          }
+        });
       }
     }
   }

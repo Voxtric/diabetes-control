@@ -38,6 +38,7 @@ import java.util.List;
 
 import com.voxtric.diabetescontrol.AwaitRecoveryActivity;
 import com.voxtric.diabetescontrol.R;
+import com.voxtric.diabetescontrol.ShowcaseViewHandler;
 import com.voxtric.diabetescontrol.database.AppDatabase;
 import com.voxtric.diabetescontrol.database.Event;
 import com.voxtric.diabetescontrol.database.EventsDao;
@@ -94,6 +95,20 @@ public class EditEventsActivity extends AwaitRecoveryActivity
         });
       }
     });
+  }
+
+  @Override
+  public void onStart()
+  {
+    super.onStart();
+    findViewById(R.id.edit_events_content).postDelayed(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        ShowcaseViewHandler.handleEditEventsActivityShowcaseViews(EditEventsActivity.this);
+      }
+    }, 500);
   }
 
   @Override

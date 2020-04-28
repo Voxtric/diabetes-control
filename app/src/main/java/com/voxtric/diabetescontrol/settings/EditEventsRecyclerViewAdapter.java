@@ -116,7 +116,7 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
     return m_activeMovementButtons;
   }
 
-  class ViewHolder extends RecyclerView.ViewHolder
+  public class ViewHolder extends RecyclerView.ViewHolder
   {
     private final TextView m_eventNameTextView;
     private final TextView m_eventTimeTextView;
