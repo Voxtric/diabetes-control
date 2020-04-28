@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -37,6 +38,7 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
   private boolean m_calculateNewStatistics = false;
   private long m_periodStartTimestamp = 0L;
   private long m_periodEndTimestamp = 0L;
+  private int m_consecutiveFailedGraphDataGets = 0;
 
   private float m_maxValue = 0.0f;
 
@@ -72,6 +74,22 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
 
     if (savedInstanceState == null)
     {
+      defaultGraphInitialise(view);
+    }
+    else
+    {
+      m_maxValue = savedInstanceState.getFloat("m_maxValue");
+    }
+
+    return view;
+  }
+
+  private void defaultGraphInitialise(View rootView)
+  {
+    final TimeGraph graph = rootView.findViewById(R.id.graph);
+    final Activity activity = getActivity();
+    if (activity != null)
+    {
       AsyncTask.execute(new Runnable()
       {
         @Override
@@ -80,7 +98,14 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
           DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
 
           m_maxValue = Math.max(dataEntriesDao.getMaxBloodGlucoseLevel(), 16.0f);
-          graph.setValueAxisMax(m_maxValue, false);
+          activity.runOnUiThread(new Runnable()
+          {
+            @Override
+            public void run()
+            {
+              graph.setValueAxisMax(m_maxValue, false);
+            }
+          });
           setGraphHighlighting(graph, m_maxValue);
 
           DataEntry lastEntry = dataEntriesDao.findFirstBefore(Long.MAX_VALUE);
@@ -88,17 +113,22 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
           {
             long endTimestamp = lastEntry.actualTimestamp;
             long startTimestamp = endTimestamp - DEFAULT_DISPLAY_DURATION;
+            DataEntry firstEntry = dataEntriesDao.findFirstBefore(startTimestamp + 1);
+            if (firstEntry == null)
+            {
+              firstEntry = dataEntriesDao.findFirstAfter(startTimestamp);
+            }
+
+            if (firstEntry != null)
+            {
+              startTimestamp = firstEntry.actualTimestamp;
+            }
+
             graph.setVisibleDataPeriod(startTimestamp, endTimestamp, EntryGraphFragment.this, true);
           }
         }
       });
     }
-    else
-    {
-      m_maxValue = savedInstanceState.getFloat("m_maxValue");
-    }
-
-    return view;
   }
 
   @Override
@@ -135,35 +165,49 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
 
     DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
     List<DataEntry> entries = dataEntriesDao.findAllBetween(startTimestamp, endTimestamp);
-    if (!entries.isEmpty())
-    {
-      if (entries.size() == 1)
-      {
-        DataEntry prior = dataEntriesDao.findFirstBefore(entries.get(0).actualTimestamp);
-        if (prior != null)
-        {
-          entries.add(prior);
-        }
-      }
 
-      graphData = new GraphData[entries.size()];
-      int graphDataIndex = 0;
-      for (int i = 0; i < graphData.length; i++)
+    graphData = new GraphData[entries.size()];
+    int graphDataIndex = 0;
+    for (int i = 0; i < graphData.length; i++)
+    {
+      DataEntry entry = entries.get(graphData.length - 1 - i);
+      //if (entry.bloodGlucoseLevel > 0.0f)
       {
-        DataEntry entry = entries.get(graphData.length - 1 - i);
-        if (entry.bloodGlucoseLevel > 0.0f)
-        {
-          graphData[graphDataIndex] = new GraphData(entry.actualTimestamp, entry.bloodGlucoseLevel);
-          graphDataIndex++;
-        }
-      }
-      if (graphDataIndex != graphData.length)
-      {
-        GraphData[] oldGraphData = graphData;
-        graphData = new GraphData[graphDataIndex];
-        System.arraycopy(oldGraphData, 0, graphData, 0, graphDataIndex);
+        graphData[graphDataIndex] = new GraphData(entry.actualTimestamp, entry.bloodGlucoseLevel);
+        graphDataIndex++;
       }
     }
+    if (graphDataIndex != graphData.length)
+    {
+      GraphData[] oldGraphData = graphData;
+      graphData = new GraphData[graphDataIndex];
+      System.arraycopy(oldGraphData, 0, graphData, 0, graphDataIndex);
+    }
+
+    if (graphData.length < 2)
+    {
+      if (m_consecutiveFailedGraphDataGets < 1)
+      {
+        final Activity activity = getActivity();
+        if (activity != null)
+        {
+          activity.findViewById(R.id.graph).post(new Runnable()
+          {
+            @Override
+            public void run()
+            {
+              defaultGraphInitialise(activity.findViewById(R.id.entry_graph_content));
+            }
+          });
+        }
+      }
+      m_consecutiveFailedGraphDataGets++;
+    }
+    else
+    {
+      m_consecutiveFailedGraphDataGets = 0;
+    }
+
     return graphData;
   }
 
