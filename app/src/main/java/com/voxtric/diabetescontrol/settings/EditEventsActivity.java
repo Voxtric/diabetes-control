@@ -91,24 +91,18 @@ public class EditEventsActivity extends AwaitRecoveryActivity
             {
               actionBar.setTitle(getString(R.string.edit_events_name, events.size(), MAX_EVENT_COUNT));
             }
+            recyclerView.postDelayed(new Runnable()
+            {
+              @Override
+              public void run()
+              {
+                ShowcaseViewHandler.handleEditEventsActivityShowcaseViews(EditEventsActivity.this);
+              }
+            }, 10);
           }
         });
       }
     });
-  }
-
-  @Override
-  public void onStart()
-  {
-    super.onStart();
-    findViewById(R.id.edit_events_content).postDelayed(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        ShowcaseViewHandler.handleEditEventsActivityShowcaseViews(EditEventsActivity.this);
-      }
-    }, 500);
   }
 
   @Override

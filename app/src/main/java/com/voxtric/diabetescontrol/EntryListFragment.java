@@ -159,7 +159,7 @@ public class EntryListFragment extends Fragment
     outState.putBoolean("displaying_dummy_entry", m_displayingDummyEntry);
   }
 
-  void setDisplayingDummyEntry(boolean displayingDummyEntry, Activity activity)
+  void setDisplayingDummyEntry(boolean displayingDummyEntry, final MainActivity activity)
   {
     m_displayingDummyEntry = displayingDummyEntry;
     if (displayingDummyEntry)
@@ -167,6 +167,15 @@ public class EntryListFragment extends Fragment
       m_adapter.addDummy();
       activity.findViewById(R.id.recycler_view_entry_list).setVisibility(View.VISIBLE);
       activity.findViewById(R.id.text_view_no_data).setVisibility(View.GONE);
+
+      activity.findViewById(R.id.recycler_view_entry_list).postDelayed(new Runnable()
+      {
+        @Override
+        public void run()
+        {
+          ShowcaseViewHandler.handleEntryListFragmentShowcaseViews(activity);
+        }
+      }, 10);
     }
     else
     {

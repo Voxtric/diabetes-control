@@ -240,14 +240,7 @@ public class MainActivity extends AwaitRecoveryActivity
   public void onStart()
   {
     super.onStart();
-    m_viewPager.postDelayed(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        ShowcaseViewHandler.handleMainActivityShowcaseViews(MainActivity.this);
-      }
-    }, 500);
+    ShowcaseViewHandler.handleMainActivityShowcaseViews(MainActivity.this);
   }
 
   @Override

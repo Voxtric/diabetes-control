@@ -39,8 +39,7 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
   @Override
   public EditEventsRecyclerViewAdapter.ViewHolder onCreateViewHolder(final @NonNull ViewGroup parent, int viewType)
   {
-    View view = LayoutInflater.from(parent.getContext())
-        .inflate(R.layout.event_row, parent, false);
+    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_row, parent, false);
     return new EditEventsRecyclerViewAdapter.ViewHolder(view);
   }
 
@@ -71,7 +70,7 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
     return m_values.size();
   }
 
-  public void refreshDataSet()
+  void refreshDataSet()
   {
     m_valueMap.clear();
     notifyDataSetChanged();

@@ -184,18 +184,6 @@ public class NewEntryFragment extends Fragment
       AutoCompleteTextView emptyFoodEatenItemInput = addNewListItemAutoCompleteTextView(activity, foodEatenItemList, R.string.food_item_hint, Food.TAG, null);
       calendar.add(Calendar.MONTH, -1);
       AutoCompleteTextViewUtilities.clearAgedValuesAutoCompleteValues(activity, emptyFoodEatenItemInput, calendar.getTimeInMillis());
-
-      if (isVisible() && getUserVisibleHint() && (activity instanceof MainActivity))
-      {
-        eventSpinner.postDelayed(new Runnable()
-        {
-          @Override
-          public void run()
-          {
-            ShowcaseViewHandler.handleAddNewEntryFragmentShowcaseViews((MainActivity)activity);
-          }
-        }, 500);
-      }
     }
 
     updateEventSpinner();
@@ -311,6 +299,14 @@ public class NewEntryFragment extends Fragment
     }
   }
 
+  private void eventDataReady(Activity activity)
+  {
+    if (isVisible() && getUserVisibleHint() && (activity instanceof MainActivity))
+    {
+      ShowcaseViewHandler.handleAddNewEntryFragmentShowcaseViews((MainActivity)activity);
+    }
+  }
+
   private void pickBestEvent()
   {
     final Activity activity = getActivity();
@@ -401,6 +397,7 @@ public class NewEntryFragment extends Fragment
         eventSpinner.setSelection(eventSpinner.getCount() - 1);
         Toast.makeText(activity, R.string.new_entry_deleted_event_message, Toast.LENGTH_LONG).show();
       }
+      eventDataReady(activity);
     }
   }
 

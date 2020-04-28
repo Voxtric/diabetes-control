@@ -104,6 +104,11 @@ public class ShowcaseViewHandler
 
       if (showcaseTargetView != null)
       {
+        if (s_activeShowcaseView != null)
+        {
+          s_activeShowcaseView.hide();
+        }
+
         activity.findViewById(R.id.fragment_container).setAlpha(UNDER_SHOWCASE_ALPHA);
         MaterialShowcaseView.Builder showcaseViewBuilder = new MaterialShowcaseView.Builder(activity).setTarget(
             showcaseTargetView).setTitleText(showcaseTitle).setContentText(showcaseText).setTargetTouchable(false).setTitleTextColor(
@@ -133,15 +138,15 @@ public class ShowcaseViewHandler
         NewEntryFragment newEntryFragment = activity.getFragment(NewEntryFragment.class);
         EntryListFragment entryListFragment = activity.getFragment(EntryListFragment.class);
         EntryGraphFragment entryGraphFragment = activity.getFragment(EntryGraphFragment.class);
-        if (newEntryFragment.isVisible() && newEntryFragment.getUserVisibleHint())
+        if ((newEntryFragment != null) && newEntryFragment.isVisible() && newEntryFragment.getUserVisibleHint())
         {
           handleAddNewEntryFragmentShowcaseViews(activity);
         }
-        else if (entryListFragment.isVisible() && entryListFragment.getUserVisibleHint())
+        else if ((entryListFragment != null) && entryListFragment.isVisible() && entryListFragment.getUserVisibleHint())
         {
           handleEntryListFragmentShowcaseViews(activity);
         }
-        else if (entryGraphFragment.isVisible() && entryGraphFragment.getUserVisibleHint())
+        else if ((entryGraphFragment != null) && entryGraphFragment.isVisible() && entryGraphFragment.getUserVisibleHint())
         {
           handleEntryGraphFragmentShowcaseViews(activity);
         }
@@ -213,6 +218,11 @@ public class ShowcaseViewHandler
 
       if (showcaseTargetView != null)
       {
+        if (s_activeShowcaseView != null)
+        {
+          s_activeShowcaseView.hide();
+        }
+
         if (scrollTargetView != null)
         {
           scrollTargetView.getParent().requestChildFocus(scrollTargetView, scrollTargetView);
@@ -281,90 +291,52 @@ public class ShowcaseViewHandler
           if (entryList.getItemCount() == 0)
           {
             activity.getFragment(EntryListFragment.class).setDisplayingDummyEntry(true, activity);
-            recyclerView.postDelayed(new Runnable()
-            {
-              @Override
-              public void run()
-              {
-                View targetView = ((EntryListRecyclerViewAdapter.ViewHolder)Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(0))).itemView;
-                ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { targetView.getId() }, 1.0f);
-
-                s_activeShowcaseView = new MaterialShowcaseView.Builder(activity)
-                    .setTarget(targetView)
-                    .setTitleText(R.string.entry_list_fragment_showcase_more_options_title)
-                    .setContentText(R.string.entry_list_fragment_showcase_more_options_text)
-                    .setTargetTouchable(false)
-                    .setTitleTextColor(Color.WHITE)
-                    .setContentTextColor(Color.WHITE)
-                    .setDismissText(R.string.done_dialog_option)
-                    .setShape(new RectangleShape(new Rect(), true))
-                    .show();
-
-                s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
-                {
-                  @SuppressLint("ApplySharedPref")
-                  @Override
-                  public void onClick(View view)
-                  {
-                    s_activeShowcaseView.hide();
-                    s_activeShowcaseView = null;
-                    preferences.edit().putInt("entry_list_fragment_showcase_progress", fragmentShowcaseProgress + 1).commit();
-                    activity.getFragment(EntryListFragment.class).setDisplayingDummyEntry(false, activity);
-                    handleEntryListFragmentShowcaseViews(activity);
-
-                    ViewUtilities.setAlphaForChildren(contentView, 1.0f, null, 1.0f);
-                  }
-                });
-              }
-            }, 10);
           }
           else
           {
-            recyclerView.postDelayed(new Runnable()
-            {
-              @Override
-              public void run()
+              if (s_activeShowcaseView != null)
               {
-                View targetView = ((EntryListRecyclerViewAdapter.ViewHolder)Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(0))).itemView;
-                ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { targetView.getId() }, 1.0f);
-
-                for (int itemIndex = 0; itemIndex < entryList.getItemCount(); itemIndex++)
-                {
-                  EntryListRecyclerViewAdapter.ViewHolder viewHolder = (EntryListRecyclerViewAdapter.ViewHolder)recyclerView.findViewHolderForAdapterPosition(itemIndex);
-                  if ((viewHolder != null) && (viewHolder.itemView != targetView))
-                  {
-                    viewHolder.itemView.setAlpha(UNDER_SHOWCASE_ALPHA);
-                  }
-                }
-
-                s_activeShowcaseView = new MaterialShowcaseView.Builder(activity)
-                    .setTarget(targetView)
-                    .setTitleText(R.string.entry_list_fragment_showcase_more_options_title)
-                    .setContentText(R.string.entry_list_fragment_showcase_more_options_text)
-                    .setTargetTouchable(false)
-                    .setTitleTextColor(Color.WHITE)
-                    .setContentTextColor(Color.WHITE)
-                    .setShape(new RectangleShape(new Rect(), true))
-                    .setDismissText(R.string.done_dialog_option)
-                    .show();
-
-                s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
-                {
-                  @SuppressLint("ApplySharedPref")
-                  @Override
-                  public void onClick(View view)
-                  {
-                    s_activeShowcaseView.hide();
-                    s_activeShowcaseView = null;
-                    preferences.edit().putInt("entry_list_fragment_showcase_progress", fragmentShowcaseProgress + 1).commit();
-                    activity.getFragment(EntryListFragment.class).setDisplayingDummyEntry(false, activity);
-                    handleEntryListFragmentShowcaseViews(activity);
-
-                    ViewUtilities.setAlphaForChildren(contentView, 1.0f, null, 1.0f);
-                  }
-                });
+                s_activeShowcaseView.hide();
               }
-            }, 1000);
+
+              View targetView = ((EntryListRecyclerViewAdapter.ViewHolder)Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(0))).itemView;
+              ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { targetView.getId() }, 1.0f);
+
+              for (int itemIndex = 0; itemIndex < entryList.getItemCount(); itemIndex++)
+              {
+                EntryListRecyclerViewAdapter.ViewHolder viewHolder = (EntryListRecyclerViewAdapter.ViewHolder)recyclerView.findViewHolderForAdapterPosition(itemIndex);
+                if ((viewHolder != null) && (viewHolder.itemView != targetView))
+                {
+                  viewHolder.itemView.setAlpha(UNDER_SHOWCASE_ALPHA);
+                }
+              }
+
+              s_activeShowcaseView = new MaterialShowcaseView.Builder(activity)
+                  .setTarget(targetView)
+                  .setTitleText(R.string.entry_list_fragment_showcase_more_options_title)
+                  .setContentText(R.string.entry_list_fragment_showcase_more_options_text)
+                  .setTargetTouchable(false)
+                  .setTitleTextColor(Color.WHITE)
+                  .setContentTextColor(Color.WHITE)
+                  .setShape(new RectangleShape(new Rect(), true))
+                  .setDismissText(R.string.done_dialog_option)
+                  .show();
+
+              s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
+              {
+                @SuppressLint("ApplySharedPref")
+                @Override
+                public void onClick(View view)
+                {
+                  s_activeShowcaseView.hide();
+                  s_activeShowcaseView = null;
+                  preferences.edit().putInt("entry_list_fragment_showcase_progress", fragmentShowcaseProgress + 1).commit();
+                  activity.getFragment(EntryListFragment.class).setDisplayingDummyEntry(false, activity);
+                  handleEntryListFragmentShowcaseViews(activity);
+
+                  ViewUtilities.setAlphaForChildren(contentView, 1.0f, null, 1.0f);
+                }
+              });
           }
         }
       }
@@ -416,6 +388,11 @@ public class ShowcaseViewHandler
           @Override
           public void run()
           {
+            if (s_activeShowcaseView != null)
+            {
+              s_activeShowcaseView.hide();
+            }
+
             s_activeShowcaseView = new MaterialShowcaseView.Builder(activity)
                 .setTarget(targetView)
                 .setTitleText(showcaseTitle)
@@ -478,6 +455,11 @@ public class ShowcaseViewHandler
 
       if (showcaseTargetViewId != 0)
       {
+        if (s_activeShowcaseView != null)
+        {
+          s_activeShowcaseView.hide();
+        }
+
         ViewUtilities.setAlphaForChildren((ViewGroup)activity.findViewById(R.id.root), UNDER_SHOWCASE_ALPHA, new int[] { showcaseTargetViewId }, 1.0f);
         s_activeShowcaseView = new MaterialShowcaseView.Builder(activity)
             .setTarget(activity.findViewById(showcaseTargetViewId))
@@ -551,6 +533,11 @@ public class ShowcaseViewHandler
 
       if (showcaseTargetView != null)
       {
+        if (s_activeShowcaseView != null)
+        {
+          s_activeShowcaseView.hide();
+        }
+
         ViewUtilities.setAlphaForChildren((ViewGroup)activity.findViewById(R.id.edit_events_content), UNDER_SHOWCASE_ALPHA, new int[] { R.id.toolbar, showcaseTargetView.getId() }, 1.0f);
         final EditEventsRecyclerViewAdapter eventsList = (EditEventsRecyclerViewAdapter)recyclerView.getAdapter();
         if (eventsList != null)
