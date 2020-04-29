@@ -1,6 +1,7 @@
 package com.voxtric.diabetescontrol.settings;
 
 import android.animation.ValueAnimator;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Point;

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="?dialogPreferredPadding"
+    android:orientation="horizontal">
+
+    <RadioGroup
+        android:id="@+id/radio_group_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingEnd="@dimen/activity_vertical_margin"
+        android:paddingStart="0dp">
+
+        <RadioButton
+            android:id="@+id/radio_button_all_recorded"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/export_duration_all_recorded"
+            android:textColor="@android:color/black"/>
+
+        <RadioButton
+            android:id="@+id/radio_button_since_last_export"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/export_duration_since_last"
+            android:textColor="@android:color/black"/>
+
+        <RadioButton
+            android:id="@+id/radio_button_within_time_period"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/export_duration_within_period"
+            android:textColor="@android:color/black"/>
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/text_view_start_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/radio_group_duration"
+        app:layout_constraintStart_toEndOf="@id/radio_group_duration"
+        style="@style/BasicText"
+        android:text="@string/date_period_start_label"
+        android:focusable="true"
+        android:labelFor="@id/button_start_date"/>
+
+    <Button
+        android:id="@+id/button_start_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/text_view_start_date"
+        app:layout_constraintStart_toEndOf="@id/radio_group_duration"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/back"
+        android:minHeight="0dp"
+        style="@style/BasicText"
+        android:textAlignment="center"
+        android:contentDescription="@string/date_period_start_content_description"/>
+
+    <TextView
+        android:id="@+id/text_view_end_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/button_end_date"
+        app:layout_constraintStart_toEndOf="@id/radio_group_duration"
+        style="@style/BasicText"
+        android:text="@string/date_period_end_label"
+        android:focusable="true"
+        android:labelFor="@id/button_end_date"/>
+
+    <Button
+        android:id="@+id/button_end_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/radio_group_duration"
+        app:layout_constraintStart_toEndOf="@id/radio_group_duration"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/back"
+        android:minHeight="0dp"
+        style="@style/BasicText"
+        android:textAlignment="center"
+        android:contentDescription="@string/date_period_end_content_description"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

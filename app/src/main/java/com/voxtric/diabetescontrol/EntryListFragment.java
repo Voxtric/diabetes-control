@@ -241,11 +241,13 @@ public class EntryListFragment extends Fragment
               if (entries.isEmpty())
               {
                 recyclerView.setVisibility(View.GONE);
+                activity.findViewById(R.id.back_to_top_button).setVisibility(View.GONE);
                 activity.findViewById(R.id.text_view_no_data).setVisibility(View.VISIBLE);
               }
               else
               {
                 recyclerView.setVisibility(View.VISIBLE);
+                activity.findViewById(R.id.back_to_top_button).setVisibility(View.VISIBLE);
                 activity.findViewById(R.id.text_view_no_data).setVisibility(View.GONE);
 
                 Preference.get(activity,

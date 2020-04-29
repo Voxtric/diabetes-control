@@ -3,6 +3,7 @@ package com.voxtric.diabetescontrol;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -21,6 +23,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -433,9 +437,23 @@ public class MainActivity extends AwaitRecoveryActivity
       @Override
       public void run()
       {
-        ExportDurationDialogFragment dialog = new ExportDurationDialogFragment(intent, Long.parseLong(getResult()));
-        dialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
-        dialog.initialiseExportButton();
+        ExportDurationDialogFragment exportDurationDialog = new ExportDurationDialogFragment(intent, Long.parseLong(getResult()));
+        exportDurationDialog.showNow(getSupportFragmentManager(), ExportDurationDialogFragment.TAG);
+        exportDurationDialog.initialiseExportButton();
+
+        if ((getResources().getDisplayMetrics().density <= 1.0f) &&
+            (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE))
+        {
+          Dialog dialog = exportDurationDialog.getDialog();
+          if (dialog != null)
+          {
+            Window window = dialog.getWindow();
+            if (window != null)
+            {
+              window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            }
+          }
+        }
       }
     });
   }
