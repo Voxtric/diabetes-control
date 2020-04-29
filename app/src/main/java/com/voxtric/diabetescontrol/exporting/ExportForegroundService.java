@@ -324,11 +324,11 @@ public class ExportForegroundService extends ForegroundService
       moveFileIntent.putExtra("export_file_path", m_exportFile.getAbsolutePath());
       moveFileIntent.putExtra("export_file_mime_type", m_exportFileMimeType);
       PendingIntent moveFilePendingIntent = PendingIntent.getActivity(this, 0, moveFileIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-      notificationBuilder.addAction(-1, getString(R.string.move_dialog_option), moveFilePendingIntent);
+      notificationBuilder.addAction(new NotificationCompat.Action(0, getString(R.string.move_dialog_option), moveFilePendingIntent));
     }
 
-    notificationBuilder.addAction(-1, getString(R.string.share_dialog_option), shareFilePendingIntent);
-    notificationBuilder.addAction(-1, getString(R.string.view_dialog_option), viewFilePendingIntent);
+    notificationBuilder.addAction(new NotificationCompat.Action(0, getString(R.string.share_dialog_option), shareFilePendingIntent));
+    notificationBuilder.addAction(new NotificationCompat.Action(0, getString(R.string.view_dialog_option), viewFilePendingIntent));
 
     return notificationBuilder.build();
   }
