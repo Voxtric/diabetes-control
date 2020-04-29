@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +55,21 @@ public class ShowcaseViewHandler
 
   @SuppressLint("StaticFieldLeak")
   private static MaterialShowcaseView s_activeShowcaseView = null;
+  private static void closeCurrentActiveShowcaseView()
+  {
+    if (s_activeShowcaseView != null)
+    {
+      try
+      {
+        s_activeShowcaseView.hide();
+        s_activeShowcaseView = null;
+      }
+      catch (Exception exception)
+      {
+        Log.e("ShowcaseViewHandler", exception.getMessage(), exception);
+      }
+    }
+  }
 
   static void handleMainActivityShowcaseViews(final MainActivity activity)
   {
@@ -104,10 +120,7 @@ public class ShowcaseViewHandler
 
       if (showcaseTargetView != null)
       {
-        if (s_activeShowcaseView != null)
-        {
-          s_activeShowcaseView.hide();
-        }
+        closeCurrentActiveShowcaseView();
 
         activity.findViewById(R.id.fragment_container).setAlpha(UNDER_SHOWCASE_ALPHA);
         MaterialShowcaseView.Builder showcaseViewBuilder = new MaterialShowcaseView.Builder(activity).setTarget(
@@ -125,8 +138,7 @@ public class ShowcaseViewHandler
           @Override
           public void onClick(View view)
           {
-            s_activeShowcaseView.hide();
-            s_activeShowcaseView = null;
+            closeCurrentActiveShowcaseView();
             preferences.edit().putInt("main_activity_showcase_progress", activityShowcaseProgress + 1).commit();
             handleMainActivityShowcaseViews(activity);
           }
@@ -218,10 +230,7 @@ public class ShowcaseViewHandler
 
       if (showcaseTargetView != null)
       {
-        if (s_activeShowcaseView != null)
-        {
-          s_activeShowcaseView.hide();
-        }
+        closeCurrentActiveShowcaseView();
 
         if (scrollTargetView != null)
         {
@@ -256,8 +265,7 @@ public class ShowcaseViewHandler
           @Override
           public void onClick(View view)
           {
-            s_activeShowcaseView.hide();
-            s_activeShowcaseView = null;
+            closeCurrentActiveShowcaseView();
             preferences.edit().putInt("add_new_entry_fragment_showcase_progress", fragmentShowcaseProgress + 1).commit();
             handleMainActivityShowcaseViews(activity);
 
@@ -294,10 +302,7 @@ public class ShowcaseViewHandler
           }
           else
           {
-            if (s_activeShowcaseView != null)
-            {
-              s_activeShowcaseView.hide();
-            }
+            closeCurrentActiveShowcaseView();
 
             View targetView = ((EntryListRecyclerViewAdapter.ViewHolder)Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(0))).itemView;
             ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { targetView.getId() }, 1.0f);
@@ -328,8 +333,7 @@ public class ShowcaseViewHandler
               @Override
               public void onClick(View view)
               {
-                s_activeShowcaseView.hide();
-                s_activeShowcaseView = null;
+                closeCurrentActiveShowcaseView();
                 preferences.edit().putInt("entry_list_fragment_showcase_progress", fragmentShowcaseProgress + 1).commit();
                 activity.getFragment(EntryListFragment.class).setDisplayingDummyEntry(false, activity);
                 handleEntryListFragmentShowcaseViews(activity);
@@ -383,10 +387,7 @@ public class ShowcaseViewHandler
 
       if (targetView != null)
       {
-        if (s_activeShowcaseView != null)
-        {
-          s_activeShowcaseView.hide();
-        }
+        closeCurrentActiveShowcaseView();
 
         s_activeShowcaseView = new MaterialShowcaseView.Builder(activity)
             .setTarget(targetView)
@@ -405,8 +406,7 @@ public class ShowcaseViewHandler
           @Override
           public void onClick(View view)
           {
-            s_activeShowcaseView.hide();
-            s_activeShowcaseView = null;
+            closeCurrentActiveShowcaseView();
             preferences.edit().putInt("entry_graph_fragment_showcase_progress", fragmentShowcaseProgress + 1).commit();
             handleEntryGraphFragmentShowcaseViews(activity);
 
@@ -448,10 +448,7 @@ public class ShowcaseViewHandler
 
       if (showcaseTargetViewId != 0)
       {
-        if (s_activeShowcaseView != null)
-        {
-          s_activeShowcaseView.hide();
-        }
+        closeCurrentActiveShowcaseView();
 
         ViewUtilities.setAlphaForChildren((ViewGroup)activity.findViewById(R.id.root), UNDER_SHOWCASE_ALPHA, new int[] { showcaseTargetViewId }, 1.0f);
         s_activeShowcaseView = new MaterialShowcaseView.Builder(activity)
@@ -470,8 +467,7 @@ public class ShowcaseViewHandler
           @Override
           public void onClick(View view)
           {
-            s_activeShowcaseView.hide();
-            s_activeShowcaseView = null;
+            closeCurrentActiveShowcaseView();
             preferences.edit().putInt("settings_activity_showcase_progress", activityShowcaseProgress + 1).commit();
             ViewUtilities.setAlphaForChildren((ViewGroup)activity.findViewById(R.id.root), 1.0f, null, 1.0f);
           }
@@ -526,10 +522,7 @@ public class ShowcaseViewHandler
 
       if (showcaseTargetView != null)
       {
-        if (s_activeShowcaseView != null)
-        {
-          s_activeShowcaseView.hide();
-        }
+        closeCurrentActiveShowcaseView();
 
         ViewUtilities.setAlphaForChildren((ViewGroup)activity.findViewById(R.id.edit_events_content), UNDER_SHOWCASE_ALPHA, new int[] { R.id.toolbar, showcaseTargetView.getId() }, 1.0f);
         final EditEventsRecyclerViewAdapter eventsList = (EditEventsRecyclerViewAdapter)recyclerView.getAdapter();
@@ -565,8 +558,7 @@ public class ShowcaseViewHandler
           @Override
           public void onClick(View view)
           {
-            s_activeShowcaseView.hide();
-            s_activeShowcaseView = null;
+            closeCurrentActiveShowcaseView();
             preferences.edit().putInt("edit_events_activity_showcase_progress", activityShowcaseProgress + 1).commit();
             handleEditEventsActivityShowcaseViews(activity);
 

@@ -182,6 +182,10 @@ public class MainActivity extends AwaitRecoveryActivity
           .show();
       dialog.setCanceledOnTouchOutside(false);
     }
+//    else
+//    {
+//      ShowcaseViewHandler.handleMainActivityShowcaseViews(MainActivity.this);
+//    }
 
     if (!RecoveryForegroundService.isDownloading())
     {
@@ -240,7 +244,14 @@ public class MainActivity extends AwaitRecoveryActivity
   public void onStart()
   {
     super.onStart();
-    ShowcaseViewHandler.handleMainActivityShowcaseViews(MainActivity.this);
+    findViewById(R.id.navigation).postDelayed(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        ShowcaseViewHandler.handleMainActivityShowcaseViews(MainActivity.this);
+      }
+    }, 10);
   }
 
   @Override
