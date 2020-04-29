@@ -60,7 +60,7 @@ public class AdsExporter extends PdfGenerator implements IExporter
   @Override
   public byte[] createPDF(ExportForegroundService exportForegroundService)
   {
-    trygi
+    try
     {
       for (final Week week : m_weeks)
       {

@@ -12,7 +12,7 @@
     <string name="events_settings_help_title">Events Settings Help</string>
     <string name="events_settings_help_text"><i>This section contains settings regarding your events which are used to group insulin doses and blood glucose readings:</i>
         \n
-        \n<b>Edit Events:</b> Allows you to edit the events that take place throughout your day.</string>
+        \n<b>Edit Events:</b> Allows you to edit the events that take place throughout your day which may have an effect on your readings.</string>
 
 
 
@@ -25,7 +25,7 @@
         <string name="contact_number_hint">Contact No.</string>
 
     <string name="contact_details_settings_help_title">Contact Details Settings Help</string>
-    <string name="contact_details_settings_help_text"><i>This section contains settings regarding your contact details, which are used exclusively for populating fields in PDFs generated on export:</i>
+    <string name="contact_details_settings_help_text"><i>This section contains settings regarding your contact details. These are used exclusively for populating fields in PDFs generated on export, and are not stored anywhere other than the device or in the database backup:</i>
         \n
         \n<b>Contact Name:</b> Your full name.
         \n
@@ -57,9 +57,9 @@
         \n
         \n<b>Highlighting Enabled:</b> When enabled, your blood glucose readings will be coloured red, yellow, or green to indicate how well the reading falls into you desired range.
         \n
-        \n<b>Ideal Range (mmol/L):</b> The lower and upper limit of the range you would consider ideal for a blood glucose reading. Values within this range will be coloured green.
+        \n<b>Ideal Range (mmol/L):</b> The lower and upper limit of the range you would consider ideal for a blood glucose reading. Values within this range will be coloured green, and values below it will be coloured red.
         \n
-        \n<b>High Range (mmol/L):</b> The lower and upper limit of the range you would consider higher than ideal for a blood glucose reading, bit not necessarily a problem. Values within this range will be coloured yellow.
+        \n<b>High Range (mmol/L):</b> The lower and upper limit of the range you would consider higher than ideal for a blood glucose reading, but not necessarily a problem. Values within this range will be coloured yellow, and values above it will be coloured red.
         \n
         \n<b>Reset BGL Values:</b> Resets the lower and upper limits for your ideal and high ranges to the values suggested by the app.</string>
 
@@ -87,6 +87,8 @@
         \n
         \n<b>Set From BGL Highlighting Values:</b> Sets the lower and upper limits for your pre-meal and post-meal blood glucose readings to match the lower and upper limits in the blood glucose level highlighting section.</string>
 
+
+
     <!-- Tutorial Settings -->
     <string name="title_tutorial_settings">Tutorial</string>
 
@@ -94,7 +96,7 @@
     <string name="tutorial_reset_toast">Tutorial Reset</string>
 
     <string name="tutorial_settings_help_title">Tutorial Settings Help</string>
-    <string name="tutorial_settings_help_text"><i>This section contains settings regarding your the first-time app launch walk-through:</i>
+    <string name="tutorial_settings_help_text"><i>This section contains settings regarding the first-time app launch walk-through:</i>
         \n
-        \n<b>Reset Tutorial:</b> Resets your tutorial progress so that you\'ll be presented with the helper dialogs again.</string>
+        \n<b>Reset Tutorial:</b> Resets your tutorial progress so that you\'ll be presented with the walk-through screens again once you leave the settings page.</string>
 </resources>

@@ -27,11 +27,11 @@ import com.voxtric.diabetescontrol.utilities.LayoutExpander;
 
 public class AboutActivity extends AwaitRecoveryActivity
 {
-  private final int EXPAND_COLLAPSE_DURATION = 2;
+  private final float EXPAND_COLLAPSE_DURATION = 2.0f;
 
   private final HashMap<View, LayoutExpander.ExpansionState> m_expansionStates = new HashMap<>();
 
-  private int m_expandCollapseDuration = 0;
+  private float m_expandCollapseDuration = 0;
 
   @Override
   protected void onCreate(Bundle savedInstanceState)

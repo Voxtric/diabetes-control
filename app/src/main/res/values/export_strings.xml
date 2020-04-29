@@ -95,11 +95,11 @@ This device does not have an application installed capable of opening \'%1$s\' f
     <!-- NHS Export Warn -->
     <string name="nhs_export_warn_title">NHS Export Warning</string>
     <string name="nhs_export_warn_message">
-        The NHS format does not contain space to display any data you may have input regarding \'Food Eaten\'.
+        The NHS format does not contain space to display any data you may have entered regarding \'Food Eaten\'.
         \n
-        \nAdditionally, the NHS format uses only the default events. Any data you may have input that isn\'t related to one of the default events will not appear on the generated PDF.
+        \nAdditionally, the NHS format uses only the default events. Any data you may have entered that isn\'t related to one of the default events will not appear on the generated PDF.
         \n
-        \nContinuing the NHS export won\'t stop you from being able to export the same data in other formats afterward, so feel free to give it a try. If you find that not all the data you want to be able to see is present, it is recommended that you use the ADS format for exporting.
+        \nContinuing the NHS export won\'t stop you from being able to export the same data in other formats afterward, so feel free to give it a try. If you find that not all data required is present, it is recommended that you use the ADS format for exporting.
     </string>
     <string name="nhs_export_warn_dont_show_again">Don\'t show me this message again</string>
     <string name="nhs_export_warn_negative_button">Cancel Export</string>

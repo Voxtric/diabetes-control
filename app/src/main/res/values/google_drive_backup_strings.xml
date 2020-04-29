@@ -3,7 +3,7 @@
     <string name="title_backup_settings">Google Drive Backup</string>
 
     <string name="backup_settings_help_title">Google Drive Backup Settings Help</string>
-    <string name="backup_settings_help_text"><i>This section contains settings regarding app database backup to and recovery from Google Drive:</i>
+    <string name="backup_settings_help_text"><i>This section contains settings regarding app database backups to and recoveries from Google Drive:</i>
         \n
         \n<b>Backup Enabled:</b> Allows you to sign in or out of your Google Drive account so that app database backups and recoveries can take place.
         \n
@@ -15,7 +15,7 @@
         \n
         \n<b>Backup:</b> Immediately performs a manual backup of the app database.
         \n
-        \n<b>Recover:</b> Immediately replaces app database stored on the device with any previously backed up app database on your Google Drive.
+        \n<b>Recover:</b> Immediately replaces the app database stored on the device with any previously backed up app database from your Google Drive.
     </string>
 
 

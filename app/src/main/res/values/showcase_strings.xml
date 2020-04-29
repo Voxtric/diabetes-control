@@ -4,42 +4,42 @@
     <string name="show_showcases_dialog_title">First-Time Launch</string>
     <string name="show_showcases_dialog_text">As this is the first time you have used the app, would you like each page to present you with a quick guide on how to use it? These guides will not display in landscape mode.
         \n
-        \nIf you choose no now, you can always reset this decision later at the bottom of the Settings page.</string>
+        \nIf you choose no now, you can always undo this decision later at the bottom of the Settings page using the \'Reset Tutorial\' button.</string>
 
     <!-- Main Activity -->
     <string name="main_activity_showcase_app_title">Diabetes Control</string>
     <string name="main_activity_showcase_app_text">This app allows you to input data regarding your blood glucose level readings and your insulin intake without over-complicating the whole process.</string>
 
     <string name="main_activity_showcase_settings_title">Settings</string>
-    <string name="main_activity_showcase_settings_text">Before you start entering your data, you might want to tweak the settings to tailor the app to your needs.</string>
+    <string name="main_activity_showcase_settings_text">Before you start entering your data, you might wish to tweak the settings to tailor the app to your needs.</string>
 
     <string name="main_activity_showcase_exporting_title">Exporting</string>
-    <string name="main_activity_showcase_exporting_text">In the future, you may wish to print your data or send it to your GP. To do this, you have a choice of multiple different layouts that you can use to export your data to PDF. You can even export it to a CSV!</string>
+    <string name="main_activity_showcase_exporting_text">In the future, you may wish to print your data or send it to your Health Professional. To do this, you have a choice of multiple different layouts that you can use to export your data to PDF. You can even export to CSV for spreadsheets.</string>
 
     <string name="main_activity_showcase_navigation_title">Navigation</string>
-    <string name="main_activity_showcase_navigation_text">To move to any one of the three pages you will spend most of your time in, you can click the buttons highlighted below. Alternatively, swiping horizontally in any blank space will move you back or forward through the pages.</string>
+    <string name="main_activity_showcase_navigation_text">To move to any one of the three pages you will mainly use, you can click the buttons highlighted below. Alternatively, swiping horizontally in any blank space will move you back or forward through the pages.</string>
 
     <!-- New Entry Fragment -->
     <string name="new_entry_fragment_showcase_add_new_entry_title">Adding New Entry</string>
-    <string name="new_entry_fragment_showcase_add_new_entry_text">Whenever you want to add an entry, simply fill in the details on this page and click the highlighted button.</string>
+    <string name="new_entry_fragment_showcase_add_new_entry_text">Whenever you want to add an entry, simply fill in the boxes on this page and click the highlighted button.</string>
 
     <string name="new_entry_fragment_showcase_auto_populated_title">Auto-populated Data</string>
-    <string name="new_entry_fragment_showcase_auto_populated_text">Some of the fields will be auto-populated with the apps best guess, however you can change them manually for each entry if you want.</string>
+    <string name="new_entry_fragment_showcase_auto_populated_text">Some of the fields will be auto-populated with the app\'s best guess. However, you can change the fields manually if required.</string>
 
     <string name="new_entry_fragment_showcase_see_previous_title">Viewing Previous Input</string>
-    <string name="new_entry_fragment_showcase_see_previous_text">When inputting data, if you want to see what data you put in the last time you had or did something similar.
+    <string name="new_entry_fragment_showcase_see_previous_text">If you wish to see previous data entered similar to that which you are currently entering, click the highlighted button.
         \n
-        \nFor example, if you want to see how much insulin you gave yourself the last time you ate chips, simply add chips to your food eaten list and then click this button.</string>
+        \nFor example, if you want to see how much insulin you gave yourself the last time you ate a particular food (e.g. chips), simply add that food to your food eaten list and click the button.</string>
 
     <!-- Entry List Fragment -->
     <string name="entry_list_fragment_showcase_more_options_title">Recorded Data</string>
-    <string name="entry_list_fragment_showcase_more_options_text">All of your data will be displayed here. You can long click the entry or click the more options button on the right to open a menu of possible actions.
+    <string name="entry_list_fragment_showcase_more_options_text">All of your data will be displayed here. You can long click the entry or click the \'More Options\' button (three vertical dots) on the right hand side to open a menu of possible actions.
         \n
         \nThese actions allow you to view all data associated with an entry, edit the entry, or delete the entry altogether.</string>
 
     <!-- Entry Graph Fragment -->
     <string name="entry_graph_fragment_showcase_graph_control_title">Graph Control</string>
-    <string name="entry_graph_fragment_showcase_graph_control_text">This graph display your blood glucose readings. You can scroll the graph horizontally to view a different range of data, or you can pinch to zoom in and out of the graph.
+    <string name="entry_graph_fragment_showcase_graph_control_text">This graph displays your blood glucose readings. You can use scroll the graph horizontally to view a different range of data, or you can pinch to zoom in and out of the graph.
         \n
         \nClicking a point on the graph will take you to its corresponding entry on the \'View All\' page.</string>
 
@@ -47,18 +47,18 @@
     <string name="entry_graph_fragment_showcase_graph_statistics_text">In horizontal view, the statistics for the given graph range are hidden. Just tab the highlighted area to un-hide them.</string>
 
     <!-- Settings Activity -->
-    <string name="settings_activity_showcase_help_button_title">Settings</string>
-    <string name="settings_activity_showcase_help_button_text">You can click any of the \'?\' buttons at the top of each settings section to get an overview of what each setting is for.</string>
+    <string name="settings_activity_showcase_help_button_title">Settings Help</string>
+    <string name="settings_activity_showcase_help_button_text">You can click any of the \'?\' buttons at the top of each section to get an overview of the purpose of each setting.</string>
 
     <!-- Edit Events Activity -->
     <string name="edit_events_activity_showcase_more_options_title">Event List</string>
-    <string name="edit_events_activity_showcase_more_options_text">All of your events will be displayed here. You can long click the event or click the more options button on the right to open a menu of possible actions.
+    <string name="edit_events_activity_showcase_more_options_text">All of your events will be displayed here. You can long click the event or click the \'More Options\' button (three vertical dots) on the right hand side to open a menu of possible actions.
         \n
         \nThese actions allow you to change the order of the events throughout your day, change their name or time, or delete the event altogether.</string>
 
     <string name="edit_events_activity_showcase_reset_events_title">Default Events</string>
-    <string name="edit_events_activity_showcase_reset_events_text">If at any time you want to return the default events provided with the app, clicking this button will revert all changes you\'ve made to your event list.</string>
+    <string name="edit_events_activity_showcase_reset_events_text">If at any time you wish to return to the default events provided by the app, clicking this button will revert all changes you\'ve made to your event list (without modifying your data).</string>
 
     <string name="edit_events_activity_showcase_add_new_event_title">Add New Event</string>
-    <string name="edit_events_activity_showcase_add_new_event_text">If you\'ve deleted an event, but want to add a new one back in, simply click this button and a blank event will be inserted for you to modify. However, you may only have eight events at any one time.</string>
+    <string name="edit_events_activity_showcase_add_new_event_text">If you\'ve deleted an event, but wish to replace it with a new one, simply click this button and a blank event will be inserted for you to modify. However, you may only have eight events at any one time.</string>
 </resources>

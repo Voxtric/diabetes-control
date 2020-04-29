@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 
 public class LayoutExpander
 {
-  public static void toggleExpansion(Activity activity, View view, ExpansionState state, long expandCollapseDuration)
+  public static void toggleExpansion(Activity activity, View view, ExpansionState state, float expandCollapseDuration)
   {
     if (state.activeAnimator != null)
     {
@@ -20,7 +20,7 @@ public class LayoutExpander
     ValueAnimator valueAnimator;
     if (state.expanding)
     {
-      valueAnimator = collapse(activity, state.view, expandCollapseDuration, 0);
+      valueAnimator = collapse(activity, state.view, expandCollapseDuration);
       ((LinearLayout)view).getChildAt(1).animate().rotation(90.0f).start();
     }
     else
@@ -32,7 +32,7 @@ public class LayoutExpander
     state.activeAnimator = valueAnimator;
   }
 
-  private static ValueAnimator expand(Activity activity, final View view, long duration, final int targetHeight)
+  private static ValueAnimator expand(Activity activity, final View view, float duration, final int targetHeight)
   {
     Display display = activity.getWindowManager().getDefaultDisplay();
     final Point screenSize = new Point();
@@ -61,13 +61,13 @@ public class LayoutExpander
       }
     });
     valueAnimator.setInterpolator(new DecelerateInterpolator());
-    valueAnimator.setDuration(targetHeight / duration);
+    valueAnimator.setDuration((long)(targetHeight / duration));
     valueAnimator.start();
 
     return valueAnimator;
   }
 
-  private static ValueAnimator collapse(Activity activity, final View view, long duration, int targetHeight)
+  private static ValueAnimator collapse(Activity activity, final View view, float duration)
   {
     int[] location = new int[2];
     view.getLocationOnScreen(location);
@@ -76,7 +76,7 @@ public class LayoutExpander
     display.getSize(screenSize);
     int previousHeight = screenSize.y - location[1];
 
-    ValueAnimator valueAnimator = ValueAnimator.ofInt(previousHeight, targetHeight);
+    ValueAnimator valueAnimator = ValueAnimator.ofInt(previousHeight, 0);
     valueAnimator.setInterpolator(new DecelerateInterpolator());
     valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
     {
@@ -94,7 +94,7 @@ public class LayoutExpander
     }
     else
     {
-      valueAnimator.setDuration(previousHeight / duration);
+      valueAnimator.setDuration((long)(previousHeight / duration));
     }
     valueAnimator.start();
 
@@ -104,9 +104,9 @@ public class LayoutExpander
   public static class ExpansionState
   {
     public final View view;
-    public final int fullHeight;
-    public boolean expanding;
-    public ValueAnimator activeAnimator;
+    final int fullHeight;
+    boolean expanding;
+    ValueAnimator activeAnimator;
 
     public ExpansionState(View view)
     {

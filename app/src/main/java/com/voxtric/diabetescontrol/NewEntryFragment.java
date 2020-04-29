@@ -16,6 +16,7 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Pair;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -975,6 +976,7 @@ public class NewEntryFragment extends Fragment
       foodItemsLayout.addView(foodEatenItemInput);
       String newHint = getString(R.string.food_item_hint, 1);
       foodEatenItemInput.setHint(newHint);
+      foodEatenItemInput.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_size));
       CompositeOnFocusChangeListener compositeOnFocusChangeListener = (CompositeOnFocusChangeListener)foodEatenItemInput.getOnFocusChangeListener();
       HintHideOnFocusChangeListener hintHideOnFocusChangeListener = compositeOnFocusChangeListener.getInstance(HintHideOnFocusChangeListener.class);
       hintHideOnFocusChangeListener.changeOriginalHint(newHint);
@@ -1375,6 +1377,7 @@ public class NewEntryFragment extends Fragment
     newItem.addTextChangedListener(textWatcher);
     m_foodListTextWatchers.put(newItem, textWatcher);
     newItem.setTag(tag);
+    newItem.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_size));
     newItem.setOnEditorActionListener(new ListItemOnEditActionListener(owningLayout));
     CompositeOnFocusChangeListener.applyListenerToView(newItem, new HintHideOnFocusChangeListener(newItem, Gravity.START));
     CompositeOnFocusChangeListener.applyListenerToView(newItem,

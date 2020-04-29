@@ -32,7 +32,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:textColor="@android:color/white"
-            android:text="@string/blood_glucose_level_column_title_newline"/>
+            android:text="@string/blood_glucose_level_column_title"/>
 
         <TextView
             android:layout_width="0dp"
