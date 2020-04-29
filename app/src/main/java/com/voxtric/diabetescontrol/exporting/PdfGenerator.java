@@ -43,6 +43,8 @@ public abstract class PdfGenerator
   static final PDFont FONT = PDType1Font.HELVETICA;
   static final PDFont FONT_BOLD = PDType1Font.HELVETICA_BOLD;
   static final PDFColor BLACK = new PDFColor(0, 0, 0);
+  static final PDFColor WHITE = new PDFColor(255, 255, 255);
+  static final PDFColor BLUE = new PDFColor(183, 230, 251);
 
   private final PDDocument m_document;
   private PDPageContentStream m_content = null;

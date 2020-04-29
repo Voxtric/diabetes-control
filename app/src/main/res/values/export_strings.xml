@@ -143,8 +143,8 @@ This device does not have an application installed capable of opening \'%1$s\' f
     <string name="export_ads_fail_notification_title">ADS PDF Export Failed</string>
 
     <string name="week_commencing">Week Commencing: %1$s</string>
-    <string name="blood_glucose_targets">Blood Glucose Targets (mmol/L): Pre-meal %1$.1f - %2$.1f, Post-meal %3$.1f - %4$.1f</string>
-    <string name="blood_glucose_targets_empty">Blood Glucose Targets (mmol/L): Pre-meal ........., Post-meal .........</string>
+    <string name="blood_glucose_targets">Blood Glucose Targets (mmol/L): Pre-meal %1$.1f - %2$.1f Post-meal %3$.1f - %4$.1f</string>
+    <string name="blood_glucose_targets_empty">Blood Glucose Targets (mmol/L): Pre-meal .............. Post-meal ..............</string>
 
     <string name="reading">Reading</string>
     <string name="time">Time</string>

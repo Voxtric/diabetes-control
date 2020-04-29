@@ -26,8 +26,6 @@ public class NhsExporter extends PdfGenerator implements IExporter
 
   private static final float BORDER = 10.0f;
   private static final float NORMAL_COLUMN_WIDTH = FONT_SIZE_MEDIUM * 3.4f;
-  private static final PDFColor WHITE = new PDFColor(255, 255, 255);
-  private static final PDFColor BLUE = new PDFColor(183, 230, 251);
 
   private List<Day> m_days = null;
 

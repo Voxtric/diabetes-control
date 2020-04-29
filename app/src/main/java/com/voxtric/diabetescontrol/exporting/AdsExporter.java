@@ -60,7 +60,7 @@ public class AdsExporter extends PdfGenerator implements IExporter
   @Override
   public byte[] createPDF(ExportForegroundService exportForegroundService)
   {
-    try
+    trygi
     {
       for (final Week week : m_weeks)
       {
@@ -104,7 +104,11 @@ public class AdsExporter extends PdfGenerator implements IExporter
     // Week Commencing.
     Date date = new Date(week.weekBeginning);
     String dateString = context.getString(R.string.week_commencing, DateFormat.getDateInstance(DateFormat.SHORT).format(date));
-    drawText(FONT, FONT_SIZE_MEDIUM, dateString, BORDER, height);
+
+    drawBox(BORDER, height, 130.0f, height - FONT_SIZE_MEDIUM - LINE_SPACING, BLUE, BLUE);
+    drawBox(130.0f, height, 190.0f, height - FONT_SIZE_MEDIUM - LINE_SPACING, BLUE, null);
+    drawText(FONT, FONT_SIZE_MEDIUM, dateString, BORDER + 1.0f, height);
+
 
     // Pre-meal and post-meal targets.
     String targetString = null;
@@ -122,7 +126,11 @@ public class AdsExporter extends PdfGenerator implements IExporter
       targetString = context.getString(R.string.blood_glucose_targets, targetChange.preMealLower,
           targetChange.preMealUpper, targetChange.postMealLower, targetChange.postMealUpper);
     }
-    height = drawText(FONT, FONT_SIZE_MEDIUM, targetString, BORDER + (m_writableWidth / 3.0f), height);
+
+    drawBox(BORDER + (m_writableWidth / 3.0f) - 3.0f, height, 369.0f, height - FONT_SIZE_MEDIUM - LINE_SPACING, BLUE, BLUE);
+    drawBox(369.0f, height, 461.0f, height - FONT_SIZE_MEDIUM - LINE_SPACING, BLUE, null);
+    drawBox(461.0f, height, BORDER + m_writableWidth, height - FONT_SIZE_MEDIUM - LINE_SPACING, BLUE, null);
+    height = drawText(FONT, FONT_SIZE_MEDIUM, targetString, BORDER + (m_writableWidth / 3.0f) - 2.0f, height);
 
     // Event boxes for each day.
     Map<String, Float> eventStartXMap = new HashMap<>();
@@ -132,7 +140,7 @@ public class AdsExporter extends PdfGenerator implements IExporter
     for (Event event : week.events)
     {
       eventStartXMap.put(event.name, startX);
-      drawBox(startX, height, startX + eventWidth, height - EVENT_HEADER_HEIGHT, BLACK, null);
+      drawBox(startX, height, startX + eventWidth, height - EVENT_HEADER_HEIGHT, WHITE, BLUE);
       //drawTextCentered(FONT, FONT_SIZE_LARGE, event.first, 90.0f, startX + (eventWidth / 2.0f), height - (EVENT_HEADER_HEIGHT / 2.0f));
       drawCenteredTextParagraphed(FONT, FONT_SIZE_LARGE, event.name, 90.0f,
           startX + (eventWidth / 2.0f), height - (EVENT_HEADER_HEIGHT / 2.0f), EVENT_HEADER_HEIGHT - (LINE_SPACING * 2.0f));
@@ -140,9 +148,9 @@ public class AdsExporter extends PdfGenerator implements IExporter
       for (int i = 0; i < DAYS.length; i++)
       {
         float dayHeight = height - EVENT_HEADER_HEIGHT - (DAY_HEADER_HEIGHT * (float)i);
-        drawBox(startX, dayHeight, startX + eventWidth, dayHeight - DAY_HEADER_HEIGHT, BLACK, null);
+        drawBox(startX, dayHeight, startX + eventWidth, dayHeight - DAY_HEADER_HEIGHT, BLUE, null);
 
-        dayHeight -= 1.0f;
+        dayHeight -= 4.0f;
         dayHeight = drawTextCenterAligned(FONT, FONT_SIZE_SMALL, context.getString(R.string.reading), startX + (eventWidth / 2.0f), dayHeight) - DATA_GAP;
         dayHeight = drawTextCenterAligned(FONT, FONT_SIZE_SMALL, context.getString(R.string.time), startX + (eventWidth / 2.0f), dayHeight) - DATA_GAP;
         drawTextCenterAligned(FONT, FONT_SIZE_SMALL, context.getString(R.string.dose), startX + (eventWidth / 2.0f), dayHeight);
@@ -155,18 +163,19 @@ public class AdsExporter extends PdfGenerator implements IExporter
 
     // Day headers and extras.
     float tempHeight = height + (FONT_SIZE_LARGE * 2.2f);
-    drawBox(startX, tempHeight, startX + availableSpace, height, BLACK, null);
+    drawBox(startX, tempHeight, startX + availableSpace, height, WHITE, BLUE);
     tempHeight = drawTextCenterAligned(FONT, FONT_SIZE_LARGE, context.getString(R.string.food_eaten_title), startX + (availableSpace / 2.0f), tempHeight);
     drawTextCenterAligned(FONT, FONT_SIZE_LARGE, context.getString(R.string.additional_notes_title), startX + (availableSpace / 2.0f), tempHeight);
     for (int i = 0; i < DAYS.length; i++)
     {
       float dayHeight = height - (DAY_HEADER_HEIGHT * i);
-      drawBox(BORDER, dayHeight, BORDER + DAY_HEADER_WIDTH, dayHeight - DAY_HEADER_HEIGHT, BLACK, null);
+      drawBox(BORDER, dayHeight, BORDER + DAY_HEADER_WIDTH, dayHeight - DAY_HEADER_HEIGHT, WHITE, BLUE);
       drawTextCentered(FONT, FONT_SIZE_LARGE, DAYS[i], 90.0f, BORDER + (DAY_HEADER_WIDTH / 2.0f), dayHeight - (DAY_HEADER_HEIGHT / 2.0f));
-      drawBox(startX, dayHeight, startX + availableSpace, dayHeight - DAY_HEADER_HEIGHT, BLACK, null);
+      drawBox(startX, dayHeight, startX + availableSpace, dayHeight - DAY_HEADER_HEIGHT, BLUE, null);
     }
 
     // Data
+    float dataHeightStart = height;
     int lastDayOfWeek = -1;
     float dayStartHeight = height;
     StringBuilder foodEatenStringBuilder = new StringBuilder();
@@ -179,7 +188,7 @@ public class AdsExporter extends PdfGenerator implements IExporter
 
       int dayOfWeek = (calendar.get(Calendar.DAY_OF_WEEK) + 5) % DAYS.length;
       dayStartHeight = height - (DAY_HEADER_HEIGHT * dayOfWeek);
-      float dayHeight = dayStartHeight - FONT_SIZE_SMALL - (FONT_SIZE_MEDIUM * 0.2f);
+      float dayHeight = dayStartHeight - FONT_SIZE_SMALL - (FONT_SIZE_MEDIUM * 0.2f) - 3.0f;
       Float eventStartXValue = eventStartXMap.get(entry.event);
       float eventStartX = eventStartXValue != null ? eventStartXValue : 0.0f;
       drawTextCenterAligned(FONT, FONT_SIZE_MEDIUM, String.valueOf(entry.bloodGlucoseLevel), eventStartX + (eventWidth / 2.0f), dayHeight);
@@ -219,6 +228,8 @@ public class AdsExporter extends PdfGenerator implements IExporter
     showExtras(context, foodEatenStringBuilder, additionalNotesStringBuilder, startX, availableSpace, dayStartHeight);
     height -= DAY_HEADER_HEIGHT * DAYS.length;
 
+    drawBox(BORDER + DAY_HEADER_WIDTH, dataHeightStart, startX, height, BLUE, null);
+
     // Insulin used
     height -= VERTICAL_SPACE;
     String insulinUsedString = "";
@@ -232,7 +243,9 @@ public class AdsExporter extends PdfGenerator implements IExporter
       }
       insulinUsedString = insulinUsedStringBuilder.substring(0, insulinUsedStringBuilder.length() - 2);
     }
-    height = drawText(FONT, FONT_SIZE_MEDIUM, context.getString(R.string.insulin_used, insulinUsedString), BORDER, height);
+    drawBox(BORDER, height, 95.0f, height - FONT_SIZE_MEDIUM - LINE_SPACING, BLUE, BLUE);
+    drawBox(95.0f, height, BORDER + m_writableWidth, height - FONT_SIZE_MEDIUM - LINE_SPACING, BLUE, null);
+    height = drawText(FONT, FONT_SIZE_MEDIUM, context.getString(R.string.insulin_used, insulinUsedString), BORDER + 1.0f, height);
 
     // Contact Details
     height -= VERTICAL_SPACE / 2.0f;
@@ -240,10 +253,14 @@ public class AdsExporter extends PdfGenerator implements IExporter
     PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
     Preference preference = preferencesDao.getPreference(context.getResources().getResourceName(R.id.edit_text_contact_name));
     String contactName = preference != null && preference.value.length() > 0 ? preference.value : "...........................................";
-    drawText(FONT, FONT_SIZE_MEDIUM, context.getString(R.string.contact_name, contactName), BORDER, height);
+    drawBox(BORDER, height, 105.0f, height - FONT_SIZE_MEDIUM - LINE_SPACING, BLUE, BLUE);
+    drawBox(105.0f, height, BORDER + (m_writableWidth / 2.0f), height - FONT_SIZE_MEDIUM - LINE_SPACING, BLUE, null);
+    drawText(FONT, FONT_SIZE_MEDIUM, context.getString(R.string.contact_name, contactName), BORDER + 1.0f, height);
 
     preference = preferencesDao.getPreference(context.getResources().getResourceName(R.id.edit_text_contact_number));
     String contactNumber = preference != null && preference.value.length() > 0  ? preference.value : "...........................................";
-    drawText(FONT, FONT_SIZE_MEDIUM, context.getString(R.string.contact_number, contactNumber), BORDER + (m_writableWidth / 2.0f), height);
+    drawBox(BORDER + (m_writableWidth / 2.0f), height, 383.0f, height - FONT_SIZE_MEDIUM - LINE_SPACING, BLUE, BLUE);
+    drawBox(383.0f, height, BORDER + m_writableWidth, height - FONT_SIZE_MEDIUM - LINE_SPACING, BLUE, null);
+    drawText(FONT, FONT_SIZE_MEDIUM, context.getString(R.string.contact_number, contactNumber), BORDER + (m_writableWidth / 2.0f) + 1.0f, height);
   }
 }
