@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="expand_statistics_content_description">Expand Statistics</string>
     <string name="statistics_title">Statistics for Graph Period</string>
     <string name="maximum_bgl_label">Maximum BGL:</string>
     <string name="minimum_bgl_label">Minimum BGL:</string>

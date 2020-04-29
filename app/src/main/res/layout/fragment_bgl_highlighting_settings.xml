@@ -21,7 +21,6 @@
     <View
         android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_marginLeft="@dimen/text_box_padding"
         android:layout_marginStart="@dimen/text_box_padding"
         app:layout_constraintTop_toTopOf="@id/title_bgl_highlighting_settings"
         app:layout_constraintBottom_toBottomOf="@id/title_bgl_highlighting_settings"
@@ -45,7 +44,9 @@
         android:src="@drawable/question_mark"
         android:tint="@color/colorAccent"
         android:background="@drawable/blank"
-        android:onClick="moreInfo"/>
+        android:onClick="moreInfo"
+        tools:ignore="OnClick"
+        android:contentDescription="@string/bgl_highlighting_settings_help_title" />
 
     <Switch
         android:id="@+id/highlighting_enabled_switch"
@@ -70,7 +71,6 @@
     <EditText
         android:id="@+id/ideal_range_lower"
         android:layout_width="0dp"
-        android:layout_marginLeft="@dimen/text_box_padding"
         android:layout_marginStart="@dimen/text_box_padding"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="@id/ideal_range_label"
@@ -81,7 +81,8 @@
         android:nextFocusForward="@id/ideal_range_upper"
         android:gravity="center"
         android:background="@drawable/back"
-        android:hint="@string/ideal_range_lower_hint"/>
+        android:hint="@string/ideal_range_lower_hint"
+        tools:ignore="Autofill" />
 
     <TextView
         android:id="@+id/ideal_range_divider"
@@ -109,7 +110,8 @@
         android:nextFocusForward="@id/high_range_lower"
         android:gravity="center"
         android:background="@drawable/back"
-        android:hint="@string/ideal_range_upper_hint"/>
+        android:hint="@string/ideal_range_upper_hint"
+        tools:ignore="Autofill" />
 
     <TextView
         android:id="@+id/high_range_label"
@@ -124,7 +126,6 @@
     <EditText
         android:id="@+id/high_range_lower"
         android:layout_width="0dp"
-        android:layout_marginLeft="@dimen/text_box_padding"
         android:layout_marginStart="@dimen/text_box_padding"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="@id/high_range_label"
@@ -135,7 +136,8 @@
         android:nextFocusForward="@id/high_range_upper"
         android:gravity="center"
         android:background="@drawable/back"
-        android:hint="@string/high_range_lower_hint"/>
+        android:hint="@string/high_range_lower_hint"
+        tools:ignore="Autofill" />
 
     <TextView
         android:id="@+id/high_range_divider"
@@ -162,7 +164,8 @@
         android:imeOptions="actionDone"
         android:gravity="center"
         android:background="@drawable/back"
-        android:hint="@string/ideal_range_upper_hint"/>
+        android:hint="@string/ideal_range_upper_hint"
+        tools:ignore="Autofill" />
 
     <Button
         android:id="@+id/button_reset_bgl_values"

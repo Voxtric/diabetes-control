@@ -77,7 +77,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="@string/reset_events_text"
-            android:onClick="resetEvents"/>
+            android:onClick="resetEvents"
+            tools:ignore="ButtonStyle" />
 
         <Button
             android:id="@+id/button_add_new_event"
@@ -85,6 +86,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="@string/add_new_event_text"
-            android:onClick="addNewEvent"/>
+            android:onClick="addNewEvent"
+            tools:ignore="ButtonStyle" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -38,7 +38,8 @@
             android:layout_height="match_parent"
             android:scaleType="fitCenter"
             android:src="@drawable/arrow_enabled"
-            android:rotation="90"/>
+            android:rotation="90"
+            android:contentDescription="@string/expand_statistics_content_description" />
     </LinearLayout>
 
     <LinearLayout

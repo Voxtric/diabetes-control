@@ -104,8 +104,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="@id/event_label"
             style="@style/BasicText"
-            android:text="@string/blood_glucose_level_label"
-            android:labelFor="@id/blood_glucose_level_input"/>
+            android:text="@string/blood_glucose_level_label"/>
 
         <EditText
             android:id="@+id/blood_glucose_level_input"
@@ -122,7 +121,8 @@
             android:imeOptions="actionNext"
             android:inputType="numberDecimal"
             android:nextFocusForward="@id/insulin_name_input"
-            android:gravity="center"/>
+            android:gravity="center"
+            tools:ignore="Autofill" />
 
         <!-- Insulin Name -->
         <TextView
@@ -134,8 +134,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="@id/blood_glucose_level_label"
             style="@style/BasicText"
-            android:text="@string/insulin_name_label"
-            android:labelFor="@id/insulin_name_input"/>
+            android:text="@string/insulin_name_label"/>
 
         <AutoCompleteTextView
             android:id="@+id/insulin_name_input"
@@ -165,8 +164,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="@id/insulin_name_label"
             style="@style/BasicText"
-            android:text="@string/insulin_dose_label"
-            android:labelFor="@id/insulin_dose_input"/>
+            android:text="@string/insulin_dose_label"/>
 
         <EditText
             android:id="@+id/insulin_dose_input"
@@ -182,7 +180,8 @@
             style="@style/BasicText"
             android:imeOptions="actionDone"
             android:inputType="number"
-            android:gravity="center"/>
+            android:gravity="center"
+            tools:ignore="Autofill" />
 
         <!-- Food Eaten -->
         <TextView
@@ -211,8 +210,7 @@
             android:layout_marginTop="@dimen/text_margin"
             app:layout_constraintTop_toBottomOf="@id/food_eaten_inputs_layout"
             style="@style/BasicText"
-            android:text="@string/additional_notes_label"
-            android:labelFor="@id/additional_notes_input"/>
+            android:text="@string/additional_notes_label"/>
 
         <AutoCompleteTextView
             android:id="@+id/additional_notes_input"

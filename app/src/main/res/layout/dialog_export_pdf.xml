@@ -19,7 +19,6 @@
             android:id="@+id/progress_bar_export_indefinite"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginRight="@dimen/text_box_padding"
             android:layout_marginEnd="@dimen/text_box_padding"/>
 
         <TextView

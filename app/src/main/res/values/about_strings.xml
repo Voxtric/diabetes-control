@@ -29,6 +29,10 @@
 
 
     <!-- Content Descriptions -->
+    <string name="expand_disclaimer_content_description">Expand Disclaimer</string>
+    <string name="expand_privacy_policy_content_description">Expand Privacy Policy</string>
+    <string name="expand_open_source_information_content_description">Expand Open Source Information</string>
+    <string name="expand_donation_links_content_description">Expand Donation Links</string>
     <string name="diabetes_control_icon_content_description">Diabetes Control Icon</string>
     <string name="voxtric_icon_content_description">Voxtric Icon</string>
 </resources>

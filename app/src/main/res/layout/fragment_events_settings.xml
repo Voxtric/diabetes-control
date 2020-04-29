@@ -20,7 +20,6 @@
     <View
         android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_marginLeft="@dimen/text_box_padding"
         android:layout_marginStart="@dimen/text_box_padding"
         app:layout_constraintTop_toTopOf="@id/title_events_settings"
         app:layout_constraintBottom_toBottomOf="@id/title_events_settings"
@@ -44,7 +43,9 @@
         android:src="@drawable/question_mark"
         android:tint="@color/colorAccent"
         android:background="@drawable/blank"
-        android:onClick="moreInfo"/>
+        android:onClick="moreInfo"
+        android:contentDescription="@string/events_settings_help_title"
+        tools:ignore="onClick"/>
 
     <Button
         android:id="@+id/edit_events_button"

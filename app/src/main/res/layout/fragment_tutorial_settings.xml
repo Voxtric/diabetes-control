@@ -43,7 +43,9 @@
         android:src="@drawable/question_mark"
         android:tint="@color/colorAccent"
         android:background="@drawable/blank"
-        android:onClick="moreInfo"/>
+        android:onClick="moreInfo"
+        android:contentDescription="@string/tutorial_settings_help_title"
+        tools:ignore="OnClick" />
 
     <Button
         android:id="@+id/reset_tutorial_button"

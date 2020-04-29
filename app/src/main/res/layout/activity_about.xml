@@ -94,7 +94,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/arrow_enabled"/>
+                    android:src="@drawable/arrow_enabled"
+                    android:contentDescription="@string/expand_disclaimer_content_description"/>
             </LinearLayout>
 
 
@@ -125,7 +126,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/arrow_enabled"/>
+                    android:src="@drawable/arrow_enabled"
+                    android:contentDescription="@string/expand_privacy_policy_content_description"/>
             </LinearLayout>
 
             <TextView
@@ -155,7 +157,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/arrow_enabled"/>
+                    android:src="@drawable/arrow_enabled"
+                    android:contentDescription="@string/expand_open_source_information_content_description"/>
             </LinearLayout>
 
             <TextView
@@ -185,7 +188,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/arrow_enabled"/>
+                    android:src="@drawable/arrow_enabled"
+                    android:contentDescription="@string/expand_donation_links_content_description"/>
             </LinearLayout>
 
             <LinearLayout

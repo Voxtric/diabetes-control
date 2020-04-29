@@ -108,7 +108,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/arrow_enabled"/>
+                    android:src="@drawable/arrow_enabled"
+                    android:contentDescription="@string/expand_disclaimer_content_description"/>
             </LinearLayout>
 
             <TextView
@@ -138,7 +139,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/arrow_enabled"/>
+                    android:src="@drawable/arrow_enabled"
+                    android:contentDescription="@string/expand_privacy_policy_content_description"/>
             </LinearLayout>
 
             <TextView
@@ -168,7 +170,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/arrow_enabled"/>
+                    android:src="@drawable/arrow_enabled"
+                    android:contentDescription="@string/expand_open_source_information_content_description"/>
             </LinearLayout>
 
             <TextView
@@ -198,7 +201,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/arrow_enabled"/>
+                    android:src="@drawable/arrow_enabled"
+                    android:contentDescription="@string/expand_donation_links_content_description" />
             </LinearLayout>
 
             <LinearLayout
@@ -227,7 +231,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/text_box_padding"
-        android:layout_marginRight="@dimen/text_box_padding"
         app:layout_constraintBottom_toBottomOf="@id/voxtric_icon"
         app:layout_constraintRight_toLeftOf="@id/voxtric_icon"
         app:layout_constraintTop_toTopOf="@id/voxtric_icon"
