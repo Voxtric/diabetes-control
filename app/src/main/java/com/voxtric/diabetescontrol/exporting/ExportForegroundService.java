@@ -369,7 +369,7 @@ public class ExportForegroundService extends ForegroundService
     viewFileIntent.setDataAndType(exportFileUri, exportFileMimeType);
     viewFileIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-    boolean canOpenFile = !context.getPackageManager().queryIntentActivities(viewFileIntent, PackageManager.MATCH_DEFAULT_ONLY).isEmpty();
+    boolean canOpenFile = viewFileIntent.resolveActivity(context.getPackageManager()) != null;
     if (!canOpenFile)
     {
       viewFileIntent = new Intent(context, MainActivity.class);
@@ -382,6 +382,7 @@ public class ExportForegroundService extends ForegroundService
         viewFileIntent.putExtra("message_text", context.getString(R.string.message_view_export_fail, fileExtension));
       }
     }
+
     return viewFileIntent;
   }
 

@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -159,14 +158,12 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
   }
 
   @Override
-  public GraphData[] getData(long startTimestamp, long endTimestamp, long visibleStartTimestamp, long visibleEndTimestamp)
+  public GraphData[] getData(TimeGraph graph, long startTimestamp, long endTimestamp, long visibleStartTimestamp, long visibleEndTimestamp)
   {
-    GraphData[] graphData = null;
-
     DataEntriesDao dataEntriesDao = AppDatabase.getInstance().dataEntriesDao();
     List<DataEntry> entries = dataEntriesDao.findAllBetween(startTimestamp, endTimestamp);
 
-    graphData = new GraphData[entries.size()];
+    GraphData[] graphData = new GraphData[entries.size()];
     int graphDataIndex = 0;
     for (int i = 0; i < graphData.length; i++)
     {
@@ -191,7 +188,7 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
         final Activity activity = getActivity();
         if (activity != null)
         {
-          activity.findViewById(R.id.graph).post(new Runnable()
+          graph.post(new Runnable()
           {
             @Override
             public void run()
@@ -219,7 +216,7 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
 
   void refreshGraph(final boolean animate, boolean moveToEnd)
   {
-    Activity activity = getActivity();
+    final Activity activity = getActivity();
     if (activity != null)
     {
       final TimeGraph graph = activity.findViewById(R.id.graph);
@@ -241,7 +238,7 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
             {
               final long endTimestamp = lastEntry.actualTimestamp;
               final long startTimestamp = endTimestamp - DEFAULT_DISPLAY_DURATION;
-              getActivity().runOnUiThread(new Runnable()
+              activity.runOnUiThread(new Runnable()
               {
                 @Override
                 public void run()

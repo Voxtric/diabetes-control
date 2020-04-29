@@ -98,7 +98,6 @@
                     android:contentDescription="@string/expand_disclaimer_content_description"/>
             </LinearLayout>
 
-
             <TextView
                 android:id="@+id/disclaimer_text"
                 android:layout_width="match_parent"
