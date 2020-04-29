@@ -66,10 +66,10 @@ This will replace all current events and times with the default NHS standard eve
 
 
     <!-- Content Descriptions -->
-    <string name="edit_event_more_content_description">Edit event more options button</string>
+    <string name="edit_event_more_content_description">Edit Event More Options</string>
 
-    <string name="move_down_content_description">Move event down button</string>
-    <string name="move_up_content_description">Move event up button</string>
+    <string name="move_down_content_description">Move Event Down</string>
+    <string name="move_up_content_description">Move Event Up</string>
 
 
 

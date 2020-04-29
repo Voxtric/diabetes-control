@@ -92,5 +92,6 @@
         android:layout_gravity="bottom|end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/back_to_top"/>
+        android:src="@drawable/back_to_top"
+        android:contentDescription="@string/back_to_top_content_description"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
