@@ -88,13 +88,13 @@ public class LayoutExpander
       }
     });
     valueAnimator.setInterpolator(new DecelerateInterpolator());
-    if (duration == 0)
+    if (duration == 0.0f)
     {
       valueAnimator.setDuration(0);
     }
     else
     {
-      valueAnimator.setDuration((long)(previousHeight / duration));
+      valueAnimator.setDuration((long)(Math.abs(previousHeight) / duration));
     }
     valueAnimator.start();
 

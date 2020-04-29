@@ -3,11 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_horizontal_margin"
-    android:paddingLeft="@dimen/activity_vertical_margin"
-    android:paddingStart="@dimen/activity_vertical_margin"
-    android:paddingRight="@dimen/activity_vertical_margin"
-    android:paddingEnd="@dimen/activity_vertical_margin"
+    android:padding="?dialogPreferredPadding"
     android:orientation="vertical">
 
     <RadioGroup
@@ -59,7 +55,7 @@
             android:id="@+id/button_start_date"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="1.8"
             android:background="@drawable/back"
             android:minHeight="0dp"
             style="@style/BasicText"
@@ -87,7 +83,7 @@
             android:id="@+id/button_end_date"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="1.8"
             android:background="@drawable/back"
             android:minHeight="0dp"
             style="@style/BasicText"

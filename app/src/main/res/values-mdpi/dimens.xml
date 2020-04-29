@@ -1,0 +1,5 @@
+<resources>
+    <dimen name="text_size">14sp</dimen>
+
+    <item name="expand_collapse_duration" format="float" type="dimen">0.5</item>
+</resources>

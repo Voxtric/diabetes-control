@@ -2,6 +2,8 @@ package com.voxtric.diabetescontrol;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -56,6 +58,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TimeZone;
 
 import com.voxtric.diabetescontrol.database.AppDatabase;
 import com.voxtric.diabetescontrol.database.DataEntriesDao;
@@ -119,6 +122,7 @@ public class NewEntryFragment extends Fragment
     final Activity activity = getActivity();
     if (activity != null)
     {
+      final int padding = (int)getResources().getDimension(R.dimen.text_size);
       Spinner eventSpinner = activity.findViewById(R.id.event_spinner);
       m_eventSpinnerAdapter = new ArrayAdapter<String>(activity, R.layout.event_spinner_dropdown_item)
       {
@@ -126,9 +130,10 @@ public class NewEntryFragment extends Fragment
         public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent)
         {
           convertView = super.getDropDownView(position, convertView, parent);
-          ViewGroup.LayoutParams layoutParams = convertView.getLayoutParams();
-          layoutParams.height = 100;
-          convertView.setLayoutParams(layoutParams);
+          if (position > 0)
+          {
+            convertView.setPaddingRelative(0, padding, 0, 0);
+          }
           return convertView;
         }
       };
@@ -411,22 +416,24 @@ public class NewEntryFragment extends Fragment
       @Override
       public void onClick(View view)
       {
-        final DatePicker datePicker = new DatePicker(getActivity());
-        AlertDialog dialog = new AlertDialog.Builder(getActivity())
-            .setView(datePicker)
-            .setPositiveButton(R.string.done_dialog_option, new DialogInterface.OnClickListener()
+        Activity activity = getActivity();
+        if (activity != null)
+        {
+          Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+          DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener()
+          {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth)
             {
-              @Override
-              public void onClick(DialogInterface dialog, int which)
-              {
-                m_year = datePicker.getYear();
-                m_month = datePicker.getMonth();
-                m_day = datePicker.getDayOfMonth();
-                updateDateTime(false);
-              }
-            })
-            .create();
-        dialog.show();
+              m_year = year;
+              m_month = month;
+              m_day = dayOfMonth;
+              updateDateTime(false);
+            }
+          };
+          final DatePickerDialog datePickerDialog = new DatePickerDialog(activity, onDateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+          datePickerDialog.show();
+        }
       }
     });
   }
@@ -440,42 +447,30 @@ public class NewEntryFragment extends Fragment
       @Override
       public void onClick(View view)
       {
-        final TimePicker timePicker = new TimePicker(getActivity());
-        AlertDialog dialog = new AlertDialog.Builder(getActivity())
-            .setView(timePicker)
-            .setPositiveButton(R.string.done_dialog_option, new DialogInterface.OnClickListener()
-            {
-              @Override
-              public void onClick(DialogInterface dialog, int which)
-              {
-                m_hour = timePicker.getCurrentHour();
-                m_minute = timePicker.getCurrentMinute();
-                updateDateTime(false);
-                if (m_currentEventName == null || m_eventNameAutoSelected)
-                {
-                  pickBestEvent();
-                }
-              }
-            })
-            .create();
-        dialog.show();
-
-        // Ensure time picker displays correctly.
-        Activity activity = getActivity();
+        final Activity activity = getActivity();
         if (activity != null)
         {
-          Point point = new Point();
-          activity.getWindowManager().getDefaultDisplay().getSize(point);
-          if (point.x > point.y)
+          Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+          TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener()
           {
-            timePicker.getLayoutParams().width = WindowManager.LayoutParams.WRAP_CONTENT;
-            timePicker.getLayoutParams().height = WindowManager.LayoutParams.MATCH_PARENT;
-          }
-          else
-          {
-            timePicker.getLayoutParams().width = WindowManager.LayoutParams.MATCH_PARENT;
-            timePicker.getLayoutParams().height = WindowManager.LayoutParams.WRAP_CONTENT;
-          }
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute)
+            {
+              m_hour = hourOfDay;
+              m_minute = minute;
+              updateDateTime(false);
+              if (m_currentEventName == null || m_eventNameAutoSelected)
+              {
+                pickBestEvent();
+              }
+            }
+          };
+          final TimePickerDialog timePickerDialog = new TimePickerDialog(activity,
+                                                                         timeSetListener,
+                                                                         calendar.get(Calendar.HOUR_OF_DAY),
+                                                                         calendar.get(Calendar.MINUTE),
+                                                                         false);
+          timePickerDialog.show();
         }
       }
     });

@@ -27,11 +27,8 @@ import com.voxtric.diabetescontrol.utilities.LayoutExpander;
 
 public class AboutActivity extends AwaitRecoveryActivity
 {
-  private final float EXPAND_COLLAPSE_DURATION = 2.0f;
-
   private final HashMap<View, LayoutExpander.ExpansionState> m_expansionStates = new HashMap<>();
-
-  private float m_expandCollapseDuration = 0;
+  private float m_expandCollapseDuration = 0.0f;
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -83,7 +80,9 @@ public class AboutActivity extends AwaitRecoveryActivity
         toggleVisibility(findViewById(R.id.open_source_information_layout));
         toggleVisibility(findViewById(R.id.donation_links_layout));
 
-        m_expandCollapseDuration = EXPAND_COLLAPSE_DURATION;
+        TypedValue expandCollapseDurationValue = new TypedValue();
+        getResources().getValue(R.dimen.expand_collapse_duration, expandCollapseDurationValue, true);
+        m_expandCollapseDuration = expandCollapseDurationValue.getFloat();
       }
     });
   }

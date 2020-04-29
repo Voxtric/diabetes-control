@@ -1,7 +1,9 @@
 package com.voxtric.diabetescontrol.exporting;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +25,7 @@ import androidx.fragment.app.DialogFragment;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import com.voxtric.diabetescontrol.MainActivity;
 import com.voxtric.diabetescontrol.R;
@@ -71,8 +74,8 @@ public class ExportDurationDialogFragment extends DialogFragment
       final View view = View.inflate(activity, R.layout.dialog_export_duration, null);
       m_startDateButton = view.findViewById(R.id.button_start_date);
       m_endDateButton = view.findViewById(R.id.button_end_date);
-      initialiseDateButton(m_startDateButton);
-      initialiseDateButton(m_endDateButton);
+      initialiseDateButton(m_startDateButton, activity);
+      initialiseDateButton(m_endDateButton, activity);
 
       if (m_lastExportTimestamp == -1)
       {
@@ -194,7 +197,7 @@ public class ExportDurationDialogFragment extends DialogFragment
     outState.putLong("within_time_period_end_time_stamp", m_withinTimePeriodEndTimeStamp);
   }
 
-  private void initialiseDateButton(final Button dateButton)
+  private void initialiseDateButton(final Button dateButton, final Activity activity)
   {
     dateButton.setTypeface(null, Typeface.NORMAL);
     dateButton.setAllCaps(false);
@@ -203,46 +206,44 @@ public class ExportDurationDialogFragment extends DialogFragment
       @Override
       public void onClick(View view)
       {
-        final DatePicker datePicker = new DatePicker(getActivity());
-        AlertDialog dialog = new AlertDialog.Builder(getActivity())
-            .setView(datePicker)
-            .setPositiveButton(R.string.done_dialog_option, new DialogInterface.OnClickListener()
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener()
+        {
+          @Override
+          public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth)
+          {
+            Calendar calendar = Calendar.getInstance();
+            calendar.clear();
+            calendar.set(
+                calendar.getMinimum(Calendar.YEAR),
+                calendar.getMinimum(Calendar.MONTH),
+                calendar.getMinimum(Calendar.DATE),
+                calendar.getMinimum(Calendar.HOUR_OF_DAY),
+                calendar.getMinimum(Calendar.MINUTE),
+                calendar.getMinimum(Calendar.SECOND));
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            Date date = calendar.getTime();
+            String dateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(date);
+            dateButton.setText(dateString);
+
+            if (dateButton.getId() == R.id.button_start_date)
             {
-              @Override
-              public void onClick(DialogInterface dialog, int which)
-              {
-                Calendar calendar = Calendar.getInstance();
-                calendar.clear();
-                calendar.set(
-                    calendar.getMinimum(Calendar.YEAR),
-                    calendar.getMinimum(Calendar.MONTH),
-                    calendar.getMinimum(Calendar.DATE),
-                    calendar.getMinimum(Calendar.HOUR_OF_DAY),
-                    calendar.getMinimum(Calendar.MINUTE),
-                    calendar.getMinimum(Calendar.SECOND));
-                calendar.set(Calendar.YEAR, datePicker.getYear());
-                calendar.set(Calendar.MONTH, datePicker.getMonth());
-                calendar.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth());
-                Date date = calendar.getTime();
-                String dateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(date);
-                dateButton.setText(dateString);
+              m_withinTimePeriodStartTimeStamp = calendar.getTimeInMillis();
+            }
+            else
+            {
+              calendar.add(Calendar.DAY_OF_MONTH, 1);
+              m_withinTimePeriodEndTimeStamp = calendar.getTimeInMillis() - 1;
+            }
 
-                if (dateButton.getId() == R.id.button_start_date)
-                {
-                  m_withinTimePeriodStartTimeStamp = calendar.getTimeInMillis();
-                }
-                else
-                {
-                  calendar.add(Calendar.DAY_OF_MONTH, 1);
-                  m_withinTimePeriodEndTimeStamp = calendar.getTimeInMillis() - 1;
-                }
-
-                m_alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(
-                    m_startDateButton.getText().length() > 0 && m_endDateButton.getText().length() > 0);
-              }
-            })
-            .create();
-        dialog.show();
+            m_alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(
+                m_startDateButton.getText().length() > 0 && m_endDateButton.getText().length() > 0);
+          }
+        };
+        final DatePickerDialog datePickerDialog = new DatePickerDialog(activity, onDateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
       }
     });
   }
