@@ -27,15 +27,15 @@
     <string name="new_entry_fragment_showcase_auto_populated_text">Some of the fields will be auto-populated with the app\'s best guess. However, you can change the fields manually if required.</string>
 
     <string name="new_entry_fragment_showcase_see_previous_title">Viewing Previous Input</string>
-    <string name="new_entry_fragment_showcase_see_previous_text">If you wish to see previous data entered similar to that which you are currently entering, click the highlighted button.
-        \n
-        \nFor example, if you want to see how much insulin you gave yourself the last time you ate a particular food (e.g. chips), simply add that food to your food eaten list and click the button.</string>
+    <string name="new_entry_fragment_showcase_see_previous_button_text">If you wish to see previous data entered similar to that which you are currently entering, click the highlighted button.</string>>
+    <string name="new_entry_fragment_showcase_see_previous_example_text">For example, if you want to see how much insulin you gave yourself the last time you ate a particular food (e.g. chips), simply add that food to your food eaten list and click the \'See Previous\' button.</string>
 
     <!-- Entry List Fragment -->
-    <string name="entry_list_fragment_showcase_more_options_title">Recorded Data</string>
-    <string name="entry_list_fragment_showcase_more_options_text">All of your data will be displayed here. You can long click the entry or click the \'More Options\' button (three vertical dots) on the right hand side to open a menu of possible actions.
-        \n
-        \nThese actions allow you to view all data associated with an entry, edit the entry, or delete the entry altogether.</string>
+    <string name="entry_list_fragment_showcase_more_options_menu_title">Recorded Data</string>
+    <string name="entry_list_fragment_showcase_more_options_menu_text">All of your data will be displayed here. You can long click the entry or click the \'More Options\' button (three vertical dots) on the right hand side to open a menu of possible actions.</string>
+
+    <string name="entry_list_fragment_showcase_more_options_actions_title">Recorded Data Actions</string>
+    <string name="entry_list_fragment_showcase_more_options_actions_text">These actions allow you to view all data associated with an entry, edit the entry, or delete the entry altogether.</string>
 
     <!-- Entry Graph Fragment -->
     <string name="entry_graph_fragment_showcase_graph_control_title">Graph Control</string>
@@ -51,10 +51,11 @@
     <string name="settings_activity_showcase_help_button_text">You can click any of the \'?\' buttons at the top of each section to get an overview of the purpose of each setting.</string>
 
     <!-- Edit Events Activity -->
-    <string name="edit_events_activity_showcase_more_options_title">Event List</string>
-    <string name="edit_events_activity_showcase_more_options_text">All of your events will be displayed here. You can long click the event or click the \'More Options\' button (three vertical dots) on the right hand side to open a menu of possible actions.
-        \n
-        \nThese actions allow you to change the order of the events throughout your day, change their name or time, or delete the event altogether.</string>
+    <string name="edit_events_activity_showcase_more_options_menu_title">Event List</string>
+    <string name="edit_events_activity_showcase_more_options_menu_text">All of your events will be displayed here. You can long click the event or click the \'More Options\' button (three vertical dots) on the right hand side to open a menu of possible actions.</string>>
+
+    <string name="edit_events_activity_showcase_more_options_actions_title">Event List Actions</string>
+    <string name="edit_events_activity_showcase_more_options_actions_text">These actions allow you to change the order of the events throughout your day, change their name or time, or delete the event altogether.</string>
 
     <string name="edit_events_activity_showcase_reset_events_title">Default Events</string>
     <string name="edit_events_activity_showcase_reset_events_text">If at any time you wish to return to the default events provided by the app, clicking this button will revert all changes you\'ve made to your event list (without modifying your data).</string>

@@ -186,10 +186,11 @@
         <!-- Food Eaten -->
         <TextView
             android:id="@+id/food_eaten_label"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/text_margin"
             app:layout_constraintTop_toBottomOf="@id/insulin_dose_label"
+            app:layout_constraintStart_toStartOf="parent"
             style="@style/BasicText"
             android:text="@string/food_eaten_label"
             android:labelFor="@id/food_eaten_inputs_layout"/>
@@ -205,10 +206,11 @@
         <!-- Additional Notes -->
         <TextView
             android:id="@+id/additional_notes_label"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/text_margin"
             app:layout_constraintTop_toBottomOf="@id/food_eaten_inputs_layout"
+            app:layout_constraintStart_toStartOf="parent"
             style="@style/BasicText"
             android:text="@string/additional_notes_label"/>
 

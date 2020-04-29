@@ -179,6 +179,7 @@ public class EntryListFragment extends Fragment
     }
     else
     {
+      m_adapter.removeDummy();
       refreshEntryList();
     }
   }
