@@ -184,7 +184,7 @@ public class BglHighlightingSettingsFragment extends Fragment
                          highRangeLower.setText(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE));
                          highRangeUpper.setText(m_bglRangeValues.get(ACTION_REQUIRED_MINIMUM_PREFERENCE));
 
-                         boolean highlightingEnabled = Boolean.valueOf(m_bglRangeValues.get(
+                         boolean highlightingEnabled = Boolean.parseBoolean(m_bglRangeValues.get(
                              HIGHLIGHTING_ENABLED_PREFERENCE));
                          highlightingEnabledSwitch.setChecked(highlightingEnabled);
                          highlightingEnabledSwitch.jumpDrawablesToCurrentState();
@@ -224,19 +224,19 @@ public class BglHighlightingSettingsFragment extends Fragment
 
           try
           {
-            float value = Float.valueOf(text);
+            float value = Float.parseFloat(text);
             boolean valueValid;
             switch (preferenceName)
             {
               case IDEAL_MINIMUM_PREFERENCE:
-                valueValid = value < Float.valueOf(Objects.requireNonNull(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE)));
+                valueValid = value < Float.parseFloat(Objects.requireNonNull(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE)));
                 break;
               case HIGH_MINIMUM_PREFERENCE:
-                valueValid = value > Float.valueOf(Objects.requireNonNull(m_bglRangeValues.get(IDEAL_MINIMUM_PREFERENCE))) &&
-                    value < Float.valueOf(Objects.requireNonNull(m_bglRangeValues.get(ACTION_REQUIRED_MINIMUM_PREFERENCE)));
+                valueValid = value > Float.parseFloat(Objects.requireNonNull(m_bglRangeValues.get(IDEAL_MINIMUM_PREFERENCE))) &&
+                    value < Float.parseFloat(Objects.requireNonNull(m_bglRangeValues.get(ACTION_REQUIRED_MINIMUM_PREFERENCE)));
                 break;
               case ACTION_REQUIRED_MINIMUM_PREFERENCE:
-                valueValid = value > Float.valueOf(Objects.requireNonNull(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE)));
+                valueValid = value > Float.parseFloat(Objects.requireNonNull(m_bglRangeValues.get(HIGH_MINIMUM_PREFERENCE)));
                 break;
               default:
                 valueValid = false;
@@ -266,9 +266,9 @@ public class BglHighlightingSettingsFragment extends Fragment
     });
   }
 
-  class LinkedEditTextsTextWatcher implements TextWatcher
+  static class LinkedEditTextsTextWatcher implements TextWatcher
   {
-    private EditText m_linkedEditText;
+    private final EditText m_linkedEditText;
     private LinkedEditTextsTextWatcher m_linkedEditTextTextWatcher = null;
 
     private boolean m_processUpdate = true;

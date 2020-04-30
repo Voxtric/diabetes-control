@@ -97,7 +97,8 @@
         android:gravity="center_horizontal"
         style="@style/BasicText"
         android:inputType="phone"
-        android:imeOptions="actionDone" />
+        android:imeOptions="actionDone"
+        tools:ignore="Autofill" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

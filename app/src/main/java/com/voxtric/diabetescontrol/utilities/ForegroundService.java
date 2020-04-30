@@ -10,6 +10,7 @@ import android.os.IBinder;
 
 import androidx.annotation.StringRes;
 
+@SuppressWarnings("unused")
 public abstract class ForegroundService extends Service
 {
   private NotificationManager m_notificationManager = null;
@@ -32,9 +33,9 @@ public abstract class ForegroundService extends Service
     m_notificationManager.notify(notificationId, notification);
   }
 
-  protected void cancelNotification(int notificiationId)
+  protected void cancelNotification(int notificationId)
   {
-    m_notificationManager.cancel(notificiationId);
+    m_notificationManager.cancel(notificationId);
   }
 
   protected void createNotificationChannel(String channelId, String channelName, boolean ongoingNotification)

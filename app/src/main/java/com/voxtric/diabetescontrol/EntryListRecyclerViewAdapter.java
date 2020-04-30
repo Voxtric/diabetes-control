@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.ColorRes;
@@ -15,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,10 +24,10 @@ import com.voxtric.diabetescontrol.database.DataEntry;
 
 public class EntryListRecyclerViewAdapter extends RecyclerView.Adapter<EntryListRecyclerViewAdapter.ViewHolder>
 {
-  private MainActivity m_activity;
+  private final MainActivity m_activity;
 
   private final List<DataEntry> m_values;
-  private HashMap<View, Integer> m_valueMap = new HashMap<>();
+  private final HashMap<View, Integer> m_valueMap = new HashMap<>();
   private boolean m_loadingMore = false;
 
   private final float[] m_highlightingValues;

@@ -59,10 +59,10 @@ public class MealTargetsSettingsFragment extends Fragment
               {
                 TargetChange targetChange = new TargetChange();
                 targetChange.timestamp = System.currentTimeMillis();
-                targetChange.preMealLower = Float.valueOf(values[0]);
-                targetChange.preMealUpper = Float.valueOf(values[1]);
-                targetChange.postMealLower = Float.valueOf(values[2]);
-                targetChange.postMealUpper = Float.valueOf(values[3]);
+                targetChange.preMealLower = Float.parseFloat(values[0]);
+                targetChange.preMealUpper = Float.parseFloat(values[1]);
+                targetChange.postMealLower = Float.parseFloat(values[2]);
+                targetChange.postMealUpper = Float.parseFloat(values[3]);
                 AppDatabase.getInstance().targetChangesDao().insert(targetChange);
               }
             });

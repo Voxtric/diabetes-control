@@ -24,7 +24,7 @@ public class EditEntryActivity extends AwaitRecoveryActivity
   private DataEntry m_editedEntry = null;
   private List<Food> m_editedFoods = null;
 
-  private CountDownLatch m_latch = new CountDownLatch(1);
+  private final CountDownLatch m_latch = new CountDownLatch(1);
 
   @Override
   protected void onCreate(Bundle savedInstanceState)

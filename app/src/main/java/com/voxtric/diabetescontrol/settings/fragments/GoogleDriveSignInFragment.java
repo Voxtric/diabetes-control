@@ -19,6 +19,7 @@ import com.google.api.services.drive.DriveScopes;
 
 abstract class GoogleDriveSignInFragment extends Fragment
 {
+  @SuppressWarnings("SpellCheckingInspection")
   private static final String TAG = "GoogleDriveSignInFragme";
 
   private static final int REQUEST_CODE_SIGN_IN = 309;

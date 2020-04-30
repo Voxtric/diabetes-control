@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,7 +23,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -92,7 +90,7 @@ public class NewEntryFragment extends Fragment
   private Date m_date = null;
   private ArrayAdapter<String> m_eventSpinnerAdapter = null;
 
-  private HashMap<View, ListItemTextWatcher> m_foodListTextWatchers = new HashMap<>();
+  private final HashMap<View, ListItemTextWatcher> m_foodListTextWatchers = new HashMap<>();
 
   public NewEntryFragment()
   {
@@ -307,6 +305,7 @@ public class NewEntryFragment extends Fragment
 
   private void eventDataReady(Activity activity)
   {
+    //noinspection deprecation
     if (isVisible() && getUserVisibleHint() && (activity instanceof MainActivity))
     {
       ShowcaseViewHandler.handleAddNewEntryFragmentShowcaseViews((MainActivity)activity);

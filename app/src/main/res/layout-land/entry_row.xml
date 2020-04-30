@@ -40,7 +40,8 @@
         android:background="@drawable/back"
         android:gravity="center"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/text_size"/>
+        android:textSize="@dimen/text_size"
+        tools:ignore="InconsistentLayout" />
 
     <TextView
         android:id="@+id/text_view_insulin_dose"

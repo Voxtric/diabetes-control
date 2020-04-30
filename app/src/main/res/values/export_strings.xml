@@ -101,7 +101,7 @@ This device does not have an application installed capable of opening \'%1$s\' f
         \n
         \nContinuing the NHS export won\'t stop you from being able to export the same data in other formats afterward, so feel free to give it a try. If you find that not all data required is present, it is recommended that you use the ADS format for exporting.
     </string>
-    <string name="nhs_export_warn_dont_show_again">Don\'t show me this message again</string>
+    <string name="nhs_export_warn_do_not_show_again">Don\'t show me this message again</string>
     <string name="nhs_export_warn_negative_button">Cancel Export</string>
     <string name="nhs_export_want_positive_button">Continue Export</string>
 

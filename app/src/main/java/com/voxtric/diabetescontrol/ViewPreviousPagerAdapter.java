@@ -11,10 +11,10 @@ import java.util.List;
 
 import com.voxtric.diabetescontrol.database.DataEntry;
 
-public class ViewPreviousPagerAdapter extends PagerAdapter
+class ViewPreviousPagerAdapter extends PagerAdapter
 {
-  private Activity m_activity;
-  private List<DataEntry> m_entries;
+  private final Activity m_activity;
+  private final List<DataEntry> m_entries;
 
   ViewPreviousPagerAdapter(Activity activity, List<DataEntry> entries)
   {

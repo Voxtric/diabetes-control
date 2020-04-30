@@ -12,7 +12,7 @@ import com.voxtric.diabetescontrol.database.DataEntry;
 import com.voxtric.diabetescontrol.database.Event;
 import com.voxtric.diabetescontrol.database.EventsDao;
 
-public class Week
+class Week
 {
   static List<Week> splitEntries(List<DataEntry> entries, EventsDao eventsDao)
   {

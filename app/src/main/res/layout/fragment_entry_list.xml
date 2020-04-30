@@ -19,7 +19,6 @@
         android:background="@color/colorAccent">
 
         <TextView
-            android:id="@+id/text_view_time_stamp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
@@ -28,7 +27,6 @@
             android:text="@string/date_time_column_title"/>
 
         <TextView
-            android:id="@+id/text_view_blood_glucose_level"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1.2"
@@ -37,7 +35,6 @@
             android:text="@string/blood_glucose_level_column_title"/>
 
         <TextView
-            android:id="@+id/text_view_insulin_dose"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -46,7 +43,6 @@
             android:text="@string/insulin_dose_column_title"/>
 
         <TextView
-            android:id="@+id/text_view_event"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"

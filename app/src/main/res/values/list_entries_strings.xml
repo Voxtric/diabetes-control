@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Column Titles -->
     <string name="date_time_column_title">Date &amp; Time</string>
-    <string name="blood_glucose_level_column_title">BGL\n<font size="12">(mmol/L)</font></string>
+    <string name="blood_glucose_level_column_title">BGL\n<font size="12" tools:keep="@font/" tools:ignore="UnusedResources">(mmol/L)</font></string>
     <string name="insulin_name_column_title">Insulin Name</string>
     <string name="insulin_dose_column_title">Insulin Dose</string>
     <string name="event_column_title">Event</string>

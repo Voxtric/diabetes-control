@@ -1,7 +1,6 @@
 package com.voxtric.diabetescontrol.settings;
 
 import android.animation.ValueAnimator;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Point;
@@ -128,7 +127,7 @@ public class EditEventsActivity extends AwaitRecoveryActivity
     return super.dispatchTouchEvent(event);
   }
 
-  ViewGroup getDataView(View view)
+  private ViewGroup getDataView(View view)
   {
     ViewGroup dataView = null;
     View priorView = view;
@@ -547,20 +546,12 @@ public class EditEventsActivity extends AwaitRecoveryActivity
     }
   }
 
-  private void setMoveButtonVisible(final ViewGroup dataView, boolean visible)
+  private void makeMoveButtonVisible(final ViewGroup dataView)
   {
     final LinearLayout movementButtons = dataView.findViewById(R.id.movement_buttons);
-    if (visible)
-    {
-      m_adapter.setActiveMovementButtons(movementButtons);
-      movementButtons.setVisibility(View.VISIBLE);
-      adjustVisibility(dataView);
-    }
-    else
-    {
-      m_adapter.setActiveMovementButtons(null);
-      movementButtons.setVisibility(View.GONE);
-    }
+    m_adapter.setActiveMovementButtons(movementButtons);
+    movementButtons.setVisibility(View.VISIBLE);
+    adjustVisibility(dataView);
   }
 
   public void adjustVisibility(final ViewGroup dataView)
@@ -634,7 +625,7 @@ public class EditEventsActivity extends AwaitRecoveryActivity
         switch (item.getItemId())
         {
           case R.id.action_move:
-            setMoveButtonVisible(dataView, true);
+            makeMoveButtonVisible(dataView);
             return true;
           case R.id.navigation_edit_name:
             editEventName(dataView, false);
@@ -670,6 +661,7 @@ public class EditEventsActivity extends AwaitRecoveryActivity
     menu.show();
   }
 
+  @SuppressWarnings("unused")
   public void resetEvents(View view)
   {
     AlertDialog dialog = new AlertDialog.Builder(this)
@@ -712,6 +704,7 @@ public class EditEventsActivity extends AwaitRecoveryActivity
     dialog.show();
   }
 
+  @SuppressWarnings("unused")
   public void addNewEvent(View view)
   {
     AsyncTask.execute(new Runnable()

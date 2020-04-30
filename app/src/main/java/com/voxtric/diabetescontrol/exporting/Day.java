@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class Day
+class Day
 {
   static List<Day> splitEntries(List<DataEntry> entries)
   {

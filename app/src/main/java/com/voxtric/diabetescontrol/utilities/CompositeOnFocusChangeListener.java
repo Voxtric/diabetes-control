@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class CompositeOnFocusChangeListener implements View.OnFocusChangeListener
 {
-  private ArrayList<View.OnFocusChangeListener> m_registeredListeners = new ArrayList<>();
+  private final ArrayList<View.OnFocusChangeListener> m_registeredListeners = new ArrayList<>();
 
   private CompositeOnFocusChangeListener(View.OnFocusChangeListener onFocusChangeListener)
   {
@@ -25,11 +25,6 @@ public class CompositeOnFocusChangeListener implements View.OnFocusChangeListene
   private void registerListener(View.OnFocusChangeListener listener)
   {
     m_registeredListeners.add(listener);
-  }
-
-  public void unregisterListener(View.OnFocusChangeListener listener)
-  {
-    m_registeredListeners.remove(listener);
   }
 
   public <E extends View.OnFocusChangeListener> E getInstance(Class<E> classType)

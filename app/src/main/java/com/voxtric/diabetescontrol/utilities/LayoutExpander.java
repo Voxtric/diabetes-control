@@ -103,7 +103,7 @@ public class LayoutExpander
 
   public static class ExpansionState
   {
-    public final View view;
+    final View view;
     final int fullHeight;
     boolean expanding;
     ValueAnimator activeAnimator;

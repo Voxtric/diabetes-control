@@ -13,16 +13,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PdfGenerator
+@SuppressWarnings({ "SameParameterValue", "UnusedReturnValue", "unused" })
+abstract class PdfGenerator
 {
   private static final float POINTS_PER_INCH = 72;
-  public static final float MM_PER_INCH = 1 / (10 * 2.54f) * POINTS_PER_INCH;
+  static final float MM_PER_INCH = 1 / (10 * 2.54f) * POINTS_PER_INCH;
 
-  protected static class PDFColor
+  static class PDFColor
   {
-    int r;
-    int g;
-    int b;
+    final int r;
+    final int g;
+    final int b;
 
     PDFColor(int red, int green, int blue)
     {
@@ -42,7 +43,6 @@ public abstract class PdfGenerator
   static final float LINE_SPACING = 3.0f;
   static final PDFont FONT = PDType1Font.HELVETICA;
   static final PDFont FONT_BOLD = PDType1Font.HELVETICA_BOLD;
-  static final PDFColor BLACK = new PDFColor(0, 0, 0);
   static final PDFColor WHITE = new PDFColor(255, 255, 255);
   static final PDFColor BLUE = new PDFColor(183, 230, 251);
 

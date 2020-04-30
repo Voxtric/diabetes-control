@@ -8,10 +8,8 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -170,15 +168,18 @@ public class ShowcaseViewHandler
         NewEntryFragment newEntryFragment = activity.getFragment(NewEntryFragment.class);
         EntryListFragment entryListFragment = activity.getFragment(EntryListFragment.class);
         EntryGraphFragment entryGraphFragment = activity.getFragment(EntryGraphFragment.class);
+        //noinspection deprecation
         if ((newEntryFragment != null) && newEntryFragment.isVisible() && newEntryFragment.getUserVisibleHint())
         {
           handleAddNewEntryFragmentShowcaseViews(activity);
         }
-        else if ((entryListFragment != null) && entryListFragment.isVisible() && entryListFragment.getUserVisibleHint())
+        else //noinspection deprecation
+          if ((entryListFragment != null) && entryListFragment.isVisible() && entryListFragment.getUserVisibleHint())
         {
           handleEntryListFragmentShowcaseViews(activity);
         }
-        else if ((entryGraphFragment != null) && entryGraphFragment.isVisible() && entryGraphFragment.getUserVisibleHint())
+        else //noinspection deprecation
+            if ((entryGraphFragment != null) && entryGraphFragment.isVisible() && entryGraphFragment.getUserVisibleHint())
         {
           handleEntryGraphFragmentShowcaseViews(activity);
         }
@@ -448,7 +449,7 @@ public class ShowcaseViewHandler
         showcaseDismissText = (activity.findViewById(R.id.statistics_layout) == null) ? R.string.done_dialog_option : R.string.next_dialog_option;
         break;
       case ENTRY_GRAPH_FRAGMENT_SHOWCASE_GRAPH_STATISTICS:
-        targetView = activity.findViewById(R.id.statistics_layout_label);
+        targetView = activity.findViewById(R.id.statistics_title);
         showcaseTitle = R.string.entry_graph_fragment_showcase_graph_statistics_title;
         showcaseText = R.string.entry_graph_fragment_showcase_graph_statistics_text;
         showcaseDismissText = R.string.done_dialog_option;

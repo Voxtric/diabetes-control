@@ -1,11 +1,8 @@
 package com.voxtric.diabetescontrol.utilities;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.voxtric.diabetescontrol.R;
 
+@SuppressWarnings("UnusedReturnValue")
 public class ViewUtilities
 {
   public static float getVisibilityValue(View view)
@@ -73,23 +71,6 @@ public class ViewUtilities
           view.setAlpha(alpha);
         }
       }
-    }
-  }
-
-  @SuppressLint("SourceLockedOrientationActivity")
-  public static void lockDeviceOrientation(Activity activity, int orientation)
-  {
-    if (orientation == Configuration.ORIENTATION_LANDSCAPE)
-    {
-      activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-    }
-    else if (orientation == Configuration.ORIENTATION_PORTRAIT)
-    {
-      activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-    }
-    else
-    {
-      activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
     }
   }
 }

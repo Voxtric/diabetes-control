@@ -23,7 +23,7 @@ public class EditEventsRecyclerViewAdapter extends RecyclerView.Adapter<EditEven
 {
   private List<Event> m_values;
   private final HashMap<View, Integer> m_valueMap = new HashMap<>();
-  private EditEventsActivity m_activity;
+  private final EditEventsActivity m_activity;
 
   private Event m_eventToHighlight = null;
   private boolean m_showButtonsOnHighlightedEvent = false;

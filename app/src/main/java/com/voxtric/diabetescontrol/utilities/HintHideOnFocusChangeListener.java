@@ -8,8 +8,8 @@ import android.widget.EditText;
 public class HintHideOnFocusChangeListener implements View.OnFocusChangeListener
 {
   private String m_originalHint;
-  private int m_originalGravity;
-  private int m_targetGravity;
+  private final int m_originalGravity;
+  private final int m_targetGravity;
 
   public HintHideOnFocusChangeListener(EditText viewWithHint, int targetGravity)
   {

@@ -35,10 +35,7 @@ import com.voxtric.diabetescontrol.RecoveryForegroundService;
 import com.voxtric.diabetescontrol.database.AppDatabase;
 import com.voxtric.diabetescontrol.database.Preference;
 import com.voxtric.diabetescontrol.exporting.ExportForegroundService;
-import com.voxtric.diabetescontrol.settings.SettingsActivity;
 import com.voxtric.diabetescontrol.utilities.GoogleDriveInterface;
-
-import java.util.Objects;
 
 public class BackupSettingsFragment extends GoogleDriveSignInFragment
 {

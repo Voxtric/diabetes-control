@@ -129,6 +129,7 @@ public class EntryListFragment extends Fragment
         }
       });
 
+      //noinspection deprecation
       if (isVisible() && getUserVisibleHint())
       {
         ShowcaseViewHandler.handleEntryListFragmentShowcaseViews(activity);

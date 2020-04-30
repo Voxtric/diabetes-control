@@ -90,17 +90,17 @@ public class MainActivity extends AwaitRecoveryActivity
   private PopupMenu m_activeMenu = null;
 
   private AlertDialog m_exportProgressDialog = null;
-  private ExportOngoingBroadcastReceiver m_exportOngoingBroadcastReceiver = new ExportOngoingBroadcastReceiver();
-  private ExportFinishedBroadcastReceiver m_exportFinishedBroadcastReceiver = new ExportFinishedBroadcastReceiver();
+  private final ExportOngoingBroadcastReceiver m_exportOngoingBroadcastReceiver = new ExportOngoingBroadcastReceiver();
+  private final ExportFinishedBroadcastReceiver m_exportFinishedBroadcastReceiver = new ExportFinishedBroadcastReceiver();
 
   private AlertDialog m_backupProgressDialog = null;
-  private BackupOngoingBroadcastReceiver m_backupOngoingBroadcastReceiver = new BackupOngoingBroadcastReceiver();
-  private BackupFinishedBroadcastReceiver m_backupFinishedBroadcastReceiver = new BackupFinishedBroadcastReceiver();
+  private final BackupOngoingBroadcastReceiver m_backupOngoingBroadcastReceiver = new BackupOngoingBroadcastReceiver();
+  private final BackupFinishedBroadcastReceiver m_backupFinishedBroadcastReceiver = new BackupFinishedBroadcastReceiver();
 
   private String m_moveExportFilePath = null;
   private String m_moveExportFileMimeType = null;
 
-  private BottomNavigationView.OnNavigationItemSelectedListener m_onNavigationItemSelectedListener
+  private final BottomNavigationView.OnNavigationItemSelectedListener m_onNavigationItemSelectedListener
       = new BottomNavigationView.OnNavigationItemSelectedListener()
   {
     @Override
@@ -311,7 +311,7 @@ public class MainActivity extends AwaitRecoveryActivity
       {
         Toast.makeText(this, R.string.export_already_in_progress_message, Toast.LENGTH_LONG).show();
       }
-      else if ((menuItemId == R.id.navigation_export_nhs) && !getPreferences(MODE_PRIVATE).getBoolean("nhs_warn_dont_show_again", false))
+      else if ((menuItemId == R.id.navigation_export_nhs) && !getPreferences(MODE_PRIVATE).getBoolean("nhs_warn_do_not_show_again", false))
       {
         new AlertDialog.Builder(this)
             .setTitle(R.string.nhs_export_warn_title)
@@ -569,10 +569,10 @@ public class MainActivity extends AwaitRecoveryActivity
     }
   }
 
-  public void updateNHSWarnDontShowAgain(final View view)
+  public void updateNHSWarnDoNotShowAgain(final View view)
   {
     SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-    preferences.edit().putBoolean("nhs_warn_dont_show_again", ((CheckBox)view).isChecked()).apply();
+    preferences.edit().putBoolean("nhs_warn_do_not_show_again", ((CheckBox)view).isChecked()).apply();
   }
 
   void navigateToPageFragment(int fragmentIndex)
@@ -787,7 +787,7 @@ public class MainActivity extends AwaitRecoveryActivity
 
   private void initialiseViewPager(ViewPager viewPager, final BottomNavigationView navigation)
   {
-    FragmentPagerAdapter fragmentStatePagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager())
+    FragmentPagerAdapter fragmentStatePagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
     {
       @Override
       public Fragment getItem(int i)
@@ -985,18 +985,19 @@ public class MainActivity extends AwaitRecoveryActivity
     return view;
   }
 
+  @SuppressWarnings("unused")
   public void toggleStatisticsVisibility(View view)
   {
     getFragment(EntryGraphFragment.class).toggleStatisticsVisibility(this);
   }
 
-  public void viewExportFile(Uri exportFileUri, String exportFileMimeType, boolean showViewExportFail)
+  private void viewExportFile(Uri exportFileUri, String exportFileMimeType, boolean showViewExportFail)
   {
     Intent viewFileIntent = ExportForegroundService.buildViewFileIntent(this, exportFileUri, exportFileMimeType, showViewExportFail);
     startActivity(viewFileIntent);
   }
 
-  public void shareExportFile(String exportFilePath, String exportFileMimeType)
+  private void shareExportFile(String exportFilePath, String exportFileMimeType)
   {
     File exportFile = new File(exportFilePath);
     Uri exportFileUri = FileProvider.getUriForFile(this, getPackageName() + ".provider", exportFile);

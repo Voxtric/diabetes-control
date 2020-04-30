@@ -31,6 +31,7 @@ import com.voxtric.diabetescontrol.utilities.GoogleDriveInterface;
 
 public class RecoveryForegroundService extends ForegroundService implements MediaHttpDownloaderProgressListener
 {
+  @SuppressWarnings("SpellCheckingInspection")
   private static final String TAG = "RecoveryForegroundServi";
 
   public static final String ACTION_ONGOING = "voxtric.voxtric.diabetescontrol.RecoveryForegroundService.ACTION_ONGOING";

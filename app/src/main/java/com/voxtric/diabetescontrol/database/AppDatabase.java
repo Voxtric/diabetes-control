@@ -45,7 +45,7 @@ public abstract class AppDatabase extends RoomDatabase
     return s_instance;
   }
 
-  public static AppDatabase initialise(Context context)
+  public static void initialise(Context context)
   {
     if (s_instance != null)
     {
@@ -54,7 +54,6 @@ public abstract class AppDatabase extends RoomDatabase
     s_instance = Room.databaseBuilder(context, AppDatabase.class, NAME)
         .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
         .build();
-    return s_instance;
   }
 
   private static final Migration MIGRATION_2_3 = new Migration(2, 3)
@@ -119,9 +118,8 @@ public abstract class AppDatabase extends RoomDatabase
         {
           long timestamp = cursor.getLong(0);
           String[] foodEaten = cursor.getString(1).split(",");
-          for (int i = 0; i < foodEaten.length; i++)
+          for (String food : foodEaten)
           {
-            String food = foodEaten[i].trim();
             if (food.length() > 0)
             {
               database.execSQL("INSERT INTO foods VALUES (:timestamp, :food)", new Object[]{ timestamp, food });

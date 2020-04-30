@@ -13,7 +13,6 @@ import java.util.Locale;
 
 import com.opencsv.CSVWriter;
 import com.voxtric.diabetescontrol.database.AppDatabase;
-import com.voxtric.diabetescontrol.database.DataEntriesDao;
 import com.voxtric.diabetescontrol.database.DataEntry;
 import com.voxtric.diabetescontrol.database.Food;
 

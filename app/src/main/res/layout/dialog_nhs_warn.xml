@@ -25,6 +25,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_size"
-        android:text="@string/nhs_export_warn_dont_show_again"
-        android:onClick="updateNHSWarnDontShowAgain"/>
+        android:text="@string/nhs_export_warn_do_not_show_again"
+        android:onClick="updateNHSWarnDoNotShowAgain"/>
 </LinearLayout>

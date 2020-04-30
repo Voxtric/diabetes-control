@@ -16,7 +16,7 @@ public class Preference
 {
   @NonNull
   @PrimaryKey()
-  public String name;
+  public String name = "Null Preference";
 
   @ColumnInfo(name = "value")
   public String value;
@@ -64,28 +64,6 @@ public class Preference
         Preference preference = ensurePreferenceExists(preferencesDao, name);
         preference.value = value;
         preferencesDao.update(preference);
-      }
-    });
-  }
-
-  public static void remove(final Activity activity, final String name, final Runnable onCompletionMainThread)
-  {
-    AsyncTask.execute(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        PreferencesDao preferencesDao = AppDatabase.getInstance().preferencesDao();
-        Preference preference = preferencesDao.getPreference(name);
-        if (preference != null)
-        {
-          preferencesDao.delete(preference);
-        }
-
-        if (onCompletionMainThread != null)
-        {
-          activity.runOnUiThread(onCompletionMainThread);
-        }
       }
     });
   }

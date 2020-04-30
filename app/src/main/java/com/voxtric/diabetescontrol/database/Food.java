@@ -19,5 +19,5 @@ public class Food
 
   @NonNull
   @ColumnInfo(name = "name")
-  public String name;
+  public String name = "Null Food";
 }

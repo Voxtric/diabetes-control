@@ -163,7 +163,7 @@
         android:imeOptions="actionDone"
         android:gravity="center"
         android:background="@drawable/back"
-        android:hint="@string/ideal_range_upper_hint"
+        android:hint="@string/high_range_upper_hint"
         tools:ignore="Autofill" />
 
     <Button

@@ -20,8 +20,8 @@ import com.voxtric.diabetescontrol.utilities.ViewUtilities;
 public abstract class AwaitRecoveryActivity extends AppCompatActivity
 {
   private AlertDialog m_recoveryWaitDialog = null;
-  private RecoveryOngoingBroadcastReceiver m_recoveryOngoingBroadcastReceiver = new RecoveryOngoingBroadcastReceiver();
-  private RecoveryCompleteBroadcastReceiver m_recoveryCompleteBroadcastReceiver = new RecoveryCompleteBroadcastReceiver();
+  private final RecoveryOngoingBroadcastReceiver m_recoveryOngoingBroadcastReceiver = new RecoveryOngoingBroadcastReceiver();
+  private final RecoveryCompleteBroadcastReceiver m_recoveryCompleteBroadcastReceiver = new RecoveryCompleteBroadcastReceiver();
 
   @Override
   protected void onStart()
@@ -102,7 +102,7 @@ public abstract class AwaitRecoveryActivity extends AppCompatActivity
         new IntentFilter(RecoveryForegroundService.ACTION_FINISHED));
   }
 
-  public void cancelRecoveryWaitDialog()
+  private void cancelRecoveryWaitDialog()
   {
     LocalBroadcastManager.getInstance(this).unregisterReceiver(m_recoveryOngoingBroadcastReceiver);
     LocalBroadcastManager.getInstance(this).unregisterReceiver(m_recoveryCompleteBroadcastReceiver);

@@ -34,6 +34,7 @@ import javax.net.ssl.SSLHandshakeException;
 
 import com.voxtric.diabetescontrol.R;
 
+@SuppressWarnings("UnusedReturnValue")
 public class GoogleDriveInterface
 {
   private static final String TAG = "GoogleDriveInterface";
@@ -77,7 +78,7 @@ public class GoogleDriveInterface
     return hasWifiConnection;
   }
 
-  private Drive m_googleDrive;
+  private final Drive m_googleDrive;
 
   public GoogleDriveInterface(Context context, GoogleSignInAccount account)
   {
