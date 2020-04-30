@@ -125,8 +125,16 @@ public class MainActivity extends AwaitRecoveryActivity
   @Override
   protected void onCreate(Bundle savedInstanceState)
   {
-    PDFBoxResourceLoader.init(this);
+    AsyncTask.execute(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        PDFBoxResourceLoader.init(MainActivity.this);
+      }
+    });
 
+    setTheme(R.style.AppTheme);
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     Toolbar toolbar = findViewById(R.id.toolbar);
@@ -147,6 +155,8 @@ public class MainActivity extends AwaitRecoveryActivity
         actOnIntent(getIntent());
       }
     });
+
+
   }
 
   @Override

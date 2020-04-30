@@ -10,6 +10,7 @@ public class DecimalDigitsInputFilter implements InputFilter
 {
   private final Pattern m_pattern;
 
+  @SuppressWarnings("Annotator")
   public DecimalDigitsInputFilter(int digitsBeforeDecimalPlace, int digitsAfterDecimalPlace)
   {
     m_pattern = Pattern.compile("^\\d{0," + digitsBeforeDecimalPlace + "}((\\.{0," + digitsAfterDecimalPlace + "})|(\\.\\d{0," + digitsAfterDecimalPlace + "}))$");
