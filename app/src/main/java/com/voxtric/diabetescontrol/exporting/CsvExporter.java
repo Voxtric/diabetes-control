@@ -29,6 +29,7 @@ public class CsvExporter implements IExporter
   @Override
   public byte[] export(List<DataEntry> entries, ExportForegroundService exportForegroundService)
   {
+    byte[] csvData = null;
     try
     {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -41,13 +42,13 @@ public class CsvExporter implements IExporter
       }
 
       m_fileContents.close();
-      return outputStream.toByteArray();
+      csvData = outputStream.toByteArray();
     }
     catch (IOException exception)
     {
       Log.e(TAG, "CSV Export IO Exception", exception);
-      return null;
     }
+    return csvData;
   }
 
   @Override

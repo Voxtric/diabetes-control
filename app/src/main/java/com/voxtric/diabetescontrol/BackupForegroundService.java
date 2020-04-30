@@ -181,7 +181,7 @@ public class BackupForegroundService extends ForegroundService implements MediaH
       Preference preference = AppDatabase.getInstance().preferencesDao().getPreference("backup_complete_notify");
       if (preference != null)
       {
-        notifyOnFinished = Boolean.valueOf(preference.value);
+        notifyOnFinished = Boolean.parseBoolean(preference.value);
       }
 
       switch (result)

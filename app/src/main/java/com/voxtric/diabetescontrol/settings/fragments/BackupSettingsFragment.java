@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +70,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
         @Override
         public void run()
         {
-          wifiOnlyBackupCheck.setChecked(Boolean.valueOf(getResult()));
+          wifiOnlyBackupCheck.setChecked(Boolean.parseBoolean(getResult()));
         }
       });
       wifiOnlyBackupCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
@@ -89,7 +88,7 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
         @Override
         public void run()
         {
-          notifyBackupCompletionCheck.setChecked(Boolean.valueOf(getResult()));
+          notifyBackupCompletionCheck.setChecked(Boolean.parseBoolean(getResult()));
         }
       });
       notifyBackupCompletionCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
@@ -460,7 +459,14 @@ public class BackupSettingsFragment extends GoogleDriveSignInFragment
       {
         configureBackupButtonsEnabled(activity);
 
-        Toast.makeText(activity, R.string.backup_succeeded_message, Toast.LENGTH_LONG).show();
+        if (getString(R.string.backup_success_notification_title).equals(intent.getStringExtra("message_title")))
+        {
+          Toast.makeText(activity, R.string.backup_succeeded_message, Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+          Toast.makeText(activity, R.string.backup_failed_message, Toast.LENGTH_LONG).show();
+        }
       }
     }
   }

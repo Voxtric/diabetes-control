@@ -60,6 +60,7 @@ public class AdsExporter extends PdfGenerator implements IExporter
   @Override
   public byte[] createPDF(ExportForegroundService exportForegroundService)
   {
+    byte[] pdfData = null;
     try
     {
       for (final Week week : m_weeks)
@@ -67,13 +68,13 @@ public class AdsExporter extends PdfGenerator implements IExporter
         addPage(exportForegroundService, week);
         exportForegroundService.incrementProgress(week.entries.size());
       }
-      return getOutputStream().toByteArray();
+      pdfData = getOutputStream().toByteArray();
     }
     catch (IOException exception)
     {
       exception.printStackTrace();
-      return null;
     }
+    return pdfData;
   }
 
   private void showExtras(Context context, StringBuilder foodEatenStringBuilder, StringBuilder additionalNotesStringBuilder, float startX, float availableSpace, float height) throws IOException

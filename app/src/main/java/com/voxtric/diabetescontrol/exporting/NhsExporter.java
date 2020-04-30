@@ -57,6 +57,7 @@ public class NhsExporter extends PdfGenerator implements IExporter
   @Override
   public byte[] createPDF(ExportForegroundService exportForegroundService)
   {
+    byte[] pdfData = null;
     try
     {
       int dayCount = m_days.size();
@@ -75,13 +76,13 @@ public class NhsExporter extends PdfGenerator implements IExporter
         }
         exportForegroundService.incrementProgress(entriesAdded);
       }
-      return getOutputStream().toByteArray();
+      pdfData = getOutputStream().toByteArray();
     }
     catch (IOException exception)
     {
       exception.printStackTrace();
-      return null;
     }
+    return pdfData;
   }
 
   private void addPage(Context context, int startIndex, int entriesToAdd) throws IOException
