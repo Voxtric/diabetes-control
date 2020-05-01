@@ -137,8 +137,7 @@ public class EntryGraphFragment extends Fragment implements GraphDataProvider
     MainActivity activity = (MainActivity)getActivity();
     if (activity != null)
     {
-      //noinspection deprecation
-      if (isVisible() && getUserVisibleHint())
+      if (activity.fragmentActive(getClass()))
       {
         ShowcaseViewHandler.handleEntryGraphFragmentShowcaseViews(activity);
       }

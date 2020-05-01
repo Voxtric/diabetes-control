@@ -165,21 +165,15 @@ public class ShowcaseViewHandler
       {
         activity.findViewById(R.id.fragment_container).setAlpha(1.0f);
         toolbar.setAlpha(1.0f);
-        NewEntryFragment newEntryFragment = activity.getFragment(NewEntryFragment.class);
-        EntryListFragment entryListFragment = activity.getFragment(EntryListFragment.class);
-        EntryGraphFragment entryGraphFragment = activity.getFragment(EntryGraphFragment.class);
-        //noinspection deprecation
-        if ((newEntryFragment != null) && newEntryFragment.isVisible() && newEntryFragment.getUserVisibleHint())
+        if (activity.fragmentActive(NewEntryFragment.class))
         {
           handleAddNewEntryFragmentShowcaseViews(activity);
         }
-        else //noinspection deprecation
-          if ((entryListFragment != null) && entryListFragment.isVisible() && entryListFragment.getUserVisibleHint())
+        else if (activity.fragmentActive(EntryListFragment.class))
         {
           handleEntryListFragmentShowcaseViews(activity);
         }
-        else //noinspection deprecation
-            if ((entryGraphFragment != null) && entryGraphFragment.isVisible() && entryGraphFragment.getUserVisibleHint())
+        else if (activity.fragmentActive(EntryGraphFragment.class))
         {
           handleEntryGraphFragmentShowcaseViews(activity);
         }
@@ -446,9 +440,10 @@ public class ShowcaseViewHandler
         targetView = activity.findViewById(R.id.dummy_showcase_target);
         showcaseTitle = R.string.entry_graph_fragment_showcase_graph_control_title;
         showcaseText = R.string.entry_graph_fragment_showcase_graph_control_text;
-        showcaseDismissText = (activity.findViewById(R.id.statistics_layout) == null) ? R.string.done_dialog_option : R.string.next_dialog_option;
+        showcaseDismissText = R.string.next_dialog_option;
         break;
       case ENTRY_GRAPH_FRAGMENT_SHOWCASE_GRAPH_STATISTICS:
+        ViewUtilities.setAlphaForChildren(contentView, UNDER_SHOWCASE_ALPHA, new int[] { R.id.statistics_title }, 1.0f);
         targetView = activity.findViewById(R.id.statistics_title);
         showcaseTitle = R.string.entry_graph_fragment_showcase_graph_statistics_title;
         showcaseText = R.string.entry_graph_fragment_showcase_graph_statistics_text;

@@ -97,6 +97,8 @@ public class MainActivity extends AwaitRecoveryActivity
   private final BackupOngoingBroadcastReceiver m_backupOngoingBroadcastReceiver = new BackupOngoingBroadcastReceiver();
   private final BackupFinishedBroadcastReceiver m_backupFinishedBroadcastReceiver = new BackupFinishedBroadcastReceiver();
 
+  private AlertDialog m_firstTimeLaunchDialog = null;
+
   private String m_moveExportFilePath = null;
   private String m_moveExportFileMimeType = null;
 
@@ -168,7 +170,11 @@ public class MainActivity extends AwaitRecoveryActivity
     boolean firstTimeLaunch = preferences.getBoolean("first_time_launch", true);
     if (firstTimeLaunch)
     {
-      AlertDialog dialog = new AlertDialog.Builder(this)
+      if (m_firstTimeLaunchDialog != null)
+      {
+        m_firstTimeLaunchDialog.dismiss();
+      }
+      m_firstTimeLaunchDialog = new AlertDialog.Builder(this)
           .setTitle(R.string.show_showcases_dialog_title)
           .setMessage(R.string.show_showcases_dialog_text)
           .setCancelable(false)
@@ -183,6 +189,7 @@ public class MainActivity extends AwaitRecoveryActivity
               preferenceEditor.putBoolean("show_showcases", true);
               preferenceEditor.commit();
               ShowcaseViewHandler.handleMainActivityShowcaseViews(MainActivity.this);
+              m_firstTimeLaunchDialog = null;
             }
           })
           .setNegativeButton(R.string.no_dialog_option, new DialogInterface.OnClickListener()
@@ -191,10 +198,19 @@ public class MainActivity extends AwaitRecoveryActivity
             public void onClick(DialogInterface dialogInterface, int i)
             {
               preferences.edit().putBoolean("first_time_launch", false).apply();
+              m_firstTimeLaunchDialog = null;
+            }
+          })
+          .setOnDismissListener(new DialogInterface.OnDismissListener()
+          {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface)
+            {
+              m_firstTimeLaunchDialog = null;
             }
           })
           .show();
-      dialog.setCanceledOnTouchOutside(false);
+      m_firstTimeLaunchDialog.setCanceledOnTouchOutside(false);
     }
 
     if (!RecoveryForegroundService.isDownloading())
@@ -407,6 +423,13 @@ public class MainActivity extends AwaitRecoveryActivity
     {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+  }
+
+  public <E extends Fragment> boolean fragmentActive(Class<E> classType)
+  {
+    int fragmentIndex = getFragmentIndex(classType);
+    int currentFragmentIndex = m_viewPager.getCurrentItem();
+    return fragmentIndex == currentFragmentIndex;
   }
 
   public <E extends Fragment> int getFragmentIndex(Class<E> classType)

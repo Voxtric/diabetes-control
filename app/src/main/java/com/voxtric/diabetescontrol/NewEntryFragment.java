@@ -305,8 +305,7 @@ public class NewEntryFragment extends Fragment
 
   private void eventDataReady(Activity activity)
   {
-    //noinspection deprecation
-    if (isVisible() && getUserVisibleHint() && (activity instanceof MainActivity))
+    if ((activity instanceof MainActivity) && ((MainActivity)activity).fragmentActive(getClass()))
     {
       ShowcaseViewHandler.handleAddNewEntryFragmentShowcaseViews((MainActivity)activity);
     }

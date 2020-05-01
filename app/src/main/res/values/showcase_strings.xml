@@ -44,7 +44,7 @@
         \nClicking a point on the graph will take you to its corresponding entry on the \'View All\' page.</string>
 
     <string name="entry_graph_fragment_showcase_graph_statistics_title">Range Statistics</string>
-    <string name="entry_graph_fragment_showcase_graph_statistics_text">In horizontal view, the statistics for the given graph range are hidden. Just tab the highlighted area to un-hide them.</string>
+    <string name="entry_graph_fragment_showcase_graph_statistics_text">In horizontal view, the statistics for the given graph range are hidden. Just click the highlighted area to un-hide them.</string>
 
     <!-- Settings Activity -->
     <string name="settings_activity_showcase_help_button_title">Settings Help</string>
