@@ -39,7 +39,7 @@
 
     <!-- Entry Graph Fragment -->
     <string name="entry_graph_fragment_showcase_graph_control_title">Graph Control</string>
-    <string name="entry_graph_fragment_showcase_graph_control_text">This graph displays your blood glucose readings. You can use scroll the graph horizontally to view a different range of data, or you can pinch to zoom in and out of the graph.
+    <string name="entry_graph_fragment_showcase_graph_control_text">This graph displays your blood glucose readings. You can scroll the graph horizontally to view a different range of data, or you can pinch to zoom in and out of the graph.
         \n
         \nClicking a point on the graph will take you to its corresponding entry on the \'View All\' page.</string>
 
