@@ -434,12 +434,15 @@ public class GoogleDriveInterface
   {
     int result = RESULT_UNKNOWN_ERROR;
     List<GoogleJsonError.ErrorInfo> errors = exception.getDetails().getErrors();
-    for (int i = 0; i < errors.size() && result == RESULT_UNKNOWN_ERROR; i++)
+    if (errors != null)
     {
-      GoogleJsonError.ErrorInfo error = errors.get(i);
-      if (error.getReason().equals("storageQuotaExceeded"))
+      for (int i = 0; i < errors.size() && result == RESULT_UNKNOWN_ERROR; i++)
       {
-        result = RESULT_SPACE_ERROR;
+        GoogleJsonError.ErrorInfo error = errors.get(i);
+        if (error.getReason().equals("storageQuotaExceeded"))
+        {
+          result = RESULT_SPACE_ERROR;
+        }
       }
     }
     return result;
