@@ -151,6 +151,7 @@
             android:imeOptions="actionNext"
             android:nextFocusForward="@id/insulin_dose_input"
             android:inputType="textCapWords"
+            android:maxLength="50"
             android:gravity="center"
             android:tag="insulin_name"/>
 
@@ -177,6 +178,7 @@
             app:layout_constraintRight_toRightOf="parent"
             android:background="@drawable/back"
             android:hint="@string/insulin_dose_hint"
+            android:maxLength="4"
             style="@style/BasicText"
             android:imeOptions="actionDone"
             android:inputType="number"
@@ -230,6 +232,7 @@
             android:imeOptions="actionDone"
             android:gravity="center"
             android:minLines="3"
+            android:maxLength="300"
             android:tag="additional_notes"/>
 
         <!-- Buttons -->

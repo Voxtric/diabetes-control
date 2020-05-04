@@ -75,6 +75,8 @@ import com.voxtric.diabetescontrol.utilities.HintHideOnFocusChangeListener;
 
 public class NewEntryFragment extends Fragment
 {
+  private final int MAX_FOOD_EATEN_ITEM_LENGTH = 50;
+
   // Transferred between rotations.
   private int m_year = 0;
   private int m_month = 0;
@@ -970,6 +972,7 @@ public class NewEntryFragment extends Fragment
       String newHint = getString(R.string.food_item_hint, 1);
       foodEatenItemInput.setHint(newHint);
       foodEatenItemInput.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_size));
+      foodEatenItemInput.setFilters(new InputFilter[] { new InputFilter.LengthFilter(MAX_FOOD_EATEN_ITEM_LENGTH) });
       CompositeOnFocusChangeListener compositeOnFocusChangeListener = (CompositeOnFocusChangeListener)foodEatenItemInput.getOnFocusChangeListener();
       HintHideOnFocusChangeListener hintHideOnFocusChangeListener = compositeOnFocusChangeListener.getInstance(HintHideOnFocusChangeListener.class);
       hintHideOnFocusChangeListener.changeOriginalHint(newHint);
@@ -1366,6 +1369,7 @@ public class NewEntryFragment extends Fragment
     newItem.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
     newItem.setImeOptions(EditorInfo.IME_ACTION_NEXT);
     newItem.setPadding(padding, 0, padding, 0);
+    newItem.setFilters(new InputFilter[] { new InputFilter.LengthFilter(MAX_FOOD_EATEN_ITEM_LENGTH) });
     ListItemTextWatcher textWatcher = new ListItemTextWatcher(activity, owningLayout, tag, hintResourceID);
     newItem.addTextChangedListener(textWatcher);
     m_foodListTextWatchers.put(newItem, textWatcher);
