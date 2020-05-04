@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.opencsv.CSVWriter;
+import com.voxtric.diabetescontrol.R;
 import com.voxtric.diabetescontrol.database.AppDatabase;
 import com.voxtric.diabetescontrol.database.DataEntry;
 import com.voxtric.diabetescontrol.database.Food;
@@ -19,9 +20,6 @@ import com.voxtric.diabetescontrol.database.Food;
 public class CsvExporter implements IExporter
 {
   private static final String TAG = "CsvExporter";
-  private static final String[] HEADINGS = new String[] {
-      "Day", "Date", "Time", "Blood Glucose Level", "Insulin Name", "Insulin Dose", "Food Eaten", "Additional Notes"
-  };
 
   private CSVWriter m_fileContents = null;
 
@@ -34,7 +32,8 @@ public class CsvExporter implements IExporter
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       m_fileContents = new CSVWriter(new OutputStreamWriter(outputStream), ',', '"', '"', "\n");
 
-      m_fileContents.writeNext(HEADINGS, false);
+      String[] headings = exportForegroundService.getResources().getStringArray(R.array.csv_export_headings);
+      m_fileContents.writeNext(headings, false);
       for (int i = entries.size() - 1; i >= 0; i--)
       {
         addEntry(entries.get(i));

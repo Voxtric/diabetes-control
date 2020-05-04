@@ -90,11 +90,11 @@ Are you sure you want to save it?"
     <string name="insulin_name_label">Insulin Name:</string>
         <string name="insulin_name_hint">Insulin Name</string>
     <string name="insulin_dose_label">Insulin Dose:</string>
-        <string name="insulin_dose_hint">Insulin Dose</string>
+        <string name="insulin_dose_hint">Insulin Dose (U/mL)</string>
     <string name="food_eaten_label">Food Eaten:</string>
         <string name="food_item_hint">Food Item %1$d</string>
     <string name="additional_notes_label">Additional Notes:</string>
-        <string name="additional_notes_hint">Addition Notes</string>
+        <string name="additional_notes_hint">Additional Notes</string>
 
 
 

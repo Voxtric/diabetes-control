@@ -117,7 +117,7 @@ This device does not have an application installed capable of opening \'%1$s\' f
     <string name="target_post_meal_blood_glucose_range">My target post-meal blood glucose range (mmol/L):</string>
     <string name="target_blood_glucose_range_empty">. . . . . . . . . . . . . . . . . . . . . . . . . . . .</string>
 
-    <string name="insulin_details_header">Name of insulin, the insulin dose, and injection time</string>
+    <string name="insulin_details_header">Insulin name, insulin dose (U/mL), and injection time</string>
     <string name="blood_glucose_levels_header">Blood glucose level (mmol/L)</string>
     <string name="key_events_header">Key events/ Notes</string>
 
@@ -146,9 +146,9 @@ This device does not have an application installed capable of opening \'%1$s\' f
     <string name="blood_glucose_targets">Blood Glucose Targets (mmol/L): Pre-meal %1$.1f - %2$.1f Post-meal %3$.1f - %4$.1f</string>
     <string name="blood_glucose_targets_empty">Blood Glucose Targets (mmol/L): Pre-meal .............. Post-meal ..............</string>
 
-    <string name="reading">Reading</string>
+    <string name="reading">Reading (mmol/L)</string>
     <string name="time">Time</string>
-    <string name="dose">Dose</string>
+    <string name="dose">Dose (U/mL)</string>
 
     <string name="food_eaten_title">Food Eaten /</string>
     <string name="additional_notes_title">Additional Notes</string>
@@ -164,4 +164,15 @@ This device does not have an application installed capable of opening \'%1$s\' f
     <string name="export_csv_success_notification_title">CSV Spreadsheet Export Finished</string>
     <string name="export_csv_success_notification_text">CSV spreadsheet export successful.</string>
     <string name="export_csv_fail_notification_title">CSV Spreadsheet Export Failed</string>
+
+    <string-array name="csv_export_headings">
+        <item>Day</item>
+        <item>Date</item>
+        <item>Time</item>
+        <item>Blood Glucose Level (mmol/L)</item>
+        <item>Insulin Name</item>
+        <item>Insulin Dose (U/mL)</item>
+        <item>Food Eaten</item>
+        <item>Additional Notes</item>
+    </string-array>
 </resources>
