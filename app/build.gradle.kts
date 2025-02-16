@@ -58,6 +58,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":timegraph"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
