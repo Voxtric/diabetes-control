@@ -48,7 +48,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.tom_roush.pdfbox.util.PDFBoxResourceLoader;
+import com.tom_roush.pdfbox.android.PDFBoxResourceLoader;
 
 import java.io.File;
 import java.io.FileInputStream;

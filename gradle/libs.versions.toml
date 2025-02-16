@@ -1,0 +1,72 @@
+[versions]
+agp = "8.8.1"
+appcompat = "1.7.0"
+appcompatV7 = "28.0.0"
+appcompatVersion = "1.7.0"
+autofitedittext = "53238e2d29"
+bubblepagerindicator = "1.1.2"
+bubblepagerindicatorVersion = "1.2.0"
+constraintLayout = "2.0.4"
+constraintlayoutVersion = "2.2.0"
+design = "28.0.0"
+googleHttpClientGson = "1.26.0"
+kotlin = "2.0.0"
+coreKtx = "1.10.1"
+junit = "4.13.2"
+junitVersion = "1.1.5"
+espressoCore = "3.5.1"
+lifecycleRuntimeKtx = "2.6.1"
+activityCompose = "1.8.0"
+composeBom = "2024.04.01"
+listenablefuture = "9999.0-empty-to-avoid-conflict-with-guava"
+localbroadcastmanager = "1.1.0"
+localbroadcastmanagerVersion = "1.1.0"
+material = "1.12.0"
+materialshowcaseview = "1.3.7"
+multidex = "2.0.1"
+opencsv = "5.9"
+pdfboxAndroid = "2.0.27.0"
+playServicesAuth = "21.3.0"
+recyclerview = "1.4.0"
+recyclerviewVersion = "1.4.0"
+roomCompiler = "2.6.1"
+roomRuntime = "2.6.1"
+
+[libraries]
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayoutVersion" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-localbroadcastmanager = { module = "androidx.localbroadcastmanager:localbroadcastmanager", version.ref = "localbroadcastmanagerVersion" }
+androidx-multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
+androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerviewVersion" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+autofitedittext = { module = "com.github.ViksaaSkool:AutoFitEditText", version.ref = "autofitedittext" }
+bubblepagerindicator = { module = "com.github.shuhart:bubblepagerindicator", version.ref = "bubblepagerindicatorVersion" }
+design = { module = "com.android.support:design", version.ref = "design" }
+google-http-client-gson = { module = "com.google.http-client:google-http-client-gson", version.ref = "googleHttpClientGson" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+listenablefuture = { module = "com.google.guava:listenablefuture", version.ref = "listenablefuture" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+materialshowcaseview = { module = "com.github.deano2390:MaterialShowcaseView", version.ref = "materialshowcaseview" }
+opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
+pdfbox-android = { module = "com.tom-roush:pdfbox-android", version.ref = "pdfboxAndroid" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+

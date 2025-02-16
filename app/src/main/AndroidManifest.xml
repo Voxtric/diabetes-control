@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.voxtric.diabetescontrol">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Dangerous -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -20,7 +19,8 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
-        tools:replace="android:supportsRtl,android:allowBackup">
+        tools:replace="android:supportsRtl,android:allowBackup"
+        tools:node="replace">
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -40,6 +40,7 @@
             android:name="com.voxtric.diabetescontrol.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
+            android:exported="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

@@ -145,11 +145,11 @@ public class ShowcaseViewHandler
           showcaseViewBuilder.setShapePadding(showcaseShapePadding);
         }
         s_activeShowcaseView = showcaseViewBuilder.show();
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.text_size));
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_title)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_dismiss)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_dismiss)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
 
-        s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
+        s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
         {
           @SuppressLint("ApplySharedPref")
           @Override
@@ -283,11 +283,11 @@ public class ShowcaseViewHandler
           showcaseViewBuilder.setShape(showcaseShape);
         }
         s_activeShowcaseView = showcaseViewBuilder.show();
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.text_size));
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_title)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_dismiss)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_title)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_dismiss)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
 
-        s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
+        s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
         {
           @SuppressLint("ApplySharedPref")
           @Override
@@ -388,12 +388,12 @@ public class ShowcaseViewHandler
                 .setShapePadding(0)
                 .setDismissText(showcaseDismiss)
                 .show();
-            ((TextView)s_activeShowcaseView.findViewById(R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.text_size));
-            ((TextView)s_activeShowcaseView.findViewById(R.id.tv_title)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
-            ((TextView)s_activeShowcaseView.findViewById(R.id.tv_dismiss)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
+            ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.text_size));
+            ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_title)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
+            ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_dismiss)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
 
             final int finalFragmentShowcaseProgress = fragmentShowcaseProgress;
-            s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
+            s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
             {
               @SuppressLint("ApplySharedPref")
               @Override
@@ -471,11 +471,11 @@ public class ShowcaseViewHandler
             .setContentTextColor(Color.WHITE)
             .setDismissText(showcaseDismissText)
             .show();
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.text_size));
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_title)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_dismiss)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_title)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_dismiss)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
 
-        s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
+        s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
         {
           @SuppressLint("ApplySharedPref")
           @Override
@@ -536,11 +536,11 @@ public class ShowcaseViewHandler
             .setContentTextColor(Color.WHITE)
             .setDismissText(R.string.done_dialog_option)
             .show();
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.text_size));
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_title)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_dismiss)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_title)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_dismiss)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
 
-        s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
+        s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
         {
           @SuppressLint("ApplySharedPref")
           @Override
@@ -646,11 +646,11 @@ public class ShowcaseViewHandler
           showcaseViewBuilder.setShapePadding(showcaseShapePadding);
         }
         s_activeShowcaseView = showcaseViewBuilder.show();
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.text_size));
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_title)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
-        ((TextView)s_activeShowcaseView.findViewById(R.id.tv_dismiss)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_content)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_title)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
+        ((TextView)s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_dismiss)).setTextSize(TypedValue.COMPLEX_UNIT_PX, activity.getResources().getDimension(R.dimen.large_text_size));
 
-        s_activeShowcaseView.findViewById(R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
+        s_activeShowcaseView.findViewById(uk.co.deanwild.materialshowcaseview.R.id.tv_dismiss).setOnClickListener(new View.OnClickListener()
         {
           @SuppressLint("ApplySharedPref")
           @Override
