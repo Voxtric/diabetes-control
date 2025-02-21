@@ -10,4 +10,6 @@
     <dimen name="text_box_padding">6dp</dimen>
 
     <dimen name="help_image_button_padding">4dp</dimen>
+
+    <dimen name="click_area_minimum_size">48dp</dimen>
 </resources>

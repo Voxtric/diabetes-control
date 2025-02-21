@@ -76,7 +76,7 @@
             <LinearLayout
                 android:id="@+id/disclaimer_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/click_area_minimum_size"
                 android:orientation="horizontal"
                 android:onClick="toggleVisibility">
 
@@ -84,6 +84,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
                     android:labelFor="@id/disclaimer_text"
                     android:textColor="@color/colorText"
                     android:textSize="@dimen/large_text_size"
@@ -107,7 +108,7 @@
             <LinearLayout
                 android:id="@+id/privacy_policy_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/click_area_minimum_size"
                 android:orientation="horizontal"
                 android:onClick="toggleVisibility">
 
@@ -115,6 +116,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
                     android:labelFor="@id/privacy_policy_text"
                     android:textColor="@color/colorText"
                     android:textSize="@dimen/large_text_size"
@@ -138,7 +140,7 @@
             <LinearLayout
                 android:id="@+id/open_source_information_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/click_area_minimum_size"
                 android:orientation="horizontal"
                 android:onClick="toggleVisibility">
 
@@ -146,6 +148,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
                     android:labelFor="@id/open_source_information_text"
                     android:textColor="@color/colorText"
                     android:textSize="@dimen/large_text_size"
@@ -169,7 +172,7 @@
             <LinearLayout
                 android:id="@+id/donation_links_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/click_area_minimum_size"
                 android:orientation="horizontal"
                 android:onClick="toggleVisibility">
 
@@ -177,6 +180,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
                     android:labelFor="@id/open_source_information_text"
                     android:textColor="@color/colorText"
                     android:textSize="@dimen/large_text_size"
