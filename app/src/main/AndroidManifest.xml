@@ -22,6 +22,10 @@
         tools:replace="android:supportsRtl,android:allowBackup"
         tools:node="replace">
 
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -29,12 +33,14 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
+                android:resource="@xml/provider_paths"/>
         </provider>
 
         <service android:name="com.voxtric.diabetescontrol.exporting.ExportForegroundService"/>
         <service android:name="com.voxtric.diabetescontrol.BackupForegroundService"/>
         <service android:name="com.voxtric.diabetescontrol.RecoveryForegroundService"/>
+
+        <activity android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity" />
 
         <activity
             android:name="com.voxtric.diabetescontrol.MainActivity"
