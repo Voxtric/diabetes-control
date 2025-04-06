@@ -18,7 +18,7 @@
         <TextView
             android:id="@+id/date_label"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/click_area_minimum_size"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintWidth_percent=".4"
@@ -45,7 +45,7 @@
         <TextView
             android:id="@+id/time_label"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/click_area_minimum_size"
             android:layout_marginTop="@dimen/text_margin"
             app:layout_constraintTop_toBottomOf="@id/date_label"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -86,7 +86,7 @@
         <Spinner
             android:id="@+id/event_spinner"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/click_area_minimum_size"
             android:layout_marginTop="@dimen/text_margin"
             android:layout_marginStart="@dimen/text_margin"
             app:layout_constraintTop_toBottomOf="@id/time_label"
@@ -98,7 +98,7 @@
         <TextView
             android:id="@+id/blood_glucose_level_label"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/click_area_minimum_size"
             android:layout_marginTop="@dimen/text_margin"
             app:layout_constraintTop_toBottomOf="@id/event_label"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -128,7 +128,7 @@
         <TextView
             android:id="@+id/insulin_name_label"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/click_area_minimum_size"
             android:layout_marginTop="@dimen/text_margin"
             app:layout_constraintTop_toBottomOf="@id/blood_glucose_level_label"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -159,7 +159,7 @@
         <TextView
             android:id="@+id/insulin_dose_label"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/click_area_minimum_size"
             android:layout_marginTop="@dimen/text_margin"
             app:layout_constraintTop_toBottomOf="@id/insulin_name_label"
             app:layout_constraintLeft_toLeftOf="parent"
